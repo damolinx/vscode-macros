@@ -37,7 +37,7 @@
       },
       {
         "command": "macros.run.show",
-        "title": "Show Running Macros`",
+        "title": "Show Running Macros",
         "category": "Macros"
       }
     ],

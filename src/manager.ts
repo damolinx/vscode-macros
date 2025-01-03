@@ -1,34 +1,32 @@
 import * as vscode from 'vscode';
-import { Runner } from './runner';
+import { RunInfo, Runner } from './runner';
 import { Macro, MacroId } from './macro';
 
 export class Manager implements vscode.Disposable {
   private readonly macros: Map<MacroId, Runner>;
+  private runEventEmitter: vscode.EventEmitter<RunInfo>;
+  private stopEventEmitter: vscode.EventEmitter<RunInfo>;
 
   constructor() {
     this.macros = new Map();
+    this.runEventEmitter = new vscode.EventEmitter();
+    this.stopEventEmitter = new vscode.EventEmitter();
   }
 
   dispose() {
-    vscode.Disposable.from(...this.macros.values()).dispose();
+    vscode.Disposable.from(this.runEventEmitter, this.stopEventEmitter, ...this.macros.values()).dispose();
   }
 
   private getRunner(macroOrUri: Macro | vscode.Uri): Runner {
-    let runner: Runner | undefined;
-    if (macroOrUri instanceof Macro) {
-      runner = this.macros.get(macroOrUri.id);
-      if (!runner) {
-        runner = new Runner(macroOrUri);
-        this.macros.set(macroOrUri.id, runner);
-      }
-    } else {
-      runner = this.macros.get(Macro.getId(macroOrUri));
-      if (!runner) {
-        const macro = new Macro(macroOrUri);
-        runner = new Runner(macro);
-        this.macros.set(macro.id, runner);
-      }
+    const macro = macroOrUri instanceof Macro ? macroOrUri : new Macro(macroOrUri);
+    let runner = this.macros.get(macro.id);
+    if (!runner) {
+      runner = new Runner(macro);
+      runner.onRun((runInfo) => this.runEventEmitter.fire(runInfo));
+      runner.onStop((runInfo) => this.stopEventEmitter.fire(runInfo));
+      this.macros.set(macro.id, runner);
     }
+
     return runner;
   }
 
@@ -37,7 +35,15 @@ export class Manager implements vscode.Disposable {
     await runner.run();
   }
 
-  public get runningMacros(): ReadonlyArray<{ macro: Macro; runId: string }> {
+  public get runningMacros(): ReadonlyArray<RunInfo> {
     return [...this.macros.values()].flatMap((runner) => runner.running);
+  }
+
+  public onRun(listener: (runInfo: RunInfo) => void): vscode.Disposable {
+    return this.runEventEmitter.event(listener);
+  }
+
+  public onStop(listener: (runInfo: RunInfo) => void): vscode.Disposable {
+    return this.stopEventEmitter.event(listener);
   }
 }

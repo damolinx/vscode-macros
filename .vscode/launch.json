@@ -6,10 +6,9 @@
 			"type": "extensionHost",
 			"request": "launch",
 			"runtimeExecutable": "${execPath}",
-			"args": ["--extensionDevelopmentPath=${workspaceFolder}"],
-			"env": {
-				"VSCODE_EXT_BOOKMARKS_DEBUG": "true"
-			},
+			"args": [
+				"--extensionDevelopmentPath=${workspaceFolder}"
+			],
 			"outFiles": [],
 			"preLaunchTask": "npm: watch"
 		},

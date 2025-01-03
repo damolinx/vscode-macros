@@ -1,43 +1,36 @@
 import * as vscode from 'vscode';
-import { Lazy } from './lazy';
+import { Lazy } from './common/lazy';
+import { MacroOptions, parseOptions } from './macroOptions';
+import { basename } from 'path';
 
 export type MacroId = string;
 
 export class Macro {
+  public readonly codeLazy: Lazy<Promise<string>>;
   public readonly id: MacroId;
-  private readonly persistentLazy: Lazy<Promise<boolean>>;
-  private readonly singletonLazy: Lazy<Promise<boolean>>;
+  public readonly optionsLazy: Lazy<Promise<Readonly<MacroOptions>>>;
   public readonly uri: vscode.Uri;
 
   constructor(uri: vscode.Uri) {
+    this.codeLazy = new Lazy(async () => (await vscode.workspace.fs.readFile(this.uri)).toString());
     this.id = Macro.getId(uri);
+    this.optionsLazy = new Lazy(async () => parseOptions(await this.codeLazy.get()));
     this.uri = uri;
-
-    this.persistentLazy = new Lazy(async () => {
-      const code = await this.getCode();
-      return /\/\/\s*@macro:persist\s*$/m.test(code);
-    });
-
-    this.singletonLazy = new Lazy(async () => {
-      const code = await this.getCode();
-      return /\/\/\s*@macro:singleton\s*$/m.test(code);
-    });
-  }
-
-  public async getCode() {
-    const document = await vscode.workspace.openTextDocument(this.uri);
-    return document.getText();
   }
 
   public static getId(uri: vscode.Uri): MacroId {
     return uri.toString(true);
   }
 
-  public get singleton(): Promise<boolean> {
-    return this.singletonLazy.get();
+  public get code(): Promise<string> {
+    return this.codeLazy.get();
   }
 
-  public get persistent(): Promise<boolean> {
-    return this.persistentLazy.get();
+  public get options(): Promise<Readonly<MacroOptions>> {
+    return this.optionsLazy.get();
+  }
+
+  public get shortName(): string {
+    return basename(this.uri.fsPath);
   }
 }

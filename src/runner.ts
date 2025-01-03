@@ -1,55 +1,93 @@
 import * as vscode from 'vscode';
 import * as vm from 'vm';
 import { Macro } from './macro';
-import { basename } from 'path';
 
 export type RunId = string;
 export type RunInfo = { macro: Macro; runId: RunId };
 
 export class Runner implements vscode.Disposable {
   private readonly executions: Map<RunId, Promise<void>>;
-  public readonly macro: Macro;
   private index: number;
+  public readonly macro: Macro;
   private sharedContext?: vm.Context;
+  private runEventEmitter: vscode.EventEmitter<RunInfo>;
+  private stopEventEmitter: vscode.EventEmitter<RunInfo>;
 
   constructor(macro: Macro) {
     this.executions = new Map();
-    this.index = 1000;
+    this.index = 1;
     this.macro = macro;
+
+    this.runEventEmitter = new vscode.EventEmitter();
+    this.stopEventEmitter = new vscode.EventEmitter();
   }
 
-  dispose() {}
-
-  private createBaseContext(): vm.Context {
-    // TODO: define what is the proper API to pass in.
-    return {
-      clearInterval,
-      clearTimeout,
-      setInterval,
-      setTimeout,
-      fetch,
-      vscode,
-    };
+  dispose() {
+    vscode.Disposable.from(this.runEventEmitter, this.stopEventEmitter).dispose();
   }
 
-  private createContext(shouldPersist: boolean): vm.Context {
+  private getOrCreateContext(shouldPersist?: boolean): vm.Context {
     let context: vm.Context;
     if (shouldPersist) {
       if (!this.sharedContext) {
-        this.sharedContext = vm.createContext(this.createBaseContext());
+        this.sharedContext = createContext('shared-context');
       }
       context = this.sharedContext;
     } else {
       if (this.sharedContext) {
         delete this.sharedContext;
       }
-      context = vm.createContext(this.createBaseContext());
+      context = createContext('context');
     }
     return context;
+
+
+    function createContext(name: string): vm.Context {
+      // TODO: define what is the proper API to pass in.
+      return vm.createContext({
+        clearInterval,
+        clearTimeout,
+        fetch,
+        global,
+        require,
+        setInterval,
+        setTimeout,
+        vscode,
+      }, {
+        name
+      });
+    }
   }
 
-  public isRunning(): boolean {
-    return this.executions.size > 0;
+  public async run() {
+    const options = await this.macro.options;
+    if (options.singleton && this.executions.size > 0) {
+      throw new Error(`${this.macro.shortName} is a singleton and is already running.`);
+    }
+
+    const code = await this.macro.code;
+    const context = this.getOrCreateContext(options.persistent);
+    const scriptOptions: vm.RunningScriptOptions = {
+      filename: this.macro.uri.toString(true),
+    };
+
+    const currentRunId = `${this.macro.shortName}@${this.index++}`;
+    const execution = async () => {
+      try {
+        await (options.persistent
+          ? vm.runInContext(code, context, scriptOptions)
+          : vm.runInNewContext(code, context, scriptOptions));
+      } catch (error) {
+        vscode.window.showErrorMessage(
+          `Failed to run ${this.macro.shortName}. Error: ${error}`,
+        );
+      } finally {
+        this.executions.delete(currentRunId);
+        this.stopEventEmitter.fire({ macro: this.macro, runId: currentRunId });
+      }
+    };
+    this.executions.set(currentRunId, execution());
+    this.runEventEmitter.fire({ macro: this.macro, runId: currentRunId });
   }
 
   public get running(): ReadonlyArray<RunInfo> {
@@ -59,35 +97,11 @@ export class Runner implements vscode.Disposable {
     }));
   }
 
-  public async run() {
-    if (this.isRunning() && (await this.macro.singleton)) {
-      throw new Error('Macro is already running');
-    }
+  public onRun(listener: (runInfo: RunInfo) => void): vscode.Disposable {
+    return this.runEventEmitter.event(listener);
+  }
 
-    const [code, persistent] = await Promise.all([
-      this.macro.getCode(),
-      this.macro.persistent,
-    ]);
-
-    const context = this.createContext(persistent);
-    const options = {
-      filename: this.macro.uri.toString(true),
-    };
-
-    const currentRunId = `run@${this.index++}`;
-    const execution = async () => {
-      try {
-        await (persistent
-          ? vm.runInContext(code, context, options)
-          : vm.runInNewContext(code, context, options));
-      } catch (error) {
-        vscode.window.showErrorMessage(
-          `Failed to run ${basename(this.macro.uri.path)}. Error: ${error}`,
-        );
-      } finally {
-        this.executions.delete(currentRunId);
-      }
-    };
-    this.executions.set(currentRunId, execution());
+  public onStop(listener: (runInfo: RunInfo) => void): vscode.Disposable {
+    return this.stopEventEmitter.event(listener);
   }
 }
