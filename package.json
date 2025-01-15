@@ -34,7 +34,13 @@
         "command": "macros.run.activeEditor",
         "title": "Run Macro (Active Editor)",
         "category": "Macros",
-        "when": "editorLangId == 'javascript' && !editorIsUntitled"
+        "enablement": "editorLangId == 'javascript' && !editorIsUntitled"
+      },
+      {
+        "command": "macros.run.mru",
+        "title": "Rerun Last Macro",
+        "category": "Macros",
+        "enablement": "macros:mruSet"
       },
       {
         "command": "macros.run.show",

@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
+import { Macro } from '../macro';
 import { Manager } from '../manager';
 import { basename } from 'path';
-import { Macro } from '../macro';
 
 export async function showRunningMacros(manager: Manager) {
   const stoppableItems = manager.runningMacros.map(
