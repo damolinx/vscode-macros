@@ -10,7 +10,10 @@ export async function runMacroFromSourceDirs() {
     return;
   }
 
-  const macroFiles = await findMacroFiles(sourceDirectories.map((d) => expandPath(d.trim())));
+  const macroFiles = await findMacroFiles(
+    sourceDirectories
+      .map((path) => expandPath(path.trim()))
+      .filter((path): path is string => !!path));
   if (macroFiles.length === 0) {
     vscode.window.showInformationMessage('No macro files in configured source directories');
     return;
