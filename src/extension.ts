@@ -2,7 +2,8 @@ import * as vscode from 'vscode';
 import { Manager } from './manager';
 import { runMacro } from './commands/runMacro';
 import { showRunningMacros } from './commands/showRunninMacros';
-import { StatusBarItem } from './statusbarItem';
+import { StatusBarItem } from './statusBarItem';
+
 
 /**
  * Extension startup.
