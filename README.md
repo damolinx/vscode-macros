@@ -27,12 +27,12 @@ vscode.window.showInformationMessage("Hello, world!");
 ## Available References
 The following references are available from the global context of your macro:
 * `vscode`: symbol that provides access to the [VS Code APIs](https://code.visualstudio.com/api/references/vscode-api).
-* `macros`: symbol that provides acess to this extension's API (see [Macros API](#macros-api)). 
+* `macros`: symbol that provides access to this extension's API (see [Macros API](#macros-api)). 
 * `require`: method that allows load [NodeJS libraries](https://nodejs.org/api/all.html). Version is same as your installed VS Code's (see `About`).
 * Other: `clearInterval`, `clearTimeout`, `fetch`, `global`, `setInterval`, `setTimeout`.
 
 ### Macros API
-No API is available at this time. `macros` symbol is reserved for future use
+No API is available at this time. `macros` symbol is reserved for future use.
 
 ## Macros Options
 An option is added as a comment in the form `//@macro:«option»`.  The following options are available:
