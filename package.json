@@ -1,7 +1,7 @@
 {
   "name": "damolinx-macros",
-  "displayName": "Macros for VSCode",
-  "description": "Macros is a VSCode extension that allows to execute automation scripts.",
+  "displayName": "Macros for VS Code",
+  "description": "Macros is a VS Code extension that allows to execute automation scripts.",
   "version": "0.0.1",
   "publisher": "damolinx",
   "icon": "resources/images/icon.png",
