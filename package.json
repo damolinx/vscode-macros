@@ -42,6 +42,12 @@
         "enablement": "editorLangId == 'javascript' && !editorIsUntitled"
       },
       {
+        "command": "macros.run.fromSourceDirs",
+        "title": "Run Macro (Source Directories)",
+        "category": "Macros",
+        "enablement": "config.macros.sourceDirectories.length > 0"
+      },
+      {
         "command": "macros.run.mru",
         "title": "Rerun Last Macro",
         "category": "Macros",
@@ -53,7 +59,22 @@
         "category": "Macros"
       }
     ],
-    "configuration": []
+    "configuration": [
+      {
+        "title": "Macros",
+        "properties": {
+          "macros.sourceDirectories": {
+            "type": "array",
+            "description": "Directories to search for macro files.",
+            "default": [],
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

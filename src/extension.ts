@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { Manager } from './manager';
+import { runMacroFromSourceDirs } from './commands/runFromSourceDirs';
 import { runMacro } from './commands/runMacro';
 import { showRunningMacros } from './commands/showRunninMacros';
 import { StatusBarItem } from './statusBarItem';
@@ -17,14 +18,12 @@ export async function activate(context: vscode.ExtensionContext) {
     await vscode.commands.executeCommand('setContext', 'macros:mruSet', true);
   });
 
-  // Store a value in global state
-
-
   context.subscriptions.push(
     manager,
     new StatusBarItem(manager),
-    vscode.commands.registerCommand('macros.run', () => runMacro(manager)),
+    vscode.commands.registerCommand('macros.run', (pathOrUri?: string | vscode.Uri) => runMacro(manager, pathOrUri)),
     vscode.commands.registerCommand('macros.run.activeEditor', async () => runMacro(manager, await getActiveEditorUri())),
+    vscode.commands.registerCommand('macros.run.fromSourceDirs', () => runMacroFromSourceDirs()),
     vscode.commands.registerCommand('macros.run.mru', () => runMacro(manager, mruMacro)),
     vscode.commands.registerCommand('macros.run.show', () => showRunningMacros(manager)),
   );
