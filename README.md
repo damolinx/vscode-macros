@@ -15,14 +15,18 @@ To keep things simple, only JavaScript scripts are supported at the moment. Supp
 ## Usage
 
 1. Create a new macro file with a `.js` extension.
-2. Write your macro code (see [Available References](#available-references)).
+2. Write your JavaScript macro code (see [Available References](#available-references)).
 ```javascript
 // Example: Hello World!
 vscode.window.showInformationMessage("Hello, world!");
 ```
-3. From the [Command Palette](https://code.visualstudio.com/api/references/contribution-points#contributes.commands) use the `Macros: Run Macro (Active Editor)` command to execute your macro.
+3. From the [Command Palette](https://code.visualstudio.com/api/references/contribution-points#contributes.commands) use the `Run Macro (Active Editor)` command to execute your macro.
 
-Use the `Macros: Show Running Macros` command to view and manage running macros. Use the `Rerun Last Macro` command to re-execute the last executed macro.
+### Commands 
+* `Rerun Last Macro`: re-run last executed macro.
+* `Run Macro…`: select a macro file from file system.
+* `Run Macro (Active Editor)`: run current editor as a macro (document will be saved before running).
+* `Show Running Macros`: view and manage running macros. 
 
 ## Available References
 The following references are available from the global context of your macro:

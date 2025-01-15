@@ -4,10 +4,14 @@ import { Manager } from '../manager';
 export async function runMacro(manager: Manager, pathOrUri?: string | vscode.Uri) {
   const targetUri = pathOrUri
     ? (pathOrUri instanceof vscode.Uri ? pathOrUri : vscode.Uri.file(pathOrUri))
-    : vscode.window.activeTextEditor?.document.uri;
+    : (await vscode.window.showOpenDialog({
+      filters: {
+        'Macro Files': ['js'],
+      },
+    }))?.pop();
+
   if (!targetUri) {
-    vscode.window.showErrorMessage('No macro file to run was provided.');
-    return;
+    return; // Nothing to run.
   }
 
   try {
