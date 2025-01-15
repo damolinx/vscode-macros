@@ -3,7 +3,7 @@ import { Manager } from './manager';
 import { runMacroFromSourceDirs } from './commands/runFromSourceDirs';
 import { runMacro } from './commands/runMacro';
 import { showRunningMacros } from './commands/showRunninMacros';
-import { StatusBarTracker } from './statusBarTracker';
+import { StatusBarItem } from './statusBarItem';
 
 let mruMacro: vscode.Uri | undefined;
 
@@ -20,7 +20,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     manager,
-    new StatusBarTracker(manager),
+    new StatusBarItem(manager),
     vscode.commands.registerCommand('macros.run', (pathOrUri?: string | vscode.Uri) => runMacro(manager, pathOrUri)),
     vscode.commands.registerCommand('macros.run.activeEditor', async () => runMacro(manager, await getActiveEditorUri())),
     vscode.commands.registerCommand('macros.run.fromSourceDirs', () => runMacroFromSourceDirs()),

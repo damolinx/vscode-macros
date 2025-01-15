@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { Manager } from './manager';
 
-export class StatusBarTracker implements vscode.Disposable {
+export class StatusBarItem implements vscode.Disposable {
   private readonly item: vscode.StatusBarItem;
   private readonly manager: Manager;
   private disposables: vscode.Disposable[];
