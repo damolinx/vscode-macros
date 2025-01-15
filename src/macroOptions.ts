@@ -11,7 +11,7 @@ export interface MacroOptions {
 
 export function parseOptions(code: string): MacroOptions {
   const options: MacroOptions = {};
-  const persistent = /\/\/\s*@macro:persist\s*$/m.test(code);
+  const persistent = /\/\/\s*@macro:persistent\s*$/m.test(code);
   if (persistent) {
     options.persistent = true;
   }
