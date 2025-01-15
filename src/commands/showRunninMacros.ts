@@ -1,10 +1,11 @@
 import * as vscode from 'vscode';
+import { basename } from 'path';
+import { pickMacroFile } from '../common/ui';
 import { Macro } from '../macro';
 import { Manager } from '../manager';
-import { basename } from 'path';
 
 export async function showRunningMacros(manager: Manager) {
-  const stoppableItems = manager.runningMacros.map(
+  const runningItems = manager.runningMacros.map(
     (runInfo) =>
       <vscode.QuickPickItem & { runInfo: { macro: Macro; runId: string } }>{
         description: runInfo.runId,
@@ -13,10 +14,15 @@ export async function showRunningMacros(manager: Manager) {
         runInfo: runInfo,
       },
   );
-
-  if (stoppableItems.length) {
-    vscode.window.showQuickPick(stoppableItems);
-  } else {
+  if (runningItems.length === 0) {
     vscode.window.showInformationMessage('No running macros');
+    return;
   }
+
+  const selected = await pickMacroFile(runningItems.map((item) => item.runInfo.macro.uri).sort());
+  if (!selected) {
+    return; // Nothing to do
+  }
+
+  vscode.window.showInformationMessage('Running macros have no available actions');
 }

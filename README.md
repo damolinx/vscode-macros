@@ -26,6 +26,7 @@ vscode.window.showInformationMessage("Hello, world!");
 * `Rerun Last Macro`: re-run last executed macro.
 * `Run Macro…`: select a macro file from file system.
 * `Run Macro (Active Editor)`: run current editor as a macro (document will be saved before running).
+* `Run Macro (Source Directories)`: select a macro to run from `macros.sourceDirectories` paths.
 * `Show Running Macros`: view and manage running macros. 
 
 ## Available References
