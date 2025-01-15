@@ -26,6 +26,8 @@ export class Manager implements vscode.Disposable {
       runner.onStop((runInfo) => this.stopEventEmitter.fire(runInfo));
       this.macros.set(macro.id, runner);
     }
+    // TODO: this forces a refresh of macro file contents for next run.
+    runner.macro = macro;
 
     return runner;
   }

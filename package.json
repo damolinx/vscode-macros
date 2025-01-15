@@ -31,9 +31,10 @@
   "contributes": {
     "commands": [
       {
-        "command": "macros.run",
-        "title": "Run",
-        "category": "Macros"
+        "command": "macros.run.activeEditor",
+        "title": "Run Macro (Active Editor)",
+        "category": "Macros",
+        "when": "editorLangId == 'javascript' && !editorIsUntitled"
       },
       {
         "command": "macros.run.show",

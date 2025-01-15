@@ -8,7 +8,7 @@ export type RunInfo = { macro: Macro; runId: RunId };
 export class Runner implements vscode.Disposable {
   private readonly executions: Map<RunId, Promise<void>>;
   private index: number;
-  public readonly macro: Macro;
+  public macro: Macro;
   private sharedContext?: vm.Context;
   private runEventEmitter: vscode.EventEmitter<RunInfo>;
   private stopEventEmitter: vscode.EventEmitter<RunInfo>;

@@ -14,7 +14,7 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     manager,
     new StatusBarItem(manager),
-    vscode.commands.registerCommand('macros.run', () => runMacro(manager)),
+    vscode.commands.registerCommand('macros.run.activeEditor', () => runMacro(manager)),
     vscode.commands.registerCommand('macros.run.show', () => showRunningMacros(manager)),
   );
 }
