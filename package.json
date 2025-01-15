@@ -2,7 +2,7 @@
   "name": "damolinx-macros",
   "displayName": "Macros for VS Code",
   "description": "Macros is a VS Code extension that allows to execute automation scripts.",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publisher": "damolinx",
   "icon": "resources/images/icon.png",
   "repository": {
@@ -23,7 +23,6 @@
     "macros"
   ],
   "extensionKind": [
-    "ui",
     "workspace"
   ],
   "activationEvents": [],
@@ -65,7 +64,7 @@
         "properties": {
           "macros.sourceDirectories": {
             "type": "array",
-            "description": "Directories to search for macro files.",
+            "markdownDescription": "Directories to search for macro files. `${userHome}` and `${workspaceFolder}` variables are supported.",
             "default": [],
             "items": {
               "type": "string",

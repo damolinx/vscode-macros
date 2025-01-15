@@ -1,6 +1,7 @@
 import { extname } from 'path';
 import * as vscode from 'vscode';
 import { pickMacroFile } from '../common/ui';
+import { expandPath } from '../common/variables';
 
 export async function runMacroFromSourceDirs() {
   const sourceDirectories = vscode.workspace.getConfiguration().get<string[]>('macros.sourceDirectories', []);
@@ -9,7 +10,7 @@ export async function runMacroFromSourceDirs() {
     return;
   }
 
-  const macroFiles = await findMacroFiles(sourceDirectories.map((d) => d.trim()));
+  const macroFiles = await findMacroFiles(sourceDirectories.map((d) => expandPath(d.trim())));
   if (macroFiles.length === 0) {
     vscode.window.showInformationMessage('No macro files in configured source directories');
     return;
