@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.0.4
+- Fix packaging issue (stale file name).
+
 ## 0.0.3
 - Make `extensionKind: workspace` only.
 - Add support for `${userHome}` and `${workspaceFolder}` variables in `macros.sourceDirectories` setting
