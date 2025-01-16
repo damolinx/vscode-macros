@@ -37,8 +37,11 @@ The following references are available from the global context of your macro:
 * Other: `clearInterval`, `clearTimeout`, `fetch`, `global`, `setInterval`, `setTimeout`.
 
 ### Macros API
-No API is available at this time. `macros` symbol is reserved for future use.
-
+* `macroFile`: URI of current macro. It can be `undefined` if running from an in-memory buffer.
+```javascript
+// Example: Macros API
+vscode.window.showInformationMessage(`Hello from ${macros.macroFile?.fsPath}`);
+```
 ## Macros Options
 An option is added as a comment in the form `//@macro:«option»`.  The following options are available:
 * `persistent`: All runs of the given macro are started with the same execution context, allowing state preservation. 

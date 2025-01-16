@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as vm from 'vm';
 import { Macro } from './macro';
+import { MacrosApi } from './macrosApi';
 
 export type RunId = string;
 export type RunInfo = { macro: Macro; runId: RunId };
@@ -26,7 +27,7 @@ export class Runner implements vscode.Disposable {
     vscode.Disposable.from(this.runEventEmitter, this.stopEventEmitter).dispose();
   }
 
-  private getOrCreateContext(shouldPersist?: boolean): vm.Context {
+  private getOrCreateContext(uri: vscode.Uri, shouldPersist?: boolean): vm.Context {
     let context: vm.Context;
     if (shouldPersist) {
       if (!this.sharedContext) {
@@ -43,12 +44,14 @@ export class Runner implements vscode.Disposable {
 
 
     function createContext(name: string): vm.Context {
-      // TODO: define what is the proper API to pass in.
       return vm.createContext({
         clearInterval,
         clearTimeout,
         fetch,
         global,
+        macros: <MacrosApi>{
+          macroFile: uri,
+        },
         require,
         setInterval,
         setTimeout,
@@ -66,7 +69,7 @@ export class Runner implements vscode.Disposable {
     }
 
     const code = await this.macro.code;
-    const context = this.getOrCreateContext(options.persistent);
+    const context = this.getOrCreateContext(this.macro.uri, options.persistent);
     const scriptOptions: vm.RunningScriptOptions = {
       filename: this.macro.uri.toString(true),
     };

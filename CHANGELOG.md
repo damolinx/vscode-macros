@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.0.5
+- Initial `macros` API definition.
+
 ## 0.0.4
 - Fix packaging issue (stale file name).
 
