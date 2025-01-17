@@ -50,7 +50,9 @@ export class Runner implements vscode.Disposable {
         fetch,
         global,
         macros: <MacrosApi>{
-          macroFile: uri,
+          macro: {
+            uri,
+          }
         },
         require,
         setInterval,

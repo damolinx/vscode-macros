@@ -2,7 +2,12 @@ import * as vscode from 'vscode';
 
 export interface MacrosApi {
   /**
-   * URI of current macro. It can be undefined if running from an in-memory buffer.
+   * Current macro
    */
-  readonly macroFile: vscode.Uri | undefined;
+  macro: {
+    /**
+     * URI of current macro. It can be undefined if running from an in-memory buffer.
+     */
+    readonly uri: vscode.Uri | undefined;
+  }
 }

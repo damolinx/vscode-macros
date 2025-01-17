@@ -37,10 +37,12 @@ The following references are available from the global context of your macro:
 * Other: `clearInterval`, `clearTimeout`, `fetch`, `global`, `setInterval`, `setTimeout`.
 
 ### Macros API
-* `macroFile`: URI of current macro. It can be `undefined` if running from an in-memory buffer.
+* `macro`: Provides access to current macro.
+  * `uri`: URI of macro. It is `undefined` if running from an in-memory buffer.
+
 ```javascript
 // Example: Macros API
-vscode.window.showInformationMessage(`Hello from ${macros.macroFile?.fsPath}`);
+vscode.window.showInformationMessage(`Hello from ${macros.macro.uri?.fsPath || 'somewhere'}!`);
 ```
 ## Macros Options
 An option is added as a comment in the form `//@macro:«option»`.  The following options are available:
