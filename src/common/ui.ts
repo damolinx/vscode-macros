@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { Macro } from '../macro';
 
 export type UriQuickPickItem = vscode.QuickPickItem & {
   uri: vscode.Uri;
@@ -37,5 +38,17 @@ export function pickMacroFile(macroFiles: vscode.Uri[]): Promise<vscode.Uri | un
       await vscode.commands.executeCommand('vscode.open', e.item.uri);
     });
     return quickPick;
+  }
+}
+
+export async function showMacroErrorMessage(macro: Macro, error: unknown): Promise<void> {
+  const openOption = "Open";
+  const option = await vscode.window.showErrorMessage(
+    `Failed to run ${macro.shortName}: ${error || '« no error message »'}`,
+    openOption
+  );
+
+  if (option === openOption) {
+    await vscode.commands.executeCommand('vscode.open', macro.uri);
   }
 }
