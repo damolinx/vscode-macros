@@ -1,6 +1,8 @@
 import * as vscode from 'vscode';
 import { Macro } from '../macro';
 
+export const MACROS_FILTER = { 'Macro Files': ['js'] };
+
 export type UriQuickPickItem = vscode.QuickPickItem & {
   uri: vscode.Uri;
 };
