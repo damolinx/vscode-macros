@@ -5,12 +5,12 @@ import { dirname, join } from 'path';
 
 const MACRO_TEMPLATES_MANIFEST = 'resources/examples/manifest.json';
 
-type Manifest = {
-  templates: Array<{
+interface Manifest {
+  templates: {
     label: string;
     description: string;
     path: string;
-  }>;
+  }[];
 };
 
 let manifest: Manifest;
@@ -18,7 +18,7 @@ let manifest: Manifest;
 export async function createMacro(context: vscode.ExtensionContext) {
   if (!manifest) {
     const content = await loadFile(context, MACRO_TEMPLATES_MANIFEST);
-    manifest = <Manifest>JSON.parse(content);
+    manifest = JSON.parse(content) as Manifest;
     manifest.templates = manifest.templates.sort((t1, t2) => t1.label.localeCompare(t2.label));
   }
 

@@ -33,11 +33,11 @@ export class Manager implements vscode.Disposable {
   }
 
   public async run(macroOrUri: Macro | vscode.Uri): Promise<void> {
-    let runner = this.getRunner(macroOrUri);
+    const runner = this.getRunner(macroOrUri);
     await runner.run();
   }
 
-  public get runningMacros(): ReadonlyArray<RunInfo> {
+  public get runningMacros(): readonly RunInfo[] {
     return [...this.macros.values()].flatMap((runner) => runner.running);
   }
 

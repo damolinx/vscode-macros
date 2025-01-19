@@ -16,6 +16,10 @@ export async function runMacro(manager: Manager, pathOrUri?: string | vscode.Uri
   try {
     await manager.run(targetUri);
   } catch (reason) {
-    vscode.window.showErrorMessage((<any>reason).toString());
+    if (reason instanceof Error) {
+      vscode.window.showErrorMessage(reason.message);
+    } else {
+      vscode.window.showErrorMessage(String(reason));
+    }
   }
 }

@@ -13,6 +13,10 @@ export async function runRecent(manager: Manager, pathOrUri?: string | vscode.Ur
   try {
     await manager.run(targetUri);
   } catch (reason) {
-    vscode.window.showErrorMessage((<any>reason).toString());
+    if (reason instanceof Error) {
+      vscode.window.showErrorMessage(reason.message);
+    } else {
+      vscode.window.showErrorMessage(String(reason));
+    }
   }
 }

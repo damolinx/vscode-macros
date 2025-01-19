@@ -16,7 +16,7 @@ export function pickMacroFile(macroFiles: vscode.Uri[]): Promise<vscode.Uri | un
     });
     quickPick.onDidAccept(() => {
       resolve(quickPick.selectedItems[0].uri);
-      quickPick.hide()
+      quickPick.hide();
     });
 
     quickPick.show();
@@ -27,11 +27,11 @@ export function pickMacroFile(macroFiles: vscode.Uri[]): Promise<vscode.Uri | un
       iconPath: new vscode.ThemeIcon('go-to-file'),
       tooltip: 'Open file',
     };
-    const items = macroFiles.map((uri) => (<UriQuickPickItem>{
+    const items = macroFiles.map((uri) => ({
       buttons: [openButton],
       label: vscode.workspace.asRelativePath(uri),
       uri,
-    }));
+    } as UriQuickPickItem));
 
     const quickPick = vscode.window.createQuickPick<UriQuickPickItem>();
     quickPick.placeholder = 'Select a macro…';

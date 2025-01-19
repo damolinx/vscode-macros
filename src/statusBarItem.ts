@@ -15,7 +15,7 @@ export class StatusBarItem implements vscode.Disposable {
       this.item,
       this.manager.onRun(() => {
         this.item.tooltip = `Running ${this.manager.runningMacros.length} macro(s): ${this.manager.runningMacros.map((runInfo) => runInfo.runId).join(', ')}`;
-        this.item.show()
+        this.item.show();
       }),
       this.manager.onStop(() => {
         if (this.manager.runningMacros.length === 0) {

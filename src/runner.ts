@@ -5,7 +5,7 @@ import { Macro } from './macro';
 import { MacrosApi } from './macrosApi';
 
 export type RunId = string;
-export type RunInfo = { macro: Macro; runId: RunId };
+export interface RunInfo { macro: Macro; runId: RunId };
 
 export class Runner implements vscode.Disposable {
   private readonly executions: Map<RunId, Promise<void>>;
@@ -50,11 +50,11 @@ export class Runner implements vscode.Disposable {
         clearTimeout,
         fetch,
         global,
-        macros: <MacrosApi>{
+        macros: {
           macro: {
             uri,
           }
-        },
+        } as MacrosApi,
         require,
         setInterval,
         setTimeout,
@@ -94,7 +94,7 @@ export class Runner implements vscode.Disposable {
     this.runEventEmitter.fire({ macro: this.macro, runId: currentRunId });
   }
 
-  public get running(): ReadonlyArray<RunInfo> {
+  public get running(): readonly RunInfo[] {
     return [...this.executions.keys()].map((runId) => ({
       macro: this.macro,
       runId: runId,
