@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
+import { createMacro } from './commands/createMacro';
 import { runMacroFromSourceDirs } from './commands/runFromSourceDirs';
 import { runMacro } from './commands/runMacro';
 import { showRunningMacros } from './commands/showRunninMacros';
 import { MACROS_FILTER } from './common/ui';
 import { Manager } from './manager';
 import { StatusBarItem } from './statusBarItem';
-
 
 /**
  * Extension startup.
@@ -23,6 +23,7 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     manager,
     new StatusBarItem(manager),
+    vscode.commands.registerCommand('macros.new.macro', () => createMacro(context)),
     vscode.commands.registerCommand('macros.run', (pathOrUri?: string | vscode.Uri) => runMacro(manager, pathOrUri)),
     vscode.commands.registerCommand('macros.run.activeEditor', async () => {
       const uri = await getActiveEditorUri();

@@ -2,7 +2,8 @@
 
 ## 0.0.5
 - Initial `macros` API definition.
-- Update commands.
+- Add `New Macro…` command.
+- Fix handling of untitled JavaScript documents. 
 
 ## 0.0.4
 - Fix packaging issue (stale file name).

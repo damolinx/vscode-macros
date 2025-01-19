@@ -1,0 +1,14 @@
+{
+  "templates": [
+    {
+      "label": "Hello World!",
+      "description": "Basic macro with async code",
+      "path": "helloWorld.js"
+    },
+    {
+      "label": "WebView",
+      "description": "Create and communicate with a WebView",
+      "path": "webView.js"
+    }
+  ]
+}

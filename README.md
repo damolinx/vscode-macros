@@ -23,6 +23,7 @@ vscode.window.showInformationMessage("Hello, world!");
 3. From the [Command Palette](https://code.visualstudio.com/api/references/contribution-points#contributes.commands) use the `Run Macro (Active Editor)` command to execute your macro.
 
 ### Commands 
+* `New Macro…`: creates a new macro with sample contents. 
 * `Run Active File as Macro`: run current editor as a macro (document will be saved before running).
 * `Rerun Last Macro`: re-run last executed macro.
 * `Run Macro…`: select a macro file from file system.
@@ -36,7 +37,7 @@ The following references are available from the global context of your macro:
 * `require`: method that allows load [NodeJS libraries](https://nodejs.org/api/all.html). Version is same as your installed VS Code's (see `About`).
 * Other: `clearInterval`, `clearTimeout`, `fetch`, `global`, `setInterval`, `setTimeout`.
 
-### Macros API
+### `macros` API
 * `macro`: Provides access to current macro.
   * `uri`: URI of macro. It is `undefined` if running from an in-memory buffer.
 

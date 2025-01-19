@@ -32,6 +32,11 @@
   "contributes": {
     "commands": [
       {
+        "command": "macros.new.macro",
+        "title": "New Macro…",
+        "category": "Macros"
+      },
+      {
         "command": "macros.run",
         "title": "Run Macro…",
         "category": "Macros"
