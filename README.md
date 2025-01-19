@@ -23,9 +23,9 @@ vscode.window.showInformationMessage("Hello, world!");
 3. From the [Command Palette](https://code.visualstudio.com/api/references/contribution-points#contributes.commands) use the `Run Macro (Active Editor)` command to execute your macro.
 
 ### Commands 
+* `Run Active File as Macro`: run current editor as a macro (document will be saved before running).
 * `Rerun Last Macro`: re-run last executed macro.
 * `Run Macro…`: select a macro file from file system.
-* `Run Macro (Active Editor)`: run current editor as a macro (document will be saved before running).
 * `Run Macro (Source Directories)`: select a macro to run from `macros.sourceDirectories` paths.
 * `Show Running Macros`: view and manage running macros. 
 

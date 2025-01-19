@@ -2,6 +2,7 @@
 
 ## 0.0.5
 - Initial `macros` API definition.
+- Update commands.
 
 ## 0.0.4
 - Fix packaging issue (stale file name).

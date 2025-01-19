@@ -38,7 +38,7 @@
       },
       {
         "command": "macros.run.activeEditor",
-        "title": "Run Macro (Active Editor)",
+        "title": "Run Active File as Macro",
         "category": "Macros",
         "enablement": "editorLangId == 'javascript' && !editorIsUntitled"
       },
