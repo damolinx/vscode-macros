@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
 import { createMacro } from './commands/createMacro';
 import { debugMacro } from './commands/debugMacro';
-import { getActiveEditorUri } from './commands/getActiveEditorUri';
-import { getMacroFromSourceDirs } from './commands/getMacroFromSourceDirs';
+import { getActiveMacroEditor } from './commands/getActiveMacroEditor';
 import { runMacro } from './commands/runMacro';
+import { selectMacroFile } from './commands/selectMacroFile';
 import { showRunningMacros } from './commands/showRunningMacros';
 import { Manager } from './manager';
 import { StatusBarItem } from './statusBarItem';
@@ -24,29 +24,27 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     manager,
     new StatusBarItem(manager),
-    vscode.commands.registerCommand('macros.debug', (pathOrUri?: string | vscode.Uri) => debugMacro(manager, pathOrUri)),
-    vscode.commands.registerCommand('macros.debug.activeEditor', async () => {
-      const uri = await getActiveEditorUri();
+    vscode.commands.registerCommand('macros.debug', async () => {
+      const uri = await selectMacroFile();
       if (uri) {
         await debugMacro(manager, uri);
       }
     }),
-    vscode.commands.registerCommand('macros.debug.fromSourceDirs', async () => {
-      const uri = await getMacroFromSourceDirs();
+    vscode.commands.registerCommand('macros.debug.activeEditor', async () => {
+      const uri = await getActiveMacroEditor();
       if (uri) {
         await debugMacro(manager, uri);
       }
     }),
     vscode.commands.registerCommand('macros.new.macro', () => createMacro(context)),
-    vscode.commands.registerCommand('macros.run', (pathOrUri?: string | vscode.Uri) => runMacro(manager, pathOrUri)),
-    vscode.commands.registerCommand('macros.run.activeEditor', async () => {
-      const uri = await getActiveEditorUri();
+    vscode.commands.registerCommand('macros.run', async () => {
+      const uri = await selectMacroFile();
       if (uri) {
         await runMacro(manager, uri);
       }
     }),
-    vscode.commands.registerCommand('macros.run.fromSourceDirs', async () => {
-      const uri = await getMacroFromSourceDirs();
+    vscode.commands.registerCommand('macros.run.activeEditor', async () => {
+      const uri = await getActiveMacroEditor();
       if (uri) {
         await runMacro(manager, uri);
       }

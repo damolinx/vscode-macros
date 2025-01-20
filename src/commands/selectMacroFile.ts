@@ -1,25 +1,22 @@
 import * as vscode from 'vscode';
 import { extname } from 'path';
-import { pickMacroFile } from '../common/ui';
+import { pickMacroFile, showMacroOpenDialog } from '../common/ui';
 import { expandPath } from '../common/variables';
 
-export async function getMacroFromSourceDirs(): Promise<vscode.Uri | undefined> {
+export async function selectMacroFile(): Promise<vscode.Uri | undefined> {
+  let macroFiles: Record<string, vscode.Uri[]> = {};
+
   const sourceDirectories = vscode.workspace.getConfiguration().get<string[]>('macros.sourceDirectories', []);
-  if (sourceDirectories.length === 0) {
-    vscode.window.showInformationMessage('No configured source directories');
-    return;
+  if (sourceDirectories.length) {
+    macroFiles = await findMacroFiles(
+      sourceDirectories
+        .map((path) => expandPath(path.trim()))
+        .filter((path): path is string => !!path));
   }
 
-  const macroFiles = await findMacroFiles(
-    sourceDirectories
-      .map((path) => expandPath(path.trim()))
-      .filter((path): path is string => !!path));
-  if (Object.keys(macroFiles).length === 0) {
-    vscode.window.showInformationMessage('No macro files in configured source directories');
-    return;
-  }
-
-  const targetUri = await pickMacroFile(macroFiles);
+  const targetUri = await (Object.keys(macroFiles).length
+    ? pickMacroFile(macroFiles)
+    : showMacroOpenDialog());
   if (!targetUri) {
     return; // No macro selected.
   }

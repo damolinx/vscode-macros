@@ -2,7 +2,7 @@
   "name": "damolinx-macros",
   "displayName": "Macros for VS Code",
   "description": "Enhance your VS Code tooling via JavaScript scripts that use standard VS Code and NodeJS APIs.",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "publisher": "damolinx",
   "icon": "resources/images/icon.png",
   "repository": {
@@ -32,22 +32,16 @@
   "contributes": {
     "commands": [
       {
-        "command": "macros.debug.activeEditor",
-        "title": "Debug Active Editor as Macro",
-        "category": "Macros",
-        "enablement": "!inDebugMode && editorLangId == 'javascript' && !editorIsUntitled"
-      },
-      {
-        "command": "macros.debug.fromSourceDirs",
-        "title": "Debug Macro (Source Directories)",
-        "category": "Macros",
-        "enablement": "!inDebugMode && config.macros.sourceDirectories.length > 0"
-      },
-      {
         "command": "macros.debug",
         "title": "Debug Macro…",
         "category": "Macros",
         "enablement": "!inDebugMode"
+      },
+      {
+        "command": "macros.debug.activeEditor",
+        "title": "Debug Active Editor as Macro",
+        "category": "Macros",
+        "enablement": "!inDebugMode && editorLangId == 'javascript' && !editorIsUntitled"
       },
       {
         "command": "macros.new.macro",
@@ -64,12 +58,6 @@
         "title": "Run Active File as Macro",
         "category": "Macros",
         "enablement": "editorLangId == 'javascript'"
-      },
-      {
-        "command": "macros.run.fromSourceDirs",
-        "title": "Run Macro (Source Directories)",
-        "category": "Macros",
-        "enablement": "config.macros.sourceDirectories.length > 0"
       },
       {
         "command": "macros.run.mru",

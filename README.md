@@ -27,8 +27,7 @@ vscode.window.showInformationMessage("Hello, world!");
 ### Debug Macros
 See [Macro Debugging](#macro-debugging) for additional information.
 * `Debug Active File as Macro`: debug current editor as a macro (document will be saved before running).
-* `Debug Macro…`: select a macro file to debug from file system.
-* `Debug Macro (Source Directories)`: select a macro to debug from `macros.sourceDirectories` paths.
+* `Debug Macro…`: select a macro file to debug. Provides access to configured `macros.sourceDirectories`.
 
 ### Manage Macros
 * `New Macro…`: creates a new macro with sample contents.
@@ -37,8 +36,7 @@ See [Macro Debugging](#macro-debugging) for additional information.
 ### Run Macros
 * `Run Active File as Macro`: run current editor as a macro (document will be saved before running).
 * `Rerun Last Macro`: re-run last executed macro.
-* `Run Macro…`: select a macro file to run from file system.
-* `Run Macro (Source Directories)`: select a macro to run from `macros.sourceDirectories` paths.
+* `Run Macro…`: select a macro file to run. Provides access to configured `macros.sourceDirectories`.
 
 ## Available References
 The following references are available from the global context of your macro:

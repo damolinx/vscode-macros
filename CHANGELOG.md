@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.0.6
+- `[Run|Debug] Macro…` commands subsume `[Run|Debug] Macro (Source Directories)` commands to simplify UX.
+
 ## 0.0.5
 - Initial `macros` API definition.
 - Fix handling of untitled JavaScript documents. 
