@@ -54,3 +54,11 @@ export async function showMacroErrorMessage(macro: Macro, error: unknown): Promi
     await vscode.commands.executeCommand('vscode.open', macro.uri);
   }
 }
+
+export async function showMacroOpenDialog(): Promise<vscode.Uri | undefined> {
+  const selectedUris = await vscode.window.showOpenDialog({
+    filters: MACROS_FILTER,
+  });
+
+  return selectedUris?.pop();
+}

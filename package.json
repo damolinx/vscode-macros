@@ -32,6 +32,24 @@
   "contributes": {
     "commands": [
       {
+        "command": "macros.debug.activeEditor",
+        "title": "Debug Active Editor as Macro",
+        "category": "Macros",
+        "enablement": "!inDebugMode && editorLangId == 'javascript' && !editorIsUntitled"
+      },
+      {
+        "command": "macros.debug.fromSourceDirs",
+        "title": "Debug Macro (Source Directories)",
+        "category": "Macros",
+        "enablement": "!inDebugMode && config.macros.sourceDirectories.length > 0"
+      },
+      {
+        "command": "macros.debug",
+        "title": "Debug Macro…",
+        "category": "Macros",
+        "enablement": "!inDebugMode"
+      },
+      {
         "command": "macros.new.macro",
         "title": "New Macro…",
         "category": "Macros"
@@ -45,7 +63,7 @@
         "command": "macros.run.activeEditor",
         "title": "Run Active File as Macro",
         "category": "Macros",
-        "enablement": "editorLangId == 'javascript' && !editorIsUntitled"
+        "enablement": "editorLangId == 'javascript'"
       },
       {
         "command": "macros.run.fromSourceDirs",
@@ -69,6 +87,11 @@
       {
         "title": "Macros",
         "properties": {
+          "macros.debug.breakOnStart": {
+            "type": "boolean",
+            "description": "Set a breakpoint on the macro file being debugged, if none is defined.",
+            "default": true
+          },
           "macros.sourceDirectories": {
             "type": "array",
             "markdownDescription": "Directories to search for macro files. `${userHome}` and `${workspaceFolder}` variables are supported.",
