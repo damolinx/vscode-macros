@@ -18,7 +18,7 @@ export async function showRunningMacros(manager: Manager) {
     return;
   }
 
-  const selected = await pickMacroFile(runningItems.map((item) => item.runInfo.macro.uri).sort());
+  const selected = await pickMacroFile({ '': runningItems.map((item) => item.runInfo.macro.uri) });
   if (!selected) {
     return; // Nothing to do
   }
