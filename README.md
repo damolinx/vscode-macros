@@ -22,19 +22,19 @@ vscode.window.showInformationMessage("Hello, world!");
 ```
 3. From the [Command Palette](https://code.visualstudio.com/api/references/contribution-points#contributes.commands) use the `Run Macro (Active Editor)` command to execute your macro.
 
-### Commands 
+## Commands 
 
-#### Debug Macros
+### Debug Macros
 See [Macro Debugging](#macro-debugging) for additional information.
 * `Debug Active File as Macro`: debug current editor as a macro (document will be saved before running).
 * `Debug Macro…`: select a macro file to debug from file system.
 * `Debug Macro (Source Directories)`: select a macro to debug from `macros.sourceDirectories` paths.
 
-#### Manage Macros
+### Manage Macros
 * `New Macro…`: creates a new macro with sample contents.
 * `Show Running Macros`: view and manage running macros.
 
-#### Run Macros
+### Run Macros
 * `Run Active File as Macro`: run current editor as a macro (document will be saved before running).
 * `Rerun Last Macro`: re-run last executed macro.
 * `Run Macro…`: select a macro file to run from file system.

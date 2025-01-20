@@ -2,7 +2,7 @@
   "templates": [
     {
       "label": "Hello World!",
-      "description": "Basic macro with async code",
+      "description": "Macro demonstrating basic concepts",
       "path": "helloWorld.js"
     },
     {

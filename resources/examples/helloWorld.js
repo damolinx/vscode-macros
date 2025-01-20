@@ -1,6 +1,9 @@
 // @macro:singleton
+const { basename } = require('path');
+
 async function sayHello() {
-  return vscode.window.showInformationMessage("Hello, World!");
+  const from = basename(macros.macro.uri.fsPath);
+  return vscode.window.showInformationMessage(`Hello, World! From ${from}`);
 }
 
 sayHello();
