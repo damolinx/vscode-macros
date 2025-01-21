@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { MACROS_FILTER } from '../common/ui';
 
-export async function getActiveMacroEditor(): Promise<vscode.Uri | undefined> {
+export async function getActiveMacroEditorUri(): Promise<vscode.Uri | undefined> {
   let uri: vscode.Uri | undefined;
   const editor = vscode.window.activeTextEditor;
   if (editor) {

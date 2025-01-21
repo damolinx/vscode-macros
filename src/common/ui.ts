@@ -82,13 +82,20 @@ export function pickMacroFile(macroFiles: Record<string, vscode.Uri[]>): Promise
 
 export async function showMacroErrorMessage(macro: Macro, error: unknown): Promise<void> {
   const openOption = "Open";
+  const rerunOption = "Rerun";
   const option = await vscode.window.showErrorMessage(
     `Failed to run ${macro.shortName}: ${error || '« no error message »'}`,
-    openOption
+    openOption,
+    rerunOption
   );
 
-  if (option === openOption) {
-    await vscode.commands.executeCommand('vscode.open', macro.uri);
+  switch (option) {
+    case openOption:
+      await vscode.commands.executeCommand('vscode.open', macro.uri);
+      break;
+    case rerunOption:
+      await vscode.commands.executeCommand('macros.run', macro.uri);
+      break;
   }
 }
 
