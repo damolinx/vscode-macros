@@ -11,14 +11,18 @@ export function showMacroErrorMessage(macro: Macro, error: Error | string): Prom
     message = error;
   } else {
     message = error.message;
-    stack = error.stack;
     if (error.stack) {
-      stack = error.stack;
+      stack = filterStack(error.stack);
       selection = parseStack(stack);
     }
   }
 
   return showErrorMessage(macro, message, stack, selection);
+
+  function filterStack(stack: string): string {
+    const match = stack.match(/\n.+?vscode-macros/);
+    return match ? stack.slice(0, match.index) : stack;
+  }
 
   function parseStack(stack: string): vscode.Range | undefined {
     const firstMatch = stack.match(/.+?(?<line>\d+)(:(?<offset>\d+))?$/m);
