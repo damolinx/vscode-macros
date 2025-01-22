@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as vm from 'vm';
-import { showMacroErrorMessage } from './common/ui';
+import { showMacroErrorMessage } from './common/error';
 import { Macro } from './macro';
 import { MacrosApi } from './macrosApi';
 
@@ -84,7 +84,7 @@ export class Runner implements vscode.Disposable {
           ? vm.runInContext(code, context, scriptOptions)
           : vm.runInNewContext(code, context, scriptOptions));
       } catch (error) {
-        showMacroErrorMessage(this.macro, error);
+        showMacroErrorMessage(this.macro, error as Error | string);
       } finally {
         this.executions.delete(currentRunId);
         this.stopEventEmitter.fire({ macro: this.macro, runId: currentRunId });

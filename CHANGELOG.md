@@ -2,7 +2,7 @@
 
 ## 0.0.7
 - `[Run|Debug] Macro…` commands take in an optional `pathOrUri` argument.
-- Add `Rerun` option on error.
+- Better error dialog: `Rerun`, `Details`, navigation to error location.
 
 ## 0.0.6
 - `[Run|Debug] Macro…` commands subsume `[Run|Debug] Macro (Source Directories)` commands to simplify UX.

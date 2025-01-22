@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
 import { relative } from 'path';
-import { Macro } from '../macro';
 
 export const MACROS_FILTER = { 'Macro Files': ['js'] };
 
@@ -11,6 +10,21 @@ type UriQuickPickItem = vscode.QuickPickItem & {
 const QuickPickOpenFile: vscode.QuickPickItem = {
   label: 'Open File …'
 };
+
+
+// Opens `uri` in an editor but prevents opening multiple editors.
+export async function openDocument(uri: vscode.Uri, options?: vscode.TextDocumentShowOptions): Promise<vscode.TextEditor> {
+  const alreadyOpenEditor = vscode.window.visibleTextEditors.find(
+    editor => editor.document.uri.toString() === uri.toString());
+
+  const editor = await vscode.window.showTextDocument(uri, {
+    viewColumn: alreadyOpenEditor && alreadyOpenEditor.viewColumn,
+    preview: false,
+    ...options
+  });
+
+  return editor;
+}
 
 export function pickMacroFile(macroFiles: Record<string, vscode.Uri[]>): Promise<vscode.Uri | undefined> {
   return new Promise((resolve) => {
@@ -80,29 +94,17 @@ export function pickMacroFile(macroFiles: Record<string, vscode.Uri[]>): Promise
   }
 }
 
-export async function showMacroErrorMessage(macro: Macro, error: unknown): Promise<void> {
-  const openOption = "Open";
-  const rerunOption = "Rerun";
-  const option = await vscode.window.showErrorMessage(
-    `Failed to run ${macro.shortName}: ${error || '« no error message »'}`,
-    openOption,
-    rerunOption
-  );
-
-  switch (option) {
-    case openOption:
-      await vscode.commands.executeCommand('vscode.open', macro.uri);
-      break;
-    case rerunOption:
-      await vscode.commands.executeCommand('macros.run', macro.uri);
-      break;
-  }
-}
-
 export async function showMacroOpenDialog(): Promise<vscode.Uri | undefined> {
   const selectedUris = await vscode.window.showOpenDialog({
     filters: MACROS_FILTER,
   });
 
   return selectedUris?.pop();
+}
+
+export async function showMacroSaveDialog(): Promise<vscode.Uri | undefined> {
+  const selectedUri = await vscode.window.showSaveDialog({
+    filters: MACROS_FILTER
+  });
+  return selectedUri;
 }

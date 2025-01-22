@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { MACROS_FILTER } from '../common/ui';
+import { openDocument, showMacroSaveDialog } from '../common/ui';
 
 export async function getActiveMacroEditorUri(): Promise<vscode.Uri | undefined> {
   let uri: vscode.Uri | undefined;
@@ -22,14 +22,12 @@ export async function getActiveMacroEditorUri(): Promise<vscode.Uri | undefined>
 async function saveUntitled(document: vscode.TextDocument): Promise<vscode.TextDocument | undefined> {
   let savedDocument: vscode.TextDocument | undefined;
 
-  const targetUri = await vscode.window.showSaveDialog({
-    filters: MACROS_FILTER
-  });
-
+  const targetUri = await showMacroSaveDialog();
   if (targetUri) {
     await vscode.workspace.fs.writeFile(targetUri, Buffer.from(document.getText()));
     await vscode.commands.executeCommand('workbench.action.revertAndCloseActiveEditor');
-    const savedEditor = await vscode.window.showTextDocument(targetUri, { preview: false });
+
+    const savedEditor = await openDocument(targetUri);
     savedDocument = savedEditor.document;
   }
 
