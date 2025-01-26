@@ -3,7 +3,9 @@ import { createMacro } from './commands/createMacro';
 import { debugMacro } from './commands/debugMacro';
 import { getActiveMacroEditorUri } from './commands/getActiveMacroEditorUri';
 import { runMacro } from './commands/runMacro';
+import { selectMacroFile } from './commands/selectMacroFile';
 import { showRunningMacros } from './commands/showRunningMacros';
+import { openDocument } from './common/ui';
 import { Manager } from './manager';
 import { StatusBarItem } from './statusBarItem';
 
@@ -29,6 +31,12 @@ export async function activate(context: vscode.ExtensionContext) {
       const uri = await getActiveMacroEditorUri();
       if (uri) {
         await debugMacro(manager, uri);
+      }
+    }),
+    vscode.commands.registerCommand('macros.open', async () => {
+      const uri = await selectMacroFile();
+      if (uri) {
+        await openDocument(uri);
       }
     }),
     vscode.commands.registerCommand('macros.new.macro', () =>

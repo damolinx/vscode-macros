@@ -49,6 +49,11 @@
         "category": "Macros"
       },
       {
+        "command": "macros.open",
+        "title": "Open Macro…",
+        "category": "Macros"
+      },
+      {
         "command": "macros.run",
         "title": "Run Macro…",
         "category": "Macros"

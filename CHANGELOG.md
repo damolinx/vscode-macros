@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.0.8
+- Add `Open Macro…` command.
+
 ## 0.0.7
 - `[Run|Debug] Macro…` commands take in an optional `pathOrUri` argument.
 - Better error dialog: `Rerun`, `Details`, navigation to error location.
