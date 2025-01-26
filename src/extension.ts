@@ -34,7 +34,7 @@ export async function activate(context: vscode.ExtensionContext) {
       }
     }),
     vscode.commands.registerCommand('macros.open', async () => {
-      const uri = await selectMacroFile();
+      const uri = await selectMacroFile({ hideOpenPerItem: true });
       if (uri) {
         await openDocument(uri);
       }

@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
 import { extname } from 'path';
-import { pickMacroFile, showMacroOpenDialog } from '../common/ui';
+import { OpenMacroOptions, pickMacroFile, showMacroOpenDialog } from '../common/ui';
 import { expandPath } from '../common/variables';
 
-export async function selectMacroFile(): Promise<vscode.Uri | undefined> {
+export async function selectMacroFile(options?: OpenMacroOptions): Promise<vscode.Uri | undefined> {
   let macroFiles: Record<string, vscode.Uri[]> = {};
 
   const sourceDirectories = vscode.workspace.getConfiguration().get<string[]>('macros.sourceDirectories', []);
@@ -14,9 +14,11 @@ export async function selectMacroFile(): Promise<vscode.Uri | undefined> {
         .filter((path): path is string => !!path));
   }
 
-  const targetUri = await (Object.keys(macroFiles).length
-    ? pickMacroFile(macroFiles)
-    : showMacroOpenDialog());
+  const targetUri = Object.keys(macroFiles).length
+    ? await pickMacroFile(macroFiles, options)
+    : !options?.hideOpen
+      ? await showMacroOpenDialog()
+      : undefined;
   if (!targetUri) {
     return; // No macro selected.
   }

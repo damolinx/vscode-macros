@@ -3,6 +3,11 @@ import { relative } from 'path';
 
 export const MACROS_FILTER = { 'Macro Files': ['js'] };
 
+export type OpenMacroOptions = {
+  hideOpen?: boolean;
+  hideOpenPerItem?: boolean;
+};
+
 type UriQuickPickItem = vscode.QuickPickItem & {
   uri?: vscode.Uri;
 };
@@ -26,7 +31,7 @@ export async function openDocument(uri: vscode.Uri, options?: vscode.TextDocumen
   return editor;
 }
 
-export function pickMacroFile(macroFiles: Record<string, vscode.Uri[]>): Promise<vscode.Uri | undefined> {
+export function pickMacroFile(macroFiles: Record<string, vscode.Uri[]>, options?: OpenMacroOptions): Promise<vscode.Uri | undefined> {
   return new Promise((resolve) => {
     const quickPick = createMacroQuickPick();
     quickPick.onDidHide(() => {
@@ -50,29 +55,29 @@ export function pickMacroFile(macroFiles: Record<string, vscode.Uri[]>): Promise
   });
 
   function createMacroQuickPick() {
-    const openFileButton = {
-      iconPath: new vscode.ThemeIcon('go-to-file'),
-      tooltip: 'Open File',
-    };
-    const items: UriQuickPickItem[] = [
-      QuickPickOpenFile,
-      {
-        label: '',
-        kind: vscode.QuickPickItemKind.Separator
-      },
-      ...createMacroFileItems(openFileButton)
-    ];
+    const openFileButton = options?.hideOpenPerItem
+      ? undefined
+      : {
+        iconPath: new vscode.ThemeIcon('go-to-file'),
+        tooltip: 'Open File',
+      };
+    const items: UriQuickPickItem[] = createMacroFileItems(openFileButton);
+    if (!options?.hideOpen) {
+      items.unshift(QuickPickOpenFile,
+        {
+          label: '',
+          kind: vscode.QuickPickItemKind.Separator
+        },);
+    }
 
     const quickPick = vscode.window.createQuickPick<UriQuickPickItem>();
     quickPick.placeholder = 'Select a macro…';
     quickPick.items = items;
-    quickPick.onDidTriggerItemButton(async (e) => {
-      await vscode.commands.executeCommand('vscode.open', e.item.uri);
-    });
+    quickPick.onDidTriggerItemButton((e) => e.item.uri && openDocument(e.item.uri));
     return quickPick;
   }
 
-  function createMacroFileItems(openFileButton: { iconPath: vscode.ThemeIcon; tooltip: string; }) {
+  function createMacroFileItems(openFileButton?: { iconPath: vscode.ThemeIcon; tooltip: string; }) {
     const items = [] as UriQuickPickItem[];
     Object.keys(macroFiles).sort()
       .forEach((root) => {
@@ -84,7 +89,7 @@ export function pickMacroFile(macroFiles: Record<string, vscode.Uri[]>): Promise
         }
 
         items.push(...macroFiles[root].map((uri) => ({
-          buttons: [openFileButton],
+          buttons: openFileButton && [openFileButton],
           label: root ? relative(root, uri.fsPath) : vscode.workspace.asRelativePath(uri),
           uri,
         } as UriQuickPickItem))
