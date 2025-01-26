@@ -8,7 +8,7 @@ export type RunId = string;
 export interface RunInfo { macro: Macro; runId: RunId };
 
 export class Runner implements vscode.Disposable {
-  private readonly executions: Map<RunId, Promise<void>>;
+  private readonly executions: Map<RunId, RunInfo>;
   private index: number;
   public macro: Macro;
   private sharedContext?: vm.Context;
@@ -77,21 +77,20 @@ export class Runner implements vscode.Disposable {
       filename: this.macro.uri.toString(true),
     };
 
-    const currentRunId = `${this.macro.shortName}@${this.index++}`;
-    const execution = async () => {
-      try {
-        await (options.persistent
-          ? vm.runInContext(code, context, scriptOptions)
-          : vm.runInNewContext(code, context, scriptOptions));
-      } catch (error) {
-        showMacroErrorMessage(this.macro, error as Error | string);
-      } finally {
-        this.executions.delete(currentRunId);
-        this.stopEventEmitter.fire({ macro: this.macro, runId: currentRunId });
-      }
-    };
-    this.executions.set(currentRunId, execution());
-    this.runEventEmitter.fire({ macro: this.macro, runId: currentRunId });
+    const runInfo = { macro: this.macro, runId: `${this.macro.shortName}@${this.index++}` };
+    this.executions.set(runInfo.runId, runInfo);
+
+    this.runEventEmitter.fire(runInfo);
+    try {
+      await (options.persistent
+        ? vm.runInContext(code, context, scriptOptions)
+        : vm.runInNewContext(code, context, scriptOptions));
+    } catch (error) {
+      showMacroErrorMessage(this.macro, error as Error | string);
+    } finally {
+      this.executions.delete(runInfo.runId);
+      this.stopEventEmitter.fire(runInfo);
+    }
   }
 
   public get running(): readonly RunInfo[] {

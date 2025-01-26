@@ -2,6 +2,7 @@
 
 ## 0.0.8
 - Add `Open Macro…` command.
+- Fix: incorrect tracking of running macros in case of error.
 
 ## 0.0.7
 - `[Run|Debug] Macro…` commands take in an optional `pathOrUri` argument.
