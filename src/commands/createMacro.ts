@@ -4,8 +4,7 @@ import { promises as fsPromises } from 'fs';
 import { dirname, join } from 'path';
 
 const MACRO_TEMPLATES_MANIFEST = 'resources/examples/manifest.json';
-
-interface Manifest {
+export interface Manifest {
   templates: {
     label: string;
     description: string;

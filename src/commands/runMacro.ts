@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
-import { selectMacroFile } from './selectMacroFile';
+import { selectMacroFile } from '../common/selectMacroFile';
 import { Manager } from '../manager';
+import { activeMacroEditor } from '../common/activeMacroEditor';
 
 export async function runMacro(manager: Manager, pathOrUri?: string | vscode.Uri) {
   const targetUri = pathOrUri
@@ -12,4 +13,11 @@ export async function runMacro(manager: Manager, pathOrUri?: string | vscode.Uri
   }
 
   await manager.run(targetUri);
+}
+
+export async function runActiveEditor(manager: Manager) {
+  const editor = await activeMacroEditor(true);
+  if (editor) {
+    await runMacro(manager, editor.document.uri);
+  }
 }

@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { relative } from 'path';
+import { showTextDocument } from './vscodeEx';
 
 export const MACROS_FILTER = { 'Macro Files': ['js'] };
 
@@ -15,20 +16,6 @@ export interface UriQuickPickItem extends vscode.QuickPickItem {
 const QuickPickOpenFile: vscode.QuickPickItem = {
   label: 'Open File …'
 };
-
-// Opens `uri` in an editor but prevents opening multiple editors.
-export async function openDocument(uri: vscode.Uri, options?: vscode.TextDocumentShowOptions): Promise<vscode.TextEditor> {
-  const alreadyOpenEditor = vscode.window.visibleTextEditors.find(
-    editor => editor.document.uri.toString() === uri.toString());
-
-  const editor = await vscode.window.showTextDocument(uri, {
-    viewColumn: alreadyOpenEditor && alreadyOpenEditor.viewColumn,
-    preview: false,
-    ...options
-  });
-
-  return editor;
-}
 
 let lastSelection: vscode.Uri | undefined;
 
@@ -85,7 +72,7 @@ export function pickMacroFile(macroFiles: Record<string, vscode.Uri[]>, options?
     const quickPick = vscode.window.createQuickPick<UriQuickPickItem>();
     quickPick.placeholder = 'Select a macro…';
     quickPick.items = items;
-    quickPick.onDidTriggerItemButton((e) => e.item.uri && openDocument(e.item.uri));
+    quickPick.onDidTriggerItemButton((e) => e.item.uri && showTextDocument(e.item.uri));
     return quickPick;
   }
 

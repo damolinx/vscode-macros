@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { Macro } from '../macro';
-import { openDocument } from './ui';
+import { showTextDocument } from './vscodeEx';
 
 export function showMacroErrorMessage(macro: Macro, error: Error | string): Promise<void> {
   let message: string;
@@ -40,7 +40,7 @@ export function showMacroErrorMessage(macro: Macro, error: Error | string): Prom
     const actions = [
       {
         title: "Open",
-        execute: () => openDocument(macro.uri, { selection })
+        execute: () => showTextDocument(macro.uri, { selection })
       },
       {
         title: "Retry",

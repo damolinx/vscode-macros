@@ -1,6 +1,8 @@
 import * as vscode from 'vscode';
 import { basename, dirname } from 'path';
-import { openDocument, showMacroOpenDialog } from '../common/ui';
+import { activeMacroEditor } from '../common/activeMacroEditor';
+import { showMacroOpenDialog } from '../common/ui';
+import { showTextDocument } from '../common/vscodeEx';
 import { Manager } from '../manager';
 
 export async function debugMacro(_manager: Manager, pathOrUri?: string | vscode.Uri) {
@@ -13,7 +15,7 @@ export async function debugMacro(_manager: Manager, pathOrUri?: string | vscode.
   }
 
   // Ensure the document is open
-  const { document } = await openDocument(targetUri);
+  const { document } = await showTextDocument(targetUri);
 
   // Check for existing breakpoints in the document
   if (vscode.workspace.getConfiguration().get('macros.debug.breakOnStart', true)) {
@@ -37,4 +39,11 @@ export async function debugMacro(_manager: Manager, pathOrUri?: string | vscode.
     env: { MACROS_EXT_DEBUG: '1' }
   };
   vscode.debug.startDebugging(undefined, debugConfig);
+}
+
+export async function debugActiveEditor(manager: Manager) {
+  const editor = await activeMacroEditor(true);
+  if (editor) {
+    await debugMacro(manager, editor.document.uri);
+  }
 }

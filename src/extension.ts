@@ -1,11 +1,10 @@
-import * as vscode from 'vscode';
+import { commands, ExtensionContext, Uri } from 'vscode';
 import { createMacro } from './commands/createMacro';
-import { debugMacro } from './commands/debugMacro';
-import { getActiveMacroEditorUri } from './commands/getActiveMacroEditorUri';
-import { runMacro } from './commands/runMacro';
-import { selectMacroFile } from './commands/selectMacroFile';
+import { debugActiveEditor, debugMacro } from './commands/debugMacro';
+import { openMacro } from './commands/openMacro';
+import { runActiveEditor, runMacro } from './commands/runMacro';
 import { showRunningMacros } from './commands/showRunningMacros';
-import { openDocument } from './common/ui';
+import { setContext } from './common/vscodeEx';
 import { Manager } from './manager';
 import { StatusBarItem } from './statusBarItem';
 
@@ -13,46 +12,25 @@ import { StatusBarItem } from './statusBarItem';
  * Extension startup.
  * @param context Context.
 */
-export async function activate(context: vscode.ExtensionContext) {
-  let mruMacro: vscode.Uri | undefined;
+export async function activate(context: ExtensionContext) {
+  let mruMacro: Uri | undefined;
 
   const manager = new Manager();
-  manager.onRun(async (runInfo) => {
-    mruMacro = runInfo.macro.uri;
-    await vscode.commands.executeCommand('setContext', 'macros:mruSet', true);
-  });
-
   context.subscriptions.push(
     manager,
     new StatusBarItem(manager),
-    vscode.commands.registerCommand('macros.debug', (pathOrUri?: string | vscode.Uri) =>
-      debugMacro(manager, pathOrUri)),
-    vscode.commands.registerCommand('macros.debug.activeEditor', async () => {
-      const uri = await getActiveMacroEditorUri();
-      if (uri) {
-        await debugMacro(manager, uri);
-      }
-    }),
-    vscode.commands.registerCommand('macros.open', async () => {
-      const uri = await selectMacroFile({ hideOpenPerItem: true });
-      if (uri) {
-        await openDocument(uri);
-      }
-    }),
-    vscode.commands.registerCommand('macros.new.macro', () =>
-      createMacro(context)),
-    vscode.commands.registerCommand('macros.run', (pathOrUri?: string | vscode.Uri) =>
-      runMacro(manager, pathOrUri)),
-    vscode.commands.registerCommand('macros.run.activeEditor', async () => {
-      const uri = await getActiveMacroEditorUri();
-      if (uri) {
-        await runMacro(manager, uri);
-      }
-    }),
-    vscode.commands.registerCommand('macros.run.mru', () =>
-      runMacro(manager, mruMacro)),
-    vscode.commands.registerCommand('macros.run.show', () =>
-      showRunningMacros(manager)),
+    manager.onRun(({ macro: { uri } }) => setContext('mruSet', !!(mruMacro = uri)))
+  );
+
+  const r = commands.registerCommand;
+  context.subscriptions.push(
+    r('macros.debug', (pathOrUri?: string | Uri) => debugMacro(manager, pathOrUri)),
+    r('macros.debug.activeEditor', () => debugActiveEditor(manager)),
+    r('macros.new.macro', () => createMacro(context)),
+    r('macros.open', () => openMacro()),
+    r('macros.run', (pathOrUri?: string | Uri) => runMacro(manager, pathOrUri)),
+    r('macros.run.activeEditor', () => runActiveEditor(manager)),
+    r('macros.run.mru', () => runMacro(manager, mruMacro)),
+    r('macros.run.show', () => showRunningMacros(manager)),
   );
 }
-

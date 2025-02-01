@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { extname } from 'path';
-import { OpenMacroOptions, pickMacroFile, showMacroOpenDialog } from '../common/ui';
-import { expandPath } from '../common/variables';
+import { OpenMacroOptions, pickMacroFile, showMacroOpenDialog } from './ui';
+import { expandPath } from './variables';
 
 export async function selectMacroFile(options?: OpenMacroOptions): Promise<vscode.Uri | undefined> {
   let macroFiles: Record<string, vscode.Uri[]> = {};
