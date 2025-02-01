@@ -16,7 +16,6 @@ const QuickPickOpenFile: vscode.QuickPickItem = {
   label: 'Open File …'
 };
 
-
 // Opens `uri` in an editor but prevents opening multiple editors.
 export async function openDocument(uri: vscode.Uri, options?: vscode.TextDocumentShowOptions): Promise<vscode.TextEditor> {
   const alreadyOpenEditor = vscode.window.visibleTextEditors.find(
@@ -31,9 +30,18 @@ export async function openDocument(uri: vscode.Uri, options?: vscode.TextDocumen
   return editor;
 }
 
+let lastSelection: vscode.Uri | undefined;
+
 export function pickMacroFile(macroFiles: Record<string, vscode.Uri[]>, options?: OpenMacroOptions): Promise<vscode.Uri | undefined> {
   return new Promise((resolve) => {
     const quickPick = createMacroQuickPick();
+    if (lastSelection) {
+      const preselect = quickPick.items.find((item) => item.uri?.toString() === lastSelection!.toString());
+      if (preselect) {
+        quickPick.activeItems = [preselect];
+      }
+    }
+
     quickPick.onDidHide(() => {
       quickPick.dispose();
       resolve(undefined);
@@ -45,6 +53,10 @@ export function pickMacroFile(macroFiles: Record<string, vscode.Uri[]>, options?
         uri = await showMacroOpenDialog();
       } else {
         uri = selectedItem.uri;
+      }
+
+      if (uri) {
+        lastSelection = uri;
       }
 
       resolve(uri);

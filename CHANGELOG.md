@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.0.9
+- Macro selection dropdown remembers last selection.
+
 ## 0.0.8
 - Add `Open Macro…` command.
 - Fix: incorrect tracking of running macros in case of error.
