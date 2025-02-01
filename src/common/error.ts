@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { Macro } from '../macro';
 import { showTextDocument } from './vscodeEx';
+import { Macro } from '../macro';
 
 export function showMacroErrorMessage(macro: Macro, error: Error | string): Promise<void> {
   let message: string;

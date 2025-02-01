@@ -1,9 +1,12 @@
+import * as vscode from 'vscode';
 import { selectMacroFile } from "../common/selectMacroFile";
-import { showTextDocument } from "../common/vscodeEx";
+import { showTextDocument, UriHelpers } from "../common/vscodeEx";
 
-export async function openMacro() {
-  const uri = await selectMacroFile({ hideOpenPerItem: true });
-  if (uri) {
-    await showTextDocument(uri);
+export async function openMacro(pathOrUri?: string | vscode.Uri) {
+  const uri = pathOrUri ? UriHelpers.toUri(pathOrUri) : await selectMacroFile({ hideOpenPerItem: true });
+  if (!uri) {
+    return; // Nothing to run.
   }
+
+  await showTextDocument(uri);
 }

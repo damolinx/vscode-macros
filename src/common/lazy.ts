@@ -1,16 +1,16 @@
-export class Lazy<T> {
-  private readonly factory: () => T;
+export class Lazy<T, TArgs extends unknown[] = []> {
+  private readonly factory: (...args: TArgs) => T;
   private initialized: boolean;
   private value?: T;
 
-  constructor(factory: () => T) {
+  constructor(factory: (...args: TArgs) => T) {
     this.factory = factory;
     this.initialized = false;
   }
 
-  public get(): T {
+  public get(...args: TArgs): T {
     if (!this.initialized) {
-      this.value = this.factory();
+      this.value = this.factory(...args);
       this.initialized = true;
     }
 

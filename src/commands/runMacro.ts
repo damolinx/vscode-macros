@@ -1,18 +1,16 @@
 import * as vscode from 'vscode';
-import { selectMacroFile } from '../common/selectMacroFile';
-import { Manager } from '../manager';
 import { activeMacroEditor } from '../common/activeMacroEditor';
+import { selectMacroFile } from '../common/selectMacroFile';
+import { UriHelpers } from '../common/vscodeEx';
+import { Manager } from '../manager';
 
 export async function runMacro(manager: Manager, pathOrUri?: string | vscode.Uri) {
-  const targetUri = pathOrUri
-    ? (pathOrUri instanceof vscode.Uri ? pathOrUri : vscode.Uri.file(pathOrUri))
-    : await selectMacroFile();
-
-  if (!targetUri) {
+  const uri = pathOrUri ? UriHelpers.toUri(pathOrUri) : await selectMacroFile();
+  if (!uri) {
     return; // Nothing to run.
   }
 
-  await manager.run(targetUri);
+  await manager.run(uri);
 }
 
 export async function runActiveEditor(manager: Manager) {

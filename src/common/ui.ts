@@ -19,7 +19,7 @@ const QuickPickOpenFile: vscode.QuickPickItem = {
 
 let lastSelection: vscode.Uri | undefined;
 
-export function pickMacroFile(macroFiles: Record<string, vscode.Uri[]>, options?: OpenMacroOptions): Promise<vscode.Uri | undefined> {
+export function pickMacroFile(macroFiles: vscode.Uri[] | Record<string, vscode.Uri[]>, options?: OpenMacroOptions): Promise<vscode.Uri | undefined> {
   return new Promise((resolve) => {
     const quickPick = createMacroQuickPick();
     if (lastSelection) {
@@ -78,23 +78,33 @@ export function pickMacroFile(macroFiles: Record<string, vscode.Uri[]>, options?
 
   function createMacroFileItems(openFileButton?: { iconPath: vscode.ThemeIcon; tooltip: string; }) {
     const items = [] as UriQuickPickItem[];
-    Object.keys(macroFiles).sort()
-      .forEach((root) => {
-        if (root) {
+    if (macroFiles instanceof Array) {
+      items.push(...createItems(macroFiles));
+    } else {
+      Object.keys(macroFiles)
+        .map((root) => ({ root, label: vscode.workspace.asRelativePath(root) }))
+        .sort((t1, t2) => t1.label.localeCompare(t2.label))
+        .forEach(({ root, label }) => {
+
           items.push({
-            label: vscode.workspace.asRelativePath(root),
+            label: label,
             kind: vscode.QuickPickItemKind.Separator,
           });
-        }
 
-        items.push(...macroFiles[root].map((uri) => ({
+          items.push(...createItems(macroFiles[root], root));
+        });
+    }
+    return items;
+
+    function createItems(uris: vscode.Uri[], root?: string): UriQuickPickItem[] {
+      return uris
+        .map((uri) => ({
           buttons: openFileButton && [openFileButton],
           label: root ? relative(root, uri.fsPath) : vscode.workspace.asRelativePath(uri),
           uri,
-        } as UriQuickPickItem))
-          .sort((t1, t2) => t1.label.localeCompare(t2.label)));
-      });
-    return items;
+        }))
+        .sort((t1, t2) => t1.label.localeCompare(t2.label));
+    }
   }
 }
 
