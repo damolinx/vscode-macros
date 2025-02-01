@@ -24,15 +24,13 @@ export default tseslint.config(
     },
     rules: {
       'curly': 'warn',
-      '@stylistic/semi': ['warn', 'always'
-      ],
+      '@stylistic/semi': ['warn', 'always'],
       '@typescript-eslint/no-empty-function': 'off',
       '@typescript-eslint/naming-convention': [
         'warn',
         {
           'selector': 'import',
-          'format': ['camelCase', 'PascalCase'
-          ]
+          'format': ['camelCase', 'PascalCase']
         }
       ],
       '@typescript-eslint/no-unused-vars': [

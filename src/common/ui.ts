@@ -3,14 +3,14 @@ import { relative } from 'path';
 
 export const MACROS_FILTER = { 'Macro Files': ['js'] };
 
-export type OpenMacroOptions = {
+export interface OpenMacroOptions {
   hideOpen?: boolean;
-  hideOpenPerItem?: boolean;
-};
+  hideOpenPerItem?: boolean
+}
 
-type UriQuickPickItem = vscode.QuickPickItem & {
-  uri?: vscode.Uri;
-};
+export interface UriQuickPickItem extends vscode.QuickPickItem {
+  uri?: vscode.Uri
+}
 
 const QuickPickOpenFile: vscode.QuickPickItem = {
   label: 'Open File …'
