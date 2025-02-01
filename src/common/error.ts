@@ -1,8 +1,9 @@
 import * as vscode from 'vscode';
 import { showTextDocument } from './vscodeEx';
 import { Macro } from '../macro';
+import { Runner } from '../runner';
 
-export function showMacroErrorMessage(macro: Macro, error: Error | string): Promise<void> {
+export function showMacroErrorMessage(runner: Runner, macro: Macro, error: Error | string): Promise<void> {
   let message: string;
   let selection: vscode.Range | undefined;
   let stack: string | undefined;
@@ -17,7 +18,7 @@ export function showMacroErrorMessage(macro: Macro, error: Error | string): Prom
     }
   }
 
-  return showErrorMessage(macro, message, stack, selection);
+  return showErrorMessage(runner, macro, message, stack, selection);
 
   function filterStack(stack: string): string {
     const match = stack.match(/\n.+?vscode-macros/);
@@ -36,8 +37,8 @@ export function showMacroErrorMessage(macro: Macro, error: Error | string): Prom
     return position && new vscode.Range(position, position);
   }
 
-  async function showErrorMessage(macro: Macro, message: string, stack?: string, selection?: vscode.Range, modal = false): Promise<void> {
-    const actions = [
+  async function showErrorMessage(runner: Runner, macro: Macro, message: string, stack?: string, selection?: vscode.Range, modal = false): Promise<void> {
+    const actions: { title: string; execute: () => Thenable<unknown> | void }[] = [
       {
         title: "Open",
         execute: () => showTextDocument(macro.uri, { selection })
@@ -47,6 +48,12 @@ export function showMacroErrorMessage(macro: Macro, error: Error | string): Prom
         execute: () => vscode.commands.executeCommand('macros.run', macro.uri),
       },
     ];
+    if ((await macro.options).persistent) {
+      actions.push({
+        title: "Reset State",
+        execute: () => runner.resetSharedContext()
+      });
+    }
 
     const options: vscode.MessageOptions = {};
     if (stack) {
@@ -56,7 +63,7 @@ export function showMacroErrorMessage(macro: Macro, error: Error | string): Prom
       } else {
         actions.push({
           title: "Details",
-          execute: () => showErrorMessage(macro, message, stack, selection, true),
+          execute: () => showErrorMessage(runner, macro, message, stack, selection, true),
         });
       }
     }

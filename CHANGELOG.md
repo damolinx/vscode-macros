@@ -2,6 +2,7 @@
 
 ## 0.0.9
 - Macro selection dropdown remembers last selection.
+- Error dialog for `persistent` macros allows to `Reset State`.
 
 ## 0.0.8
 - Add `Open Macro…` command.

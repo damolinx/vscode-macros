@@ -86,7 +86,7 @@ export class Runner implements vscode.Disposable {
         ? vm.runInContext(code, context, scriptOptions)
         : vm.runInNewContext(code, context, scriptOptions));
     } catch (error) {
-      showMacroErrorMessage(this.macro, error as Error | string);
+      showMacroErrorMessage(this, this.macro, error as Error | string);
     } finally {
       this.executions.delete(runInfo.runId);
       this.stopEventEmitter.fire(runInfo);
@@ -106,6 +106,10 @@ export class Runner implements vscode.Disposable {
 
   public onStop(listener: (runInfo: RunInfo) => void): vscode.Disposable {
     return this.stopEventEmitter.event(listener);
+  }
+
+  public resetSharedContext() {
+    this.sharedContext = undefined;
   }
 }
 
