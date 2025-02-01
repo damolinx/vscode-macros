@@ -14,7 +14,10 @@ export class Manager implements vscode.Disposable {
   }
 
   dispose() {
-    vscode.Disposable.from(this.runEventEmitter, this.stopEventEmitter, ...this.macros.values()).dispose();
+    vscode.Disposable.from(
+      this.runEventEmitter,
+      this.stopEventEmitter,
+      ...this.macros.values()).dispose();
   }
 
   private getRunner(macroOrUri: Macro | vscode.Uri): Runner {
@@ -25,9 +28,10 @@ export class Manager implements vscode.Disposable {
       runner.onRun((runInfo) => this.runEventEmitter.fire(runInfo));
       runner.onStop((runInfo) => this.stopEventEmitter.fire(runInfo));
       this.macros.set(macro.id, runner);
+    } else {
+      // TODO: this forces a refresh of macro file contents for next run.
+      runner.macro = macro;
     }
-    // TODO: this forces a refresh of macro file contents for next run.
-    runner.macro = macro;
 
     return runner;
   }
