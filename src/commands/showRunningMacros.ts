@@ -65,9 +65,9 @@ function pickRunningMacro(runInfos: RunInfo[]): Promise<RunInfo | undefined> {
       }
       entries.push(runInfo);
       return acc;
-    }, {} as { [key: string]: RunInfo[] });
+    }, {} as Record<string, RunInfo[]>);
 
-    let items: (vscode.QuickPickItem & { runInfo?: RunInfo })[] = [];
+    const items: (vscode.QuickPickItem & { runInfo?: RunInfo })[] = [];
     Object.keys(groupedByPath)
       .sort((a, b) => a.localeCompare(b))
       .forEach((path) => {
@@ -85,6 +85,6 @@ function pickRunningMacro(runInfos: RunInfo[]): Promise<RunInfo | undefined> {
               runInfo,
             })));
       });
-    return items
+    return items;
   }
 }
