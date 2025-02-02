@@ -66,7 +66,7 @@ export function pickMacroFile(macroFiles: vscode.Uri[] | Record<string, vscode.U
         {
           label: '',
           kind: vscode.QuickPickItemKind.Separator
-        },);
+        });
     }
 
     const quickPick = vscode.window.createQuickPick<UriQuickPickItem>();

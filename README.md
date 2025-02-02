@@ -25,7 +25,7 @@ vscode.window.showInformationMessage("Hello, world!");
 ## Commands 
 
 ### Debug Macros
-See [Macro Debugging](#macro-debugging) for additional information.
+See [Debugging a Macro](#debugging-a-macro) for additional information.
 * `Debug Active File as Macro`: debug current editor as a macro (document will be saved before running).
 * `Debug Macro…`: select a macro file to debug. Provides access to configured `macros.sourceDirectories`.
 
@@ -42,7 +42,7 @@ See [Macro Debugging](#macro-debugging) for additional information.
 The following references are available from the global context of your macro:
 * `vscode`: symbol that provides access to the [VS Code APIs](https://code.visualstudio.com/api/references/vscode-api).
 * `macros`: symbol that provides access to this extension's API (see [Macros API](#macros-api)). 
-* `require`: method that allows load [NodeJS libraries](https://nodejs.org/api/all.html). Version is same as your installed VS Code's (see `About`).
+* `require`: method that allows load [NodeJS libraries](https://nodejs.org/api/all.html). Version is same as your installed VS Code's (see `About` option).
 * Other: `clearInterval`, `clearTimeout`, `fetch`, `global`, `setInterval`, `setTimeout`.
 
 ### `macros` API
@@ -54,7 +54,13 @@ The following references are available from the global context of your macro:
 vscode.window.showInformationMessage(`Hello from ${macros.macro.uri?.fsPath || 'somewhere'}!`);
 ```
 
+### Special Tokens
+This tokens do not form part of contexts shared when `@macro:persistent` is used, i.e. they are alwasy different from session to session.
+* `__cancellationToken`: a [CancellationToken](https://code.visualstudio.com/api/references/vscode-api#CancellationToken) used by the extension to nofiy about a stop request. See [Stopping a Macro](#stopping-a-macro).
+* `__runId`: Id of the current macro execution session.
+
 ## Macro Options
+
 An option is added to macro file as a comment in the form `//@macro:«option»`. The following options are available:
 * `persistent`: All runs of the given macro are started with the same execution context, allowing state preservation. 
 * `singleton`: Only one running instance of the given macro is allowed at a time.
@@ -65,5 +71,9 @@ An option is added to macro file as a comment in the form `//@macro:«option»`.
 vscode.window.showInformationMessage("Hello, world!");
 ```
 
-### Macro Debugging
+## Debugging a Macro
 Debugging a macro leverages VS Code's extension debugging [story](https://code.visualstudio.com/api/get-started/your-first-extension#debugging-the-extension) since the macros are run in the context of this extension. This makes the experience a bit awkward as a new VS Code instance is launched, and you need to open the right context (e.g. workspace) in that new instance to debug your macro (vs, for example, launching another VS Code instance and attaching to the current one). 
+
+## Stopping a Macro
+Macros are run [sandboxed](https://nodejs.org/api/vm.html#class-vmscript) but in-process, so terminating a macro is not possible. A `__cancellationToken` token is made available, however, so as long as the macro follow the rules of this VS Code API, it is possible to for macros to be good citizens and exit upon request. 
+Remember several VS Code APIs already take in a [CancellationToken](https://code.visualstudio.com/api/references/vscode-api#CancellationToken) argument so make sure to pass it in as needed.

@@ -5,7 +5,12 @@ import { Macro } from './macro';
 import { MacrosApi } from './macrosApi';
 
 export type RunId = string;
-export interface RunInfo { macro: Macro; runId: RunId };
+
+export interface RunInfo {
+  cts: vscode.CancellationTokenSource;
+  macro: Macro;
+  runId: RunId
+};
 
 export class Runner implements vscode.Disposable {
   private readonly executions: Map<RunId, RunInfo>;
@@ -28,39 +33,38 @@ export class Runner implements vscode.Disposable {
     vscode.Disposable.from(this.runEventEmitter, this.stopEventEmitter).dispose();
   }
 
-  private getOrCreateContext(uri: vscode.Uri, shouldPersist?: boolean): vm.Context {
+  private getContext(runInfo: RunInfo, shouldPersist?: boolean): vm.Context {
     let context: vm.Context;
+    let name: string;
     if (shouldPersist) {
-      if (!this.sharedContext) {
-        this.sharedContext = createContext('shared-context');
-      }
-      context = this.sharedContext;
+      this.sharedContext ||= createContext();
+      context = { ...this.sharedContext };
+      name = 'shared-context';
     } else {
-      if (this.sharedContext) {
-        delete this.sharedContext;
-      }
-      context = createContext('context');
+      delete this.sharedContext;
+      context = createContext();
+      name = 'context';
     }
-    return context;
 
+    context.__cancellationToken = runInfo.cts.token;
+    context.__runId = runInfo.runId;
+    return vm.createContext(context, { name });
 
-    function createContext(name: string): vm.Context {
-      return vm.createContext({
+    function createContext() {
+      return ({
         clearInterval,
         clearTimeout,
         fetch,
         global,
         macros: {
           macro: {
-            uri,
+            uri: runInfo.macro.uri
           }
         } as MacrosApi,
         require,
         setInterval,
         setTimeout,
         vscode,
-      }, {
-        name
       });
     }
   }
@@ -71,15 +75,20 @@ export class Runner implements vscode.Disposable {
       throw new Error(`${this.macro.shortName} is a singleton and is already running.`);
     }
 
+    const cts = new vscode.CancellationTokenSource();
+    const runInfo = {
+      macro: this.macro,
+      runId: `${this.macro.shortName}@${this.index++}`,
+      cts,
+    };
+
     const code = await this.macro.code;
-    const context = this.getOrCreateContext(this.macro.uri, options.persistent);
+    const context = this.getContext(runInfo, options.persistent);
     const scriptOptions: vm.RunningScriptOptions = {
       filename: this.macro.uri.toString(true),
     };
 
-    const runInfo = { macro: this.macro, runId: `${this.macro.shortName}@${this.index++}` };
     this.executions.set(runInfo.runId, runInfo);
-
     this.runEventEmitter.fire(runInfo);
     try {
       await (options.persistent
@@ -94,10 +103,7 @@ export class Runner implements vscode.Disposable {
   }
 
   public get running(): readonly RunInfo[] {
-    return [...this.executions.keys()].map((runId) => ({
-      macro: this.macro,
-      runId: runId,
-    }));
+    return [...this.executions.values()];
   }
 
   public onRun(listener: (runInfo: RunInfo) => void): vscode.Disposable {

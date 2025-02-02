@@ -1,6 +1,11 @@
 {
   "templates": [
     {
+      "label": "Cancellation",
+      "description": "Support macro cancellation flow",
+      "path": "cancellation.js"
+    },
+    {
       "label": "Hello World!",
       "description": "Macro demonstrating basic concepts",
       "path": "helloWorld.js"

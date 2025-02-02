@@ -3,6 +3,7 @@
 ## 0.0.9
 - Macro selection dropdown remembers last selection.
 - Error dialog for `persistent` macros allows to `Reset State`.
+- Add support for cooperative macro stop via a `CancellationToken`.
 
 ## 0.0.8
 - Add `Open Macro…` command.

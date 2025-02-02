@@ -41,7 +41,7 @@ export class Manager implements vscode.Disposable {
     await runner.run();
   }
 
-  public get runningMacros(): readonly RunInfo[] {
+  public get runningMacros(): RunInfo[] {
     return [...this.macros.values()].flatMap((runner) => runner.running);
   }
 
