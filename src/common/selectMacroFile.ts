@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { extname } from 'path';
 import { OpenMacroOptions, pickMacroFile, showMacroOpenDialog } from './ui';
 import { expandPath } from './variables';
+import { MACRO_EXTENSIONS } from '../constants';
 
 export async function selectMacroFile(options?: OpenMacroOptions): Promise<vscode.Uri | undefined> {
   let macroFiles: Record<string, vscode.Uri[]> = {};
@@ -34,7 +35,8 @@ async function findMacroFiles(sourceDirectories: string[]): Promise<Record<strin
       return [
         sourceDirectory,
         entries
-          .filter(([path, type]) => type === vscode.FileType.File && extname(path) === '.js')
+          .filter(([_, type]) => type === vscode.FileType.File)
+          .filter(([path, _]) => MACRO_EXTENSIONS.includes(extname(path)))
           .map(([path, _]) => vscode.Uri.joinPath(uri, path))
       ] as [string, vscode.Uri[]];
     }),

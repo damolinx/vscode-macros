@@ -1,8 +1,7 @@
 import * as vscode from 'vscode';
 import { relative } from 'path';
 import { showTextDocument } from './vscodeEx';
-
-export const MACROS_FILTER = { 'Macro Files': ['js'] };
+import { MACROS_FILTER } from '../constants';
 
 export interface OpenMacroOptions {
   hideOpen?: boolean;
