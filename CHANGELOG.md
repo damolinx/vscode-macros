@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.0
+- Completes basic scenarios.
+- `.cjs` is now supported.
+
 ## 0.0.9
 - Macro selection dropdown remembers last selection.
 - Error dialog for `persistent` macros allows to `Reset State`.
