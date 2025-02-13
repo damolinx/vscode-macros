@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.1
+- Ignore FileNotFound on missing source directories.
+
 ## 0.1.0
 - Completes basic scenarios.
 - `.cjs` is now supported.

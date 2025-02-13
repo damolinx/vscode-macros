@@ -31,7 +31,15 @@ async function findMacroFiles(sourceDirectories: string[]): Promise<Record<strin
   const result = await Promise.all(
     sourceDirectories.map(async (sourceDirectory) => {
       const uri = vscode.Uri.file(sourceDirectory);
-      const entries = await vscode.workspace.fs.readDirectory(uri);
+      let entries: [string, vscode.FileType][];
+      try {
+        entries = await vscode.workspace.fs.readDirectory(uri);
+      } catch (e) {
+        if (!(e instanceof vscode.FileSystemError) || e.code !== 'FileNotFound') {
+          throw e;
+        }
+        entries = [];
+      }
       return [
         sourceDirectory,
         entries
