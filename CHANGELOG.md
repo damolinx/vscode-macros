@@ -3,6 +3,9 @@
 ## 0.1.2
 - Prefer `TextDocument` version of macro content (over file-system version).
   - Allows to run untitled editors rather than forcing a save. 
+- Improve extension package: 
+  - Minifying makes it 17KB vs 3.92MB.
+  - Exclude dev-only files. 
 
 ## 0.1.1
 - Ignore FileNotFound on missing source directories.
