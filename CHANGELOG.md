@@ -4,7 +4,7 @@
 - Prefer `TextDocument` version of macro content (over file-system version).
   - Allows to run untitled editors rather than forcing a save. 
 - Improve extension package: 
-  - Minifying makes it 17KB vs 3.92MB.
+  - Minifying makes it 17KB.
   - Exclude dev-only files. 
 
 ## 0.1.1
