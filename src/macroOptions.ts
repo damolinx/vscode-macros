@@ -11,13 +11,18 @@ export interface MacroOptions {
 
 export function parseOptions(code: string): MacroOptions {
   const options: MacroOptions = {};
-  const persistent = /\/\/\s*@macro:persistent\s*$/m.test(code);
-  if (persistent) {
-    options.persistent = true;
-  }
-  const singleton = /\/\/\s*@macro:singleton\s*$/m.test(code);
-  if (singleton) {
-    options.singleton = true;
+
+  for (const match of code.matchAll(/\/\/\s*@macro:\s*(?<option>\w+)\s*$/gm)) {
+    if (match.groups?.option) {
+      switch (match.groups.option) {
+        case 'persistent':
+          options.persistent = true;
+          break;
+        case 'singleton':
+          options.singleton = true;
+          break;
+      }
+    }
   }
   return options;
 } 
