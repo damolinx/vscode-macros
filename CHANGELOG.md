@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2
+- Prefer `TextDocument` version of macro content (over file-system version).
+  - Allows to run untitled editors rather than forcing a save. 
+
 ## 0.1.1
 - Ignore FileNotFound on missing source directories.
 

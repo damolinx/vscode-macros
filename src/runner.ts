@@ -70,7 +70,7 @@ export class Runner implements vscode.Disposable {
   }
 
   public async run() {
-    const options = await this.macro.options;
+    const { code, options } = await this.macro.getCodeAndOptions();
     if (options.singleton && this.executions.size > 0) {
       throw new Error(`${this.macro.shortName} is a singleton and is already running.`);
     }
@@ -82,7 +82,6 @@ export class Runner implements vscode.Disposable {
       cts,
     };
 
-    const code = await this.macro.code;
     const context = this.getContext(runInfo, options.persistent);
     const scriptOptions: vm.RunningScriptOptions = {
       filename: this.macro.uri.toString(true),
@@ -95,7 +94,7 @@ export class Runner implements vscode.Disposable {
         ? vm.runInContext(code, context, scriptOptions)
         : vm.runInNewContext(code, context, scriptOptions));
     } catch (error) {
-      showMacroErrorMessage(this, this.macro, error as Error | string);
+      showMacroErrorMessage(this, this.macro, options, error as Error | string);
     } finally {
       this.executions.delete(runInfo.runId);
       this.stopEventEmitter.fire(runInfo);

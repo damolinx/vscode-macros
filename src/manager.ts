@@ -20,24 +20,22 @@ export class Manager implements vscode.Disposable {
       ...this.macros.values()).dispose();
   }
 
-  private getRunner(macroOrUri: Macro | vscode.Uri): Runner {
-    const macro = macroOrUri instanceof Macro ? macroOrUri : new Macro(macroOrUri);
-    let runner = this.macros.get(macro.id);
+  private getRunner(uri: vscode.Uri): Runner {
+    const macroId = Macro.getId(uri);
+    let runner = this.macros.get(macroId);
     if (!runner) {
+      const macro = new Macro(uri, macroId);
       runner = new Runner(macro);
       runner.onRun((runInfo) => this.runEventEmitter.fire(runInfo));
       runner.onStop((runInfo) => this.stopEventEmitter.fire(runInfo));
-      this.macros.set(macro.id, runner);
-    } else {
-      // TODO: this forces a refresh of macro file contents for next run.
-      runner.macro = macro;
+      this.macros.set(macroId, runner);
     }
 
     return runner;
   }
 
-  public async run(macroOrUri: Macro | vscode.Uri): Promise<void> {
-    const runner = this.getRunner(macroOrUri);
+  public async run(uri: vscode.Uri): Promise<void> {
+    const runner = this.getRunner(uri);
     await runner.run();
   }
 

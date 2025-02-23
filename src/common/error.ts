@@ -2,8 +2,9 @@ import * as vscode from 'vscode';
 import { showTextDocument } from './vscodeEx';
 import { Macro } from '../macro';
 import { Runner } from '../runner';
+import { MacroOptions } from '../macroOptions';
 
-export function showMacroErrorMessage(runner: Runner, macro: Macro, error: Error | string): Promise<void> {
+export function showMacroErrorMessage(runner: Runner, macro: Macro, macroOptions: MacroOptions, error: Error | string): Promise<void> {
   let message: string;
   let selection: vscode.Range | undefined;
   let stack: string | undefined;
@@ -18,7 +19,7 @@ export function showMacroErrorMessage(runner: Runner, macro: Macro, error: Error
     }
   }
 
-  return showErrorMessage(runner, macro, message, stack, selection);
+  return showErrorMessage(runner, message, stack, selection);
 
   function filterStack(stack: string): string {
     const match = stack.match(/\n.+?vscode-macros/);
@@ -37,7 +38,7 @@ export function showMacroErrorMessage(runner: Runner, macro: Macro, error: Error
     return position && new vscode.Range(position, position);
   }
 
-  async function showErrorMessage(runner: Runner, macro: Macro, message: string, stack?: string, selection?: vscode.Range, modal = false): Promise<void> {
+  async function showErrorMessage(runner: Runner, message: string, stack?: string, selection?: vscode.Range, modal = false): Promise<void> {
     const actions: { title: string; execute: () => Thenable<unknown> | void }[] = [
       {
         title: "Open",
@@ -48,7 +49,7 @@ export function showMacroErrorMessage(runner: Runner, macro: Macro, error: Error
         execute: () => vscode.commands.executeCommand('macros.run', macro.uri),
       },
     ];
-    if ((await macro.options).persistent) {
+    if (macroOptions.persistent) {
       actions.push({
         title: "Reset State",
         execute: () => runner.resetSharedContext()
@@ -63,7 +64,7 @@ export function showMacroErrorMessage(runner: Runner, macro: Macro, error: Error
       } else {
         actions.push({
           title: "Details",
-          execute: () => showErrorMessage(runner, macro, message, stack, selection, true),
+          execute: () => showErrorMessage(runner, message, stack, selection, true),
         });
       }
     }

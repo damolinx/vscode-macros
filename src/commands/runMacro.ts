@@ -14,7 +14,7 @@ export async function runMacro(manager: Manager, pathOrUri?: string | vscode.Uri
 }
 
 export async function runActiveEditor(manager: Manager) {
-  const editor = await activeMacroEditor(true);
+  const editor = await activeMacroEditor(false);
   if (editor) {
     await runMacro(manager, editor.document.uri);
   }
