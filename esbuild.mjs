@@ -1,4 +1,4 @@
-const esbuild = require('esbuild');
+import * as esbuild from 'esbuild';
 
 esbuild.build({
   entryPoints: ['./src/extension.ts'],
@@ -12,5 +12,4 @@ esbuild.build({
 }).catch(() => {
   console.error(e);
   process.exit(1);
-}
-);
+});
