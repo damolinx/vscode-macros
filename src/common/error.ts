@@ -41,17 +41,17 @@ export function showMacroErrorMessage(runner: Runner, macro: Macro, macroOptions
   async function showErrorMessage(runner: Runner, message: string, stack?: string, selection?: vscode.Range, modal = false): Promise<void> {
     const actions: { title: string; execute: () => Thenable<unknown> | void }[] = [
       {
-        title: "Open",
+        title: 'Open',
         execute: () => showTextDocument(macro.uri, { selection })
       },
       {
-        title: "Retry",
+        title: 'Retry',
         execute: () => vscode.commands.executeCommand('macros.run', macro.uri),
       },
     ];
     if (macroOptions.persistent) {
       actions.push({
-        title: "Reset State",
+        title: 'Reset State',
         execute: () => runner.resetSharedContext()
       });
     }
@@ -63,7 +63,7 @@ export function showMacroErrorMessage(runner: Runner, macro: Macro, macroOptions
         options.modal = true;
       } else {
         actions.push({
-          title: "Details",
+          title: 'Details',
           execute: () => showErrorMessage(runner, message, stack, selection, true),
         });
       }

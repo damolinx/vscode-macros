@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 import { resolve } from 'path';
 
-export const HOME_TOKEN = "${userHome}";
-export const WORKSPACE_TOKEN = "${workspaceFolder}";
+export const HOME_TOKEN = '${userHome}';
+export const WORKSPACE_TOKEN = '${workspaceFolder}';
 
 export function expandPath(filePath: string): string | undefined {
   let expandedPath: string | undefined = filePath

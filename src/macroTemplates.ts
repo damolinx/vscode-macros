@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { promises as fsPromises } from 'fs';
 import { dirname, join } from 'path';
-import { Lazy } from "./common/lazy";
+import { Lazy } from './common/lazy';
 
 export const MACRO_TEMPLATES_MANIFEST = 'resources/examples/manifest.json';
 
