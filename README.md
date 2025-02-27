@@ -1,4 +1,4 @@
-# `Macros for VS Code` Extension 
+# Macros for Visual Studio Code Extension 
 
 The `Macros for VS Code` extension allows you to run automation scripts (macros) using standard [VS Code APIs](https://code.visualstudio.com/api/references/vscode-api) but without having to create a full extension. This enables scenarios like rapid prototyping of extension features, or commonly, custom tools for rare or specific scenarios that do not justify the effort of maintaining a full extension. 
 
@@ -56,7 +56,7 @@ vscode.window.showInformationMessage(`Hello from ${macros.macro.uri?.fsPath || '
 
 ### Special Tokens
 This tokens do not form part of contexts shared when `@macro:persistent` is used, i.e. they are alwasy different from session to session.
-* `__cancellationToken`: a [CancellationToken](https://code.visualstudio.com/api/references/vscode-api#CancellationToken) used by the extension to nofiy about a stop request. See [Stopping a Macro](#stopping-a-macro).
+* `__cancellationToken`: a [CancellationToken](https://code.visualstudio.com/api/references/vscode-api#CancellationToken) used by the extension to notify about a stop request. See [Stopping a Macro](#stopping-a-macro).
 * `__runId`: Id of the current macro execution session.
 
 ## Macro Options
@@ -75,5 +75,5 @@ vscode.window.showInformationMessage("Hello, world!");
 Debugging a macro leverages VS Code's extension debugging [story](https://code.visualstudio.com/api/get-started/your-first-extension#debugging-the-extension) since the macros are run in the context of this extension. This makes the experience a bit awkward as a new VS Code instance is launched, and you need to open the right context (e.g. workspace) in that new instance to debug your macro (vs, for example, launching another VS Code instance and attaching to the current one). 
 
 ## Stopping a Macro
-Macros are run [sandboxed](https://nodejs.org/api/vm.html#class-vmscript) but in-process, so terminating a macro is not possible. A `__cancellationToken` token is made available, however, so as long as the macro follow the rules of this VS Code API, it is possible to for macros to be good citizens and exit upon request. 
+Macros are run [sandboxed](https://nodejs.org/api/vm.html#class-vmscript) but in-process, so terminating a macro is not possible. A `__cancellationToken` token is made available, however, so as long as the macro follows the rules of this VS Code API, it is possible to for macros to be good citizens and exit upon request. 
 Remember several VS Code APIs already take in a [CancellationToken](https://code.visualstudio.com/api/references/vscode-api#CancellationToken) argument so make sure to pass it in as needed.
