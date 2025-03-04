@@ -74,6 +74,11 @@
         "command": "macros.run.show",
         "title": "Show Running Macros",
         "category": "Macros"
+      },
+      {
+        "command": "macros.sourceDirectories.setup",
+        "title": "Setup Source Directory for Development",
+        "category": "Macros"
       }
     ],
     "configuration": [

@@ -3,6 +3,7 @@ import { createMacro } from './commands/createMacro';
 import { debugActiveEditor, debugMacro } from './commands/debugMacro';
 import { openMacro } from './commands/openMacro';
 import { runActiveEditor, runMacro } from './commands/runMacro';
+import { setupSourceDirectory } from './commands/setupSourceDirectory';
 import { showRunningMacros } from './commands/showRunningMacros';
 import { setContext } from './common/vscodeEx';
 import { Manager } from './manager';
@@ -33,5 +34,6 @@ export async function activate(context: vscode.ExtensionContext) {
     r('macros.run.mru', () => runMacro(manager, mruMacro)),
     r('macros.run.show', () => showRunningMacros(manager)),
     r('macros.sourceDirectories.settings', () => vscode.commands.executeCommand('workbench.action.openSettings', 'macros.sourceDirectories')),
+    r('macros.sourceDirectories.setup', () => setupSourceDirectory()),
   );
 }

@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { extname, sep } from 'path';
-import { OpenMacroOptions, pickMacroFile, showMacroOpenDialog } from './ui';
+import { OpenMacroOptions, pickMacroFile, showMacroOpenDialog, UriQuickPickItem } from './ui';
 import { expandPath } from './variables';
 import { MACRO_EXTENSIONS } from '../constants';
 
@@ -32,6 +32,30 @@ export async function selectMacroFile(options?: OpenMacroOptions): Promise<vscod
   }
 
   return targetUri;
+}
+
+export async function selectSourceDirectory(): Promise<vscode.Uri | undefined> {
+  const sourceDirectories = getSourceDirectories();
+  if (sourceDirectories.length === 0) {
+    const OptionConfigure = 'Configure';
+    const option = await vscode.window.showInformationMessage('No configured source directories', OptionConfigure);
+    if (option === OptionConfigure) {
+      await vscode.commands.executeCommand('macros.sourceDirectories.settings');
+      return;
+    }
+  }
+
+  const selectedItem = await vscode.window.showQuickPick<UriQuickPickItem>(
+    sourceDirectories.map((d) => ({
+      label: vscode.workspace.asRelativePath(d),
+      uri: d
+    })).sort((t1, t2) => t1.label.localeCompare(t2.label)),
+    {
+      placeHolder: 'Select a macro source directory …'
+    }
+  );
+
+  return selectedItem?.uri;
 }
 
 async function findMacroFiles(sourceDirectories: vscode.Uri[]): Promise<Record<string, vscode.Uri[]>> {

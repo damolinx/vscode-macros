@@ -16,6 +16,7 @@ To keep things simple, only JavaScript scripts are supported at the moment. Supp
 
 1. Create a new macro file with a `.js` extension.
 2. Write your JavaScript macro code (see [Available References](#available-references)).
+
 ```javascript
 // Example: Hello World!
 vscode.window.showInformationMessage("Hello, world!");
@@ -28,6 +29,9 @@ vscode.window.showInformationMessage("Hello, world!");
 See [Debugging a Macro](#debugging-a-macro) for additional information.
 * `Debug Active File as Macro`: debug current editor as a macro (document will be saved before running).
 * `Debug Macro…`: select a macro file to debug. Provides access to configured `macros.sourceDirectories`.
+
+### Development
+* `Setup Source Directory for Development`: adds or updates __optional__ files used to improve IntelliSense on macro files.
 
 ### Manage Macros
 * `New Macro…`: creates a new macro with sample contents.

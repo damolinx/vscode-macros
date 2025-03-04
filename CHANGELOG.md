@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.3
+- Add `Setup Source Directory for Development` command to add optional files to support macro development.
+
 ## 0.1.2
 - Prefer `TextDocument` version of macro content (over file-system version).
   - Allows to run untitled editors rather than forcing a save. 
