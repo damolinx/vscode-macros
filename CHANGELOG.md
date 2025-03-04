@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.4
+- Fix: `WorkspaceEditor` unexpected behavior means no files are updated by `Setup Source Directory for Development`.
+
 ## 0.1.3
 - Add `Setup Source Directory for Development` command to add optional files to support macro development.
 

@@ -11,6 +11,7 @@ export async function setupSourceDirectory(pathOrUri?: string | vscode.Uri): Pro
   const encoder = new TextEncoder();
   const edit = new vscode.WorkspaceEdit();
 
+  let updatingFiles = false;
   for (const [name, newContents] of [
     ['global.d.ts', createGlobalDefs()],
     ['jsconfig.json', createJSConfig()]]) {
@@ -19,6 +20,7 @@ export async function setupSourceDirectory(pathOrUri?: string | vscode.Uri): Pro
       .then((d) => d.getText(), () => undefined);
 
     if (currentContents !== newContents) {
+      updatingFiles = true;
       edit.createFile(vscode.Uri.joinPath(uri, name), {
         overwrite: true,
         contents: encoder.encode(newContents),
@@ -26,7 +28,7 @@ export async function setupSourceDirectory(pathOrUri?: string | vscode.Uri): Pro
     }
   }
 
-  if (edit.entries().length === 0) {
+  if (!updatingFiles) {
     vscode.window.showInformationMessage('All files used to support macro development are up-to-date.');
   } else if (await vscode.workspace.applyEdit(edit)) {
     vscode.window.showInformationMessage('Updated files used to support macro development to the latest version.');
