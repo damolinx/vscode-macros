@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { resolve } from 'path';
+import { resolve, sep } from 'path';
 
 export const HOME_TOKEN = '${userHome}';
 export const WORKSPACE_TOKEN = '${workspaceFolder}';
@@ -15,6 +15,6 @@ export function expandPath(filePath: string): string | undefined {
     expandedPath = undefined; // No workspace folder, cannot expand.
   }
 
-  const normalizedPath = expandedPath && resolve(expandedPath);
+  const normalizedPath = expandedPath && (resolve(expandedPath) + sep);
   return normalizedPath;
 }

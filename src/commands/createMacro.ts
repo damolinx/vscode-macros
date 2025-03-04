@@ -1,8 +1,9 @@
 
 import * as vscode from 'vscode';
+import { MACRO_LANGUAGE } from '../constants';
 import { templates } from '../macroTemplates';
 
-export async function createMacro(context: vscode.ExtensionContext) {
+export async function createMacro(context: vscode.ExtensionContext): Promise<vscode.TextEditor | undefined> {
   const selectedTemplate = await vscode.window.showQuickPick(
     await templates(context),
     {
@@ -14,8 +15,10 @@ export async function createMacro(context: vscode.ExtensionContext) {
   }
 
   const document = await vscode.workspace.openTextDocument({
-    language: 'javascript',
+    language: MACRO_LANGUAGE,
     content: await selectedTemplate.load(),
   });
-  await vscode.window.showTextDocument(document);
+
+  const editor = await vscode.window.showTextDocument(document);
+  return editor;
 }

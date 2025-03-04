@@ -2,10 +2,10 @@ import * as vscode from 'vscode';
 
 // Saving an editor with an untitled document might will a new editor, which is
 // confusing. This method will return the proper editor after saving.  
-export async function saveTextEditor(editor: vscode.TextEditor, options?: vscode.SaveDialogOptions): Promise<vscode.TextEditor | undefined> {
+export async function saveTextEditor(editor: vscode.TextEditor, optionsOrUri?: vscode.SaveDialogOptions | vscode.Uri): Promise<vscode.TextEditor | undefined> {
   let savedEditor: vscode.TextEditor | undefined;
   if (editor.document.isUntitled) {
-    const targetUri = await vscode.window.showSaveDialog(options);
+    const targetUri = optionsOrUri instanceof vscode.Uri ? optionsOrUri : await vscode.window.showSaveDialog(optionsOrUri);
     if (targetUri) {
       await vscode.workspace.fs.writeFile(targetUri, Buffer.from(editor.document.getText()));
       await vscode.commands.executeCommand('workbench.action.revertAndCloseActiveEditor');
