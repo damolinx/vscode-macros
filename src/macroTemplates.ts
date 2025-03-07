@@ -1,9 +1,10 @@
 import * as vscode from 'vscode';
-import { promises as fsPromises } from 'fs';
-import { dirname, join } from 'path';
+import { join } from 'path';
 import { Lazy } from './common/lazy';
+import { readFile } from './common/resources';
 
-export const MACRO_TEMPLATES_MANIFEST = 'resources/examples/manifest.json';
+export const MACRO_TEMPLATES_DIR_RESOURCE = 'examples/';
+export const MACRO_TEMPLATES_MANIFEST_RESOURCE = `${MACRO_TEMPLATES_DIR_RESOURCE}/manifest.json`;
 
 export interface MacroTemplate {
   label: string;
@@ -21,7 +22,7 @@ export interface LoadableMacroTemplate extends MacroTemplate {
 
 // Caching manifest since it is shipped with the extension, i.e. not expected to change. 
 const manifest = new Lazy(async (context: vscode.ExtensionContext) => {
-  const content = await readFile(context, MACRO_TEMPLATES_MANIFEST);
+  const content = await readFile(context, MACRO_TEMPLATES_MANIFEST_RESOURCE);
   const manifest = JSON.parse(content) as Manifest;
   manifest.templates.sort((t1, t2) => t1.label.localeCompare(t2.label));
   return manifest;
@@ -32,15 +33,10 @@ export async function templates(context: vscode.ExtensionContext): Promise<Loada
   return templates.map(t => ({ ...t, load: () => readTemplate(context, t) }));
 }
 
-async function readFile(context: vscode.ExtensionContext, relativePath: string): Promise<string> {
-  const path = context.asAbsolutePath(relativePath);
-  const buffer = await fsPromises.readFile(path);
-  const content = new TextDecoder().decode(buffer);
-  return content;
-}
+
 
 async function readTemplate(context: vscode.ExtensionContext, template: MacroTemplate): Promise<string> {
-  const path = join(dirname(MACRO_TEMPLATES_MANIFEST), template.path);
+  const path = join(MACRO_TEMPLATES_DIR_RESOURCE, template.path);
   const content = await readFile(context, path);
   return content;
 }

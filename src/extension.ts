@@ -34,6 +34,6 @@ export async function activate(context: vscode.ExtensionContext) {
     r('macros.run.mru', () => runMacro(manager, mruMacro)),
     r('macros.run.show', () => showRunningMacros(manager)),
     r('macros.sourceDirectories.settings', () => vscode.commands.executeCommand('workbench.action.openSettings', 'macros.sourceDirectories')),
-    r('macros.sourceDirectories.setup', () => setupSourceDirectory()),
+    r('macros.sourceDirectories.setup', () => setupSourceDirectory(context)),
   );
 }

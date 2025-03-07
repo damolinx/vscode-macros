@@ -59,7 +59,7 @@ vscode.window.showInformationMessage(`Hello from ${macros.macro.uri?.fsPath || '
 ```
 
 ### Special Tokens
-This tokens do not form part of contexts shared when `@macro:persistent` is used, i.e. they are alwasy different from session to session.
+This tokens do not form part of contexts shared when `@macro:persistent` is used, i.e. they are always different from session to session.
 * `__cancellationToken`: a [CancellationToken](https://code.visualstudio.com/api/references/vscode-api#CancellationToken) used by the extension to notify about a stop request. See [Stopping a Macro](#stopping-a-macro).
 * `__runId`: Id of the current macro execution session.
 

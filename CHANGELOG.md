@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.5
+- Improve supporting development files.
+
 ## 0.1.4
 - Fix: `WorkspaceEditor` unexpected behavior means no files are updated by `Setup Source Directory for Development`.
 
