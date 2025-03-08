@@ -31,16 +31,12 @@ function createWebView(html) {
   return panel;
 }
 
-const html = createHtml();
-const webview = createWebView(html);
-webview.webview.onDidReceiveMessage((message) => {
-  // Process received messages
-  vscode.window.showInformationMessage(message.text);
-});
-
 // Keep script alive until the webview is disposed
 new Promise((resolve) => {
-  webview.onDidDispose(() => {
-    resolve(undefined);
-  });
+  const html = createHtml();
+  const webview = createWebView(html);
+  webview.webview.onDidReceiveMessage((message) =>
+    vscode.window.showInformationMessage(message.text)
+  );
+  webview.onDidDispose(resolve);
 });
