@@ -11,6 +11,11 @@
       "path": "helloWorld.js"
     },
     {
+      "label": "References",
+      "description": "Query the language service for all references to the symbol at current location.",
+      "path": "references.js"
+    },
+    {
       "label": "WebView",
       "description": "Create and communicate with a WebView",
       "path": "webView.js"

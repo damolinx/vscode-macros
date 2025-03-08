@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.6
+- Add `References` macro example.
+
 ## 0.1.5
 - Improve supporting development files.
 
