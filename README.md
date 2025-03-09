@@ -17,11 +17,28 @@ To keep things simple, only JavaScript scripts are supported at the moment. Supp
 1. Create a new macro file with a `.js` extension.
 2. Write your JavaScript macro code (see [Available References](#available-references)).
 
-```javascript
-// Example: Hello World!
-vscode.window.showInformationMessage("Hello, world!");
-```
+   ```javascript
+   // Example: Hello World!
+   vscode.window.showInformationMessage("Hello, world!");
+   ```
 3. From the [Command Palette](https://code.visualstudio.com/api/references/contribution-points#contributes.commands) use the `Run Macro (Active Editor)` command to execute your macro.
+
+### Keybinding a Macro
+All that is required is to keybind the `macros.run` command with a single argument that is the path to the macro to run. This can only be done directly in the `keybindings.json` file, however. Check the VS Code [documentation](https://code.visualstudio.com/docs/editor/keybindings#_advanced-customization) for details.
+
+1. Use the `Preferences: Open Keyboard Shortcuts (JSON)` command to open `keybindings.json`.
+2. Add a keybinding for the `macros.run` command that takes as an argument the path to the macro to run (`${userhome}` and `${workspaceFolder}` tokens are supported), e.g.
+
+   ```json
+   [
+     {
+       "key": "Shift+Alt+X",
+       "command": "macros.run",
+       "args": "${userhome}/macros/references.js",
+       "when": "editorTextFocus"
+     }
+   ]
+   ```
 
 ## Commands 
 

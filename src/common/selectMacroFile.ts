@@ -11,7 +11,7 @@ export function getSourceDirectories(): vscode.Uri[] {
   return sourceDirectories
     .map((path) => expandPath(path.trim()))
     .filter((path): path is string => !!path)
-    .map(sourceDirectory => vscode.Uri.file(sourceDirectory));
+    .map(sourceDirectory => vscode.Uri.file(sourceDirectory.endsWith(sep) ? sourceDirectory : (sourceDirectory + sep)));
 }
 
 export async function selectMacroFile(options?: OpenMacroOptions): Promise<vscode.Uri | undefined> {

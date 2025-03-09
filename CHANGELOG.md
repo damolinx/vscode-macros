@@ -1,7 +1,11 @@
 # Changelog
 
 ## 0.1.6
+- Document macro keybindings.
+- Add support for tokens in macro paths to improve keybinding scenarios.
 - Add `References` macro example.
+- Update existing macro examples.
+- Update development files.
 
 ## 0.1.5
 - Improve supporting development files.
