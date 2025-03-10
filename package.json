@@ -2,7 +2,7 @@
   "name": "damolinx-macros",
   "displayName": "Macros for VS Code",
   "description": "Enhance your VS Code tooling via JavaScript scripts that use standard VS Code and NodeJS APIs.",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "publisher": "damolinx",
   "icon": "resources/images/icon.png",
   "repository": {
@@ -41,7 +41,8 @@
         "command": "macros.debug.activeEditor",
         "title": "Debug Active Editor as Macro",
         "category": "Macros",
-        "enablement": "!inDebugMode && editorLangId == 'javascript' && !editorIsUntitled"
+        "enablement": "!inDebugMode && (editorLangId == javascript || editorLangId == javascriptmacro) && resourceScheme != untitled",
+        "icon": "$(debug-alt)"
       },
       {
         "command": "macros.new.macro",
@@ -62,7 +63,8 @@
         "command": "macros.run.activeEditor",
         "title": "Run Active File as Macro",
         "category": "Macros",
-        "enablement": "editorLangId == 'javascript'"
+        "enablement": "editorLangId == javascript || editorLangId == javascriptmacro",
+        "icon": "$(run)"
       },
       {
         "command": "macros.run.mru",
@@ -102,7 +104,40 @@
           }
         }
       }
-    ]
+    ],
+    "languages": [
+      {
+        "id": "javascriptmacro",
+        "aliases": [
+          "JavaScript Macro"
+        ],
+        "configuration": "./resources/language/javascriptmacro-language-configuration.json",
+        "extensions": [
+          ".macro.js"
+        ]
+      }
+    ],
+    "grammars": [
+      {
+        "language": "javascriptmacro",
+        "scopeName": "source.js",
+        "path": "./resources/language/javascriptmacro.tmLamguage.json"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "macros.debug.activeEditor",
+          "group": "navigation",
+          "when": "!inDebugMode && editorLangId == javascriptmacro && resourceScheme != untitled"
+        },
+        {
+          "command": "macros.run.activeEditor",
+          "group": "navigation",
+          "when": "editorLangId == javascriptmacro"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "node esbuild.mjs",

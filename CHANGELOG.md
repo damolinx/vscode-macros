@@ -1,6 +1,8 @@
 # Changelog
 
 ## 0.1.6
+- Define `javascriptmacro` language using `.macro.js` extension.
+  - Initial imoplementation, missing language server.
 - Document macro keybindings.
 - Add support for tokens in macro paths to improve keybinding scenarios.
 - Add `References` macro example.
