@@ -14,29 +14,35 @@ export async function setupSourceDirectory(context: vscode.ExtensionContext, pat
 
   const encoder = new TextEncoder();
   const edit = new vscode.WorkspaceEdit();
+  const updatingFiles = (await Promise.all([
+    update(uri, GLOBALS_RESOURCE, 'global.d.ts'),
+    update(uri, JSCONFIG_RESOURCE, 'jsconfig.json')
+  ])).some(result => result);
 
-  let updatingFiles = false;
-  for (const [source, target] of
-    [[GLOBALS_RESOURCE, 'global.d.ts'], [JSCONFIG_RESOURCE, 'jsconfig.json']]) {
+  if (!updatingFiles) {
+    vscode.window.showInformationMessage('All files are up-to-date.');
+    return; // Nothing to update.
+  }
 
+  if (await vscode.workspace.applyEdit(edit)) {
+    vscode.window.showInformationMessage('Updated files to the latest versions.');
+  }
+
+  async function update(uri: vscode.Uri, source: string, target: string): Promise<boolean> {
     const [currentContents, newContents] = await Promise.all([
       vscode.workspace.openTextDocument(vscode.Uri.joinPath(uri, target))
         .then((d) => d.getText(), () => undefined),
       readFile(context, source),
     ]);
-
-    if (currentContents !== newContents) {
-      updatingFiles = true;
-      edit.createFile(vscode.Uri.joinPath(uri, target), {
-        overwrite: true,
-        contents: encoder.encode(newContents),
-      });
+    if (currentContents === newContents) {
+      return false;
     }
-  }
 
-  if (!updatingFiles) {
-    vscode.window.showInformationMessage('All files used to support macro development are up-to-date.');
-  } else if (await vscode.workspace.applyEdit(edit)) {
-    vscode.window.showInformationMessage('Updated files used to support macro development to the latest version.');
+    edit.createFile(vscode.Uri.joinPath(uri, target), {
+      overwrite: true,
+      contents: encoder.encode(newContents),
+    });
+
+    return true;
   }
 }
