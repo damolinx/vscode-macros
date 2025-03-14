@@ -2,6 +2,7 @@
 
 ## 0.1.7
 - Update macro selection picker.
+- Add initialization CodeLens for `javascriptmacro` editors.
 
 ## 0.1.6
 - Define `javascriptmacro` language using `.macro.js` extension.
