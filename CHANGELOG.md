@@ -2,7 +2,7 @@
 
 ## 0.1.6
 - Define `javascriptmacro` language using `.macro.js` extension.
-  - Initial imoplementation, missing language server.
+  - Initial implementation, missing language server.
 - Document macro keybindings.
 - Add support for tokens in macro paths to improve keybinding scenarios.
 - Add `References` macro example.
@@ -20,10 +20,10 @@
 
 ## 0.1.2
 - Prefer `TextDocument` version of macro content (over file-system version).
-  - Allows to run untitled editors rather than forcing a save. 
-- Improve extension package: 
+  - Allows running untitled editors rather than forcing a save.
+- Improve extension package:
   - Minifying makes it 17KB.
-  - Exclude dev-only files. 
+  - Exclude dev-only files.
 
 ## 0.1.1
 - Ignore FileNotFound on missing source directories.
@@ -51,7 +51,7 @@
 
 ## 0.0.5
 - Initial `macros` API definition.
-- Fix handling of untitled JavaScript documents. 
+- Fix handling of untitled JavaScript documents.
 - Command updates:
   - Add `New Macro…` command.
   - Add `Debug *` family of commands.
@@ -61,10 +61,10 @@
 
 ## 0.0.3
 - Make `extensionKind: workspace` only.
-- Add support for `${userHome}` and `${workspaceFolder}` variables in `macros.sourceDirectories` setting
+- Add support for `${userHome}` and `${workspaceFolder}` variables in `macros.sourceDirectories` setting.
 
 ## 0.0.2
-- Add "Source Directories" concept create macro libraries.
+- Add "Source Directories" concept to create macro libraries.
 
 ## 0.0.1
 - Initial MVP version.
