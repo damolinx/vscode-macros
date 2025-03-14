@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.7
+- Update macro selection picker.
+
 ## 0.1.6
 - Define `javascriptmacro` language using `.macro.js` extension.
   - Initial implementation, missing language server.

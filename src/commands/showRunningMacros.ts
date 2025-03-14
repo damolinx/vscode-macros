@@ -36,7 +36,7 @@ function pickRunningMacro(runInfos: RunInfo[]): Promise<RunInfo | undefined> {
     };
     const stopButton = {
       iconPath: new vscode.ThemeIcon('debug-stop'),
-      tooltip: 'Request Macro To Stop',
+      tooltip: 'Request To Stop',
     };
     const buttons = [stopButton, openButton];
 
