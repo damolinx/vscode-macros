@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
+import { FileMacro } from './fileMacro';
+import { getId, MacroId } from './macro';
 import { RunInfo, Runner } from './runner';
-import { Macro, MacroId } from './macro';
 
 export class Manager implements vscode.Disposable {
   private readonly macros: Map<MacroId, Runner>;
@@ -21,10 +22,10 @@ export class Manager implements vscode.Disposable {
   }
 
   private getRunner(uri: vscode.Uri): Runner {
-    const macroId = Macro.getId(uri);
+    const macroId = getId(uri);
     let runner = this.macros.get(macroId);
     if (!runner) {
-      const macro = new Macro(uri, macroId);
+      const macro = new FileMacro(uri);
       runner = new Runner(macro);
       runner.onRun((runInfo) => this.runEventEmitter.fire(runInfo));
       runner.onStop((runInfo) => this.stopEventEmitter.fire(runInfo));

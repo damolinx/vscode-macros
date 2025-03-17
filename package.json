@@ -50,6 +50,11 @@
         "category": "Macros"
       },
       {
+        "command": "macros.new.macro.repl",
+        "title": "Create New REPL Terminal",
+        "category": "Macros"
+      },
+      {
         "command": "macros.open",
         "title": "Open Macro…",
         "category": "Macros"
@@ -101,6 +106,11 @@
               "minLength": 1
             },
             "uniqueItems": true
+          },
+          "macros.terminal.history": {
+            "type": "number",
+            "description": "Controls the number of recently used commands to keep in the terminal command history. Set to 0 to disable terminal command history.",
+            "default": 100
           }
         }
       }

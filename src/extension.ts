@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { createMacro, updateActiveEditor } from './commands/createMacro';
+import { createMacroRepl } from './commands/createMacroRepl';
 import { debugActiveEditor, debugMacro } from './commands/debugMacro';
 import { openMacro } from './commands/openMacro';
 import { runActiveEditor, runMacro } from './commands/runMacro';
@@ -36,6 +37,7 @@ export async function activate(context: vscode.ExtensionContext) {
     r('macros.debug.activeEditor', () => debugActiveEditor(manager)),
     r('macros.new.macro', () => createMacro(context)),
     r('macros.new.macro.activeEditor', () => updateActiveEditor(context)),
+    r('macros.new.macro.repl', () => createMacroRepl()),
     r('macros.open', () => openMacro()),
     r('macros.run', (pathOrUri?: string | vscode.Uri) => runMacro(manager, pathOrUri)),
     r('macros.run.activeEditor', () => runActiveEditor(manager)),
