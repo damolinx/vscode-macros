@@ -1,14 +1,21 @@
 # Changelog
 
+## 0.1.8
+- Update REPL:
+  - Add history support (UP/DOWN) and clear line (ESC).
+  - Object expressions (e.g., `{a: 1}`) are evaluated as such, not as blocks.
+  - Object results are printed closer to their expected representation.
+- Fix: `persistent` does not update saved root-scoped variables.
+
 ## 0.1.7
-- Add initialization CodeLens for `javascriptmacro` editors.
-  - Initial implementation, missing escaoe-actions.
-- Add `Create New REPL Terminal` command, and REPL Terminal. 
+- Add initialization CodeLens for `javascriptmacro` editors:
+  - Initial implementation, missing escape actions.
+- Add `Create New REPL Terminal` command and REPL Terminal.
 - Update macro selection picker.
-- Fix: `persistent` does not root-scoped variables.
+- Fix: `persistent` does not save root-scoped variables.
 
 ## 0.1.6
-- Define `javascriptmacro` language using `.macro.js` extension.
+- Define `javascriptmacro` language using the `.macro.js` extension:
   - Initial implementation, missing language server.
 - Document macro keybindings.
 - Add support for tokens in macro paths to improve keybinding scenarios.
@@ -20,28 +27,28 @@
 - Improve supporting development files.
 
 ## 0.1.4
-- Fix: `WorkspaceEditor` unexpected behavior means no files are updated by `Setup Source Directory for Development`.
+- Fix: `WorkspaceEditor` unexpected behavior where no files are updated by `Setup Source Directory for Development`.
 
 ## 0.1.3
 - Add `Setup Source Directory for Development` command to add optional files to support macro development.
 
 ## 0.1.2
-- Prefer `TextDocument` version of macro content (over file-system version).
+- Prefer `TextDocument` version of macro content (over file-system version):
   - Allows running untitled editors rather than forcing a save.
 - Improve extension package:
-  - Minifying makes it 17KB.
+  - Minifying reduces it to 17KB.
   - Exclude dev-only files.
 
 ## 0.1.1
-- Ignore FileNotFound on missing source directories.
+- Ignore `FileNotFound` on missing source directories.
 
 ## 0.1.0
-- Completes basic scenarios.
+- Complete basic scenarios.
 - `.cjs` is now supported.
 
 ## 0.0.9
-- Macro selection dropdown remembers last selection.
-- Error dialog for `persistent` macros allows to `Reset State`.
+- Macro selection dropdown remembers the last selection.
+- Error dialog for `persistent` macros allows `Reset State`.
 - Add support for cooperative macro stop via a `CancellationToken`.
 
 ## 0.0.8
@@ -50,8 +57,8 @@
 - Open-macro dropdown is configurable.
 
 ## 0.0.7
-- `[Run|Debug] Macro…` commands take in an optional `pathOrUri` argument.
-- Better error dialog: `Rerun`, `Details`, navigation to error location.
+- `[Run|Debug] Macro…` commands take an optional `pathOrUri` argument.
+- Better error dialog: `Rerun`, `Details`, and navigation to the error location.
 
 ## 0.0.6
 - `[Run|Debug] Macro…` commands subsume `[Run|Debug] Macro (Source Directories)` commands to simplify UX.
@@ -68,7 +75,7 @@
 
 ## 0.0.3
 - Make `extensionKind: workspace` only.
-- Add support for `${userHome}` and `${workspaceFolder}` variables in `macros.sourceDirectories` setting.
+- Add support for `${userHome}` and `${workspaceFolder}` variables in the `macros.sourceDirectories` setting.
 
 ## 0.0.2
 - Add "Source Directories" concept to create macro libraries.
