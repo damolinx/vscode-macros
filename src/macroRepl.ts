@@ -16,7 +16,7 @@ export class MacroRepl implements Macro, vscode.Pseudoterminal {
     this.history = [];
     this.onDidWriteEmitter = new vscode.EventEmitter();
     this.runner = new Runner(this);
-    this.shortName = `repl${MacroRepl.id}`;
+    this.shortName = `macro${MacroRepl.id++}`;
     this.uri = vscode.Uri.from({ scheme: 'macro', authority: 'terminal', path: `/${this.shortName}` });
   }
 
