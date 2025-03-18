@@ -7,9 +7,13 @@ export function getId(uri: vscode.Uri): MacroId {
   return uri.toString(true);
 }
 
+export interface MacroCode {
+  readonly code: string;
+  readonly options: Readonly<MacroOptions>;
+}
+
 export interface Macro {
-  getCode(): string | Promise<string>;
-  getCodeAndOptions(): { code: string; options: MacroOptions; } | Promise<{ code: string; options: MacroOptions; }>;
+  getCode(): Promise<MacroCode> | MacroCode;
   readonly shortName: string;
   readonly uri: vscode.Uri;
 }

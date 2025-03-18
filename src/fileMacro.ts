@@ -1,16 +1,23 @@
 import * as vscode from 'vscode';
 import { basename, extname } from 'path';
-import { Macro } from './macro';
-import { MacroOptions, parseOptions } from './macroOptions';
+import { Macro, MacroCode } from './macro';
+import { parseOptions } from './macroOptions';
 
 export class FileMacro implements Macro {
+  public readonly shortName: string;
   public readonly uri: vscode.Uri;
 
   constructor(uri: vscode.Uri) {
+    this.shortName = basename(uri.fsPath, extname(uri.fsPath));
     this.uri = uri;
   }
 
-  public async getCode(): Promise<string> {
+  public async getCode(): Promise<MacroCode> {
+    const code = await this.readFile();
+    return { code, options: parseOptions(code) };
+  }
+
+  public async readFile(): Promise<string> {
     let code: string;
     const openDocument = await vscode.workspace.openTextDocument(this.uri);
     if (openDocument) {
@@ -20,18 +27,5 @@ export class FileMacro implements Macro {
       code = bytes.toString();
     }
     return code;
-  }
-
-  public async getCodeAndOptions(): Promise<{ code: string; options: MacroOptions }> {
-    const code = await this.getCode();
-    return {
-      code,
-      options: parseOptions(code)
-    };
-  }
-
-  public get shortName(): string {
-    const path = this.uri.fsPath;
-    return basename(path, extname(path));
   }
 }

@@ -71,7 +71,7 @@ export class Runner implements vscode.Disposable {
 
   /* eslint-disable @typescript-eslint/no-explicit-any */
   public async run(withErrorHandling = true): Promise<any> {
-    const { code, options } = await this.macro.getCodeAndOptions();
+    const { code, options } = await this.macro.getCode();
     if (options.singleton && this.executions.size > 0) {
       throw new Error(`${this.macro.shortName} is a singleton and is already running.`);
     }
@@ -96,11 +96,10 @@ export class Runner implements vscode.Disposable {
         const initialKeys = Object.keys(context).filter(k => !k.startsWith('__'));
         result = await vm.runInContext(code, context, scriptOptions);
         const currentKeys = Object.keys(context).filter(k => !k.startsWith('__'));
-        const addedKeys = [...currentKeys].filter(key => !initialKeys.includes(key));
         const removedKeys = [...initialKeys].filter(key => !currentKeys.includes(key));
 
         if (this.sharedContext) {
-          for (const key of addedKeys) {
+          for (const key of currentKeys) {
             this.sharedContext[key] = context[key];
           }
           for (const key of removedKeys) {
