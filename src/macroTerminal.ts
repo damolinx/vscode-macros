@@ -25,10 +25,13 @@ export class MacroTerminal implements vscode.Pseudoterminal {
     this.history = [''];
     this.onDidWriteEmitter = new vscode.EventEmitter();
     this.runner = new Runner({
-      getCode: () => ({
-        code: this.history.length ? `(${this.history.at(-1)})` : '',
-        options: { persistent: true }
-      }),
+      getCode: () => {
+        const code = this.history.at(-1) ?? '';
+        return {
+          code: code.startsWith('{') ? `(${code})` : code,
+          options: { persistent: true }
+        };
+      },
       shortName: `macro${id}`,
       uri: vscode.Uri.parse(`macro://terminal/macro${id++}`),
     });
@@ -91,8 +94,11 @@ export class MacroTerminal implements vscode.Pseudoterminal {
 
       case CARRIAGE_RETURN:
         this.historyIndex = undefined;
+        statement = this.history.at(-1)?.trim() ?? '';
+        this.history[this.history.length - 1] = statement;
+
         if (this.history.length > 1) {
-          const duplicateIndex = this.history.lastIndexOf(this.history.at(-1)!, this.history.length - 2);
+          const duplicateIndex = this.history.lastIndexOf(statement, this.history.length - 2);
           if (duplicateIndex !== -1) {
             this.history.splice(duplicateIndex, 1);
           }
@@ -101,7 +107,6 @@ export class MacroTerminal implements vscode.Pseudoterminal {
           }
         }
 
-        statement = this.history.at(-1)?.trim();
         if (!statement) {
           this.history[this.history.length - 1] = '';
           this.fireOnDidWrite(NEWLINE, PROMPT);
@@ -138,13 +143,12 @@ export class MacroTerminal implements vscode.Pseudoterminal {
 
     /* eslint-disable @typescript-eslint/no-explicit-any */
     function convertToString(value: any): string {
-      switch (typeof value) {
-        case 'string':
-          return `'${value}'`;
-        case 'object':
-          return JSON.stringify(value);
-        default:
-          return String(value);
+      if (value === undefined) {
+        return String(value);
+      } else if (typeof value === 'function') {
+        return `\x1B[3m${value}\x1B[0m`;
+      } else {
+        return JSON.stringify(value);
       }
     }
     /* eslint-enable @typescript-eslint/no-explicit-any */
