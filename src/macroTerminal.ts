@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { inspect } from 'util';
 import { Runner } from './runner';
 
 const ARROW_DOWN = '\x1b[B';
@@ -9,6 +10,8 @@ const BACKSPACE = '\x7f';
 const CARRIAGE_RETURN = '\x0d';
 const CLEAR_LINE = '\x1b[2K\x1b[G';
 const ESCAPE = '\x1b';
+// const MOVE_END_OF_CURRENT_LINE = '\x1b[0K';
+// const MOVE_PREVIOUS_LINE = '\x1b[F';
 const NEWLINE = CARRIAGE_RETURN + '\x0a';
 const PROMPT = '\x1b[1m\x1b[30m> \x1b[0m';
 
@@ -16,6 +19,7 @@ let id = 1;
 
 export class MacroTerminal implements vscode.Pseudoterminal {
 
+  private columns?: number;
   private readonly history: string[];
   private historyIndex?: number;
   private readonly onDidWriteEmitter: vscode.EventEmitter<string>;
@@ -42,8 +46,16 @@ export class MacroTerminal implements vscode.Pseudoterminal {
     this.runner.dispose();
   }
 
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+  private convertToString(value: any): string {
+    return inspect(value, {
+      breakLength: this.columns,
+      colors: true,
+    });
+  }
+
   private fireOnDidWrite(...args: string[]) {
-    args.forEach(arg => this.onDidWriteEmitter.fire(arg));
+    args.forEach(arg => this.onDidWriteEmitter.fire(arg.replaceAll('\n', NEWLINE)));
   }
 
   public handleInput(data: string): void {
@@ -114,10 +126,10 @@ export class MacroTerminal implements vscode.Pseudoterminal {
         }
         this.runner.run(false)
           .then((value) => {
-            this.fireOnDidWrite(NEWLINE, convertToString(value));
+            this.fireOnDidWrite(NEWLINE, this.convertToString(value));
           })
           .catch((reason) => {
-            this.fireOnDidWrite(NEWLINE, `\x1b[31m${reason}\x1b[0m`);  // Red
+            this.fireOnDidWrite(NEWLINE, `\x1b[31m${reason}\x1b[0m`); // Red
           })
           .finally(() => {
             this.history.push('');
@@ -140,18 +152,6 @@ export class MacroTerminal implements vscode.Pseudoterminal {
         }
         break;
     }
-
-    /* eslint-disable @typescript-eslint/no-explicit-any */
-    function convertToString(value: any): string {
-      if (value === undefined) {
-        return String(value);
-      } else if (typeof value === 'function') {
-        return `\x1B[3m${value}\x1B[0m`;
-      } else {
-        return JSON.stringify(value);
-      }
-    }
-    /* eslint-enable @typescript-eslint/no-explicit-any */
   }
 
   private get maxHistorySize(): number {
@@ -162,7 +162,10 @@ export class MacroTerminal implements vscode.Pseudoterminal {
     return this.onDidWriteEmitter.event;
   }
 
-  public open(): void {
+  public open(initialDimensions?: vscode.TerminalDimensions): void {
+    if (initialDimensions) {
+      this.columns = initialDimensions.columns;
+    }
     this.onDidWriteEmitter.fire(PROMPT);
   }
 }
