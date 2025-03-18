@@ -162,10 +162,11 @@ export class MacroTerminal implements vscode.Pseudoterminal {
     return this.onDidWriteEmitter.event;
   }
 
-  public open(initialDimensions?: vscode.TerminalDimensions): void {
-    if (initialDimensions) {
-      this.columns = initialDimensions.columns;
-    }
+  public open(): void {
     this.onDidWriteEmitter.fire(PROMPT);
+  }
+
+  public setDimensions(dimensions: vscode.TerminalDimensions): void {
+    this.columns = dimensions.columns;
   }
 }
