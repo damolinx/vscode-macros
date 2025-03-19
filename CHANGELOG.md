@@ -3,7 +3,7 @@
 ## 0.1.9
 - Update REPL:
   - Switch to Node.js's `inspect` for outputting results, improving overall UX and ensuring safety, especially for objects with reference cycles.
-  - Properly handle `\n` when writing output to the terminal.
+  - Handle `\n` when writing output to the terminal.
 
 ## 0.1.8
 - Update REPL:
