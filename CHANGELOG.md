@@ -1,9 +1,10 @@
 # Changelog
 
+## 0.1.10
+- Rewrite Macro REPL to use Node.js' `repl`, providing a fully functional REPL.
+
 ## 0.1.9
-- Update REPL:
-  - Switch to Node.js's `inspect` for outputting results, improving overall UX and ensuring safety, especially for objects with reference cycles.
-  - Handle `\n` when writing output to the terminal.
+- Update REPL to use Node.js' `inspect` to print results and handle incomplete new-line when writing results.
 
 ## 0.1.8
 - Update REPL:

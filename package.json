@@ -106,11 +106,6 @@
               "minLength": 1
             },
             "uniqueItems": true
-          },
-          "macros.terminal.history": {
-            "type": "number",
-            "description": "Controls the number of recently used commands to keep in the terminal command history. Set to 0 to disable terminal command history.",
-            "default": 100
           }
         }
       }

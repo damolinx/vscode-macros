@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as vm from 'vm';
 import { showMacroErrorMessage } from './common/error';
 import { Macro } from './macro';
-import { MacrosApi } from './macrosApi';
+import { initalizeContext, initializeMacrosApi } from './macrosApi';
 
 export type RunId = string;
 
@@ -37,36 +37,17 @@ export class Runner implements vscode.Disposable {
     let context: vm.Context;
     let name: string;
     if (shouldPersist) {
-      this.sharedContext ||= createContext();
+      this.sharedContext ||= initalizeContext({});
       context = { ...this.sharedContext };
       name = 'shared-context';
     } else {
       delete this.sharedContext;
-      context = createContext();
+      context = initalizeContext({});
       name = 'context';
     }
 
-    context.__cancellationToken = runInfo.cts.token;
-    context.__runId = runInfo.runId;
+    initializeMacrosApi(context, runInfo.macro.uri, runInfo.runId, runInfo.cts.token);
     return vm.createContext(context, { name });
-
-    function createContext() {
-      return ({
-        clearInterval,
-        clearTimeout,
-        fetch,
-        global,
-        macros: {
-          macro: {
-            uri: runInfo.macro.uri
-          }
-        } as MacrosApi,
-        require,
-        setInterval,
-        setTimeout,
-        vscode,
-      });
-    }
   }
 
   /* eslint-disable @typescript-eslint/no-explicit-any */

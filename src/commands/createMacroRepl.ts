@@ -1,12 +1,17 @@
 import * as vscode from 'vscode';
 import { MacroTerminal } from '../macroTerminal';
 
+let id = 0;
+
 export async function createMacroRepl(preserveFocus?: boolean): Promise<vscode.Terminal> {
+  const macroTerminal = new MacroTerminal(`macro${++id}`);
   const terminal = await vscode.window.createTerminal({
     iconPath: new vscode.ThemeIcon('run-all'),
     name: 'macro',
-    pty: new MacroTerminal(),
+    pty: macroTerminal,
   });
+  macroTerminal.onDidClose(() => terminal.dispose());
+
   terminal.show(preserveFocus);
   return terminal;
 }

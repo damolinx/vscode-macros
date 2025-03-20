@@ -40,7 +40,7 @@ All that is required is to keybind the `macros.run` command with a single argume
    ]
    ```
 
-## Commands 
+## Commands
 
 ### Debug Macros
 See [Debugging a Macro](#debugging-a-macro) for additional information.
@@ -48,6 +48,8 @@ See [Debugging a Macro](#debugging-a-macro) for additional information.
 * `Debug Macro…`: select a macro file to debug. Provides access to configured `macros.sourceDirectories`.
 
 ### Development
+* `Create New REPL Terminal`: start a REPL whose context matches the one used when running macros.
+  * Use `.help` for list of available commands.
 * `Setup Source Directory for Development`: adds or updates __optional__ files used to improve IntelliSense on macro files.
 
 ### Manage Macros
@@ -63,8 +65,8 @@ See [Debugging a Macro](#debugging-a-macro) for additional information.
 The following references are available from the global context of your macro:
 * `vscode`: symbol that provides access to the [VS Code APIs](https://code.visualstudio.com/api/references/vscode-api).
 * `macros`: symbol that provides access to this extension's API (see [Macros API](#macros-api)). 
-* `require`: method that allows load [NodeJS libraries](https://nodejs.org/api/all.html). Version is same as your installed VS Code's (see `About` option).
-* Other: `clearInterval`, `clearTimeout`, `fetch`, `global`, `setInterval`, `setTimeout`.
+* `require`: method that allows load [Node.js libraries](https://nodejs.org/api/all.html). Version is same as your installed VS Code's (see `About` option).
+* Other: `atob`, `btoa`, `clearInterval`, `clearTimeout`, `crypto`, `fetch`, `global`, `require`, `setInterval`, `setTimeout`.
 
 ### `macros` API
 * `macro`: Provides access to current macro.
