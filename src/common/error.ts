@@ -27,7 +27,7 @@ export function showMacroErrorMessage(runner: Runner, macro: Macro, macroOptions
   }
 
   function parseStack(stack: string): vscode.Range | undefined {
-    const firstMatch = stack.match(/.+?(?<line>\d+)(:(?<offset>\d+))?$/m);
+    const firstMatch = stack.match(/.+?:(?<line>\d+)(:(?<offset>\d+))?$/m);
     let position: vscode.Position | undefined;
     if (firstMatch) {
       const { line, offset } = firstMatch.groups!;
