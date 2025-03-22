@@ -1,29 +1,26 @@
-/** @returns {Promise<Array<InstanceType<typeof vscode.Location>> | undefined> } */
-async function getReferences() {
+async function main() {
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
+    vscode.window.showInformationMessage("No active editor");
     return;
   }
-  const { document, selection: { active: position } } = editor;
 
-  /** @type {Array<InstanceType<typeof vscode.Location>>} */
+  const { document: { uri }, selection: { active: position } } = editor;
   const references = await vscode.commands.executeCommand(
-    'vscode.executeReferenceProvider',
-    editor.document.uri,
-    position
-  );
+    'vscode.executeReferenceProvider', uri, position);
 
-  return references;
+  if (!references.length) {
+    vscode.window.showInformationMessage("No references found");
+    return;
+  }
+
+  const content = references
+    .map(({ uri, range: { start } }) =>
+      uri.with({ fragment: `${start.line + 1}:${start.character + 1}` }))
+    .join("\n");
+
+  const resultsDocument = await vscode.workspace.openTextDocument({ content });
+  await vscode.window.showTextDocument(resultsDocument);
 }
 
-getReferences().then((refs) => {
-  if (!refs?.length) {
-    vscode.window.showInformationMessage(refs ? "No references found" : "No active editor");
-  } else {
-    const content = refs
-      .map(({ uri, range: { start } }) => uri.with({ fragment: `${start.line + 1}:${start.character + 1}` }).toString(true))
-      .join("\n");
-    vscode.workspace.openTextDocument({ content })
-      .then(vscode.window.showTextDocument);
-  }
-});
+main();
