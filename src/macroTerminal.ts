@@ -1,10 +1,13 @@
 import * as vscode from 'vscode';
-import { REPLCommand, REPLServer, start as startREPL } from 'repl';
+import { REPLServer, start as startREPL } from 'repl';
 import { PassThrough } from 'stream';
 import { Context } from 'vm';
+import { createMacro } from './commands/createMacro';
+import { selectMacroFile } from './common/selectMacroFile';
 import { initalizeContext, initializeMacrosApi } from './macrosApi';
 
 export class MacroTerminal implements vscode.Pseudoterminal {
+  private readonly context: vscode.ExtensionContext;
   private readonly cts: vscode.CancellationTokenSource;
   private readonly disposables: vscode.Disposable[];
   private readonly input: PassThrough;
@@ -14,7 +17,8 @@ export class MacroTerminal implements vscode.Pseudoterminal {
   private readonly output: PassThrough & { columns?: number; rows?: number };
   private repl?: REPLServer;
 
-  constructor(name: string) {
+  constructor(context: vscode.ExtensionContext, name: string) {
+    this.context = context;
     this.cts = new vscode.CancellationTokenSource();
     this.input = new PassThrough();
     this.name = name;
@@ -23,7 +27,6 @@ export class MacroTerminal implements vscode.Pseudoterminal {
     this.output = new PassThrough({ encoding: 'utf-8' })
       .on('data', (chunk: string) => {
         this.onDidWriteEmitter.fire(chunk.replaceAll('\n', '\r\n'));
-        console.log('>>>', chunk);
       });
 
     this.disposables = [
@@ -65,17 +68,50 @@ export class MacroTerminal implements vscode.Pseudoterminal {
     }).on('exit', () => {
       this.onDidCloseEmitter.fire();
       this.close();
+    }) as REPLServer & { history: string[] };
+
+    // Override to provide sane help 
+    const originalBreak = repl.commands.break;
+    repl.defineCommand('break', {
+      help: 'Break from multi-line editing mode',
+      action: (text) => originalBreak?.action.call(repl, text)
     });
 
-    const writableRepl = (repl.commands as NodeJS.Dict<REPLCommand>);
-    delete writableRepl.break;
-    delete writableRepl.load;
-    delete writableRepl.save;
-
+    // Override to setup context
+    const originalClear = repl.commands.clear;
     repl.defineCommand('clear', {
       help: 'Reset context',
-      action: (_text) => {
+      action: (text) => {
+        originalClear?.action.call(repl, text);
         this.setupContext(repl.context);
+      }
+    });
+
+    // Override to connect to `selectMacroFile`
+    const originalLoad = repl.commands.load;
+    repl.defineCommand('load', {
+      help: 'Load and evaluate a macro file',
+      action: async () => {
+        const file = await selectMacroFile({ hideOpenPerItem: true });
+        if (file) {
+          originalLoad?.action.call(repl, file.fsPath);
+        } else {
+          this.output.write('Nothing to load\n');
+        }
+        repl.displayPrompt();
+      }
+    });
+
+    // Override to save directly to an untitled editor 
+    repl.defineCommand('save', {
+      help: 'Save all evaluated commands into a new editor',
+      action: async () => {
+        const content = repl.history.filter(s => !s?.startsWith('.')).reverse().join('\n');
+        if (content) {
+          await createMacro(this.context, content, { preserveFocus: true });
+        } else {
+          this.output.write('Nothing to save\n');
+        }
         repl.displayPrompt();
       }
     });

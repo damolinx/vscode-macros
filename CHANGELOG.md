@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.11
+- REPL gains VS Code-integrated `.load` and `.save` commands.
+
 ## 0.1.10
 - Rewrite Macro REPL to use Node.js' `repl`, providing a fully functional REPL.
 

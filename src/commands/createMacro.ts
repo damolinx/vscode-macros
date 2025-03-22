@@ -4,8 +4,8 @@ import { activeMacroEditor } from '../common/activeMacroEditor';
 import { MACRO_LANGUAGE } from '../constants';
 import { templates } from '../macroTemplates';
 
-export async function createMacro(context: vscode.ExtensionContext): Promise<vscode.TextEditor | undefined> {
-  const content = await getTemplateContent(context);
+export async function createMacro(context: vscode.ExtensionContext, defaultContent?: string, options?: vscode.TextDocumentShowOptions): Promise<vscode.TextEditor | undefined> {
+  const content = defaultContent ?? await getTemplateContent(context);
   if (!content) {
     return;
   }
@@ -14,17 +14,17 @@ export async function createMacro(context: vscode.ExtensionContext): Promise<vsc
     language: MACRO_LANGUAGE,
     content,
   });
-  const editor = await vscode.window.showTextDocument(document);
+  const editor = await vscode.window.showTextDocument(document, options);
   return editor;
 }
 
-export async function updateActiveEditor(context: vscode.ExtensionContext): Promise<void> {
+export async function updateActiveEditor(context: vscode.ExtensionContext, defaultContent?: string,): Promise<void> {
   const editor = await activeMacroEditor(false);
   if (!editor) {
     return;
   }
 
-  const content = await getTemplateContent(context);
+  const content = defaultContent ?? await getTemplateContent(context);
   if (!content) {
     return;
   }

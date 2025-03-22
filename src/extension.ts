@@ -35,9 +35,9 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     r('macros.debug', (pathOrUri?: string | vscode.Uri) => debugMacro(manager, pathOrUri)),
     r('macros.debug.activeEditor', () => debugActiveEditor(manager)),
-    r('macros.new.macro', () => createMacro(context)),
+    r('macros.new.macro', (content?: string) => createMacro(context, content)),
     r('macros.new.macro.activeEditor', () => updateActiveEditor(context)),
-    r('macros.new.macro.repl', () => createMacroRepl()),
+    r('macros.new.macro.repl', () => createMacroRepl(context)),
     r('macros.open', () => openMacro()),
     r('macros.run', (pathOrUri?: string | vscode.Uri) => runMacro(manager, pathOrUri)),
     r('macros.run.activeEditor', () => runActiveEditor(manager)),
