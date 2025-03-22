@@ -2,6 +2,7 @@
 
 ## 0.1.11
 - REPL gains VS Code-integrated `.load` and `.save` commands.
+- Statusbar item shows running macros on click.
 - Fix: Error location calculated incorrectly in some cases.
 
 ## 0.1.10

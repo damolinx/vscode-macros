@@ -8,6 +8,7 @@ export class StatusBarItem implements vscode.Disposable {
 
   constructor(manager: Manager) {
     this.item = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000);
+    this.item.command = 'macros.run.show';
     this.item.text = '$(run-all)';
     this.manager = manager;
 
