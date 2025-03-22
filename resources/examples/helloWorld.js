@@ -1,9 +1,11 @@
-// @macro:singleton
-const { basename } = require('path');
+// @macro:persistent
+var basename;
+basename ||= require('path').basename;
 
-async function sayHello() {
-  const from = basename(macros.macro.uri.fsPath);
-  return vscode.window.showInformationMessage(`Hello, World! From ${from}`, { modal: true });
-}
+var invocationCount;
+invocationCount = invocationCount === undefined ? 1 : invocationCount + 1;
 
-sayHello();
+vscode.window.showInformationMessage(
+  `Hello, World! This is ${basename(macros.macro.uri.fsPath)}. This message has been displayed ${invocationCount} time(s).`,
+  { modal: true }
+);

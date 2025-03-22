@@ -2,17 +2,17 @@
   "templates": [
     {
       "label": "Cancellation",
-      "description": "Support macro cancellation flow",
+      "description": "Support macro cancellation",
       "path": "cancellation.js"
     },
     {
       "label": "Hello World!",
-      "description": "Macro demonstrating basic concepts",
+      "description": "A simple macro",
       "path": "helloWorld.js"
     },
     {
       "label": "References",
-      "description": "Query the language service for all references to the symbol at current location.",
+      "description": "Query a language service for symbol references",
       "path": "references.js"
     },
     {
