@@ -63,6 +63,7 @@ export class MacroTerminal implements vscode.Pseudoterminal {
     const repl = startREPL({
       input: this.input,
       output: this.output,
+      prompt: '\x1b[90m≫ \x1b[0m', // Changed to dark gray formatting
       terminal: true,
       useColors: true,
     }).on('exit', () => {
