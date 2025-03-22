@@ -3,6 +3,7 @@
 ## 0.1.11
 - REPL gains VS Code-integrated `.load` and `.save` commands.
 - Statusbar item shows running macros on click.
+- `Reset Context` CodeLens on `@macro:persistent` macros. 
 - Fix: Error location calculated incorrectly in some cases.
 
 ## 0.1.10
