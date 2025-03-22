@@ -41,7 +41,7 @@ export function showMacroErrorMessage(runner: Runner, macro: Macro, macroOptions
   async function showErrorMessage(runner: Runner, message: string, stack?: string, selection?: vscode.Range, modal = false): Promise<void> {
     const actions: { title: string; execute: () => Thenable<unknown> | void }[] = [
       {
-        title: 'Open',
+        title: selection ? 'Go to Error Location' : 'Open Macro',
         execute: () => showTextDocument(macro.uri, { selection })
       },
       {
