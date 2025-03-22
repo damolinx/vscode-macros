@@ -12,8 +12,13 @@
     },
     {
       "label": "Hello World!",
-      "description": "A simple macro",
+      "description": "'Hello World' macro",
       "path": "helloWorld.js"
+    },
+    {
+      "label": "Persistent Hello World!",
+      "description": "Leverage a persistent context",
+      "path": "persistent.js"
     },
     {
       "label": "References",
