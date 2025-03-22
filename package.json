@@ -69,7 +69,7 @@
         "title": "Run Active File as Macro",
         "category": "Macros",
         "enablement": "editorLangId == javascript || editorLangId == javascriptmacro",
-        "icon": "$(run)"
+        "icon": "$(run-all)"
       },
       {
         "command": "macros.run.mru",
