@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as vm from 'vm';
 import { showMacroErrorMessage } from './common/error';
 import { Macro } from './macro';
-import { initalizeContext, initializeMacrosApi, MacroContext } from './macrosApi';
+import { DisposableLikes, initalizeContext, initializeMacrosApi, MacroContext, MacroInitParams } from './macrosApi';
 import { RunId, RunInfo } from './runInfo';
 
 export class Runner implements vscode.Disposable {
@@ -26,45 +26,46 @@ export class Runner implements vscode.Disposable {
     vscode.Disposable.from(this.runEventEmitter, this.stopEventEmitter).dispose();
   }
 
-  private getContext({ cts: { token }, macro: { uri }, runId }: RunInfo, shouldPersist?: boolean): vm.Context {
-    const macroParams = { runId, token, uri };
+  private getContext(params: MacroInitParams & { persistent?: boolean }): vm.Context {
     let context: MacroContext;
-    let name: string;
+    let name = `context-${params.runId}`;
 
-
-    if (shouldPersist) {
-      if (!this.sharedContext) {
-        this.sharedContext = initalizeContext({}, macroParams);
-        context = this.sharedContext;
+    if (params.persistent) {
+      name += '(shared)';
+      if (this.sharedContext) {
+        initializeMacrosApi(this.sharedContext, params);
       } else {
-        context = this.sharedContext;
-        initializeMacrosApi(context, macroParams);
+        this.sharedContext = initalizeContext({}, params);
       }
-      name = `shared-context (${runId})`;
+      context = this.sharedContext;
     } else {
       delete this.sharedContext;
-      context = initalizeContext({}, macroParams);
-      name = `context (${runId})`;
+      context = initalizeContext({}, params);
     }
 
     return vm.createContext(context, { name });
   }
 
-   
   public async run(withErrorHandling = true): Promise<any> {
     const { code, options } = await this.macro.getCode();
     if (options.singleton && this.executions.size > 0) {
-      throw new Error(`${this.macro.shortName} is a singleton and is already running.`);
+      throw new Error(`Singleton macro ${this.macro.shortName} is already running.`);
     }
 
-    const cts = new vscode.CancellationTokenSource();
     const runInfo = {
+      cts: new vscode.CancellationTokenSource(),
       macro: this.macro,
       runId: `${this.macro.shortName}@${this.index++}`,
-      cts,
     };
 
-    const context = this.getContext(runInfo, options.persistent);
+    const macroDisposables = [] as DisposableLikes[];
+    const context = this.getContext({
+      disposables: macroDisposables,
+      persistent: !!options.persistent,
+      runId: runInfo.runId,
+      token: runInfo.cts.token,
+      uri: this.macro.uri,
+    });
     const scriptOptions: vm.RunningScriptOptions = {
       filename: this.macro.uri.toString(true),
     };
@@ -93,16 +94,25 @@ export class Runner implements vscode.Disposable {
       return result;
     } catch (error) {
       if (withErrorHandling) {
-        showMacroErrorMessage(this, this.macro, options, error as Error | string);
+        showMacroErrorMessage(this, options, error as Error | string);
       } else {
         throw error;
       }
     } finally {
+      safeDispose(this, macroDisposables);
       this.executions.delete(runInfo.runId);
       this.stopEventEmitter.fire(runInfo);
     }
+
+
+    function safeDispose(runner: Runner, disposables: DisposableLikes[]) {
+      try {
+        vscode.Disposable.from(...disposables).dispose();
+      } catch (error) {
+        showMacroErrorMessage(runner, options, error as Error | string);
+      }
+    }
   }
-   
 
   public get running(): readonly RunInfo[] {
     return [...this.executions.values()];

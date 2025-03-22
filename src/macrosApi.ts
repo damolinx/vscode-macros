@@ -2,6 +2,13 @@ import * as vscode from 'vscode';
 import * as vm from 'vm';
 import { RunId } from './runInfo';
 
+export interface DisposableLikes {
+  /**
+   * Function to clean up resources.
+   */
+  dispose: () => any;
+}
+
 /**
  * Macro-API unique to a given macro run.
  */
@@ -10,6 +17,10 @@ export interface MacrosApi {
    * Cancellation token invoked when macro should stop.
    */
   readonly __cancellationToken: vscode.CancellationToken;
+  /**
+ * Id of current macro execution.
+ */
+  readonly __disposables: DisposableLikes[];
   /**
    * Id of current macro execution.
    */
@@ -49,6 +60,7 @@ export interface MacroContext extends vm.Context, MacrosApi {
 }
 
 export interface MacroInitParams {
+  disposables: DisposableLikes[];
   runId: string;
   token: vscode.CancellationToken;
   uri?: vscode.Uri;
@@ -81,6 +93,7 @@ export function initializeMacrosApi(context: MacroContext, params: MacroInitPara
 function createMacroApi(params: MacroInitParams): MacrosApi {
   return {
     __cancellationToken: params.token,
+    __disposables: params.disposables,
     __runId: params.runId,
     macros: {
       macro: {

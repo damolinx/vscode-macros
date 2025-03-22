@@ -1,10 +1,9 @@
 import * as vscode from 'vscode';
 import { showTextDocument } from './vscodeEx';
-import { Macro } from '../macro';
 import { Runner } from '../runner';
 import { MacroOptions } from '../macroOptions';
 
-export function showMacroErrorMessage(runner: Runner, macro: Macro, macroOptions: MacroOptions, error: Error | string): Promise<void> {
+export function showMacroErrorMessage(runner: Runner, macroOptions: MacroOptions, error: Error | string): Promise<void> {
   let message: string;
   let selection: vscode.Range | undefined;
   let stack: string | undefined;
@@ -42,11 +41,11 @@ export function showMacroErrorMessage(runner: Runner, macro: Macro, macroOptions
     const actions: { title: string; execute: () => Thenable<any> | void }[] = [
       {
         title: selection ? 'Go to Error Location' : 'Open Macro',
-        execute: () => showTextDocument(macro.uri, { selection })
+        execute: () => showTextDocument(runner.macro.uri, { selection })
       },
       {
         title: 'Retry',
-        execute: () => vscode.commands.executeCommand('macros.run', macro.uri),
+        execute: () => vscode.commands.executeCommand('macros.run', runner.macro.uri),
       },
     ];
     if (macroOptions.persistent) {

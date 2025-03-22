@@ -1,9 +1,11 @@
 # Changelog
 
 ## 0.1.11
-- REPL gains VS Code-integrated `.load` and `.save` commands.
+- Add `__disposable` API. Check README and example template.
+- Add`.load` and `.save` commands in REPL, fully leveraging VS Code integration.
+- Add `Reset Context` CodeLens on `@macro:persistent` macros.
 - Statusbar item shows running macros on click.
-- `Reset Context` CodeLens on `@macro:persistent` macros. 
+
 - Fix: Error location calculated incorrectly in some cases.
 
 ## 0.1.10

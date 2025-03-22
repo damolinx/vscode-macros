@@ -6,6 +6,11 @@
       "path": "cancellation.js"
     },
     {
+      "label": "Dispose",
+      "description": "Support cleaning up of disposable objects",
+      "path": "dispose.js"
+    },
+    {
       "label": "Hello World!",
       "description": "A simple macro",
       "path": "helloWorld.js"

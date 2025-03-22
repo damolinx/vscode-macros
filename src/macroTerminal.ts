@@ -4,14 +4,14 @@ import { PassThrough } from 'stream';
 import { Context } from 'vm';
 import { createMacro } from './commands/createMacro';
 import { selectMacroFile } from './common/selectMacroFile';
-import { initalizeContext } from './macrosApi';
+import { initalizeContext, MacroInitParams } from './macrosApi';
 
 export class MacroTerminal implements vscode.Pseudoterminal {
   private readonly context: vscode.ExtensionContext;
   private readonly cts: vscode.CancellationTokenSource;
   private readonly disposables: vscode.Disposable[];
   private readonly input: PassThrough;
-  private readonly name: string;
+  private readonly macroInitParams: MacroInitParams;
   private readonly onDidCloseEmitter: vscode.EventEmitter<void>;
   private readonly onDidWriteEmitter: vscode.EventEmitter<string>;
   private readonly output: PassThrough & { columns?: number; rows?: number };
@@ -21,7 +21,11 @@ export class MacroTerminal implements vscode.Pseudoterminal {
     this.context = context;
     this.cts = new vscode.CancellationTokenSource();
     this.input = new PassThrough();
-    this.name = name;
+    this.macroInitParams = {
+      disposables: [],
+      runId: name,
+      token: this.cts.token,
+    };
     this.onDidCloseEmitter = new vscode.EventEmitter();
     this.onDidWriteEmitter = new vscode.EventEmitter();
     this.output = new PassThrough({ encoding: 'utf-8' })
@@ -30,12 +34,13 @@ export class MacroTerminal implements vscode.Pseudoterminal {
       });
 
     this.disposables = [
+      { dispose: () => vscode.Disposable.from(...this.macroInitParams.disposables) },
       { dispose: () => this.input.destroy() },
       { dispose: () => this.output.destroy() },
       { dispose: () => this.repl?.close() },
       this.cts,
       this.onDidCloseEmitter,
-      this.onDidWriteEmitter
+      this.onDidWriteEmitter,
     ];
   }
 
@@ -130,9 +135,6 @@ export class MacroTerminal implements vscode.Pseudoterminal {
     // REPL's context contains additional values that would not be normally
     // available to a macro and could cause confusion, so resetting first.
     Object.keys(context).forEach(k => delete context[k]);
-    initalizeContext(context, {
-      runId: this.name,
-      token: this.cts.token,
-    });
+    initalizeContext(context, this.macroInitParams);
   }
 }
