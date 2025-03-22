@@ -1,5 +1,5 @@
-async function waitForCancellation() {
-  return vscode.window.withProgress(
+async function main() {
+  const result = await vscode.window.withProgress(
     {
       title: `Cancel '${__runId}' using 'Show Running Macros' command …`,
       location: vscode.ProgressLocation.Notification,
@@ -10,6 +10,8 @@ async function waitForCancellation() {
       __cancellationToken.onCancellationRequested(() => resolve("Cancelled from 'Show Running Macros'"));
     })
   );
+
+  vscode.window.showInformationMessage(result);
 }
 
-waitForCancellation().then((result) => vscode.window.showInformationMessage(result));
+main();
