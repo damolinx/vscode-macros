@@ -81,7 +81,7 @@ export class MacroTerminal implements vscode.Pseudoterminal {
     // Override to setup context
     const originalClear = repl.commands.clear;
     repl.defineCommand('clear', {
-      help: 'Reset context',
+      help: 'Reset macro context',
       action: (text) => {
         originalClear?.action.call(repl, text);
         this.setupContext(repl.context);

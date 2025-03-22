@@ -50,7 +50,7 @@ export class Runner implements vscode.Disposable {
     return vm.createContext(context, { name });
   }
 
-  /* eslint-disable @typescript-eslint/no-explicit-any */
+   
   public async run(withErrorHandling = true): Promise<any> {
     const { code, options } = await this.macro.getCode();
     if (options.singleton && this.executions.size > 0) {
@@ -102,7 +102,7 @@ export class Runner implements vscode.Disposable {
       this.stopEventEmitter.fire(runInfo);
     }
   }
-  /* eslint-enable @typescript-eslint/no-explicit-any */
+   
 
   public get running(): readonly RunInfo[] {
     return [...this.executions.values()];
@@ -120,4 +120,3 @@ export class Runner implements vscode.Disposable {
     this.sharedContext = undefined;
   }
 }
-

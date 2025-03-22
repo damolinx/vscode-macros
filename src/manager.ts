@@ -22,7 +22,7 @@ export class Manager implements vscode.Disposable {
       ...this.macros.values()).dispose();
   }
 
-  private getRunner(uri: vscode.Uri): Runner {
+  public getRunner(uri: vscode.Uri): Runner {
     const macroId = getId(uri);
     let runner = this.macros.get(macroId);
     if (!runner) {

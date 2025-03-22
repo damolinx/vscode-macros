@@ -3,6 +3,7 @@ import { createMacro, updateActiveEditor } from './commands/createMacro';
 import { createMacroRepl } from './commands/createMacroRepl';
 import { debugActiveEditor, debugMacro } from './commands/debugMacro';
 import { openMacro } from './commands/openMacro';
+import { resetSharedContext } from './commands/resetContext';
 import { runActiveEditor, runMacro } from './commands/runMacro';
 import { setupSourceDirectory } from './commands/setupSourceDirectory';
 import { showRunningMacros } from './commands/showRunningMacros';
@@ -33,6 +34,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const r = vscode.commands.registerCommand;
   context.subscriptions.push(
+    r('macros.resetContext', (pathOrUri: string | vscode.Uri) => resetSharedContext(manager, pathOrUri)),
     r('macros.debug', (pathOrUri?: string | vscode.Uri) => debugMacro(manager, pathOrUri)),
     r('macros.debug.activeEditor', () => debugActiveEditor(manager)),
     r('macros.new.macro', (content?: string) => createMacro(context, content)),

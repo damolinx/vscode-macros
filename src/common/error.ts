@@ -39,7 +39,7 @@ export function showMacroErrorMessage(runner: Runner, macro: Macro, macroOptions
   }
 
   async function showErrorMessage(runner: Runner, message: string, stack?: string, selection?: vscode.Range, modal = false): Promise<void> {
-    const actions: { title: string; execute: () => Thenable<unknown> | void }[] = [
+    const actions: { title: string; execute: () => Thenable<any> | void }[] = [
       {
         title: selection ? 'Go to Error Location' : 'Open Macro',
         execute: () => showTextDocument(macro.uri, { selection })
@@ -51,7 +51,7 @@ export function showMacroErrorMessage(runner: Runner, macro: Macro, macroOptions
     ];
     if (macroOptions.persistent) {
       actions.push({
-        title: 'Reset State',
+        title: 'Reset Context',
         execute: () => runner.resetSharedContext()
       });
     }
