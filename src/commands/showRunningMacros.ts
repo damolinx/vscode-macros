@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 import { basename } from 'path';
-import { Manager } from '../manager';
-import { RunInfo } from '../runner';
 import { showTextDocument } from '../common/vscodeEx';
+import { Manager } from '../manager';
+import { RunInfo } from '../runInfo';
 
 export async function showRunningMacros(manager: Manager) {
   const { runningMacros } = manager;

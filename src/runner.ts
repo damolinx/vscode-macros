@@ -2,21 +2,14 @@ import * as vscode from 'vscode';
 import * as vm from 'vm';
 import { showMacroErrorMessage } from './common/error';
 import { Macro } from './macro';
-import { initalizeContext, initializeMacrosApi } from './macrosApi';
-
-export type RunId = string;
-
-export interface RunInfo {
-  cts: vscode.CancellationTokenSource;
-  macro: Macro;
-  runId: RunId
-};
+import { initalizeContext, initializeMacrosApi, MacroContext } from './macrosApi';
+import { RunId, RunInfo } from './runInfo';
 
 export class Runner implements vscode.Disposable {
   private readonly executions: Map<RunId, RunInfo>;
   private index: number;
   public macro: Macro;
-  private sharedContext?: vm.Context;
+  private sharedContext?: MacroContext;
   private runEventEmitter: vscode.EventEmitter<RunInfo>;
   private stopEventEmitter: vscode.EventEmitter<RunInfo>;
 
@@ -33,20 +26,27 @@ export class Runner implements vscode.Disposable {
     vscode.Disposable.from(this.runEventEmitter, this.stopEventEmitter).dispose();
   }
 
-  private getContext(runInfo: RunInfo, shouldPersist?: boolean): vm.Context {
-    let context: vm.Context;
+  private getContext({ cts: { token }, macro: { uri }, runId }: RunInfo, shouldPersist?: boolean): vm.Context {
+    const macroParams = { runId, token, uri };
+    let context: MacroContext;
     let name: string;
+
+
     if (shouldPersist) {
-      this.sharedContext ||= initalizeContext({});
-      context = { ...this.sharedContext };
-      name = 'shared-context';
+      if (!this.sharedContext) {
+        this.sharedContext = initalizeContext({}, macroParams);
+        context = this.sharedContext;
+      } else {
+        context = this.sharedContext;
+        initializeMacrosApi(context, macroParams);
+      }
+      name = `shared-context (${runId})`;
     } else {
       delete this.sharedContext;
-      context = initalizeContext({});
-      name = 'context';
+      context = initalizeContext({}, macroParams);
+      name = `context (${runId})`;
     }
 
-    initializeMacrosApi(context, runInfo.macro.uri, runInfo.runId, runInfo.cts.token);
     return vm.createContext(context, { name });
   }
 

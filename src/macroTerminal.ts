@@ -4,7 +4,7 @@ import { PassThrough } from 'stream';
 import { Context } from 'vm';
 import { createMacro } from './commands/createMacro';
 import { selectMacroFile } from './common/selectMacroFile';
-import { initalizeContext, initializeMacrosApi } from './macrosApi';
+import { initalizeContext } from './macrosApi';
 
 export class MacroTerminal implements vscode.Pseudoterminal {
   private readonly context: vscode.ExtensionContext;
@@ -127,17 +127,12 @@ export class MacroTerminal implements vscode.Pseudoterminal {
   }
 
   private setupContext(context: Context) {
-    reset(context);
-    initalizeContext(context);
-    initializeMacrosApi(
-      context,
-      vscode.Uri.parse(`macro://terminal/${this.name}`),
-      this.name,
-      this.cts.token
-    );
-
-    function reset(context: Context) {
-      Object.keys(context).forEach(k => delete context[k]);
-    }
+    // REPL's context contains additional values that would not be normally
+    // available to a macro and could cause confusion, so resetting first.
+    Object.keys(context).forEach(k => delete context[k]);
+    initalizeContext(context, {
+      runId: this.name,
+      token: this.cts.token,
+    });
   }
 }

@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
 import { FileMacro } from './fileMacro';
 import { getId, MacroId } from './macro';
-import { RunInfo, Runner } from './runner';
+import { RunInfo } from './runInfo';
+import { Runner } from './runner';
 
 export class Manager implements vscode.Disposable {
   private readonly macros: Map<MacroId, Runner>;

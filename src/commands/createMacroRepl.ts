@@ -4,7 +4,7 @@ import { MacroTerminal } from '../macroTerminal';
 let id = 0;
 
 export async function createMacroRepl(context: vscode.ExtensionContext, preserveFocus?: boolean): Promise<vscode.Terminal> {
-  const macroTerminal = new MacroTerminal(context, `macro${++id}`);
+  const macroTerminal = new MacroTerminal(context, `macro-repl-${++id}`);
   const terminal = await vscode.window.createTerminal({
     iconPath: new vscode.ThemeIcon('run-all'),
     name: 'macro',
