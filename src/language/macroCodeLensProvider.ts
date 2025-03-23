@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { parseOptions } from './macroOptions';
+import { parseOptions } from '../macroOptions';
 
 export class MacroCodeLensProvider implements vscode.CodeLensProvider {
 

@@ -4,7 +4,7 @@ export interface MacroOptions {
    */
   persistent?: boolean;
   /**
-   * Macro can have only one instance running. Default: false. 
+   * Macro can only have a single running instance. Default: false.
    */
   singleton?: boolean;
 }

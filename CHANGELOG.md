@@ -4,6 +4,7 @@
 - Add `__disposable` API. Check README and example template.
 - Add`.load` and `.save` commands in REPL, fully leveraging VS Code integration.
 - Add `Reset Context` CodeLens on `@macro:persistent` macros.
+- Add autocomplete support for `@macro` options.
 - Updated and new macro templates.
 - Statusbar item shows running macros on click.
 - Fix: Error line location for Error dialogs was calculated incorrectly in some cases.

@@ -9,7 +9,8 @@ import { setupSourceDirectory } from './commands/setupSourceDirectory';
 import { showRunningMacros } from './commands/showRunningMacros';
 import { setContext } from './common/vscodeEx';
 import { MACRO_LANGUAGE } from './constants';
-import { MacroCodeLensProvider } from './macroCodeLensProvider';
+import { MacroCodeLensProvider } from './language/macroCodeLensProvider';
+import { MacroOptionsCompletionProvider } from './language/macroOptionsCompletionProvider';
 import { Manager } from './manager';
 import { StatusBarItem } from './statusBarItem';
 
@@ -27,25 +28,27 @@ export async function activate(context: vscode.ExtensionContext) {
     manager.onRun(({ macro: { uri } }) => setContext('mruSet', !!(mruMacro = uri)))
   );
 
-  vscode.languages.registerCodeLensProvider(
-    { language: MACRO_LANGUAGE },
-    new MacroCodeLensProvider()
+  const { commands: c, languages: l } = vscode;
+  const selector: vscode.DocumentSelector = { language: MACRO_LANGUAGE };
+  context.subscriptions.push(
+    l.registerCodeLensProvider(selector, new MacroCodeLensProvider()),
+    l.registerCompletionItemProvider(selector, new MacroOptionsCompletionProvider(), ':', '@'),
   );
 
-  const r = vscode.commands.registerCommand;
+  const { registerCommand: cr } = c;
   context.subscriptions.push(
-    r('macros.resetContext', (pathOrUri: string | vscode.Uri) => resetSharedContext(manager, pathOrUri)),
-    r('macros.debug', (pathOrUri?: string | vscode.Uri) => debugMacro(manager, pathOrUri)),
-    r('macros.debug.activeEditor', () => debugActiveEditor(manager)),
-    r('macros.new.macro', (content?: string) => createMacro(context, content)),
-    r('macros.new.macro.activeEditor', () => updateActiveEditor(context)),
-    r('macros.new.macro.repl', () => createMacroRepl(context)),
-    r('macros.open', () => openMacro()),
-    r('macros.run', (pathOrUri?: string | vscode.Uri) => runMacro(manager, pathOrUri)),
-    r('macros.run.activeEditor', () => runActiveEditor(manager)),
-    r('macros.run.mru', () => runMacro(manager, mruMacro)),
-    r('macros.run.show', () => showRunningMacros(manager)),
-    r('macros.sourceDirectories.settings', () => vscode.commands.executeCommand('workbench.action.openSettings', 'macros.sourceDirectories')),
-    r('macros.sourceDirectories.setup', () => setupSourceDirectory(context)),
+    cr('macros.resetContext', (pathOrUri: string | vscode.Uri) => resetSharedContext(manager, pathOrUri)),
+    cr('macros.debug', (pathOrUri?: string | vscode.Uri) => debugMacro(manager, pathOrUri)),
+    cr('macros.debug.activeEditor', () => debugActiveEditor(manager)),
+    cr('macros.new.macro', (content?: string) => createMacro(context, content)),
+    cr('macros.new.macro.activeEditor', () => updateActiveEditor(context)),
+    cr('macros.new.macro.repl', () => createMacroRepl(context)),
+    cr('macros.open', () => openMacro()),
+    cr('macros.run', (pathOrUri?: string | vscode.Uri) => runMacro(manager, pathOrUri)),
+    cr('macros.run.activeEditor', () => runActiveEditor(manager)),
+    cr('macros.run.mru', () => runMacro(manager, mruMacro)),
+    cr('macros.run.show', () => showRunningMacros(manager)),
+    cr('macros.sourceDirectories.settings', () => c.executeCommand('workbench.action.openSettings', 'macros.sourceDirectories')),
+    cr('macros.sourceDirectories.setup', () => setupSourceDirectory(context)),
   );
 }
