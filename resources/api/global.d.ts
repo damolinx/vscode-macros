@@ -15,7 +15,12 @@ declare global {
   const __cancellationToken: _vscode.CancellationToken;
 
   /**
-   * Id of the current macro execution session.
+   * Array of [disposables](https://code.visualstudio.com/api/references/vscode-api#Disposable) to release when macro completes.
+   */
+  const __disposables: ({ dispose: () => any })[];
+
+  /**
+   * Id of current macro execution.
    */
   const __runId: string;
 

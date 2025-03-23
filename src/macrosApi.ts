@@ -18,8 +18,8 @@ export interface MacrosApi {
    */
   readonly __cancellationToken: vscode.CancellationToken;
   /**
- * Id of current macro execution.
- */
+   * Array of disposables to release when macro completes.
+   */
   readonly __disposables: DisposableLikes[];
   /**
    * Id of current macro execution.
