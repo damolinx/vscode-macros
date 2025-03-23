@@ -12,16 +12,21 @@ To keep things simple, only JavaScript scripts are supported at the moment. Supp
 - Run multiple macros simultaneously, on demand or at extension startup.
 - Options to define persistent and singleton macros provide advanced control.
 
-## Usage
+## Getting Started
 
-1. Create a new macro file with a `.js` extension.
+1. Use the `Macros: New Macro` command to create a new macro. Alternatively, create a new `javascript` file.
+
+   > **ℹ️ Use a filename ending on `.macro.js`** so UI controls and IntelliSense features are active. This is required to prevent confusion with non-macro `.js` files.
+
 2. Write your JavaScript macro code (see [Available References](#available-references)).
+   - You can use the `Initialize` CodeLens shown on empty `.macro.js` editors to add macro content.
 
    ```javascript
    // Example: Hello World!
    vscode.window.showInformationMessage("Hello, world!");
    ```
-3. From the [Command Palette](https://code.visualstudio.com/api/references/contribution-points#contributes.commands) use the `Run Macro (Active Editor)` command to execute your macro.
+3. From the [Command Palette](https://code.visualstudio.com/api/references/contribution-points#contributes.commands) use the `Run Active Editor as Macro` command to execute your macro.
+   - If editor name ends on `.macro.js`, there will be a run and debug buttons on the editor title bar.
 
 ### Keybinding a Macro
 All that is required is to keybind the `macros.run` command with a single argument that is the path to the macro to run. This can only be done directly in the `keybindings.json` file, however. Check the VS Code [documentation](https://code.visualstudio.com/docs/editor/keybindings#_advanced-customization) for details.
@@ -34,7 +39,7 @@ All that is required is to keybind the `macros.run` command with a single argume
      {
        "key": "Shift+Alt+X",
        "command": "macros.run",
-       "args": "${userhome}/macros/references.js",
+       "args": "${userhome}/macros/references.macro.js",
        "when": "editorTextFocus"
      }
    ]

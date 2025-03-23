@@ -8,7 +8,7 @@ import { runActiveEditor, runMacro } from './commands/runMacro';
 import { setupSourceDirectory } from './commands/setupSourceDirectory';
 import { showRunningMacros } from './commands/showRunningMacros';
 import { setContext } from './common/vscodeEx';
-import { MACRO_LANGUAGE } from './constants';
+import { MACRO_EXTENSION, MACRO_LANGUAGE } from './constants';
 import { MacroCodeLensProvider } from './language/macroCodeLensProvider';
 import { MacroOptionsCompletionProvider } from './language/macroOptionsCompletionProvider';
 import { Manager } from './manager';
@@ -28,14 +28,17 @@ export async function activate(context: vscode.ExtensionContext) {
     manager.onRun(({ macro: { uri } }) => setContext('mruSet', !!(mruMacro = uri)))
   );
 
-  const { commands: c, languages: l } = vscode;
-  const selector: vscode.DocumentSelector = { language: MACRO_LANGUAGE };
+  const { languages: l } = vscode;
+  const selector: vscode.DocumentSelector = [
+    { language: MACRO_LANGUAGE },
+    { pattern: `**/*${MACRO_EXTENSION}` }
+  ];
   context.subscriptions.push(
     l.registerCodeLensProvider(selector, new MacroCodeLensProvider()),
     l.registerCompletionItemProvider(selector, new MacroOptionsCompletionProvider(), ':', '@'),
   );
 
-  const { registerCommand: cr } = c;
+  const { commands: c, commands: { registerCommand: cr } } = vscode;
   context.subscriptions.push(
     cr('macros.resetContext', (pathOrUri: string | vscode.Uri) => resetSharedContext(manager, pathOrUri)),
     cr('macros.debug', (pathOrUri?: string | vscode.Uri) => debugMacro(manager, pathOrUri)),
