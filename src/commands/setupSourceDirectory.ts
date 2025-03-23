@@ -26,6 +26,8 @@ export async function setupSourceDirectory(context: vscode.ExtensionContext, pat
 
   if (await vscode.workspace.applyEdit(edit)) {
     vscode.window.showInformationMessage('Updated files to the latest versions.');
+  } else {
+    vscode.window.showErrorMessage(`Could not update ${uri.fsPath}`);
   }
 
   async function update(uri: vscode.Uri, source: string, target: string): Promise<boolean> {
