@@ -27,7 +27,7 @@ export async function debugMacro(_manager: Manager, pathOrUri?: string | vscode.
     }
   }
 
-  // Launch VS Code 
+  // Launch VS Code
   const debugConfig: vscode.DebugConfiguration = {
     name: `Debug Macro: ${basename(document.uri.fsPath)}`,
     type: 'extensionHost',

@@ -20,7 +20,7 @@ export interface LoadableMacroTemplate extends MacroTemplate {
   load: () => Promise<string>;
 }
 
-// Caching manifest since it is shipped with the extension, i.e. not expected to change. 
+// Caching manifest since it is shipped with the extension, i.e. not expected to change.
 const manifest = new Lazy(async (context: vscode.ExtensionContext) => {
   const content = await readFile(context, MACRO_TEMPLATES_MANIFEST_RESOURCE);
   const manifest = JSON.parse(content) as Manifest;

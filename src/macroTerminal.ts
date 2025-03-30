@@ -76,7 +76,7 @@ export class MacroTerminal implements vscode.Pseudoterminal {
       this.close();
     }) as REPLServer & { history: string[] };
 
-    // Override to provide sane help 
+    // Override to provide sane help
     const originalBreak = repl.commands.break;
     repl.defineCommand('break', {
       help: 'Break from multi-line editing mode',
@@ -108,7 +108,7 @@ export class MacroTerminal implements vscode.Pseudoterminal {
       }
     });
 
-    // Override to save directly to an untitled editor 
+    // Override to save directly to an untitled editor
     repl.defineCommand('save', {
       help: 'Save all evaluated commands into a new editor',
       action: async () => {

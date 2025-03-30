@@ -25,4 +25,4 @@ export function parseOptions(code: string): MacroOptions {
     }
   }
   return options;
-} 
+}
