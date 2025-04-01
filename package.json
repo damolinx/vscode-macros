@@ -122,7 +122,7 @@
         {
           "command": "macros.run.activeEditor",
           "group": "navigation",
-          "when": "resourceFilename =~ /.macro.js$/"
+          "when": "editorLangId == javascript && (resourceScheme == untitled || resourceFilename =~ /.macro.js$/)"
         }
       ]
     }

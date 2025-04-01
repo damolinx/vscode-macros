@@ -30,7 +30,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const { languages: l } = vscode;
   const selector: vscode.DocumentSelector = [
-    { language: MACRO_LANGUAGE },
+    { scheme: 'untitled', language: MACRO_LANGUAGE },
     { pattern: `**/*${MACRO_EXTENSION}` }
   ];
   context.subscriptions.push(
