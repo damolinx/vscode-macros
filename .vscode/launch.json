@@ -10,7 +10,11 @@
 				"--extensionDevelopmentPath=${workspaceFolder}"
 			],
 			"outFiles": [],
-			"preLaunchTask": "npm: watch"
+			"preLaunchTask": "npm: watch",
+			"resolveSourceMapLocations": [
+				"${workspaceFolder}/**",
+				"!**/node_modules/**"
+			]
 		},
 		{
 			"name": "Test Extension",
@@ -22,7 +26,11 @@
 				"--extensionTestsPath=${workspaceFolder}/out/test/suite/index"
 			],
 			"outFiles": [],
-			"preLaunchTask": "npm: watch"
+			"preLaunchTask": "npm: watch",
+			"resolveSourceMapLocations": [
+				"${workspaceFolder}/**",
+				"!**/node_modules/**"
+			]
 		}
 	]
 }
