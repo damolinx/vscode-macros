@@ -12,7 +12,7 @@
 			"outFiles": [],
 			"preLaunchTask": "npm: watch",
 			"resolveSourceMapLocations": [
-				"${workspaceFolder}/**",
+				"${workspaceFolder}/out/**",
 				"!**/node_modules/**"
 			]
 		},
@@ -28,7 +28,7 @@
 			"outFiles": [],
 			"preLaunchTask": "npm: watch",
 			"resolveSourceMapLocations": [
-				"${workspaceFolder}/**",
+				"${workspaceFolder}/out/**",
 				"!**/node_modules/**"
 			]
 		}
