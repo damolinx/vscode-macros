@@ -14,16 +14,18 @@ export class MacroOptionsCompletionProvider implements vscode.CompletionItemProv
 
     if (context.triggerCharacter === '@') {
       if (/^\s*\/\/\s*@/.test(line)) {
-        return [
-          new vscode.CompletionItem('macro', vscode.CompletionItemKind.Keyword)
-        ];
+        const macroItem = new vscode.CompletionItem('@macro', vscode.CompletionItemKind.Snippet);
+        macroItem.filterText = "macro";
+        macroItem.insertText = "macro";
+        return [macroItem];
       }
     } else if (context.triggerCharacter === ':' || context.triggerKind == vscode.CompletionTriggerKind.Invoke) {
       if (/^\s*\/\/\s*@macro:/.test(line)) {
-        return [
-          new vscode.CompletionItem('persistent', vscode.CompletionItemKind.Keyword),
-          new vscode.CompletionItem('singleton', vscode.CompletionItemKind.Keyword)
-        ];
+        const persistentItem = new vscode.CompletionItem('persistent', vscode.CompletionItemKind.Snippet);
+        persistentItem.documentation = "All instances of this macro share the same context.";
+        const singletonItem = new vscode.CompletionItem('singleton', vscode.CompletionItemKind.Snippet);
+        singletonItem.documentation = "Only one instance of the macro can be active at a time.";
+        return [persistentItem, singletonItem];
       }
     }
 
