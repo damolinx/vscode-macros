@@ -1,5 +1,7 @@
 import * as vscode from 'vscode';
 
+export const MACRO_TRIGGER_CHARACTERS = ['@', ':'];
+
 /**
  * Provide autocompletion for `@macro` options.
  */
@@ -15,16 +17,16 @@ export class MacroOptionsCompletionProvider implements vscode.CompletionItemProv
     if (context.triggerCharacter === '@') {
       if (/^\s*\/\/\s*@/.test(line)) {
         const macroItem = new vscode.CompletionItem('@macro', vscode.CompletionItemKind.Snippet);
-        macroItem.filterText = "macro";
-        macroItem.insertText = "macro";
+        macroItem.filterText = 'macro';
+        macroItem.insertText = 'macro';
         return [macroItem];
       }
     } else if (context.triggerCharacter === ':' || context.triggerKind == vscode.CompletionTriggerKind.Invoke) {
       if (/^\s*\/\/\s*@macro:/.test(line)) {
         const persistentItem = new vscode.CompletionItem('persistent', vscode.CompletionItemKind.Snippet);
-        persistentItem.documentation = "All instances of this macro share the same context.";
+        persistentItem.documentation = 'All instances of this macro share the same context.';
         const singletonItem = new vscode.CompletionItem('singleton', vscode.CompletionItemKind.Snippet);
-        singletonItem.documentation = "Only one instance of the macro can be active at a time.";
+        singletonItem.documentation = 'Only one instance of the macro can be active at a time.';
         return [persistentItem, singletonItem];
       }
     }

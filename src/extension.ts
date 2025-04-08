@@ -10,7 +10,7 @@ import { showRunningMacros } from './commands/showRunningMacros';
 import { setContext } from './common/vscodeEx';
 import { MACRO_EXTENSION, MACRO_LANGUAGE } from './constants';
 import { MacroCodeLensProvider } from './language/macroCodeLensProvider';
-import { MacroOptionsCompletionProvider } from './language/macroOptionsCompletionProvider';
+import { MacroOptionsCompletionProvider, MACRO_TRIGGER_CHARACTERS } from './language/macroOptionsCompletionProvider';
 import { Manager } from './manager';
 import { StatusBarItem } from './statusBarItem';
 
@@ -35,7 +35,7 @@ export async function activate(context: vscode.ExtensionContext) {
   ];
   context.subscriptions.push(
     l.registerCodeLensProvider(selector, new MacroCodeLensProvider()),
-    l.registerCompletionItemProvider(selector, new MacroOptionsCompletionProvider(), ':', '@'),
+    l.registerCompletionItemProvider(selector, new MacroOptionsCompletionProvider(), ...MACRO_TRIGGER_CHARACTERS),
   );
 
   const { commands: c, commands: { registerCommand: cr } } = vscode;
