@@ -6,21 +6,21 @@ import { createMacro } from './commands/createMacro';
 import { selectMacroFile } from './common/selectMacroFile';
 import { initalizeContext, MacroInitParams } from './execution/utils';
 
-export class MacroTerminal implements vscode.Pseudoterminal {
+export class MacroPseudoterminal implements vscode.Pseudoterminal {
   private readonly context: vscode.ExtensionContext;
   private readonly cts: vscode.CancellationTokenSource;
-  private readonly disposables: vscode.Disposable[];
-  private readonly input: PassThrough;
   private readonly macroInitParams: MacroInitParams;
   private readonly onDidCloseEmitter: vscode.EventEmitter<void>;
   private readonly onDidWriteEmitter: vscode.EventEmitter<string>;
-  private readonly output: PassThrough & { columns?: number; rows?: number };
-  private repl?: REPLServer;
+  private repl?: {
+    input: PassThrough,
+    output: PassThrough & { columns?: number; rows?: number },
+    server: REPLServer & { history: string[] },
+  } & vscode.Disposable;
 
   constructor(context: vscode.ExtensionContext, name: string) {
     this.context = context;
     this.cts = new vscode.CancellationTokenSource();
-    this.input = new PassThrough();
     this.macroInitParams = {
       disposables: [],
       runId: name,
@@ -28,28 +28,18 @@ export class MacroTerminal implements vscode.Pseudoterminal {
     };
     this.onDidCloseEmitter = new vscode.EventEmitter();
     this.onDidWriteEmitter = new vscode.EventEmitter();
-    this.output = new PassThrough({ encoding: 'utf-8' })
-      .on('data', (chunk: string) => {
-        this.onDidWriteEmitter.fire(chunk.replaceAll('\n', '\r\n'));
-      });
-
-    this.disposables = [
-      { dispose: () => vscode.Disposable.from(...this.macroInitParams.disposables) },
-      { dispose: () => this.input.destroy() },
-      { dispose: () => this.output.destroy() },
-      { dispose: () => this.repl?.close() },
-      this.cts,
-      this.onDidCloseEmitter,
-      this.onDidWriteEmitter,
-    ];
   }
 
   public close(): void {
-    vscode.Disposable.from(...this.disposables).dispose();
+    vscode.Disposable.from(...this.macroInitParams.disposables).dispose();
+    this.cts.dispose();
+    this.onDidCloseEmitter.dispose();
+    this.onDidWriteEmitter.dispose();
+    this.repl?.dispose();
   }
 
   public handleInput(data: string): void {
-    this.input.write(data);
+    this.repl?.input.write(data);
   }
 
   public get onDidClose(): vscode.Event<void> {
@@ -65,10 +55,13 @@ export class MacroTerminal implements vscode.Pseudoterminal {
       return;
     }
 
-    const repl = startREPL({
-      input: this.input,
-      output: this.output,
-      prompt: '\x1b[90m≫ \x1b[0m', // Changed to dark gray formatting
+    const input = new PassThrough();
+    const output = new PassThrough({ encoding: 'utf-8' })
+      .on('data', (chunk: string) => this.onDidWriteEmitter.fire(chunk.replaceAll('\n', '\r\n')));
+    const replServer = startREPL({
+      input,
+      output,
+      prompt: '\x1b[90m≫ \x1b[0m',
       terminal: true,
       useColors: true,
     }).on('exit', () => {
@@ -77,62 +70,73 @@ export class MacroTerminal implements vscode.Pseudoterminal {
     }) as REPLServer & { history: string[] };
 
     // Override to provide sane help
-    const originalBreak = repl.commands.break;
-    repl.defineCommand('break', {
+    const originalBreak = replServer.commands.break;
+    replServer.defineCommand('break', {
       help: 'Break from multi-line editing mode',
-      action: (text) => originalBreak?.action.call(repl, text)
+      action: (text) => originalBreak?.action.call(replServer, text)
     });
 
     // Override to setup context
-    const originalClear = repl.commands.clear;
-    repl.defineCommand('clear', {
+    const originalClear = replServer.commands.clear;
+    replServer.defineCommand('clear', {
       help: 'Reset macro context',
       action: (text) => {
-        originalClear?.action.call(repl, text);
-        this.setupContext(repl.context);
+        originalClear?.action.call(replServer, text);
+        this.setupContext(replServer.context);
       }
     });
 
     // Override to connect to `selectMacroFile`
-    const originalLoad = repl.commands.load;
-    repl.defineCommand('load', {
+    const originalLoad = replServer.commands.load;
+    replServer.defineCommand('load', {
       help: 'Load and evaluate a macro file',
       action: async () => {
         const file = await selectMacroFile({ hideOpenPerItem: true });
         if (file) {
-          originalLoad?.action.call(repl, file.fsPath);
+          originalLoad?.action.call(replServer, file.fsPath);
         } else {
-          this.output.write('Nothing to load\n');
+          output.write('Nothing to load\n');
         }
-        repl.displayPrompt();
+        replServer.displayPrompt();
       }
     });
 
     // Override to save directly to an untitled editor
-    repl.defineCommand('save', {
+    replServer.defineCommand('save', {
       help: 'Save all evaluated commands into a new editor',
       action: async () => {
-        const content = repl.history.filter(s => !s?.startsWith('.')).reverse().join('\n');
-        if (content) {
-          await createMacro(this.context, content, { preserveFocus: true });
+        const nonCommandStmts = replServer.history.filter(s => !s.startsWith('.'));
+        if (nonCommandStmts.length > 0) {
+          await createMacro(this.context, nonCommandStmts.reverse().join('\n'), { preserveFocus: true });
         } else {
-          this.output.write('Nothing to save\n');
+          output.write('Nothing to save\n');
         }
-        repl.displayPrompt();
+        replServer.displayPrompt();
       }
     });
 
-    this.setupContext(repl.context);
-    this.repl = repl;
+    this.setupContext(replServer.context);
+    this.repl = {
+      dispose: () => {
+        replServer.close();
+        input.destroy();
+        output.destroy();
+      },
+      input,
+      output,
+      server: replServer,
+    };
   }
 
   public setDimensions(dimensions: vscode.TerminalDimensions): void {
-    this.output.columns = dimensions.columns;
-    this.output.rows = dimensions.rows;
+    if (this.repl) {
+      this.repl.output.columns = dimensions.columns;
+      this.repl.output.rows = dimensions.rows;
+    }
   }
 
   private setupContext(context: Context) {
-    // REPL's context contains additional values that would not be normally
+    // REPL's context contains additional values that would not normally be
     // available to a macro and could cause confusion, so resetting first.
     Object.keys(context).forEach(k => delete context[k]);
     initalizeContext(context, this.macroInitParams);

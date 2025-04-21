@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { createMacro, updateActiveEditor } from './commands/createMacro';
-import { createMacroRepl } from './commands/createMacroRepl';
+import { createRepl } from './commands/createRepl';
 import { debugActiveEditor, debugMacro } from './commands/debugMacro';
 import { openMacro } from './commands/openMacro';
 import { resetSharedContext } from './commands/resetContext';
@@ -11,8 +11,8 @@ import { setContext } from './common/vscodeEx';
 import { MACRO_EXTENSION, MACRO_LANGUAGE } from './constants';
 import { MacroCodeLensProvider } from './language/macroCodeLensProvider';
 import { MacroOptionsCompletionProvider, MACRO_TRIGGER_CHARACTERS } from './language/macroOptionsCompletionProvider';
+import { MacroStatusBarItem } from './macroStatusBarItem';
 import { Manager } from './manager';
-import { StatusBarItem } from './statusBarItem';
 
 /**
  * Extension startup.
@@ -24,7 +24,7 @@ export async function activate(context: vscode.ExtensionContext) {
   const manager = new Manager();
   context.subscriptions.push(
     manager,
-    new StatusBarItem(manager),
+    new MacroStatusBarItem(manager),
     manager.onRun(({ macro: { uri } }) => setContext('mruSet', !!(mruMacro = uri)))
   );
 
@@ -45,7 +45,7 @@ export async function activate(context: vscode.ExtensionContext) {
     cr('macros.debug.activeEditor', () => debugActiveEditor(manager)),
     cr('macros.new.macro', (content?: string) => createMacro(context, content)),
     cr('macros.new.macro.activeEditor', () => updateActiveEditor(context)),
-    cr('macros.new.macro.repl', () => createMacroRepl(context)),
+    cr('macros.new.macro.repl', () => createRepl(context)),
     cr('macros.open', () => openMacro()),
     cr('macros.run', (pathOrUri?: string | vscode.Uri) => runMacro(manager, pathOrUri)),
     cr('macros.run.activeEditor', () => runActiveEditor(manager)),
