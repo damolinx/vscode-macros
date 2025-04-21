@@ -1,9 +1,10 @@
 import * as vscode from 'vscode';
 import * as vm from 'vm';
-import { showMacroErrorMessage } from './common/error';
-import { Macro } from './macro';
-import { DisposableLikes, initalizeContext, initializeMacrosApi, MacroContext, MacroInitParams } from './macrosApi';
 import { RunId, RunInfo } from './runInfo';
+import { initalizeContext, initializeMacrosApi, MacroInitParams } from './utils';
+import { MacroContext } from '../api/macroContext';
+import { showMacroErrorMessage } from '../common/error';
+import { Macro } from '../macro';
 
 export class Runner implements vscode.Disposable {
   private readonly executions: Map<RunId, RunInfo>;
@@ -58,7 +59,7 @@ export class Runner implements vscode.Disposable {
       runId: `${this.macro.shortName}@${this.index++}`,
     };
 
-    const macroDisposables = [] as DisposableLikes[];
+    const macroDisposables = [] as vscode.Disposable[];
     const context = this.getContext({
       disposables: macroDisposables,
       persistent: !!options.persistent,
@@ -105,7 +106,7 @@ export class Runner implements vscode.Disposable {
     }
 
 
-    function safeDispose(runner: Runner, disposables: DisposableLikes[]) {
+    function safeDispose(runner: Runner, disposables: vscode.Disposable[]) {
       try {
         vscode.Disposable.from(...disposables).dispose();
       } catch (error) {

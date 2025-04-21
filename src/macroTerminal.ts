@@ -4,7 +4,7 @@ import { PassThrough } from 'stream';
 import { Context } from 'vm';
 import { createMacro } from './commands/createMacro';
 import { selectMacroFile } from './common/selectMacroFile';
-import { initalizeContext, MacroInitParams } from './macrosApi';
+import { initalizeContext, MacroInitParams } from './execution/utils';
 
 export class MacroTerminal implements vscode.Pseudoterminal {
   private readonly context: vscode.ExtensionContext;

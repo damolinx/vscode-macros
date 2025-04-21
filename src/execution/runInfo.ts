@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
-import { Macro } from './macro';
-
+import { Macro } from '../macro';
 
 export type RunId = string;
 

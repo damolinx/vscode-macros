@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { showTextDocument } from './vscodeEx';
-import { Runner } from '../runner';
+import { Runner } from '../execution/runner';
 import { MacroOptions } from '../macroOptions';
 
 export function showMacroErrorMessage(runner: Runner, macroOptions: MacroOptions, error: Error | string): Promise<void> {
