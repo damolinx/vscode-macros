@@ -10,7 +10,7 @@ import { showRunningMacros } from './commands/showRunningMacros';
 import { setContext } from './common/vscodeEx';
 import { MACRO_EXTENSION, MACRO_LANGUAGE } from './constants';
 import { MacroCodeLensProvider } from './language/macroCodeLensProvider';
-import { MacroOptionsCompletionProvider, MACRO_TRIGGER_CHARACTERS } from './language/macroOptionsCompletionProvider';
+import { MACRO_TRIGGER_CHARACTERS, MacroOptionsCompletionProvider } from './language/macroOptionsCompletionProvider';
 import { MacroStatusBarItem } from './macroStatusBarItem';
 import { Manager } from './manager';
 
