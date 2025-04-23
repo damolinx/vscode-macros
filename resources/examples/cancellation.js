@@ -3,12 +3,12 @@ async function main() {
     {
       title: `Cancel '${__runId}' using 'Show Running Macros' command …`,
       location: vscode.ProgressLocation.Notification,
-      cancellable: true
+      cancellable: true,
     },
     (progress, token) => new Promise((resolve) => {
       token.onCancellationRequested(() => resolve('Cancelled from notification'));
-      __cancellationToken.onCancellationRequested(() => resolve("Cancelled from 'Show Running Macros'"));
-    })
+      __cancellationToken.onCancellationRequested(() => resolve('Cancelled from \'Show Running Macros\''));
+    }),
   );
 
   vscode.window.showInformationMessage(result);

@@ -25,7 +25,7 @@ function createWebView(html) {
     vscode.ViewColumn.Active,
     {
       enableScripts: true,
-    }
+    },
   );
   panel.webview.html = html;
   return panel;
@@ -36,7 +36,7 @@ new Promise((resolve) => {
   const html = createHtml();
   const webview = createWebView(html);
   webview.webview.onDidReceiveMessage((message) =>
-    vscode.window.showInformationMessage(message.text)
+    vscode.window.showInformationMessage(message.text),
   );
   webview.onDidDispose(resolve);
 });

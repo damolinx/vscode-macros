@@ -10,7 +10,7 @@ declare global {
 
   /**
    * A [CancellationToken](https://code.visualstudio.com/api/references/vscode-api#CancellationToken)
-   * used by the extension to notify about a stop request. 
+   * used by the extension to notify about a stop request.
    */
   const __cancellationToken: _vscode.CancellationToken;
 

@@ -1,7 +1,7 @@
 async function main() {
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
-    vscode.window.showInformationMessage("No active editor");
+    vscode.window.showInformationMessage('No active editor');
     return;
   }
 
@@ -10,14 +10,14 @@ async function main() {
     'vscode.executeReferenceProvider', uri, position);
 
   if (!references.length) {
-    vscode.window.showInformationMessage("No references found");
+    vscode.window.showInformationMessage('No references found');
     return;
   }
 
   const content = references
     .map(({ uri, range: { start } }) =>
       uri.with({ fragment: `${start.line + 1}:${start.character + 1}` }))
-    .join("\n");
+    .join('\n');
 
   const resultsDocument = await vscode.workspace.openTextDocument({ content });
   await vscode.window.showTextDocument(resultsDocument);
