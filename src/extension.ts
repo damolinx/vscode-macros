@@ -25,13 +25,13 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     manager,
     new MacroStatusBarItem(manager),
-    manager.onRun(({ macro: { uri } }) => setContext('mruSet', !!(mruMacro = uri)))
+    manager.onRun(({ macro: { uri } }) => setContext('mruSet', !!(mruMacro = uri))),
   );
 
   const { languages: l } = vscode;
   const selector: vscode.DocumentSelector = [
     { scheme: 'untitled', language: MACRO_LANGUAGE },
-    { pattern: `**/*${MACRO_EXTENSION}` }
+    { pattern: `**/*${MACRO_EXTENSION}` },
   ];
   context.subscriptions.push(
     l.registerCodeLensProvider(selector, new MacroCodeLensProvider()),

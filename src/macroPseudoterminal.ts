@@ -75,7 +75,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     const originalBreak = replServer.commands.break;
     replServer.defineCommand('break', {
       help: 'Break from multi-line editing mode',
-      action: (text) => originalBreak?.action.call(replServer, text)
+      action: (text) => originalBreak?.action.call(replServer, text),
     });
 
     // Override to setup context
@@ -85,7 +85,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
       action: (text) => {
         originalClear?.action.call(replServer, text);
         this.setupContext(replServer.context);
-      }
+      },
     });
 
     // Override to connect to `selectMacroFile`
@@ -100,7 +100,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
           output.write('Nothing to load\n');
         }
         replServer.displayPrompt();
-      }
+      },
     });
 
     // Override to save directly to an untitled editor
@@ -114,7 +114,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
           output.write('Nothing to save\n');
         }
         replServer.displayPrompt();
-      }
+      },
     });
 
     this.setupContext(replServer.context);

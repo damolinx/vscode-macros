@@ -6,5 +6,5 @@ export const MACRO_EXTENSIONS = [MACRO_EXTENSION, '.js', '.cjs'];
 
 export const MACROS_FILTER = {
   'JavaScript Macro': ['macro.js'],
-  'JavaScript': ['js', 'cjs']
+  'JavaScript': ['js', 'cjs'],
 };

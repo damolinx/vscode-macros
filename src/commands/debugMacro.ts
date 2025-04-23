@@ -33,9 +33,9 @@ export async function debugMacro(_manager: Manager, pathOrUri?: string | vscode.
     type: 'extensionHost',
     request: 'launch',
     args: [
-      `--extensionDevelopmentPath=${dirname(document.uri.fsPath)}`
+      `--extensionDevelopmentPath=${dirname(document.uri.fsPath)}`,
     ],
-    env: { MACROS_EXT_DEBUG: '1' }
+    env: { MACROS_EXT_DEBUG: '1' },
   };
   vscode.debug.startDebugging(undefined, debugConfig);
 }

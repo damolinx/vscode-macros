@@ -10,7 +10,7 @@ export class MacroOptionsCompletionProvider implements vscode.CompletionItemProv
     document: vscode.TextDocument,
     position: vscode.Position,
     _token: vscode.CancellationToken,
-    context: vscode.CompletionContext
+    context: vscode.CompletionContext,
   ): Promise<vscode.CompletionItem[] | undefined> {
     const line = document.lineAt(position).text.substring(0, position.character);
 

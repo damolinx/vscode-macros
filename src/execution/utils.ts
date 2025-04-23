@@ -42,7 +42,7 @@ function createMacroApi(params: MacroInitParams): MacrosApi {
     macros: {
       macro: {
         uri: params.uri,
-      }
-    }
+      },
+    },
   };
 }

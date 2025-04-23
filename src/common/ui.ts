@@ -14,12 +14,12 @@ export interface UriQuickPickItem extends vscode.QuickPickItem {
 
 const QuickPickOpenFile: vscode.QuickPickItem = {
   label: 'Open File …',
-  iconPath: new vscode.ThemeIcon('folder-opened')
+  iconPath: new vscode.ThemeIcon('folder-opened'),
 };
 
 const QuickPickConfigureSourceDirectories: vscode.QuickPickItem = {
   label: 'Configure Source Directories …',
-  iconPath: new vscode.ThemeIcon('gear')
+  iconPath: new vscode.ThemeIcon('gear'),
 };
 
 let lastSelection: vscode.Uri | undefined;
@@ -76,7 +76,7 @@ export function pickMacroFile(macroFiles: vscode.Uri[] | Record<string, vscode.U
         QuickPickConfigureSourceDirectories,
         {
           label: '',
-          kind: vscode.QuickPickItemKind.Separator
+          kind: vscode.QuickPickItemKind.Separator,
         });
     }
 
@@ -129,7 +129,7 @@ export async function showMacroOpenDialog(): Promise<vscode.Uri | undefined> {
 
 export async function showMacroSaveDialog(): Promise<vscode.Uri | undefined> {
   const selectedUri = await vscode.window.showSaveDialog({
-    filters: MACROS_FILTER
+    filters: MACROS_FILTER,
   });
   return selectedUri;
 }

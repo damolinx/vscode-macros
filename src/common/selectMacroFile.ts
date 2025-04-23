@@ -48,11 +48,11 @@ export async function selectSourceDirectory(): Promise<vscode.Uri | undefined> {
   const selectedItem = await vscode.window.showQuickPick<UriQuickPickItem>(
     sourceDirectories.map((d) => ({
       label: vscode.workspace.asRelativePath(d),
-      uri: d
+      uri: d,
     })).sort((t1, t2) => t1.label.localeCompare(t2.label)),
     {
-      placeHolder: 'Select a macro source directory …'
-    }
+      placeHolder: 'Select a macro source directory …',
+    },
   );
 
   return selectedItem?.uri;
@@ -74,7 +74,7 @@ async function findMacroFiles(sourceDirectories: vscode.Uri[]): Promise<Record<s
         sourceDirectory.fsPath,
         filterReadDirectoryEntries(
           entries.filter(([_, type]) => type === vscode.FileType.File),
-          sourceDirectory)
+          sourceDirectory),
       ] as [string, vscode.Uri[]];
     }),
   );

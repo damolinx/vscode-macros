@@ -74,7 +74,7 @@ function pickRunningMacro(runInfos: RunInfo[]): Promise<RunInfo | undefined> {
         items.push(
           {
             label: basename(path),
-            kind: vscode.QuickPickItemKind.Separator
+            kind: vscode.QuickPickItemKind.Separator,
           },
           ...groupedByPath[path]
             .sort((a, b) => a.runId.localeCompare(b.runId))

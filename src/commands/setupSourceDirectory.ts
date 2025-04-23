@@ -16,7 +16,7 @@ export async function setupSourceDirectory(context: vscode.ExtensionContext, pat
   const edit = new vscode.WorkspaceEdit();
   const updatingFiles = (await Promise.all([
     update(uri, GLOBALS_RESOURCE, 'global.d.ts'),
-    update(uri, JSCONFIG_RESOURCE, 'jsconfig.json')
+    update(uri, JSCONFIG_RESOURCE, 'jsconfig.json'),
   ])).some(result => result);
 
   if (!updatingFiles) {

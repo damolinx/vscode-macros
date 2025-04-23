@@ -12,8 +12,8 @@ export class MacroCodeLensProvider implements vscode.CodeLensProvider {
         {
           title: 'Initialize',
           command: 'macros.new.macro.activeEditor',
-          tooltip: 'Initialize from a macro template'
-        }
+          tooltip: 'Initialize from a macro template',
+        },
       ));
     } else if (parseOptions(document.getText()).persistent) {
       lenses.push(new vscode.CodeLens(
@@ -22,8 +22,8 @@ export class MacroCodeLensProvider implements vscode.CodeLensProvider {
           title: 'Reset Context',
           command: 'macros.resetContext',
           arguments: [document.uri],
-          tooltip: 'Reset shared macro context'
-        }
+          tooltip: 'Reset shared macro context',
+        },
       ));
     }
 

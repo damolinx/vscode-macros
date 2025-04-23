@@ -41,7 +41,7 @@ export function showMacroErrorMessage(runner: Runner, macroOptions: MacroOptions
     const actions: { title: string; execute: () => Thenable<any> | void }[] = [
       {
         title: selection ? 'Go to Error Location' : 'Open Macro',
-        execute: () => showTextDocument(runner.macro.uri, { selection })
+        execute: () => showTextDocument(runner.macro.uri, { selection }),
       },
       {
         title: 'Retry',
@@ -51,7 +51,7 @@ export function showMacroErrorMessage(runner: Runner, macroOptions: MacroOptions
     if (macroOptions.persistent) {
       actions.push({
         title: 'Reset Context',
-        execute: () => runner.resetSharedContext()
+        execute: () => runner.resetSharedContext(),
       });
     }
 

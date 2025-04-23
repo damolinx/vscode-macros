@@ -18,7 +18,7 @@ export async function createMacro(context: vscode.ExtensionContext, defaultConte
   return editor;
 }
 
-export async function updateActiveEditor(context: vscode.ExtensionContext, defaultContent?: string,): Promise<void> {
+export async function updateActiveEditor(context: vscode.ExtensionContext, defaultContent?: string): Promise<void> {
   const editor = await activeMacroEditor(false);
   if (!editor) {
     return;
@@ -33,10 +33,10 @@ export async function updateActiveEditor(context: vscode.ExtensionContext, defau
     editBuilder.replace(
       new vscode.Range(
         new vscode.Position(0, 0),
-        editor.document.lineAt(editor.document.lineCount - 1).range.end
+        editor.document.lineAt(editor.document.lineCount - 1).range.end,
       ),
       content,
-    )
+    ),
   );
 }
 
