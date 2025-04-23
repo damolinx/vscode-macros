@@ -24,7 +24,8 @@ export class Runner implements vscode.Disposable {
   }
 
   dispose() {
-    vscode.Disposable.from(this.runEventEmitter, this.stopEventEmitter).dispose();
+    this.runEventEmitter.dispose();
+    this.stopEventEmitter.dispose();
   }
 
   private getContext(params: MacroContextInitParams & { persistent?: boolean }): vm.Context {
