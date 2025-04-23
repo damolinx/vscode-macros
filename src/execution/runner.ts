@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as vm from 'vm';
 import { RunId, RunInfo } from './runInfo';
-import { initalizeContext, initializeMacrosApi, MacroInitParams } from './utils';
+import { initalizeContext, initializeMacrosApi, MacroContextInitParams } from './utils';
 import { MacroContext } from '../api/macroContext';
 import { showMacroErrorMessage } from '../common/error';
 import { Macro } from '../macro';
@@ -27,7 +27,7 @@ export class Runner implements vscode.Disposable {
     vscode.Disposable.from(this.runEventEmitter, this.stopEventEmitter).dispose();
   }
 
-  private getContext(params: MacroInitParams & { persistent?: boolean }): vm.Context {
+  private getContext(params: MacroContextInitParams & { persistent?: boolean }): vm.Context {
     let context: MacroContext;
     let name = `context-${params.runId}`;
 

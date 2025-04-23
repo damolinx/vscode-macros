@@ -3,14 +3,14 @@ import * as vm from 'vm';
 import { MacrosApi } from '../api/macrosApi';
 import { MacroContext } from '../api/macroContext';
 
-export interface MacroInitParams {
+export interface MacroContextInitParams {
   disposables: vscode.Disposable[];
   runId: string;
   token: vscode.CancellationToken;
   uri?: vscode.Uri;
 }
 
-export function initalizeContext(context: vm.Context, params: MacroInitParams): MacroContext {
+export function initalizeContext(context: vm.Context, params: MacroContextInitParams): MacroContext {
   const updatedContext = Object.assign(context,
     {
       atob: atob,
@@ -29,12 +29,12 @@ export function initalizeContext(context: vm.Context, params: MacroInitParams): 
   return updatedContext;
 }
 
-export function initializeMacrosApi(context: MacroContext, params: MacroInitParams): MacroContext {
+export function initializeMacrosApi(context: MacroContext, params: MacroContextInitParams): MacroContext {
   const updatedContext = Object.assign(context, createMacroApi(params));
   return updatedContext;
 }
 
-function createMacroApi(params: MacroInitParams): MacrosApi {
+function createMacroApi(params: MacroContextInitParams): MacrosApi {
   return {
     __cancellationToken: params.token,
     __disposables: params.disposables,

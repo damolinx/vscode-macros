@@ -4,14 +4,14 @@ import { PassThrough } from 'stream';
 import { Context } from 'vm';
 import { createMacro } from './commands/createMacro';
 import { selectMacroFile } from './common/selectMacroFile';
-import { initalizeContext, MacroInitParams } from './execution/utils';
+import { initalizeContext, MacroContextInitParams } from './execution/utils';
 
 type REPLServerWithHistory = REPLServer & { history?: string[] };
 
 export class MacroPseudoterminal implements vscode.Pseudoterminal {
   private readonly context: vscode.ExtensionContext;
   private readonly cts: vscode.CancellationTokenSource;
-  private readonly macroInitParams: MacroInitParams;
+  private readonly macroInitParams: MacroContextInitParams;
   private readonly onDidCloseEmitter: vscode.EventEmitter<void>;
   private readonly onDidWriteEmitter: vscode.EventEmitter<string>;
   private repl?: {
