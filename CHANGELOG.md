@@ -1,7 +1,10 @@
 # Changelog
 
+## 0.2.1
+- Updated templates.
+
 ## 0.2.0
-- Remove `javascriptmacro` language and lean on `.macro.js` whenever surfacing a feature would cause confusion with standard JavaSCript files (e.g. UI buttons).
+- Remove `javascriptmacro` language and lean on `.macro.js` whenever surfacing a feature would cause confusion with standard JavaScript files (e.g. UI buttons).
 - Add `__disposable` API. Check README and example template.
 - Add`.load` and `.save` commands in REPL, fully leveraging VS Code integration.
 - Add `Reset Context` CodeLens on `@macro:persistent` macros.
