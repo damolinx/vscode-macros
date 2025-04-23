@@ -6,6 +6,8 @@ import { createMacro } from './commands/createMacro';
 import { selectMacroFile } from './common/selectMacroFile';
 import { initalizeContext, MacroInitParams } from './execution/utils';
 
+type REPLServerWithHistory = REPLServer & { history?: string[] };
+
 export class MacroPseudoterminal implements vscode.Pseudoterminal {
   private readonly context: vscode.ExtensionContext;
   private readonly cts: vscode.CancellationTokenSource;
@@ -15,7 +17,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
   private repl?: {
     input: PassThrough,
     output: PassThrough & { columns?: number; rows?: number },
-    server: REPLServer & { history: string[] },
+    server: REPLServerWithHistory,
   } & vscode.Disposable;
 
   constructor(context: vscode.ExtensionContext, name: string) {
@@ -67,7 +69,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     }).on('exit', () => {
       this.onDidCloseEmitter.fire();
       this.close();
-    }) as REPLServer & { history: string[] };
+    }) as REPLServerWithHistory;
 
     // Override to provide sane help
     const originalBreak = replServer.commands.break;
@@ -105,8 +107,8 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     replServer.defineCommand('save', {
       help: 'Save all evaluated commands into a new editor',
       action: async () => {
-        const nonCommandStmts = replServer.history.filter(s => !s.startsWith('.'));
-        if (nonCommandStmts.length > 0) {
+        const nonCommandStmts = replServer.history?.filter(s => !s.startsWith('.'));
+        if (nonCommandStmts?.length) {
           await createMacro(this.context, nonCommandStmts.reverse().join('\n'), { preserveFocus: true });
         } else {
           output.write('Nothing to save\n');
