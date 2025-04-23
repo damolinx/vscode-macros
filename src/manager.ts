@@ -6,8 +6,8 @@ import { getId, MacroId } from './macro';
 
 export class Manager implements vscode.Disposable {
   private readonly macros: Map<MacroId, Runner>;
-  private runEventEmitter: vscode.EventEmitter<RunInfo>;
-  private stopEventEmitter: vscode.EventEmitter<RunInfo>;
+  private readonly runEventEmitter: vscode.EventEmitter<RunInfo>;
+  private readonly stopEventEmitter: vscode.EventEmitter<RunInfo>;
 
   constructor() {
     this.macros = new Map();
@@ -16,10 +16,9 @@ export class Manager implements vscode.Disposable {
   }
 
   dispose() {
-    vscode.Disposable.from(
-      this.runEventEmitter,
-      this.stopEventEmitter,
-      ...this.macros.values()).dispose();
+    this.runEventEmitter.dispose();
+    this.stopEventEmitter.dispose();
+    vscode.Disposable.from(...this.macros.values()).dispose();
   }
 
   public getRunner(uri: vscode.Uri): Runner {
