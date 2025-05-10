@@ -11,6 +11,11 @@
       "path": "dispose.js"
     },
     {
+      "label": "Git",
+      "description": "Interact with the Git API using its git.d.ts definitions",
+      "path": "git.js"
+    },
+    {
       "label": "Hello World!",
       "description": "'Hello World' macro",
       "path": "helloWorld.js"

@@ -1,3 +1,4 @@
+
 // @macro:persistent
 
 var invocationCount;

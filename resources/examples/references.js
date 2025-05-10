@@ -1,3 +1,4 @@
+
 async function main() {
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
