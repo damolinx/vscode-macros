@@ -1,6 +1,7 @@
 
-// Download https://github.com/Microsoft/vscode/blob/main/extensions/git/src/api/git.d.ts
-// and place it in the same directory as this file to get type information.
+// Download https://github.com/microsoft/vscode/blob/main/extensions/git/src/api/git.d.ts
+// to the same directory as this macro to enable type definitions. You can use the
+// `Download d.ts files` code action.
 
 /** @typedef {import('./git').API} GitAPI */
 

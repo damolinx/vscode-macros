@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.2.2
+- Add `Download .d.ts` code action on `.d.ts` URLs.
 - New `Git` API template.
 
 ## 0.2.1

@@ -1,8 +1,10 @@
 import * as vscode from 'vscode';
 import { parseOptions } from '../macroOptions';
 
+/**
+ * Provides a CodeLens to initialize or reset the context of a persistent macro.
+ */
 export class MacroCodeLensProvider implements vscode.CodeLensProvider {
-
   provideCodeLenses(document: vscode.TextDocument, _token: vscode.CancellationToken): vscode.CodeLens[] {
     const lenses: vscode.CodeLens[] = [];
 
