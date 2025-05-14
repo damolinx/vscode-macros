@@ -51,7 +51,8 @@ export class Runner implements vscode.Disposable {
   public async run(withErrorHandling = true): Promise<any> {
     const { code, options } = await this.macro.getCode();
     if (options.singleton && this.executions.size > 0) {
-      throw new Error(`Singleton macro ${this.macro.shortName} is already running.`);
+      showMacroErrorMessage(this, options, `Singleton macro ${this.macro.shortName} is already running.`);
+      return;
     }
 
     const runInfo = {

@@ -42,12 +42,15 @@ export function showMacroErrorMessage(runner: Runner, macroOptions: MacroOptions
       {
         title: selection ? 'Go to Error Location' : 'Open Macro',
         execute: () => showTextDocument(runner.macro.uri, { selection }),
-      },
-      {
+      }];
+
+    if (!macroOptions.singleton || runner.running.length === 0) {
+      actions.push({
         title: 'Retry',
         execute: () => vscode.commands.executeCommand('macros.run', runner.macro.uri),
-      },
-    ];
+      });
+    }
+
     if (macroOptions.persistent) {
       actions.push({
         title: 'Reset Context',
