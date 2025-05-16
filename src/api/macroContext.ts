@@ -18,4 +18,3 @@ export interface MacroContext extends vm.Context, MacrosApi {
   readonly setTimeout: typeof setTimeout;
   readonly vscode: typeof vscode;
 }
-
