@@ -117,7 +117,7 @@
         {
           "command": "macros.debug.activeEditor",
           "group": "navigation",
-          "when": "!inDebugMode && resourceScheme != untitled && resourceFilename =~ /.macro.js$/"
+          "when": "!inDebugMode && resourceFilename =~ /.macro.js$/"
         },
         {
           "command": "macros.run.activeEditor",
