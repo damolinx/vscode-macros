@@ -21,6 +21,11 @@
       "path": "helloWorld.js"
     },
     {
+      "label": "Language Model",
+      "description": "Interact with a Language Model",
+      "path": "languageModel.js"
+    },
+    {
       "label": "Persistent Hello World!",
       "description": "Leverage a persistent context",
       "path": "persistent.js"

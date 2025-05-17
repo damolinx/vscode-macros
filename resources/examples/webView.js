@@ -1,5 +1,5 @@
 
-// Learn more about Webviews at https://code.visualstudio.com/api/extension-guides/webview
+// Learn about the Webview API at https://code.visualstudio.com/api/extension-guides/webview
 
 function createHtml() {
   return `<!DOCTYPE html>

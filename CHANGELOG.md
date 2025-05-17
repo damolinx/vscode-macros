@@ -1,8 +1,11 @@
 # Changelog
 
+## 0.2.3
+- New `Language Model` template.
+
 ## 0.2.2
 - Add `Download .d.ts` code action on `.d.ts` URLs.
-- New `Git` API template.
+- New `Git` template.
 
 ## 0.2.1
 - Updated templates.
