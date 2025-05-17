@@ -125,6 +125,61 @@
           "when": "editorLangId == javascript && (resourceScheme == untitled || resourceFilename =~ /.macro.js$/)"
         }
       ]
+    },
+    "views": {
+      "macrosView": [
+        {
+          "id": "macrosView.treeview1",
+          "name": "Treeview 1",
+          "type": "tree",
+          "icon": "$(run-all)",
+          "when": "macrosView.treeview1.show"
+        },
+        {
+          "id": "macrosView.treeview2",
+          "name": "Treeview 2",
+          "type": "tree",
+          "icon": "$(run-all)",
+          "when": "macrosView.treeview2.show"
+        },
+        {
+          "id": "macrosView.treeview3",
+          "name": "Treeview 3",
+          "type": "tree",
+          "icon": "$(run-all)",
+          "when": "macrosView.treeview3.show"
+        },
+        {
+          "id": "macrosView.webview1",
+          "name": "Webview 1",
+          "type": "webview",
+          "icon": "$(run-all)",
+          "when": "macrosView.webview1.show"
+        },
+        {
+          "id": "macrosView.webview2",
+          "name": "Webview 2",
+          "type": "webview",
+          "icon": "$(run-all)",
+          "when": "macrosView.webview2.show"
+        },
+        {
+          "id": "macrosView.webview3",
+          "name": "Webview 3",
+          "type": "webview",
+          "icon": "$(run-all)",
+          "when": "macrosView.webview3.show"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "macrosView",
+          "title": "Macros",
+          "icon": "$(run-all)"
+        }
+      ]
     }
   },
   "scripts": {

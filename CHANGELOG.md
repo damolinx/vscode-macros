@@ -1,7 +1,8 @@
 # Changelog
 
 ## 0.2.3
-- New `Language Model` template.
+- New `Macros` view container on the Activity Bar allows to create a new type of webview.
+- New `Language Model`, `Webview (Activity Bar)` templates.
 
 ## 0.2.2
 - Add `Download .d.ts` code action on `.d.ts` URLs.

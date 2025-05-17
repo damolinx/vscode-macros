@@ -11,21 +11,21 @@ function createHtml() {
   </head>
   <body>
     <h1>Hello from Webview</h1>
-    <button id="sendMessageButton">Send Message</button>
+    <button id="sendButton">Send Message</button>
 
     <script>
       const vscode = acquireVsCodeApi();
-      const sendButton = document.getElementById('sendMessageButton');
+      const sendButton = document.getElementById('sendButton');
 
       sendButton.addEventListener('click', () => {
-        vscode.postMessage({ command: 'alert', text: 'Hello from your Webview!' });
+        vscode.postMessage({ text: 'Hello from your Webview!' });
       });
     </script>
   </body>
 </html>`;
 }
 
-function createWebView(html) {
+function createWebview(html) {
   const panel = vscode.window.createWebviewPanel(
     'mywebview.id',
     'My Webview',
@@ -41,7 +41,7 @@ function createWebView(html) {
 // Keep script alive until the webview is disposed
 new Promise((resolve) => {
   const html = createHtml();
-  const webview = createWebView(html);
+  const webview = createWebview(html);
   webview.webview.onDidReceiveMessage((message) =>
     vscode.window.showInformationMessage(message.text),
   );

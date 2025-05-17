@@ -36,9 +36,14 @@
       "path": "references.js"
     },
     {
-      "label": "WebView",
-      "description": "Create and communicate with a WebView",
-      "path": "webView.js"
+      "label": "Webview (Activity Bar)",
+      "description": "Create a Webview that can be hosted on the Activity Bar or as a Panel",
+      "path": "webview.activityBar.js"
+    },
+    {
+      "label": "Webview (Editor)",
+      "description": "Create a Webview that is hosted on the editor area",
+      "path": "webview.editor.js"
     }
   ]
 }
