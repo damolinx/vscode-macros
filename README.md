@@ -36,7 +36,7 @@ Remember several VS Code APIs already take in a [CancellationToken](https://code
 All that is required is to keybind the `macros.run` command with a single argument that is the path to the macro to run. This can only be done directly in the `keybindings.json` file, however. Check the VS Code [documentation](https://code.visualstudio.com/docs/editor/keybindings#_advanced-customization) for details.
 
 1. Use the **Preferences: Open Keyboard Shortcuts (JSON)** command to open the `keybindings.json` file.
-2. Add a keybinding for the `macros.run` command passing as  argument the path to the macro file to run (`${userhome}` and `${workspaceFolder}` tokens are supported), e.g.
+2. Add a keybinding for the `macros.run` command passing as argument the path to the macro file to run (`${userhome}` and `${workspaceFolder}` tokens are supported), e.g.
 
     **Example: Keybinding definition**
     ```json
@@ -86,19 +86,23 @@ The following references are available from the global context of your macro:
 
   **Example: Macros API**
   ```javascript
-
   vscode.window.showInformationMessage(`Hello from ${macros.macro.uri?.fsPath || 'somewhere'}!`);
   ```
-
+  
 ### Predefined Views and View Container
-Views such as sidebars and panels cannot be created dynamically—they must first be declared in the extension's `package.json` manifest. This limitation means macros would not be able to define their own views at runtime. To overcome this limitation, the extension predefines a `Macros` view container (with the id: `macrosViews`) with  generic `webview` and `treeview` views (with ids `macrosView.webview[1..3]` and `macrosView.treeview[1..3]`). Macros can then "claim" and use these predefined views to display custom content or UI as needed.
-Views are disabled by default via a context value, so to enable them you must enable that context value, with a command similar to
+Views such as sidebars and panels cannot be created dynamically—they must first be declared in the extension's `package.json` manifest. This limitation means macros would not be able to define their own views at runtime. To overcome this limitation, the extension predefines a `Macros` view container (with the id: `macrosViews`) with generic `webview` and `treeview` views (with ids `macrosView.webview[1..3]` and `macrosView.treeview[1..3]`). Macros can then "claim" and use these predefined views to display custom content or UI as needed.
+Views are disabled by default via a context value, so to enable them you must enable that context value (see example below).
 
   **Example: Enabling `macrosView.webview1` view**
   ```
   vscode.commands.executeCommand('setContext', 'macrosView.webview1.show', true);
   ```
-Remember to set this back to `false` when macro completes.
+Remember to set this back to `false` when macro completes. 
+
+**Macro-backed tree view ("Tree View" template)**
+<p align=center>
+<img width="292" alt="image" src="https://github.com/user-attachments/assets/ffdbcb2d-4e68-4960-a6a7-f3a76490317f" />
+</p>
 
 #### Special Tokens
 These tokens do not form part of contexts shared when `@macro:persistent` is used as they are different from session to session.
