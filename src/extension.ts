@@ -1,4 +1,6 @@
 import * as vscode from 'vscode';
+import { MacroChatParticipant } from './ai/macroChatParticipant';
+import { CREATE_MACRO_TOOL_ID, MacroCreateTool } from './ai/macroCreateTool';
 import { createMacro, updateActiveEditor } from './commands/createMacro';
 import { createRepl } from './commands/createRepl';
 import { debugActiveEditor, debugMacro } from './commands/debugMacro';
@@ -35,11 +37,16 @@ export async function activate(context: vscode.ExtensionContext) {
     { scheme: 'untitled', language: MACRO_LANGUAGE },
     { pattern: `**/*${MACRO_EXTENSION}` },
   ];
-
   context.subscriptions.push(
     l.registerCodeActionsProvider(selector, new DTSCodeActionProvider()),
     l.registerCodeLensProvider(selector, new MacroCodeLensProvider()),
     l.registerCompletionItemProvider(selector, new MacroOptionsCompletionProvider(), ...MACRO_TRIGGER_CHARACTERS),
+  );
+
+  const { lm } = vscode;
+  context.subscriptions.push(
+    new MacroChatParticipant(context),
+    lm.registerTool(CREATE_MACRO_TOOL_ID, new MacroCreateTool(context)),
   );
 
   const { commands: c, commands: { registerCommand: cr } } = vscode;

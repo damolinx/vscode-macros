@@ -26,11 +26,28 @@ To keep things simple, only JavaScript scripts are supported at the moment. Supp
     ```javascript
     vscode.window.showInformationMessage("Hello, world!");
     ```
+
+     **Example: Async "Hello, World!" macro**
+    ```javascript
+    async function main() {
+      const yes = { title: 'Yes' };
+      const no = { title: 'No', isCloseAffordance: true };
+
+      let answer;
+      do {
+        answer = await vscode.window.showInformationMessage(
+          `Hello, World!. Close this dialog?`, { modal: true }, yes, no);
+      } while (answer !== yes);
+    }
+
+    main()
+    ```
+
 3. From the [Command Palette](https://code.visualstudio.com/api/references/contribution-points#contributes.commands), use the **Run Active Editor as Macro** command to execute your macro. Alternatively, if active editor name ends with `.macro.js`, run and debug buttons will be available on the editor title bar.
 
 <p align=center>
   <img width="461" alt="image" src="https://github.com/user-attachments/assets/53f36963-d754-4b83-912d-689d5e200f17" />
-</p>  
+</p>
 
 ### Stopping a Macro
 Macros are run [sandboxed](https://nodejs.org/api/vm.html#class-vmscript) but in-process, so terminating a macro is not possible. A `__cancellationToken` token is made available, however, so as long as the macro follows the rules of this VS Code API, it is possible to for macros to be good citizens and exit upon request.
@@ -92,7 +109,7 @@ The following references are available from the global context of your macro:
   ```javascript
   vscode.window.showInformationMessage(`Hello from ${macros.macro.uri?.fsPath || 'somewhere'}!`);
   ```
-  
+
 ### Predefined Views and View Container
 Views such as sidebars and panels cannot be created dynamically—they must first be declared in the extension's `package.json` manifest. This limitation means macros would not be able to define their own views at runtime. To overcome this limitation, the extension predefines a `Macros` view container (with the id: `macrosViews`) with generic `webview` and `treeview` views (with ids `macrosView.webview[1..3]` and `macrosView.treeview[1..3]`). Macros can then "claim" and use these predefined views to display custom content or UI as needed.
 Views are disabled by default via a context value, so to enable them you must enable that context value (see example below).
@@ -101,7 +118,7 @@ Views are disabled by default via a context value, so to enable them you must en
   ```
   vscode.commands.executeCommand('setContext', 'macrosView.webview1.show', true);
   ```
-Remember to set this back to `false` when macro completes. 
+Remember to set this back to `false` when macro completes.
 
 **Macro-backed tree view ("Tree View" template)**
 <p align=center>

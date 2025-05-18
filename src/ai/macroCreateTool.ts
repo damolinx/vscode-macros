@@ -1,0 +1,25 @@
+import * as vscode from 'vscode';
+import { templates } from '../macroTemplates';
+
+export const CREATE_MACRO_TOOL_ID = 'create_macro_from_template';
+
+export interface MacroCreateToolArgs {
+  path: string;
+}
+
+export class MacroCreateTool implements vscode.LanguageModelTool<MacroCreateToolArgs> {
+  private readonly context: vscode.ExtensionContext;
+
+  constructor(context: vscode.ExtensionContext) {
+    this.context = context;
+  }
+
+  public async invoke(options: vscode.LanguageModelToolInvocationOptions<MacroCreateToolArgs>, _token: vscode.CancellationToken): Promise<vscode.LanguageModelToolResult> {
+    const loadableTemplates = await templates(this.context);
+    const loadableTemplate = loadableTemplates.find(t => t.path === options.input.path);
+    const loadedTemplate = loadableTemplate ? await loadableTemplate.load() : '';
+    return new vscode.LanguageModelToolResult([
+      new vscode.LanguageModelTextPart(loadedTemplate),
+    ]);
+  }
+}

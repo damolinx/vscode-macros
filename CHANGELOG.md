@@ -6,6 +6,7 @@
 - Update `Webview` template:
    - Renamed to `Webview (Editor)` and style changes.
    - Fix: stopping macro disposes view correctly.
+- Add a `macros` chat agent (experimental).
 
 ## 0.2.2
 - Add `Download .d.ts` code action on `.d.ts` URLs.
