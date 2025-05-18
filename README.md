@@ -28,6 +28,10 @@ To keep things simple, only JavaScript scripts are supported at the moment. Supp
     ```
 3. From the [Command Palette](https://code.visualstudio.com/api/references/contribution-points#contributes.commands), use the **Run Active Editor as Macro** command to execute your macro. Alternatively, if active editor name ends with `.macro.js`, run and debug buttons will be available on the editor title bar.
 
+<p align=center>
+  <img width="461" alt="image" src="https://github.com/user-attachments/assets/53f36963-d754-4b83-912d-689d5e200f17" />
+</p>  
+
 ### Stopping a Macro
 Macros are run [sandboxed](https://nodejs.org/api/vm.html#class-vmscript) but in-process, so terminating a macro is not possible. A `__cancellationToken` token is made available, however, so as long as the macro follows the rules of this VS Code API, it is possible to for macros to be good citizens and exit upon request.
 Remember several VS Code APIs already take in a [CancellationToken](https://code.visualstudio.com/api/references/vscode-api#CancellationToken) argument so make sure to pass it in as needed.
