@@ -36,14 +36,19 @@
       "path": "references.js"
     },
     {
-      "label": "Webview (Activity Bar)",
-      "description": "Create a Webview that can be hosted on the Activity Bar or as a Panel",
-      "path": "webview.activityBar.js"
+      "label": "Tree View (Sidebar)",
+      "description": "Create a TreeView hosted in the `Macros` sidebar",
+      "path": "treeview.js"
     },
     {
       "label": "Webview (Editor)",
-      "description": "Create a Webview that is hosted on the editor area",
+      "description": "Create a Webview hosted in the editor area",
       "path": "webview.editor.js"
+    },
+    {
+      "label": "Webview (Sidebar)",
+      "description": "Create a Webview hosted in the `Macros` sidebar",
+      "path": "webview.view.js"
     }
   ]
 }

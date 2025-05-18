@@ -3,11 +3,8 @@
 // to the same directory as this macro to enable type definitions. You can use the
 // `Download d.ts files` code action.
 
-/** @typedef {import('./git').API} GitAPI */
-
 async function main() {
-
-  /** @type {GitAPI | undefined} */
+  /** @type {{import('./git').API} | undefined} */
   const git = vscode.extensions.getExtension('vscode.git')?.exports.getAPI(1);
   if (!git) {
     vscode.window.showErrorMessage('Git API not found');

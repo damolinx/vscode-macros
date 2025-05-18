@@ -2,7 +2,8 @@
 // Learn about the Webview API at https://code.visualstudio.com/api/extension-guides/webview
 
 function createHtml() {
-  return `<!DOCTYPE html>
+  return `
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8">
@@ -25,7 +26,7 @@ function createHtml() {
 </html>`;
 }
 
-function createWebview(html) {
+function createWebview(resolve) {
   const panel = vscode.window.createWebviewPanel(
     'mywebview.id',
     'My Webview',
@@ -34,16 +35,17 @@ function createWebview(html) {
       enableScripts: true,
     },
   );
-  panel.webview.html = html;
+  panel.onDidDispose(resolve);
+
+  panel.webview.html = createHtml();
+  panel.webview.onDidReceiveMessage((message) =>
+    vscode.window.showInformationMessage(message.text),
+  );
   return panel;
 }
 
-// Keep script alive until the webview is disposed
+// Keep macro alive until view is disposed.
 new Promise((resolve) => {
-  const html = createHtml();
-  const webview = createWebview(html);
-  webview.webview.onDidReceiveMessage((message) =>
-    vscode.window.showInformationMessage(message.text),
-  );
-  webview.onDidDispose(resolve);
+  __cancellationToken.onCancellationRequested(resolve);
+  __disposables.push(createWebview(resolve));
 });

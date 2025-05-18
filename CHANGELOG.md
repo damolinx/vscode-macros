@@ -2,7 +2,10 @@
 
 ## 0.2.3
 - New `Macros` view container on the Activity Bar allows to create a new type of webview.
-- New `Language Model`, `Webview (Activity Bar)` templates.
+- New `Language Model`, `Tree View (Sidebar)`, `Webview (Sidebar)` templates.
+- Update `Webview` template:
+   - Renamed to `Webview (Editor)` and style changes.
+   - Fix: stopping macro disposes view correctly.
 
 ## 0.2.2
 - Add `Download .d.ts` code action on `.d.ts` URLs.

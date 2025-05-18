@@ -7,7 +7,8 @@
 const viewId = "macrosView.webview1";
 
 function createHtml() {
-  return `<!DOCTYPE html>
+  return `
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8">
@@ -30,31 +31,37 @@ function createHtml() {
 </html>`;
 }
 
-function createWebview(resolve) {
-  __disposables.push(
-    vscode.window.registerWebviewViewProvider(viewId, {
-      resolveWebviewView: (webviewView) => {
-        webviewView.webview.html = createHtml();
-        webviewView.webview.onDidReceiveMessage((message) => {
-          switch (message.command) {
-            case 'close':
-              vscode.commands.executeCommand('setContext', `${viewId}.show`, false);
-              break;
-          }
-        });
-        webviewView.webview.options = {
-          enableScripts: true
-        };
-        webviewView.title = `Macro ${__runId}`;
-        webviewView.onDidDispose(resolve);
-      }
-    }),
-  );
+/** @returns {import('vscode').WebviewViewProvider } */
+function createWebviewViewProvider(resolve) {
+  return {
+    resolveWebviewView: (webviewView) => {
+      webviewView.webview.html = createHtml();
+      webviewView.webview.onDidReceiveMessage((message) => {
+        switch (message.command) {
+          case 'close':
+            vscode.commands.executeCommand('setContext', `${viewId}.show`, false);
+            break;
+        }
+      });
+      webviewView.webview.options = {
+        enableScripts: true
+      };
+      webviewView.title = `Macro ${__runId}`;
+      webviewView.onDidDispose(resolve);
+    }
+  };
 }
 
-// Keep script alive until the webview is disposed
+// Keep macro alive until view is disposed.
 new Promise((resolve) => {
-  createWebview(resolve);
+  __cancellationToken.onCancellationRequested(resolve);
+  __disposables.push(
+    vscode.window.registerWebviewViewProvider(
+      viewId,
+      createWebviewViewProvider(resolve)),
+    {
+      dispose: () => vscode.commands.executeCommand('setContext', `${viewId}.show`, false)
+    });
 
   vscode.commands.executeCommand('setContext', `${viewId}.show`, true);
   vscode.commands.executeCommand(`${viewId}.focus`);
