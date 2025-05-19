@@ -1,6 +1,7 @@
 
 import * as vscode from 'vscode';
 import { activeMacroEditor } from '../common/activeMacroEditor';
+import { createGroupedQuickPickItems } from '../common/ui';
 import { MACRO_LANGUAGE } from '../constants';
 import { templates } from '../macroTemplates';
 
@@ -43,7 +44,16 @@ export async function updateActiveEditor(context: vscode.ExtensionContext, defau
 
 async function getTemplateContent(context: vscode.ExtensionContext): Promise<string | undefined> {
   const selectedTemplate = await vscode.window.showQuickPick(
-    await templates(context),
+    createGroupedQuickPickItems(
+      await templates(context),
+      {
+        groupBy: (template) => template.category ?? '',
+        itemBuilder: (template) => ({
+          label: template.label,
+          description: template.description,
+          template,
+        }),
+      }),
     {
       matchOnDescription: true,
       placeHolder: 'Select a macro template',
@@ -52,6 +62,6 @@ async function getTemplateContent(context: vscode.ExtensionContext): Promise<str
     return;
   }
 
-  const content = await selectedTemplate.load();
+  const content = await selectedTemplate.template.load();
   return content;
 }

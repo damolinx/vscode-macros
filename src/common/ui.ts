@@ -133,3 +133,41 @@ export async function showMacroSaveDialog(): Promise<vscode.Uri | undefined> {
   });
   return selectedUri;
 }
+
+export function createGroupedQuickPickItems<
+  TItem,
+  TQuickPick extends vscode.QuickPickItem>(
+    items: TItem[],
+    options: {
+      groupBy: (item: TItem) => string,
+      itemBuilder: (item: TItem) => TQuickPick,
+    }): TQuickPick[] {
+
+  const groups = new Map<string, TItem[]>();
+  for (const item of items) {
+    const groupName = options.groupBy(item);
+    let group = groups.get(groupName);
+    if (!group) {
+      group = [];
+      groups.set(groupName, group);
+    }
+    group.push(item);
+  }
+
+  const quickPickItems: TQuickPick[] = [];
+  const sortedGroups = [...groups.keys()].sort((a, b) => a.localeCompare(b));
+  for (const groupName of sortedGroups) {
+
+    quickPickItems.push(({
+      label: groupName,
+      kind: vscode.QuickPickItemKind.Separator,
+    } as any));
+
+    quickPickItems.push(...
+      groups.get(groupName)!
+        .map(options.itemBuilder)
+        .sort((a, b) => a.label.localeCompare(b.label)));
+  }
+
+  return quickPickItems;
+}

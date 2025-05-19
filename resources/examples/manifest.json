@@ -1,51 +1,61 @@
 {
   "templates": [
     {
+      "category": "Basics",
       "label": "Cancellation",
       "description": "Support macro cancellation",
       "path": "cancellation.js"
     },
     {
+      "category": "Basics",
       "label": "Dispose",
       "description": "Support cleaning up of disposable objects",
       "path": "dispose.js"
     },
     {
+      "category": "Tools",
       "label": "Git",
       "description": "Interact with the Git API using its git.d.ts definitions",
       "path": "git.js"
     },
     {
+      "category": "Basics",
       "label": "Hello World!",
       "description": "'Hello World' macro",
       "path": "helloWorld.js"
     },
     {
+      "category": "Tools",
       "label": "Language Model",
       "description": "Interact with a Language Model",
       "path": "languageModel.js"
     },
     {
+      "category": "Basics",
       "label": "Persistent Hello World!",
       "description": "Leverage a persistent context",
       "path": "persistent.js"
     },
     {
+      "category": "Tools",
       "label": "References",
       "description": "Query a language service for symbol references",
       "path": "references.js"
     },
     {
+      "category": "UI",
       "label": "Tree View (Sidebar)",
       "description": "Create a TreeView hosted in the `Macros` sidebar",
       "path": "treeview.js"
     },
     {
+      "category": "UI",
       "label": "Webview (Editor)",
       "description": "Create a Webview hosted in the editor area",
       "path": "webview.editor.js"
     },
     {
+      "category": "UI",
       "label": "Webview (Sidebar)",
       "description": "Create a Webview hosted in the `Macros` sidebar",
       "path": "webview.view.js"

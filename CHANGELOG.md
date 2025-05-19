@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.2.4
+- Macro templates are grouped by category.
+
 ## 0.2.3
 - New `Macros` view container on the Activity Bar allows to create a new type of webview.
 - New `Language Model`, `Tree View (Sidebar)`, `Webview (Sidebar)` templates.

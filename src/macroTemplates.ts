@@ -7,8 +7,9 @@ export const MACRO_TEMPLATES_DIR_RESOURCE = 'examples/';
 export const MACRO_TEMPLATES_MANIFEST_RESOURCE = `${MACRO_TEMPLATES_DIR_RESOURCE}/manifest.json`;
 
 export interface MacroTemplate {
-  label: string;
+  category?: string;
   description: string;
+  label: string;
   path: string;
 }
 
