@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { basename } from 'path';
+import { createGroupedQuickPickItems } from '../common/ui';
 import { showTextDocument } from '../common/vscodeEx';
 import { RunInfo } from '../execution/runInfo';
 import { Manager } from '../manager';
@@ -20,12 +20,10 @@ export async function showRunningMacros(manager: Manager) {
 function pickRunningMacro(runInfos: RunInfo[]): Promise<RunInfo | undefined> {
   return new Promise((resolve) => {
     const quickPick = createMacroQuickPick();
-
     quickPick.onDidHide(() => {
       quickPick.dispose();
       resolve(undefined);
     });
-
     quickPick.show();
   });
 
@@ -41,7 +39,15 @@ function pickRunningMacro(runInfos: RunInfo[]): Promise<RunInfo | undefined> {
     const buttons = [stopButton, openButton];
 
     const quickPick = vscode.window.createQuickPick<vscode.QuickPickItem & { runInfo?: RunInfo }>();
-    quickPick.items = createQuickPickItems(runInfos, buttons);
+    quickPick.items = createGroupedQuickPickItems(runInfos, {
+      groupBy: (runInfo) => runInfo.macro.shortName,
+      itemBuilder: (runInfo) => ({
+        buttons,
+        detail: runInfo.macro.uri.fsPath,
+        label: runInfo.runId,
+        runInfo,
+      }),
+    });
     quickPick.matchOnDetail = true;
     quickPick.placeholder = 'Running macros';
     quickPick.onDidTriggerItemButton(async (e) => {
@@ -53,38 +59,5 @@ function pickRunningMacro(runInfos: RunInfo[]): Promise<RunInfo | undefined> {
       }
     });
     return quickPick;
-  }
-
-  function createQuickPickItems(runInfos: RunInfo[], buttons: vscode.QuickInputButton[]) {
-    const groupedByPath = runInfos.reduce((acc, runInfo) => {
-      const key = runInfo.macro.uri.fsPath;
-      let entries = acc[key];
-      if (!entries) {
-        entries = [];
-        acc[key] = entries;
-      }
-      entries.push(runInfo);
-      return acc;
-    }, {} as Record<string, RunInfo[]>);
-
-    const items: (vscode.QuickPickItem & { runInfo?: RunInfo })[] = [];
-    Object.keys(groupedByPath)
-      .sort((a, b) => a.localeCompare(b))
-      .forEach((path) => {
-        items.push(
-          {
-            label: basename(path),
-            kind: vscode.QuickPickItemKind.Separator,
-          },
-          ...groupedByPath[path]
-            .sort((a, b) => a.runId.localeCompare(b.runId))
-            .map((runInfo) => ({
-              buttons,
-              detail: runInfo.macro.uri.fsPath,
-              label: runInfo.runId,
-              runInfo,
-            })));
-      });
-    return items;
   }
 }
