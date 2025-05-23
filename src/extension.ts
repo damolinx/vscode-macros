@@ -15,6 +15,7 @@ import { MACRO_EXTENSION, MACRO_LANGUAGE } from './constants';
 import { MacroStatusBarItem } from './macroStatusBarItem';
 import { Manager } from './manager';
 import { DTSCodeActionProvider } from './providers/dtsCodeActionProvider';
+import { EXECUTE_COMMAND_CHARACTERS, ExecuteCommandCompletionProvider } from './providers/executeCommandCompletionProvider';
 import { MacroCodeLensProvider } from './providers/macroCodeLensProvider';
 import { MACRO_TRIGGER_CHARACTERS, MacroOptionsCompletionProvider } from './providers/macroOptionsCompletionProvider';
 
@@ -37,8 +38,11 @@ export async function activate(context: vscode.ExtensionContext) {
     { scheme: 'untitled', language: MACRO_LANGUAGE },
     { pattern: `**/*${MACRO_EXTENSION}` },
   ];
+  const executeCommandCompletionProvider = new ExecuteCommandCompletionProvider();
   context.subscriptions.push(
     l.registerCodeActionsProvider(selector, new DTSCodeActionProvider()),
+    executeCommandCompletionProvider,
+    l.registerCompletionItemProvider(selector, executeCommandCompletionProvider, ...EXECUTE_COMMAND_CHARACTERS),
     l.registerCodeLensProvider(selector, new MacroCodeLensProvider()),
     l.registerCompletionItemProvider(selector, new MacroOptionsCompletionProvider(), ...MACRO_TRIGGER_CHARACTERS),
   );

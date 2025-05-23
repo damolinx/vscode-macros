@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.2.4
+- Add autocomplete support for `executeCommand` method (command id -only).
 - Macro templates are grouped by category.
 
 ## 0.2.3
