@@ -28,13 +28,13 @@ export class ExecuteCommandCompletionProvider implements vscode.Disposable, vsco
     _context: vscode.CompletionContext,
   ): Promise<vscode.CompletionItem[] | undefined> {
     const line = document.lineAt(position).text.substring(0, position.character);
-    const match = line.match(/(?:^\s*\.?|\.)executeCommand\s*\(\s*(?:(?<quote>["'`])[a-zA-Z0-9._-]*|(?<quote>["'`])?)$/);
+    const match = line.match(/(?:^\s*\.?|\.)executeCommand\s*\(\s*(?:(?<quote1>["'`])[a-zA-Z0-9._-]*|(?<quote2>["'`])?)$/);
     if (!match) {
       return;
     }
 
     const commandIds = await this.commandIds.get();
-    const quote = match.groups?.quote;
+    const quote = match.groups?.quote1 || match.groups?.quote2;
     const range = document.getWordRangeAtPosition(position, /[a-zA-Z0-9._-]+/);
 
     return commandIds.map((id) => {

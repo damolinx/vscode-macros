@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.2.5
+- Fix: Duplicate capture group name.
+
 ## 0.2.4
 - `macros` chat agent uses history as context.
 - Add autocomplete support for `executeCommand` method (command id -only).
