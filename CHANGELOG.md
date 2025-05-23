@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.2.4
+- `macros` chat agent uses history as context.
 - Add autocomplete support for `executeCommand` method (command id -only).
 - Macro templates are grouped by category.
 
