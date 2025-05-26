@@ -9,6 +9,21 @@ function createHtml() {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Webview Example</title>
+    <style>
+      button {
+        background: var(--vscode-button-background);
+        border: 1px solid var(--vscode-button-border,transparent);
+        color: var(--vscode-button-foreground);
+        padding: 4px;
+        text-align: center;
+      }
+      button:hover {
+        background: var(--vscode-button-hoverBackground);
+      }
+      button:focus {
+        outline-color: var(--vscode-focusBorder);
+      }
+    </style>
   </head>
   <body>
     <h1>Hello from Webview</h1>
