@@ -13,19 +13,8 @@ export class FileMacro implements Macro {
   }
 
   public async getCode(): Promise<MacroCode> {
-    const code = await this.readFile();
-    return { code, options: parseOptions(code) };
-  }
-
-  public async readFile(): Promise<string> {
-    let code: string;
     const openDocument = await vscode.workspace.openTextDocument(this.uri);
-    if (openDocument) {
-      code = openDocument.getText();
-    } else {
-      const bytes = await vscode.workspace.fs.readFile(this.uri);
-      code = bytes.toString();
-    }
-    return code;
+    const code = openDocument.getText();
+    return { code, options: parseOptions(code) };
   }
 }
