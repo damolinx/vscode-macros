@@ -7,7 +7,7 @@ import { ManifestRaw } from '../macroTemplates';
 export const MACROS_CHAT_PARTICIPANT_ID = 'macros.chatParticipant';
 
 export const MACRO_PROMPT = `
-You are a subject matter expert on VSCode Macros. The followin message will
+You are a subject matter expert on VS Code Macros. The following message will
 provide basic documentation on macros for context.
 `;
 
@@ -18,20 +18,20 @@ There are two options to satisfy this request:
   They can be instantiated via the ${CREATE_MACRO_TOOL_ID} tool. If there are
   multiple matches, ask the user to refine the request. If a given template
   partially satisfies the request, load it and then suggest modifications.
-- Generate new code if no template satisfes the request. Do not ask the user
+- Generate new code if no template satisfies the request. Do not ask the user
   for confirmation, just generate the code. Basic rules for macro creation:
-  - A macro is a JavaScript that is run as an entry point script. DO NOT use
-     return, module.exports or await in any top level statements.
+  - A macro is a JavaScript file that is run as an entry point script. DO NOT
+    use return, module.exports or await in any top level statements.
   - The script runs in a context where vscode and NodeJS global namespaces
-    are already included, do not import them. Any NodeJS library, howver,
+    are already included, do not import them. Any NodeJS library, however,
     can be required. Only use CommonJS' require statements.
   - If there is any async code, OR need to wait for completion, the script
     result should be a Promise (do not use return, last statement is the
-    impolicit result).
+    implicit result).
   - If any UI component is created, also use a Promise as result, and only
-   resolve the promise when the UI compoennt is closed / disposed.
+    resolve the promise when the UI component is closed / disposed.
   - Macros should use the built-in __disposables variable to register any
-    objects that must be explicitly disposed when macro exists. This is the
+    objects that must be explicitly disposed when macro exits. This is the
     direct replacement of context.subscriptions.
   - Macros should use the __cancellationToken CancellationToken variable to
     support stopping the macro from the extension.
@@ -40,7 +40,7 @@ There are two options to satisfy this request:
     - '// @macro:persistent' so macro context is shared across all instances.
   - TreeView or WebView targeting the sidebar, use IDs like 'macrosView.webview1' (IDs 1-3).
     These macros must be singletons and should return a Promise that resolves when the view
-    closes. The macro should not exit before view is disposed. To make these view visible,
+    closes. The macro should not exit before the view is disposed. To make these views visible,
     'vscode.commands.executeCommand('setContext', 'macrosView.webview1.show', true);' must
     be called.
 `;
