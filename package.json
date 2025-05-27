@@ -101,7 +101,7 @@
           },
           "macros.sourceDirectories": {
             "type": "array",
-            "markdownDescription": "Directories containing macro files (non-recursive). `${userHome}` and `${workspaceFolder}` variables are supported.",
+            "markdownDescription": "Directories containing macro files (non-recursive). The following tokens are available:\n\n- `${userHome}`: User home directory.\n- `${workspaceFolder}`: Current workspace root directory.",
             "default": [],
             "items": {
               "type": "string",
