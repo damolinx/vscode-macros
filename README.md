@@ -1,4 +1,4 @@
-# Macros for Visual Studio Code Extension
+# Macros for VS Code
 
 This extension enables you to execute automation scripts (macros) using the standard [VS Code APIs](https://code.visualstudio.com/api/references/vscode-api) without the need to develop a full-fledged extension. It is ideal for rapid prototyping of extension features or creating custom tools tailored to specific or infrequent use cases, eliminating the overhead of maintaining a complete extension.
 
