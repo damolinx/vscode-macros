@@ -1,7 +1,7 @@
 {
   "name": "damolinx-macros",
   "displayName": "Macros for VS Code",
-  "description": "Enhance your VS Code tooling via JavaScript scripts that use standard VS Code and NodeJS APIs.",
+  "description": "Macros are JavaScript scripts for automating VS Code using standard extensibility APIs.",
   "version": "0.2.5",
   "publisher": "damolinx",
   "icon": "resources/images/icon.png",

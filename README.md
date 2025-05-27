@@ -1,26 +1,20 @@
 # Macros for VS Code
 
-This extension enables you to execute automation scripts (macros) using the standard [VS Code APIs](https://code.visualstudio.com/api/references/vscode-api) without the need to develop a full-fledged extension. It is ideal for rapid prototyping of extension features or creating custom tools tailored to specific or infrequent use cases, eliminating the overhead of maintaining a complete extension.
+A **macro** is a JavaScript script that lets you automate tasks or add custom tools to VS Code using its standard [extensibility APIs](https://code.visualstudio.com/api/references/vscode-api) but without the overhead of maintaining a full extension. Macros are ideal for workspace-specific automation, enhancing your workflow with custom utilities, or quickly prototyping extension features.
 
-The primary tradeoff of this approach is that all scripts execute within the same process as the extension. While their execution context is [sandboxed](https://nodejs.org/api/vm.html#class-vmscript), a poorly optimized or malfunctioning script could impact other scripts or even the extension itself. At present, isolating scripts in separate processes is not a design goal, as it would get too close to the architecture of traditional VS Code extensions.
-
-To keep things simple, only JavaScript scripts are supported at the moment. Supporting TypeScript would require integrating a toolchain and a transpilation process, which would add complexity to the setup. This decision ensures a lightweight and straightforward experience for users.
-
-## Features
-
-- Create custom macros using JavaScript.
-- Run multiple macros simultaneously, on demand or at extension startup.
-- Options to define persistent and singleton macros provide advanced control.
+Implementation-wise, these macro scripts are executed within [sandboxes](https://nodejs.org/api/vm.html#class-vmscript) hosted within the process of this extension. This approach provides isolated execution, with full access to `vscode` and NodeJS APIs.
 
 ## Getting Started
 
-1. Use the `Macros: New Macro` command to create a new macro. Alternatively, create a new editor and mark it as `javascript` language.
+1. Create a new macro:
+   - **Option 1**: Use the **New Macro** command.
+   - **Option 2**: Create an empty `javascript` editor and use the **Initialize** CodeLens
+   - **Option 3**: Ask the `@macros` chat agent to create a macro for you.
 
-  > **ℹ️ Tip:** Save your macro files with a `.macro.js` extension. This enables UI controls, IntelliSense, and other macro-specific features.
+   > ℹ️ Save your macro files using a `.macro.js` extension. This enables UI controls, IntelliSense, and other macro-specific features.
 
-2. Write or update your macro code.
+2. Write, or update, your macro code.
    - See [Available References](#available-code-references).
-   - Use the **Initialize** CodeLens shown in *empty* untitled or `.macro.js` editors set as `javascript` language.
 
     **Example: "Hello, World!" macro**
     ```javascript
@@ -43,20 +37,25 @@ To keep things simple, only JavaScript scripts are supported at the moment. Supp
     main()
     ```
 
-3. From the [Command Palette](https://code.visualstudio.com/api/references/contribution-points#contributes.commands), use the **Run Active Editor as Macro** command to execute your macro. Alternatively, if active editor name ends with `.macro.js`, run and debug buttons will be available on the editor title bar.
+3. From the [Command Palette](https://code.visualstudio.com/api/references/contribution-points#contributes.commands), use the **Run Active Editor as Macro** command to execute your macro.  Alternatively, on `Untitled` `javascript` or `*.macro.js`,  editors,  use the run and debug buttons will be available on the editor title bar.
 
-<p align=center>
-  <img width="461" alt="image" src="https://github.com/user-attachments/assets/53f36963-d754-4b83-912d-689d5e200f17" />
-</p>
+   <p align=center>
+     <img width="400" alt="Macro editor showing Run Macro button" src="https://github.com/user-attachments/assets/53f36963-d754-4b83-912d-689d5e200f17" />
+   </p>
 
 ### Stopping a Macro
-Macros are run [sandboxed](https://nodejs.org/api/vm.html#class-vmscript) but in-process, so terminating a macro is not possible. A `__cancellationToken` token is made available, however, so as long as the macro follows the rules of this VS Code API, it is possible to for macros to be good citizens and exit upon request.
-Remember several VS Code APIs already take in a [CancellationToken](https://code.visualstudio.com/api/references/vscode-api#CancellationToken) argument so make sure to pass it in as needed.
+
+1. Use the **Show Running Macros** command and click the stop button to **request** the macro to stop.
+
+A macro sandbox cannot be terminated; instead, the `Stop` action sends a cancellation request via the `__cancellationToken` ([CancellationToken](https://code.visualstudio.com/api/references/vscode-api#CancellationToken)) variable to the macro. This variable must be wired into all async code and APIs.
+
+If a macro does not respond to the cancellation request, it will continue running. In such cases, you can use the **Developer: Restart Extension Host** command to restart all extensions, or simply restart VS Code to stop the macro. While this is not ideal, it provides a way to recover from unresponsive or runaway macros. Note that this approach will not implicitly terminate external processes started by the macro.
 
 ### Keybinding a Macro
-All that is required is to keybind the `macros.run` command with a single argument that is the path to the macro to run. This can only be done directly in the `keybindings.json` file, however. Check the VS Code [documentation](https://code.visualstudio.com/docs/editor/keybindings#_advanced-customization) for details.
+Keybind the `macros.run` command with a single argument that is the path to the macro to run. This can only be done directly in the `keybindings.json` file, however. Check the VS Code [documentation](https://code.visualstudio.com/docs/editor/keybindings#_advanced-customization) for details.
 
 1. Use the **Preferences: Open Keyboard Shortcuts (JSON)** command to open the `keybindings.json` file.
+
 2. Add a keybinding for the `macros.run` command passing as argument the path to the macro file to run (`${userhome}` and `${workspaceFolder}` tokens are supported), e.g.
 
     **Example: Keybinding definition**
@@ -142,6 +141,7 @@ An option is added to macro file as a comment in the form `//@macro:«option»`.
 // Example: Hello World!
 vscode.window.showInformationMessage("Hello, world!");
 ```
+
 ### Download Definition Files
 Any URL in a macro file pointing to a `.d.ts` file will automatically receive a code action, **Download .d.ts**, enabling you to download the file directly to the macro's parent folder. This simplifies adding type definitions to support IntelliSense in your macros.
 

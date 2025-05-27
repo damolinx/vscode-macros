@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.2.6
+- Updated templates and documentation.
+
 ## 0.2.5
 - Fix: Duplicate capture group name.
 
