@@ -3,8 +3,9 @@
 
 var invocationCount;
 
-async function main(invocation) {
+async function main() {
   invocationCount ||= 0;
+  let invocation = ++invocationCount;
 
   await vscode.window.showInformationMessage(
     `Hello from call ${invocation}. Run this macro a couple of times before dismissing this message.`);
@@ -12,4 +13,4 @@ async function main(invocation) {
     `Bye from call ${invocation}. You have made ${invocationCount} call(s) so far`);
 }
 
-main(++invocationCount);
+main();

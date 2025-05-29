@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.2.7
+- Updated templates.
+
 ## 0.2.6
 - Updated templates and documentation.
 
