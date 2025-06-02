@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { relative } from 'path';
-import { showTextDocument } from './vscodeEx';
-import { MACROS_FILTER } from '../constants';
+import { showMacroOpenDialog } from './dialogs';
+import { showTextDocument } from '../utils/vscodeEx';
 
 export interface OpenMacroOptions {
   hideOpen?: boolean;
@@ -117,21 +117,6 @@ export function pickMacroFile(macroFiles: vscode.Uri[] | Record<string, vscode.U
         .sort((t1, t2) => t1.label.localeCompare(t2.label));
     }
   }
-}
-
-export async function showMacroOpenDialog(): Promise<vscode.Uri | undefined> {
-  const selectedUris = await vscode.window.showOpenDialog({
-    filters: MACROS_FILTER,
-  });
-
-  return selectedUris?.pop();
-}
-
-export async function showMacroSaveDialog(): Promise<vscode.Uri | undefined> {
-  const selectedUri = await vscode.window.showSaveDialog({
-    filters: MACROS_FILTER,
-  });
-  return selectedUri;
 }
 
 export function createGroupedQuickPickItems<

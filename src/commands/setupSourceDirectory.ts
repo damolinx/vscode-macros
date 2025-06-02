@@ -1,13 +1,13 @@
 import * as vscode from 'vscode';
-import { readFile } from '../common/resources';
-import { selectSourceDirectory } from '../common/selectMacroFile';
-import { UriHelpers } from '../common/vscodeEx';
+import { selectSourceDirectory } from '../ui/selectMacroFile';
+import { readFile } from '../utils/resources';
+import { PathLike, toUri } from '../utils/uri';
 
 export const GLOBALS_RESOURCE = 'api/global.d.ts';
 export const JSCONFIG_RESOURCE = 'api/jsconfig.json';
 
-export async function setupSourceDirectory(context: vscode.ExtensionContext, pathOrUri?: string | vscode.Uri): Promise<void> {
-  const uri = pathOrUri ? UriHelpers.toUri(pathOrUri) : await selectSourceDirectory();
+export async function setupSourceDirectory(context: vscode.ExtensionContext, pathOrUri?: PathLike): Promise<void> {
+  const uri = pathOrUri ? toUri(pathOrUri) : await selectSourceDirectory();
   if (!uri) {
     return; // Nothing to run.
   }

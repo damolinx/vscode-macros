@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
-import { Lazy } from '../common/lazy';
 import { CREATE_MACRO_TOOL_ID } from './macroCreateTool';
-import { readFile } from '../common/resources';
 import { ManifestRaw } from '../macroTemplates';
+import { Lazy } from '../utils/lazy';
+import { readFile } from '../utils/resources';
 
 export const MACROS_CHAT_PARTICIPANT_ID = 'macros.chatParticipant';
 

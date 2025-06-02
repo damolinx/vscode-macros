@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.2.7
+## 0.3.0
+- General logic review and code clean-up.
+  - Better tracking of macro documents.
+  - Download `.d.ts` supports any FS.
+- New `Fill File with Template` command replaces `Initialize` CodeLens.
 - Updated templates.
 
 ## 0.2.6

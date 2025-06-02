@@ -1,8 +1,9 @@
 import * as vscode from 'vscode';
 import { extname, sep } from 'path';
-import { OpenMacroOptions, pickMacroFile, showMacroOpenDialog, UriQuickPickItem } from './ui';
-import { expandPath } from './variables';
-import { MACRO_EXTENSIONS } from '../constants';
+import { showMacroOpenDialog } from './dialogs';
+import { OpenMacroOptions, pickMacroFile, UriQuickPickItem } from './ui';
+import { MACRO_EXTENSIONS } from '../core/constants';
+import { expandPath } from '../utils/variables';
 
 export const SOURCE_DIRS_CONFIG = 'macros.sourceDirectories';
 

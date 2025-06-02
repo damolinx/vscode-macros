@@ -1,10 +1,10 @@
 import * as vscode from 'vscode';
-import { createGroupedQuickPickItems } from '../common/ui';
-import { showTextDocument } from '../common/vscodeEx';
-import { RunInfo } from '../execution/runInfo';
-import { Manager } from '../manager';
+import { MacroRunInfo } from '../core/execution/macroRunInfo';
+import { MacroRunnerManager } from '../core/execution/macroRunnerManager';
+import { createGroupedQuickPickItems } from '../ui/ui';
+import { showTextDocument } from '../utils/vscodeEx';
 
-export async function showRunningMacros(manager: Manager) {
+export async function showRunningMacros(manager: MacroRunnerManager) {
   const { runningMacros } = manager;
   if (runningMacros.length === 0) {
     vscode.window.showInformationMessage('No running macros');
@@ -17,7 +17,7 @@ export async function showRunningMacros(manager: Manager) {
   }
 }
 
-function pickRunningMacro(runInfos: RunInfo[]): Promise<RunInfo | undefined> {
+function pickRunningMacro(runInfos: MacroRunInfo[]): Promise<MacroRunInfo | undefined> {
   return new Promise((resolve) => {
     const quickPick = createMacroQuickPick();
     quickPick.onDidHide(() => {
@@ -38,13 +38,13 @@ function pickRunningMacro(runInfos: RunInfo[]): Promise<RunInfo | undefined> {
     };
     const buttons = [stopButton, openButton];
 
-    const quickPick = vscode.window.createQuickPick<vscode.QuickPickItem & { runInfo?: RunInfo }>();
+    const quickPick = vscode.window.createQuickPick<vscode.QuickPickItem & { runInfo?: MacroRunInfo }>();
     quickPick.items = createGroupedQuickPickItems(runInfos, {
-      groupBy: (runInfo) => runInfo.macro.shortName,
+      groupBy: (runInfo) => runInfo.macro.name,
       itemBuilder: (runInfo) => ({
         buttons,
         detail: runInfo.macro.uri.fsPath,
-        label: runInfo.runId,
+        label: runInfo.id,
         runInfo,
       }),
     });

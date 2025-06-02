@@ -10,14 +10,14 @@ import { resetSharedContext } from './commands/resetContext';
 import { runActiveEditor, runMacro } from './commands/runMacro';
 import { setupSourceDirectory } from './commands/setupSourceDirectory';
 import { showRunningMacros } from './commands/showRunningMacros';
-import { setContext } from './common/vscodeEx';
-import { MACRO_EXTENSION, MACRO_LANGUAGE } from './constants';
+import { MACRO_EXTENSION, MACRO_LANGUAGE } from './core/constants';
+import { MacroRunnerManager } from './core/execution/macroRunnerManager';
 import { MacroStatusBarItem } from './macroStatusBarItem';
-import { Manager } from './manager';
 import { DTSCodeActionProvider } from './providers/dtsCodeActionProvider';
 import { EXECUTE_COMMAND_CHARACTERS, ExecuteCommandCompletionProvider } from './providers/executeCommandCompletionProvider';
 import { MacroCodeLensProvider } from './providers/macroCodeLensProvider';
 import { MACRO_TRIGGER_CHARACTERS, MacroOptionsCompletionProvider } from './providers/macroOptionsCompletionProvider';
+import { PathLike } from './utils/uri';
 
 /**
  * Extension startup.
@@ -26,11 +26,12 @@ import { MACRO_TRIGGER_CHARACTERS, MacroOptionsCompletionProvider } from './prov
 export async function activate(context: vscode.ExtensionContext) {
   let mruMacro: vscode.Uri | undefined;
 
-  const manager = new Manager();
+  const manager = new MacroRunnerManager();
   context.subscriptions.push(
     manager,
     new MacroStatusBarItem(manager),
-    manager.onRun(({ macro: { uri } }) => setContext('mruSet', !!(mruMacro = uri))),
+    manager.onRun(({ macro: { uri } }) =>
+      vscode.commands.executeCommand('setContext', 'macros:mruSet', !!(mruMacro = uri))),
   );
 
   const { languages: l } = vscode;
@@ -55,15 +56,15 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const { commands: c, commands: { registerCommand: cr } } = vscode;
   context.subscriptions.push(
-    cr('macros.resetContext', (pathOrUri: string | vscode.Uri) => resetSharedContext(manager, pathOrUri)),
-    cr('macros.debug', (pathOrUri?: string | vscode.Uri) => debugMacro(manager, pathOrUri)),
-    cr('macros.debug.activeEditor', () => debugActiveEditor(manager)),
-    cr('macros.downloadAsset', (url: string, macroFile: vscode.Uri) => downloadAsset(url, macroFile)),
+    cr('macros.resetContext', (pathOrUri: PathLike) => resetSharedContext(manager, pathOrUri)),
+    cr('macros.debug', (pathOrUri?: PathLike) => debugMacro(pathOrUri)),
+    cr('macros.debug.activeEditor', () => debugActiveEditor()),
+    cr('macros.downloadAsset', (assetUri: vscode.Uri, macroPathOrUri: PathLike) => downloadAsset(assetUri, macroPathOrUri)),
     cr('macros.new.macro', (content?: string) => createMacro(context, content)),
     cr('macros.new.macro.activeEditor', () => updateActiveEditor(context)),
     cr('macros.new.macro.repl', () => createRepl(context)),
     cr('macros.open', () => openMacro()),
-    cr('macros.run', (pathOrUri?: string | vscode.Uri) => runMacro(manager, pathOrUri)),
+    cr('macros.run', (pathOrUri?: PathLike) => runMacro(manager, pathOrUri)),
     cr('macros.run.activeEditor', () => runActiveEditor(manager)),
     cr('macros.run.mru', () => runMacro(manager, mruMacro)),
     cr('macros.run.show', () => showRunningMacros(manager)),

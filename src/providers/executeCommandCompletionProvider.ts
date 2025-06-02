@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { Lazy } from '../common/lazy';
+import { Lazy } from '../utils/lazy';
 
 export const EXECUTE_COMMAND_CHARACTERS: readonly string[] = ['(', '"', '\'', '`'];
 

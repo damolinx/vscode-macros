@@ -11,7 +11,6 @@ export interface MacroOptions {
 
 export function parseOptions(code: string): MacroOptions {
   const options: MacroOptions = {};
-
   for (const match of code.matchAll(/\/\/\s*@macro:\s*(?<option>\w+)\s*$/gm)) {
     if (match.groups?.option) {
       switch (match.groups.option) {

@@ -1,0 +1,33 @@
+import * as vscode from 'vscode';
+import { showMacroErrorMessage } from './errors';
+import { selectMacroFile } from './selectMacroFile';
+import { OpenMacroOptions } from './ui';
+import { MACROS_FILTER } from '../core/constants';
+import { MacroRunner } from '../core/execution/macroRunner';
+import { MacroOptions } from '../core/macroOptions';
+
+export function showMacroErrorDialog(runner: MacroRunner, macroOptions: MacroOptions, error: Error | string): Promise<void> {
+  return showMacroErrorMessage(runner, macroOptions, error);
+}
+
+export async function showMacroOpenDialog(options?: vscode.OpenDialogOptions): Promise<vscode.Uri | undefined> {
+  const selectedUris = await vscode.window.showOpenDialog({
+    filters: MACROS_FILTER,
+    ...options,
+  });
+
+  return selectedUris?.pop();
+}
+
+export async function showMacroSaveDialog(options?: vscode.SaveDialogOptions): Promise<vscode.Uri | undefined> {
+  const selectedUri = await vscode.window.showSaveDialog({
+    filters: MACROS_FILTER,
+    ...options,
+  });
+
+  return selectedUri;
+}
+
+export async function showMacroQuickPick(options?: OpenMacroOptions): Promise<vscode.Uri | undefined> {
+  return selectMacroFile(options);
+}

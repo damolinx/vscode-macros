@@ -1,12 +1,12 @@
 import * as vscode from 'vscode';
-import { Manager } from './manager';
+import { MacroRunnerManager } from './core/execution/macroRunnerManager';
 
 export class MacroStatusBarItem implements vscode.Disposable {
+  private readonly disposables: vscode.Disposable[];
   private readonly item: vscode.StatusBarItem;
-  private readonly manager: Manager;
-  private disposables: vscode.Disposable[];
+  private readonly manager: MacroRunnerManager;
 
-  constructor(manager: Manager) {
+  constructor(manager: MacroRunnerManager) {
     this.item = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000);
     this.item.command = 'macros.run.show';
     this.item.text = '$(run-all)';
@@ -15,7 +15,7 @@ export class MacroStatusBarItem implements vscode.Disposable {
     this.disposables = [
       this.item,
       this.manager.onRun(() => {
-        this.item.tooltip = `Running ${this.manager.runningMacros.length} macro(s): ${this.manager.runningMacros.map((runInfo) => runInfo.runId).join(', ')}`;
+        this.item.tooltip = `Running ${this.manager.runningMacros.length} macro(s): ${this.manager.runningMacros.map((runInfo) => runInfo.id).join(', ')}`;
         this.item.show();
       }),
       this.manager.onStop(() => {

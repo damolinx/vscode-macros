@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { join } from 'path';
-import { Lazy } from './common/lazy';
-import { readFile } from './common/resources';
+import { Lazy } from './utils/lazy';
+import { readFile } from './utils/resources';
 
 export const MACRO_TEMPLATES_DIR_RESOURCE = 'examples/';
 export const MACRO_TEMPLATES_MANIFEST_RESOURCE = `${MACRO_TEMPLATES_DIR_RESOURCE}/manifest.json`;
@@ -36,8 +36,6 @@ export async function templates(context: vscode.ExtensionContext): Promise<Loada
   const { templates } = await Manifest.get(context);
   return templates.map(t => ({ ...t, load: () => readTemplate(context, t) }));
 }
-
-
 
 async function readTemplate(context: vscode.ExtensionContext, template: MacroTemplate): Promise<string> {
   const path = join(MACRO_TEMPLATES_DIR_RESOURCE, template.path);

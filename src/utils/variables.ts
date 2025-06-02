@@ -1,10 +1,11 @@
 import * as vscode from 'vscode';
 import { resolve } from 'path';
+import { PathLike } from './uri';
 
 export const HOME_TOKEN = '${userHome}';
 export const WORKSPACE_TOKEN = '${workspaceFolder}';
 
-export function expandTokens<T extends string | vscode.Uri>(pathOrUri: T): T {
+export function expandTokens<T extends PathLike>(pathOrUri: T): T {
   const expandedPathOrUri = (pathOrUri instanceof vscode.Uri)
     ? expandUri(pathOrUri) : expandPath(pathOrUri);
 

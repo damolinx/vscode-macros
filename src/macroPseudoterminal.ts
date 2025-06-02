@@ -3,8 +3,8 @@ import { REPLServer, start as startREPL } from 'repl';
 import { PassThrough } from 'stream';
 import { Context } from 'vm';
 import { createMacro } from './commands/createMacro';
-import { selectMacroFile } from './common/selectMacroFile';
-import { initalizeContext, MacroContextInitParams } from './execution/utils';
+import { initalizeContext, MacroContextInitParams } from './core/execution/macroRunContext';
+import { showMacroQuickPick } from './ui/dialogs';
 
 type REPLServerWithHistory = REPLServer & { history?: string[] };
 
@@ -93,7 +93,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     replServer.defineCommand('load', {
       help: 'Load and evaluate a macro file',
       action: async () => {
-        const file = await selectMacroFile({ hideOpenPerItem: true });
+        const file = await showMacroQuickPick({ hideOpenPerItem: true });
         if (file) {
           originalLoad?.action.call(replServer, file.fsPath);
         } else {

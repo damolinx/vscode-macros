@@ -22,7 +22,7 @@ export class DTSCodeActionProvider implements vscode.CodeActionProvider {
     downloadAction.command = {
       title: downloadAction.title,
       command: 'macros.downloadAsset',
-      arguments: [url, document.uri],
+      arguments: [vscode.Uri.parse(url), document.uri],
     };
     return [downloadAction];
   }

@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
-import { showTextDocument } from './vscodeEx';
-import { Runner } from '../execution/runner';
-import { MacroOptions } from '../macroOptions';
+import { MacroRunner } from '../core/execution/macroRunner';
+import { MacroOptions } from '../core/macroOptions';
+import { showTextDocument } from '../utils/vscodeEx';
 
-export function showMacroErrorMessage(runner: Runner, macroOptions: MacroOptions, error: Error | string): Promise<void> {
+export function showMacroErrorMessage(runner: MacroRunner, macroOptions: MacroOptions, error: Error | string): Promise<void> {
   let message: string;
   let selection: vscode.Range | undefined;
   let stack: string | undefined;
@@ -37,14 +37,14 @@ export function showMacroErrorMessage(runner: Runner, macroOptions: MacroOptions
     return position && new vscode.Range(position, position);
   }
 
-  async function showErrorMessage(runner: Runner, message: string, stack?: string, selection?: vscode.Range, modal = false): Promise<void> {
+  async function showErrorMessage(runner: MacroRunner, message: string, stack?: string, selection?: vscode.Range, modal = false): Promise<void> {
     const actions: { title: string; execute: () => Thenable<any> | void }[] = [
       {
         title: selection ? 'Go to Error Location' : 'Open Macro',
         execute: () => showTextDocument(runner.macro.uri, { selection }),
       }];
 
-    if (!macroOptions.singleton || runner.running.length === 0) {
+    if (!macroOptions.singleton || !runner.someRunning) {
       actions.push({
         title: 'Retry',
         execute: () => vscode.commands.executeCommand('macros.run', runner.macro.uri),

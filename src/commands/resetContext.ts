@@ -1,9 +1,8 @@
-import * as vscode from 'vscode';
-import { Manager } from '../manager';
-import { UriHelpers } from '../common/vscodeEx';
+import { MacroRunnerManager } from '../core/execution/macroRunnerManager';
+import { PathLike, toUri } from '../utils/uri';
 
-export function resetSharedContext(manager: Manager, pathOrUri: string | vscode.Uri): void {
-  const uri = UriHelpers.toUri(pathOrUri);
+export function resetSharedContext(manager: MacroRunnerManager, pathOrUri: PathLike): void {
+  const uri = toUri(pathOrUri);
   const runner = manager.getRunner(uri);
   runner.resetSharedContext();
 }

@@ -1,12 +1,12 @@
 import * as vscode from 'vscode';
 import { basename, dirname } from 'path';
-import { activeMacroEditor } from '../common/activeMacroEditor';
-import { showMacroOpenDialog } from '../common/ui';
-import { showTextDocument, UriHelpers } from '../common/vscodeEx';
-import { Manager } from '../manager';
+import { showMacroOpenDialog } from '../ui/dialogs';
+import { activeMacroEditor } from '../utils/activeMacroEditor';
+import { showTextDocument } from '../utils/vscodeEx';
+import { PathLike, toUri } from '../utils/uri';
 
-export async function debugMacro(_manager: Manager, pathOrUri?: string | vscode.Uri) {
-  const uri = pathOrUri ? UriHelpers.toUri(pathOrUri) : await showMacroOpenDialog();
+export async function debugMacro(pathOrUri?: PathLike) {
+  const uri = pathOrUri ? toUri(pathOrUri) : await showMacroOpenDialog();
   if (!uri) {
     return; // Nothing to run.
   }
@@ -40,9 +40,9 @@ export async function debugMacro(_manager: Manager, pathOrUri?: string | vscode.
   vscode.debug.startDebugging(undefined, debugConfig);
 }
 
-export async function debugActiveEditor(manager: Manager) {
+export async function debugActiveEditor() {
   const editor = await activeMacroEditor(true);
   if (editor) {
-    await debugMacro(manager, editor.document.uri);
+    await debugMacro(editor.document.uri);
   }
 }

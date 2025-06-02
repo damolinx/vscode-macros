@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as vm from 'vm';
-import { MacrosApi } from '../api/macrosApi';
-import { MacroContext } from '../api/macroContext';
+import { MacrosApi } from '../../api/macrosApi';
+import { MacroContext } from '../../api/macroContext';
 
 export interface MacroContextInitParams {
   disposables: vscode.Disposable[];

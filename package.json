@@ -52,6 +52,12 @@
         "category": "Macros"
       },
       {
+        "command": "macros.new.macro.activeEditor",
+        "title": "Fill File with Template",
+        "category": "Macros",
+        "when": "editorLangId == javascript && (resourceScheme == untitled || resourceFilename =~ /.macro.js$/)"
+      },
+      {
         "command": "macros.new.macro.repl",
         "title": "New REPL Terminal",
         "category": "Macros"

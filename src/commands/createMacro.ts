@@ -1,9 +1,9 @@
 
 import * as vscode from 'vscode';
-import { activeMacroEditor } from '../common/activeMacroEditor';
-import { createGroupedQuickPickItems } from '../common/ui';
-import { MACRO_LANGUAGE } from '../constants';
+import { MACRO_LANGUAGE } from '../core/constants';
 import { templates } from '../macroTemplates';
+import { createGroupedQuickPickItems } from '../ui/ui';
+import { activeMacroEditor } from '../utils/activeMacroEditor';
 
 export async function createMacro(context: vscode.ExtensionContext, defaultContent?: string, options?: vscode.TextDocumentShowOptions): Promise<vscode.TextEditor | undefined> {
   const content = defaultContent ?? await getTemplateContent(context);
@@ -15,7 +15,9 @@ export async function createMacro(context: vscode.ExtensionContext, defaultConte
     language: MACRO_LANGUAGE,
     content,
   });
-  const editor = await vscode.window.showTextDocument(document, options);
+  const editor = await vscode.window.showTextDocument(
+    document,
+    options);
   return editor;
 }
 
@@ -40,7 +42,6 @@ export async function updateActiveEditor(context: vscode.ExtensionContext, defau
     ),
   );
 }
-
 
 async function getTemplateContent(context: vscode.ExtensionContext): Promise<string | undefined> {
   const selectedTemplate = await vscode.window.showQuickPick(

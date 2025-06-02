@@ -8,7 +8,7 @@ Implementation-wise, these macro scripts are executed within [sandboxes](https:/
 
 1. Create a new macro:
    - **Option 1**: Use the **New Macro** command.
-   - **Option 2**: Create an empty `javascript` editor and use the **Initialize** CodeLens
+   - **Option 2**: Create an empty `javascript` editor and use the **Fill File with Template** command.
    - **Option 3**: Ask the `@macros` chat agent to create a macro for you.
 
    > ℹ️ Save your macro files using a `.macro.js` extension. This enables UI controls, IntelliSense, and other macro-specific features.
@@ -83,7 +83,8 @@ See [Debugging a Macro](#debugging-a-macro) for additional information.
 * **Setup Source Directory for Development**: adds or updates optional files used to improve IntelliSense on macro files.
 
 #### Manage Macros
-* **New Macro…**: creates a new macro with sample contents.
+* **Fill File with Template**: initialize an existing file with example macro content.
+* **New Macro…**: creates a new file with example macro content.
 * **Show Running Macros**: view and manage running macros.
 
 #### Run Macros

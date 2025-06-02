@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 
-// Saving an editor with an untitled document might will a new editor, which is
-// confusing. This method will return the proper editor after saving.
+// Saving an editor with an untitled document will return a new editor, which
+// is confusing. This method will return the proper editor after saving.
 export async function saveTextEditor(editor: vscode.TextEditor, optionsOrUri?: vscode.SaveDialogOptions | vscode.Uri): Promise<vscode.TextEditor | undefined> {
   let savedEditor: vscode.TextEditor | undefined;
   if (editor.document.isUntitled) {
@@ -19,10 +19,6 @@ export async function saveTextEditor(editor: vscode.TextEditor, optionsOrUri?: v
   return savedEditor;
 }
 
-export function setContext<T>(name: string, value: T): Thenable<void> {
-  return vscode.commands.executeCommand('setContext', `macros:${name}`, value);
-}
-
 // Opens `uri` in an editor but prevents opening multiple editors.
 export async function showTextDocument(uri: vscode.Uri, options?: vscode.TextDocumentShowOptions): Promise<vscode.TextEditor> {
   const alreadyOpenEditor = vscode.window.visibleTextEditors.find(
@@ -35,14 +31,4 @@ export async function showTextDocument(uri: vscode.Uri, options?: vscode.TextDoc
   });
 
   return editor;
-}
-
-export class UriHelpers {
-  public static toPath(pathOrUri: string | vscode.Uri): string {
-    return pathOrUri instanceof vscode.Uri ? pathOrUri.fsPath : pathOrUri;
-  }
-
-  public static toUri(pathOrUri: string | vscode.Uri): vscode.Uri {
-    return pathOrUri instanceof vscode.Uri ? pathOrUri : vscode.Uri.file(pathOrUri);
-  }
 }

@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { RunId } from '../execution/runInfo';
+import { MacroRunId } from '../core/execution/macroRunInfo';
 
 /**
  * Macro-API unique to a given macro run.
@@ -16,7 +16,7 @@ export interface MacrosApi {
   /**
    * Id of current macro execution.
    */
-  readonly __runId: RunId;
+  readonly __runId: MacroRunId;
 
   /**
    * Macros namespace

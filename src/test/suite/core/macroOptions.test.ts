@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 import { basename } from 'path';
-import { parseOptions } from '../../macroOptions';
+import { parseOptions } from '../../../core/macroOptions';
 
 suite(`Suite: ${basename(__filename, '.test.js')}`, () => {
   test('should return default options when file is empty', () => {
