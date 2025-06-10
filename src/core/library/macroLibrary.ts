@@ -16,6 +16,6 @@ export class MacroLibrary {
       .filter(([name, type]) =>
         (type === vscode.FileType.File || type === vscode.FileType.SymbolicLink) &&
         MACRO_EXTENSIONS.includes(posix.extname(name)))
-      .map(([name, _]) => vscode.Uri.joinPath(this.root, name, posix.sep));
+      .map(([name, _]) => vscode.Uri.joinPath(this.root, name));
   }
 }

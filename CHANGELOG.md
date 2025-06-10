@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.2
+- Fix: Trailing `/` affecting `vscode-remote` execution.
+- Fix: Missing source directories lead to error.
+
 ## 0.3.1
 - Support multi-root workspaces.
 - Simplify `Run Macro…` behavior when no libraries have been configured.
