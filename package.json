@@ -130,6 +130,18 @@
           "group": "navigation",
           "when": "editorLangId == javascript && (resourceScheme == untitled || resourceFilename =~ /.macro.js$/)"
         }
+      ],
+      "explorer/context": [
+        {
+          "command": "macros.debug",
+          "when": "!inDebugMode && resourceLangId == javascript && resourceFilename =~ /.macro.js$/",
+          "group": "macro@2"
+        },
+        {
+          "command": "macros.run",
+          "when": "resourceLangId == javascript && resourceFilename =~ /.macro.js$/",
+          "group": "macro@1"
+        }
       ]
     },
     "views": {

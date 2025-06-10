@@ -3,6 +3,7 @@
 ## 0.3.1
 - Support multi-root workspaces.
 - Simplify `Run Macro…` behavior when no libraries have been configured.
+- `Run|Debug Macro` actions available from context menu on `.macro.js` files.
 
 ## 0.3.0
 - General logic review and code clean-up.
