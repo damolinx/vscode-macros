@@ -10,7 +10,8 @@ export class MacroLibrary {
   }
 
   public async getFiles(): Promise<vscode.Uri[]> {
-    const entries = await vscode.workspace.fs.readDirectory(this.root);
+    const entries = await (vscode.workspace.fs.readDirectory(this.root)
+      .then((entries) => entries, (_error) => []));
     return entries
       .filter(([name, type]) =>
         (type === vscode.FileType.File || type === vscode.FileType.SymbolicLink) &&
