@@ -8,13 +8,11 @@ export const USER_HOME_TOKEN = '${userHome}';
 export const WORKSPACE_TOKEN = '${workspaceFolder}';
 
 export class MacroLibraryManager implements vscode.Disposable {
-  private readonly home?: string;
   public readonly libraries: Lazy<readonly MacroLibrary[]>;
   private readonly onDidChangeConfigDisposable: vscode.Disposable;
 
   constructor() {
-    this.home = os.platform() === 'win32' ? process.env.USERPROFILE : process.env.HOME;
-    this.libraries = new Lazy(() => MacroLibraryManager.getLibraries(this.home));
+    this.libraries = new Lazy(() => MacroLibraryManager.getLibraries());
     this.onDidChangeConfigDisposable = vscode.workspace.onDidChangeConfiguration((e) => {
       if (e.affectsConfiguration(SOURCE_DIRS_CONFIG)) {
         this.libraries.reset();
@@ -37,11 +35,11 @@ export class MacroLibraryManager implements vscode.Disposable {
     return allFiles;
   }
 
-  private static getLibraries(home?: string): MacroLibrary[] {
+  private static getLibraries(): MacroLibrary[] {
     const uniqueRoots = new Set<string>();
 
     getConfigValue().forEach((path) => expandSourceDirPath(
-      path, { home, workspaceFolders: vscode.workspace.workspaceFolders ?? [] }));
+      path, ...vscode.workspace.workspaceFolders ?? []));
 
     return [...uniqueRoots].map((root) => new MacroLibrary(vscode.Uri.file(root)));
 
@@ -50,11 +48,9 @@ export class MacroLibraryManager implements vscode.Disposable {
         .get<string[]>(SOURCE_DIRS_CONFIG, []);
     }
 
-    function expandSourceDirPath(path: string, { workspaceFolders, home }: { workspaceFolders: readonly vscode.WorkspaceFolder[], home?: string }) {
+    function expandSourceDirPath(path: string, ...workspaceFolders: vscode.WorkspaceFolder[]) {
       if (path.includes(USER_HOME_TOKEN)) {
-        if (home) {
-          uniqueRoots.add(path.replace(USER_HOME_TOKEN, home));
-        }
+        uniqueRoots.add(path.replace(USER_HOME_TOKEN, os.homedir()));
       } else if (path.includes(WORKSPACE_TOKEN)) {
         workspaceFolders.forEach((folder) => {
           uniqueRoots.add(path.replace(WORKSPACE_TOKEN, folder.uri.fsPath));
