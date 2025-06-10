@@ -4,12 +4,13 @@ import { PassThrough } from 'stream';
 import { Context } from 'vm';
 import { createMacro } from './commands/createMacro';
 import { initalizeContext, MacroContextInitParams } from './core/execution/macroRunContext';
+import { ExtensionContext } from './extensionContext';
 import { showMacroQuickPick } from './ui/dialogs';
 
 type REPLServerWithHistory = REPLServer & { history?: string[] };
 
 export class MacroPseudoterminal implements vscode.Pseudoterminal {
-  private readonly context: vscode.ExtensionContext;
+  private readonly context: ExtensionContext;
   private readonly cts: vscode.CancellationTokenSource;
   private readonly macroInitParams: MacroContextInitParams;
   private readonly onDidCloseEmitter: vscode.EventEmitter<void>;
@@ -20,7 +21,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     server: REPLServerWithHistory,
   } & vscode.Disposable;
 
-  constructor(context: vscode.ExtensionContext, name: string) {
+  constructor(context: ExtensionContext, name: string) {
     this.context = context;
     this.cts = new vscode.CancellationTokenSource();
     this.macroInitParams = {
@@ -93,7 +94,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     replServer.defineCommand('load', {
       help: 'Load and evaluate a macro file',
       action: async () => {
-        const file = await showMacroQuickPick({ hideOpenPerItem: true });
+        const file = await showMacroQuickPick(this.context.libraryManager, { hideOpenPerItem: true });
         if (file) {
           originalLoad?.action.call(replServer, file.fsPath);
         } else {

@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { CREATE_MACRO_TOOL_ID } from './macroCreateTool';
+import { ExtensionContext } from '../extensionContext';
 import { ManifestRaw } from '../macroTemplates';
 import { Lazy } from '../utils/lazy';
 import { readFile } from '../utils/resources';
@@ -53,8 +54,8 @@ export class MacroChatParticipant implements vscode.Disposable {
   private readonly participant: vscode.ChatParticipant;
   private readonly readme: Lazy<Promise<string>>;
 
-  constructor(context: vscode.ExtensionContext) {
-    this.context = context;
+  constructor({ extensionContext }: ExtensionContext) {
+    this.context = extensionContext;
     this.participant = vscode.chat.createChatParticipant(
       MACROS_CHAT_PARTICIPANT_ID,
       async (request: vscode.ChatRequest, context: vscode.ChatContext, response: vscode.ChatResponseStream, token: vscode.CancellationToken) => {

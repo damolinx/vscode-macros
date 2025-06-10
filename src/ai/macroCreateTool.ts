@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { ExtensionContext } from '../extensionContext';
 import { templates } from '../macroTemplates';
 
 export const CREATE_MACRO_TOOL_ID = 'create_macro_from_template';
@@ -8,9 +9,9 @@ export interface MacroCreateToolArgs {
 }
 
 export class MacroCreateTool implements vscode.LanguageModelTool<MacroCreateToolArgs> {
-  private readonly context: vscode.ExtensionContext;
+  private readonly context: ExtensionContext;
 
-  constructor(context: vscode.ExtensionContext) {
+  constructor(context: ExtensionContext) {
     this.context = context;
   }
 

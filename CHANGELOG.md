@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1
+- Support multi-root workspaces.
+- Simplify `Run Macro…` behavior when no libraries have been configured.
+
 ## 0.3.0
 - General logic review and code clean-up.
   - Better tracking of macro documents.

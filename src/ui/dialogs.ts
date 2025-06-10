@@ -4,6 +4,7 @@ import { selectMacroFile } from './selectMacroFile';
 import { OpenMacroOptions } from './ui';
 import { MACROS_FILTER } from '../core/constants';
 import { MacroRunner } from '../core/execution/macroRunner';
+import { MacroLibraryManager } from '../core/library/macroLibraryManager';
 import { MacroOptions } from '../core/macroOptions';
 
 export function showMacroErrorDialog(runner: MacroRunner, macroOptions: MacroOptions, error: Error | string): Promise<void> {
@@ -28,6 +29,6 @@ export async function showMacroSaveDialog(options?: vscode.SaveDialogOptions): P
   return selectedUri;
 }
 
-export async function showMacroQuickPick(options?: OpenMacroOptions): Promise<vscode.Uri | undefined> {
-  return selectMacroFile(options);
+export async function showMacroQuickPick(manager: MacroLibraryManager, options?: OpenMacroOptions): Promise<vscode.Uri | undefined> {
+  return selectMacroFile(manager, options);
 }

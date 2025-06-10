@@ -1,8 +1,8 @@
-import { MacroRunnerManager } from '../core/execution/macroRunnerManager';
+import { ExtensionContext } from '../extensionContext';
 import { PathLike, toUri } from '../utils/uri';
 
-export function resetSharedContext(manager: MacroRunnerManager, pathOrUri: PathLike): void {
+export function resetSharedContext({ runnerManager }: ExtensionContext, pathOrUri: PathLike): void {
   const uri = toUri(pathOrUri);
-  const runner = manager.getRunner(uri);
+  const runner = runnerManager.getRunner(uri);
   runner.resetSharedContext();
 }

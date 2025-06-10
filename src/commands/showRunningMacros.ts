@@ -1,11 +1,10 @@
 import * as vscode from 'vscode';
 import { MacroRunInfo } from '../core/execution/macroRunInfo';
-import { MacroRunnerManager } from '../core/execution/macroRunnerManager';
+import { ExtensionContext } from '../extensionContext';
 import { createGroupedQuickPickItems } from '../ui/ui';
 import { showTextDocument } from '../utils/vscodeEx';
 
-export async function showRunningMacros(manager: MacroRunnerManager) {
-  const { runningMacros } = manager;
+export async function showRunningMacros({ runnerManager: { runningMacros } }: ExtensionContext) {
   if (runningMacros.length === 0) {
     vscode.window.showInformationMessage('No running macros');
     return;

@@ -1,16 +1,15 @@
-import { MacroRunnerManager } from '../core/execution/macroRunnerManager';
+import { ExtensionContext } from '../extensionContext';
 import { showMacroErrorDialog, showMacroQuickPick } from '../ui/dialogs';
 import { activeMacroEditor } from '../utils/activeMacroEditor';
 import { PathLike, toUri } from '../utils/uri';
-import { expandTokens } from '../utils/variables';
 
-export async function runMacro(manager: MacroRunnerManager, pathOrUri?: PathLike) {
-  const uri = pathOrUri ? toUri(expandTokens(pathOrUri)) : await showMacroQuickPick();
+export async function runMacro(context: ExtensionContext, pathOrUri?: PathLike) {
+  const uri = pathOrUri ? toUri(pathOrUri) : await showMacroQuickPick(context.libraryManager);
   if (!uri) {
     return; // Nothing to run.
   }
 
-  const runner = manager.getRunner(uri);
+  const runner = context.runnerManager.getRunner(uri);
   try {
     await runner.run();
   } catch (error) {
@@ -19,9 +18,9 @@ export async function runMacro(manager: MacroRunnerManager, pathOrUri?: PathLike
   }
 }
 
-export async function runActiveEditor(manager: MacroRunnerManager) {
+export async function runActiveEditor(context: ExtensionContext) {
   const editor = await activeMacroEditor(false);
   if (editor) {
-    await runMacro(manager, editor.document.uri);
+    await runMacro(context, editor.document.uri);
   }
 }

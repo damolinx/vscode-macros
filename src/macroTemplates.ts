@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { join } from 'path';
+import { ExtensionContext } from './extensionContext';
 import { Lazy } from './utils/lazy';
 import { readFile } from './utils/resources';
 
@@ -32,9 +33,9 @@ export const Manifest = new Lazy(async (context: vscode.ExtensionContext) => {
   return manifest;
 });
 
-export async function templates(context: vscode.ExtensionContext): Promise<LoadableMacroTemplate[]> {
-  const { templates } = await Manifest.get(context);
-  return templates.map(t => ({ ...t, load: () => readTemplate(context, t) }));
+export async function templates({ extensionContext }: ExtensionContext): Promise<LoadableMacroTemplate[]> {
+  const { templates } = await Manifest.get(extensionContext);
+  return templates.map(t => ({ ...t, load: () => readTemplate(extensionContext, t) }));
 }
 
 async function readTemplate(context: vscode.ExtensionContext, template: MacroTemplate): Promise<string> {
