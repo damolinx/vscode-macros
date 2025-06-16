@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.3
+- Upgrade minimum VS Code version to 1.99
+
 ## 0.3.2
 - Fix: Trailing `/` affecting `vscode-remote` execution.
 - Fix: Missing source directories lead to error.
