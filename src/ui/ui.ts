@@ -93,16 +93,11 @@ export function pickMacroFile(macroFiles: vscode.Uri[] | Record<string, vscode.U
       items.push(...createItems(macroFiles));
     } else {
       Object.keys(macroFiles)
-        .map((root) => ({ root, label: vscode.workspace.asRelativePath(root) }))
-        .sort((t1, t2) => t1.label.localeCompare(t2.label))
-        .forEach(({ root, label }) => {
-
-          items.push({
-            label: label,
-            kind: vscode.QuickPickItemKind.Separator,
-          });
-
-          items.push(...createItems(macroFiles[root], root));
+        .sort((r1, r2) => r1.localeCompare(r2))
+        .forEach((root) => {
+          items.push(
+            { label: root, kind: vscode.QuickPickItemKind.Separator },
+            ...createItems(macroFiles[root], root));
         });
     }
     return items;
