@@ -101,10 +101,10 @@ export class MacroRunner implements vscode.Disposable {
     try {
       let result: any;
       if (options.persistent) {
-        const initialKeys = Object.keys(context).filter(k => !k.startsWith('__'));
+        const initialKeys = Object.keys(context).filter((k) => !k.startsWith('__'));
         result = await vm.runInContext(code, context, scriptOptions);
-        const currentKeys = Object.keys(context).filter(k => !k.startsWith('__'));
-        const removedKeys = [...initialKeys].filter(key => !currentKeys.includes(key));
+        const currentKeys = Object.keys(context).filter((k) => !k.startsWith('__'));
+        const removedKeys = [...initialKeys].filter((key) => !currentKeys.includes(key));
 
         if (this.sharedMacroContext) {
           for (const key of currentKeys) {
@@ -145,7 +145,7 @@ export class MacroRunner implements vscode.Disposable {
         }
       }
       return errors.length > 0
-        ? new Error(`Error(s) occurred while disposing resources:\n${errors.map(e => typeof e === 'string' ? e : e.message).join('\n')}`)
+        ? new Error(`Error(s) occurred while disposing resources:\n${errors.map((e) => typeof e === 'string' ? e : e.message).join('\n')}`)
         : undefined;
     }
   }

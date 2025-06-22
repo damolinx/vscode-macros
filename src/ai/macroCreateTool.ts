@@ -17,7 +17,7 @@ export class MacroCreateTool implements vscode.LanguageModelTool<MacroCreateTool
 
   public async invoke(options: vscode.LanguageModelToolInvocationOptions<MacroCreateToolArgs>, _token: vscode.CancellationToken): Promise<vscode.LanguageModelToolResult> {
     const loadableTemplates = await templates(this.context);
-    const loadableTemplate = loadableTemplates.find(t => t.path === options.input.path);
+    const loadableTemplate = loadableTemplates.find((t) => t.path === options.input.path);
     const loadedTemplate = loadableTemplate ? await loadableTemplate.load() : '';
     return new vscode.LanguageModelToolResult([
       new vscode.LanguageModelTextPart(loadedTemplate),

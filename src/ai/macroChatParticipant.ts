@@ -98,7 +98,7 @@ export class MacroChatParticipant implements vscode.Disposable {
           input: fragment.input,
           toolInvocationToken: request.toolInvocationToken,
         });
-        for (const toolResponseContent of toolResponse.content.filter(c => c instanceof vscode.LanguageModelTextPart)) {
+        for (const toolResponseContent of toolResponse.content.filter((c) => c instanceof vscode.LanguageModelTextPart)) {
           responseStream.markdown(new vscode.MarkdownString(`\`\`\`javascript\n${toolResponseContent.value}`));
         }
       } else {
@@ -127,14 +127,14 @@ export class MacroChatParticipant implements vscode.Disposable {
 
   private getChatTools(...tags: ChatTag[]): vscode.LanguageModelChatTool[] | undefined {
     return vscode.lm.tools.filter(
-      tool => tags.every(tag => tool.tags.includes(tag)));
+      (tool) => tags.every((tag) => tool.tags.includes(tag)));
   }
 
   private getMessages(context: vscode.ChatContext): vscode.LanguageModelChatMessage[] {
     const messages = context.history
-      .filter(turn => turn instanceof vscode.ChatResponseTurn)
-      .filter(turn => turn.participant === MACROS_CHAT_PARTICIPANT_ID)
-      .map(turn =>
+      .filter((turn) => turn instanceof vscode.ChatResponseTurn)
+      .filter((turn) => turn.participant === MACROS_CHAT_PARTICIPANT_ID)
+      .map((turn) =>
         vscode.LanguageModelChatMessage.Assistant(
           turn.response.reduce((prev, curr) =>
             (curr instanceof vscode.ChatResponseMarkdownPart)
@@ -147,7 +147,7 @@ export class MacroChatParticipant implements vscode.Disposable {
 
   private hasCommandHistory(context: vscode.ChatContext, command: ChatCommand) {
     return context.history.some(
-      turn => turn.command === command && turn instanceof vscode.ChatRequestTurn);
+      (turn) => turn.command === command && turn instanceof vscode.ChatRequestTurn);
   }
 
   private isCommandChat(request: vscode.ChatRequest, context: vscode.ChatContext, command: ChatCommand) {

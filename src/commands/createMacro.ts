@@ -33,7 +33,7 @@ export async function updateActiveEditor(context: ExtensionContext, defaultConte
     return;
   }
 
-  await editor.edit(editBuilder =>
+  await editor.edit((editBuilder) =>
     editBuilder.replace(
       new vscode.Range(
         new vscode.Position(0, 0),

@@ -18,7 +18,7 @@ export async function setupSourceDirectory(context: ExtensionContext, pathOrUri?
   const updatingFiles = (await Promise.all([
     update(uri, GLOBALS_RESOURCE, 'global.d.ts'),
     update(uri, JSCONFIG_RESOURCE, 'jsconfig.json'),
-  ])).some(result => result);
+  ])).some((result) => result);
 
   if (!updatingFiles) {
     vscode.window.showInformationMessage('All files are up-to-date.');

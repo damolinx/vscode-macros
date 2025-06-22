@@ -17,8 +17,8 @@ export async function debugMacro(pathOrUri?: PathLike) {
   // Check for existing breakpoints in the document
   if (vscode.workspace.getConfiguration().get('macros.debug.breakOnStart', true)) {
     const hasBreakpoints = vscode.debug.breakpoints
-      .filter(bp => bp instanceof vscode.SourceBreakpoint)
-      .some(bp => bp.location.uri.fsPath === document.uri.fsPath);
+      .filter((bp) => bp instanceof vscode.SourceBreakpoint)
+      .some((bp) => bp.location.uri.fsPath === document.uri.fsPath);
 
     if (!hasBreakpoints) {
       const breakpoint = new vscode.SourceBreakpoint(

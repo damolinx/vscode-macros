@@ -110,7 +110,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     replServer.defineCommand('save', {
       help: 'Save all evaluated commands into a new editor',
       action: async () => {
-        const nonCommandStmts = replServer.history?.filter(s => !s.startsWith('.'));
+        const nonCommandStmts = replServer.history?.filter((s) => !s.startsWith('.'));
         if (nonCommandStmts?.length) {
           await createMacro(this.context, nonCommandStmts.reverse().join('\n'), { preserveFocus: true });
         } else {
@@ -143,7 +143,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
   private setupContext(context: Context) {
     // REPL's context contains additional values that would not normally be
     // available to a macro and could cause confusion, so resetting first.
-    Object.keys(context).forEach(k => delete context[k]);
+    Object.keys(context).forEach((k) => delete context[k]);
     initalizeContext(context, this.macroInitParams);
   }
 }

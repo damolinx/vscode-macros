@@ -35,7 +35,7 @@ export const Manifest = new Lazy(async (context: vscode.ExtensionContext) => {
 
 export async function templates({ extensionContext }: ExtensionContext): Promise<LoadableMacroTemplate[]> {
   const { templates } = await Manifest.get(extensionContext);
-  return templates.map(t => ({ ...t, load: () => readTemplate(extensionContext, t) }));
+  return templates.map((t) => ({ ...t, load: () => readTemplate(extensionContext, t) }));
 }
 
 async function readTemplate(context: vscode.ExtensionContext, template: MacroTemplate): Promise<string> {
