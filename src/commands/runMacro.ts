@@ -4,7 +4,9 @@ import { activeMacroEditor } from '../utils/activeMacroEditor';
 import { PathLike, toUri } from '../utils/uri';
 
 export async function runMacro(context: ExtensionContext, pathOrUri?: PathLike) {
-  const uri = pathOrUri ? toUri(pathOrUri) : await showMacroQuickPick(context.libraryManager);
+  const uri = pathOrUri
+    ? toUri(pathOrUri)
+    : await showMacroQuickPick(context.libraryManager, { selectUri: context.mruMacro });
   if (!uri) {
     return; // Nothing to run.
   }

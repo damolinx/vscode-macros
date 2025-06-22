@@ -6,6 +6,7 @@ import { showTextDocument } from '../utils/vscodeEx';
 export interface OpenMacroOptions {
   hideOpen?: boolean;
   hideOpenPerItem?: boolean
+  selectUri?: vscode.Uri;
 }
 
 export interface UriQuickPickItem extends vscode.QuickPickItem {
@@ -27,8 +28,9 @@ let lastSelection: vscode.Uri | undefined;
 export function pickMacroFile(macroFiles: vscode.Uri[] | Record<string, vscode.Uri[]>, options?: OpenMacroOptions): Promise<vscode.Uri | undefined> {
   return new Promise((resolve) => {
     const quickPick = createMacroQuickPick();
-    if (lastSelection) {
-      const preselect = quickPick.items.find((item) => item.uri?.toString() === lastSelection!.toString());
+    const selectUri = options?.selectUri || lastSelection;
+    if (selectUri) {
+      const preselect = quickPick.items.find((item) => item.uri?.toString() === selectUri.toString());
       if (preselect) {
         quickPick.activeItems = [preselect];
       }
