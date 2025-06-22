@@ -51,6 +51,10 @@ export class MacroRunner implements vscode.Disposable {
     return vm.createContext(context, { name });
   }
 
+  public getMacroCode(): Promise<[string, MacroOptions]> {
+    return Promise.all([this.macro.getCode(), this.macro.getOptions()]);
+  }
+
   public onStartRun(listener: (runInfo: MacroRunInfo) => void): vscode.Disposable {
     return this.startEventEmitter.event(listener);
   }
@@ -63,16 +67,11 @@ export class MacroRunner implements vscode.Disposable {
     this.sharedMacroContext = undefined;
   }
 
-  public async run(): Promise<void> {
-    const [code, options] = await Promise.all([this.macro.getCode(), this.macro.getOptions()]);
-    await this.runInternal(code, options);
-  }
-
   public get running(): Iterable<MacroRunInfo> {
     return this.runs.values();
   }
 
-  private async runInternal(code: string, options: MacroOptions) {
+  public async run(code: string, options: MacroOptions) {
     if (this.runs.size > 0 && options.singleton) {
       throw new Error(`Singleton macro ${this.macro.name} is already running`);
     }

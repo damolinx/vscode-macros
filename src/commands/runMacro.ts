@@ -3,19 +3,19 @@ import { showMacroErrorDialog, showMacroQuickPick } from '../ui/dialogs';
 import { activeMacroEditor } from '../utils/activeMacroEditor';
 import { PathLike, toUri } from '../utils/uri';
 
-export async function runMacro(context: ExtensionContext, pathOrUri?: PathLike) {
+export async function runMacro({ libraryManager, runnerManager, mruMacro }: ExtensionContext, pathOrUri?: PathLike) {
   const uri = pathOrUri
     ? toUri(pathOrUri)
-    : await showMacroQuickPick(context.libraryManager, { selectUri: context.mruMacro });
+    : await showMacroQuickPick(libraryManager, { selectUri: mruMacro });
   if (!uri) {
     return; // Nothing to run.
   }
 
-  const runner = context.runnerManager.getRunner(uri);
+  const runner = runnerManager.getRunner(uri);
+  const [code, options] = await runner.getMacroCode();
   try {
-    await runner.run();
+    await runner.run(code, options);
   } catch (error) {
-    const options = await runner.macro.getOptions();
     await showMacroErrorDialog(runner, options, error as Error | string);
   }
 }

@@ -30,7 +30,7 @@ export function pickMacroFile(macroFiles: vscode.Uri[] | Record<string, vscode.U
     const quickPick = createMacroQuickPick();
     const selectUri = options?.selectUri || lastSelection;
     if (selectUri) {
-      const preselect = quickPick.items.find((item) => item.uri?.toString() === selectUri.toString());
+      const preselect = quickPick.items.find(({ uri }) => uri?.toString() === selectUri.toString());
       if (preselect) {
         quickPick.activeItems = [preselect];
       }
@@ -83,9 +83,9 @@ export function pickMacroFile(macroFiles: vscode.Uri[] | Record<string, vscode.U
     }
 
     const quickPick = vscode.window.createQuickPick<UriQuickPickItem>();
-    quickPick.placeholder = 'Select a macro…';
     quickPick.items = items;
-    quickPick.onDidTriggerItemButton((e) => e.item.uri && showTextDocument(e.item.uri));
+    quickPick.onDidTriggerItemButton(({ item: { uri } }) => uri && showTextDocument(uri));
+    quickPick.placeholder = 'Select a macro…';
     return quickPick;
   }
 
