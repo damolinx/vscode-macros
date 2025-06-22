@@ -3,14 +3,17 @@ import { MacroRunInfo, MacroRunStopInfo } from './macroRunInfo';
 import { MacroRunner } from './macroRunner';
 import { getMacroId, Macro, MacroId } from '../macro';
 import { MACRO_EXTENSIONS, MACRO_LANGUAGES } from '../constants';
+import { ExtensionContext } from '../../extensionContext';
 
 export class MacroRunnerManager implements vscode.Disposable {
-  private readonly onDidDeleteFilesDisposable: vscode.Disposable;
+  private readonly context: ExtensionContext;
   private readonly macros: Map<MacroId, MacroRunner>;
+  private readonly onDidDeleteFilesDisposable: vscode.Disposable;
   private readonly runEventEmitter: vscode.EventEmitter<MacroRunInfo>;
   private readonly stopEventEmitter: vscode.EventEmitter<MacroRunStopInfo>;
 
-  constructor() {
+  constructor(context: ExtensionContext) {
+    this.context = context;
     this.macros = new Map();
     vscode.workspace.onDidCloseTextDocument((doc) => {
       if (doc.isUntitled && MACRO_LANGUAGES.some((lang) => doc.languageId === lang)) {
@@ -55,7 +58,7 @@ export class MacroRunnerManager implements vscode.Disposable {
     const macro = new Macro(uri);
     let runner = this.macros.get(macro.id);
     if (!runner) {
-      runner = new MacroRunner(macro);
+      runner = new MacroRunner(this.context, macro);
       runner.onStartRun((runInfo) => this.runEventEmitter.fire(runInfo));
       runner.onStopRun((runInfo) => this.stopEventEmitter.fire(runInfo));
       this.macros.set(macro.id, runner);

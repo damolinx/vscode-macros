@@ -20,7 +20,7 @@ declare global {
   const __disposables: ({ dispose: () => any })[];
 
   /**
-   * Id of current macro execution.
+   * ID of current macro execution.
    */
   const __runId: string;
 
@@ -29,6 +29,10 @@ declare global {
    * See https://github.com/damolinx/vscode-macros#readme for more information.
    */
   const macros: {
+    /**
+     * **Macros** [log output channel](https://code.visualstudio.com/api/references/vscode-api#LogOutputChannel).
+     */
+    readonly log: vscode.LogOutputChannel;
     /**
      * Current macro.
      */

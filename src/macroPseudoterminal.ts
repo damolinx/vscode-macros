@@ -6,6 +6,7 @@ import { createMacro } from './commands/createMacro';
 import { initalizeContext, MacroContextInitParams } from './core/execution/macroRunContext';
 import { ExtensionContext } from './extensionContext';
 import { showMacroQuickPick } from './ui/dialogs';
+import { MacrosLogOutputChannel } from './api/macroLogOutputChannel';
 
 type REPLServerWithHistory = REPLServer & { history?: string[] };
 
@@ -26,6 +27,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     this.cts = new vscode.CancellationTokenSource();
     this.macroInitParams = {
       disposables: [],
+      log: new MacrosLogOutputChannel(name, context),
       runId: name,
       token: this.cts.token,
     };

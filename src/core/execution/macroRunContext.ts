@@ -5,6 +5,7 @@ import { MacroContext } from '../../api/macroContext';
 
 export interface MacroContextInitParams {
   disposables: vscode.Disposable[];
+  log: vscode.LogOutputChannel;
   runId: string;
   token: vscode.CancellationToken;
   uri?: vscode.Uri;
@@ -43,6 +44,7 @@ function createMacroApi(params: MacroContextInitParams): MacrosApi {
       macro: {
         uri: params.uri,
       },
+      log: params.log,
     },
   };
 }

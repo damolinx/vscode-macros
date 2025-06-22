@@ -2,6 +2,8 @@
 
 ## 0.3.3
 - Upgrade minimum VS Code version to 1.99
+- Add `Macros` output channel.
+  - Introduce `macros.log` accessor for macro-specific logging.
 - Fix: `sourceDirectories` ignores non-tokenized paths.
 
 ## 0.3.2

@@ -14,7 +14,7 @@ export interface MacrosApi {
    */
   readonly __disposables: ({ dispose: () => any })[];
   /**
-   * Id of current macro execution.
+   * ID of current macro execution.
    */
   readonly __runId: MacroRunId;
 
@@ -22,6 +22,10 @@ export interface MacrosApi {
    * Macros namespace
    */
   readonly macros: {
+    /**
+     * **Macros** log output channel.
+     */
+    readonly log: vscode.LogOutputChannel;
     /**
      * Current macro.
      */

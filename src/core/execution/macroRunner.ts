@@ -5,16 +5,20 @@ import { MacroRunId, MacroRunInfo, MacroRunStopInfo } from './macroRunInfo';
 import { Macro } from '../macro';
 import { MacroOptions } from '../macroOptions';
 import { MacroContext } from '../../api/macroContext';
+import { MacrosLogOutputChannel } from '../../api/macroLogOutputChannel';
+import { ExtensionContext } from '../../extensionContext';
 
 export class MacroRunner implements vscode.Disposable {
+  private readonly context: ExtensionContext;
   private index: number;
   public readonly macro: Macro;
   private readonly runs: Map<MacroRunId, MacroRunInfo>;
-  private sharedContext?: MacroContext;
+  private sharedMacroContext?: MacroContext;
   private startEventEmitter: vscode.EventEmitter<MacroRunInfo>;
   private stopEventEmitter: vscode.EventEmitter<MacroRunStopInfo>;
 
-  constructor(macro: Macro) {
+  constructor(context: ExtensionContext, macro: Macro) {
+    this.context = context;
     this.index = 0;
     this.macro = macro;
     this.runs = new Map();
@@ -33,14 +37,14 @@ export class MacroRunner implements vscode.Disposable {
 
     if (params.persistent) {
       name += '(shared)';
-      if (this.sharedContext) {
-        initializeMacrosApi(this.sharedContext, params);
+      if (this.sharedMacroContext) {
+        initializeMacrosApi(this.sharedMacroContext, params);
       } else {
-        this.sharedContext = initalizeContext({}, params);
+        this.sharedMacroContext = initalizeContext({}, params);
       }
-      context = this.sharedContext;
+      context = this.sharedMacroContext;
     } else {
-      delete this.sharedContext;
+      delete this.sharedMacroContext;
       context = initalizeContext({}, params);
     }
 
@@ -56,7 +60,7 @@ export class MacroRunner implements vscode.Disposable {
   }
 
   public resetSharedContext() {
-    this.sharedContext = undefined;
+    this.sharedMacroContext = undefined;
   }
 
   public async run(): Promise<void> {
@@ -83,6 +87,7 @@ export class MacroRunner implements vscode.Disposable {
     const macroDisposables = [] as vscode.Disposable[];
     const context = this.getContext({
       disposables: macroDisposables,
+      log: new MacrosLogOutputChannel(runInfo.id, this.context),
       persistent: !!options.persistent,
       runId: runInfo.id,
       token: runInfo.cts.token,
@@ -102,12 +107,12 @@ export class MacroRunner implements vscode.Disposable {
         const currentKeys = Object.keys(context).filter(k => !k.startsWith('__'));
         const removedKeys = [...initialKeys].filter(key => !currentKeys.includes(key));
 
-        if (this.sharedContext) {
+        if (this.sharedMacroContext) {
           for (const key of currentKeys) {
-            this.sharedContext[key] = context[key];
+            this.sharedMacroContext[key] = context[key];
           }
           for (const key of removedKeys) {
-            delete this.sharedContext[key];
+            delete this.sharedMacroContext[key];
           }
         }
       } else {

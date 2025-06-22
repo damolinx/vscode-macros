@@ -102,12 +102,16 @@ The following references are available from the global context of your macro:
 * Other: `atob`, `btoa`, `clearInterval`, `clearTimeout`, `crypto`, `fetch`, `global`, `require`, `setInterval`, `setTimeout`.
 
 ### `macros` API
-* `macro`: Provides access to current macro.
+
+* `log`: Provides access to the **Macros** log output channel, allowing macros to write log entries as needed.
+
+* `macro`: Current macro.
   * `uri`: URI of macro. It is `undefined` if running from an in-memory buffer.
 
   **Example: Macros API**
   ```javascript
-  vscode.window.showInformationMessage(`Hello from ${macros.macro.uri?.fsPath || 'somewhere'}!`);
+  vscode.window.showInformationMessage(`Hello from ${macros.macro.uri.fsPath}!`);
+  macros.log.info('Greeted the world');
   ```
 
 ### Predefined Views and View Container
