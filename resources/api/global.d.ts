@@ -20,9 +20,14 @@ declare global {
   const __disposables: ({ dispose: () => any })[];
 
   /**
-   * ID of current macro execution.
+   * ID of macro run.
    */
-  const __runId: string;
+  const __runId: MacroRunId;
+
+  /**
+   * Macro run was triggered on startup.
+   */
+  const __startup: true | undefined;
 
   /**
    * Macros Extension for Visual Studio Code API.

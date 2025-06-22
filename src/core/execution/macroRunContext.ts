@@ -7,6 +7,7 @@ export interface MacroContextInitParams {
   disposables: vscode.Disposable[];
   log: vscode.LogOutputChannel;
   runId: string;
+  startup?: true;
   token: vscode.CancellationToken;
   uri?: vscode.Uri;
 }
@@ -40,6 +41,7 @@ function createMacroApi(params: MacroContextInitParams): MacrosApi {
     __cancellationToken: params.token,
     __disposables: params.disposables,
     __runId: params.runId,
+    __startup: params.startup,
     macros: {
       macro: {
         uri: params.uri,

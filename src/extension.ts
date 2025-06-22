@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { existsSync } from 'fs';
 import { MacroChatParticipant } from './ai/macroChatParticipant';
 import { CREATE_MACRO_TOOL_ID, MacroCreateTool } from './ai/macroCreateTool';
 import { createMacro, updateActiveEditor } from './commands/createMacro';
@@ -12,6 +13,7 @@ import { setupSourceDirectory } from './commands/setupSourceDirectory';
 import { showRunningMacros } from './commands/showRunningMacros';
 import { MACRO_EXTENSION, MACRO_LANGUAGE } from './core/constants';
 import { SOURCE_DIRS_CONFIG } from './core/library/macroLibraryManager';
+import { expandConfigPaths } from './core/library/utils';
 import { ExtensionContext } from './extensionContext';
 import { MacroStatusBarItem } from './macroStatusBarItem';
 import { DTSCodeActionProvider } from './providers/dtsCodeActionProvider';
@@ -30,6 +32,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     context,
     new MacroStatusBarItem(context),
   );
+  context.log.info('Activating extension:', extensionContext.extension.packageJSON.version);
 
   const { languages: l } = vscode;
   const selector: vscode.DocumentSelector = [
@@ -67,5 +70,31 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.run.show', () => showRunningMacros(context)),
     cr('macros.sourceDirectories.settings', () => c.executeCommand('workbench.action.openSettings', SOURCE_DIRS_CONFIG)),
     cr('macros.sourceDirectories.setup', () => setupSourceDirectory(context)),
+  );
+
+  await runStartupMacros(context);
+}
+
+async function runStartupMacros(context: ExtensionContext) {
+  const paths = expandConfigPaths('macros.startupMacros');
+  if (paths.length === 0) {
+    return;
+  }
+
+  const existingPaths = paths.filter((path) => existsSync(path));
+  if (existingPaths.length === 0) {
+    context.log.warn('Skipped all startup macros: none were found.');
+    return;
+  } else if (existingPaths.length !== paths.length) {
+    const nonExistingPaths = paths.filter((path) => !existingPaths.includes(path));
+    context.log.warn(
+      'Skipped startup macros that were not found:',
+      ...nonExistingPaths.map((path) => `"${vscode.workspace.asRelativePath(path, true)}"`));
+  }
+
+  context.log.info('Running startup macros:',
+    ...existingPaths.map((path) => `"${vscode.workspace.asRelativePath(path, true)}"`));
+  await Promise.all(
+    existingPaths.map((path) => runMacro(context, path, true)),
   );
 }

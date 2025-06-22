@@ -28,7 +28,7 @@
     "workspace"
   ],
   "activationEvents": [
-    "onLanguage:javascript"
+    "onStartupFinished"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -112,6 +112,17 @@
             "items": {
               "type": "string",
               "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "macros.startupMacros": {
+            "type": "array",
+            "markdownDescription": "Macro **files** that run when VS Code starts or a workspace is opened. The following tokens are available:\n\n- `${userHome}`: User home directory.\n- `${workspaceFolder}`: Current workspace root directory.",
+            "default": [],
+            "items": {
+              "type": "string",
+              "minLength": 4,
+              "pattern": ".+(\\.macro)?\\.c?js$"
             },
             "uniqueItems": true
           }

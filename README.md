@@ -51,6 +51,11 @@ A macro sandbox cannot be terminated; instead, the `Stop` action sends a cancell
 
 If a macro does not respond to the cancellation request, it will continue running. In such cases, you can use the **Developer: Restart Extension Host** command to restart all extensions, or simply restart VS Code to stop the macro. While this is not ideal, it provides a way to recover from unresponsive or runaway macros. Note that this approach will not implicitly terminate external processes started by the macro.
 
+### Running a Macro on startup
+You can run macros on startup using the `macros.startupMacros` setting. This setting accepts paths to specific macro files (not directories), which are executed when a workspace is opened or when VS Code starts without one. Paths pointing to non-existent or empty files are automatically ignored (see the *Macros* log for details), but logic errors will trigger an error dialog.
+
+Startup macros let you define logic equivalent to an extension’s activate method. When appropriate, add cleanup logic using `__disposables` member.
+
 ### Keybinding a Macro
 Keybind the `macros.run` command with a single argument that is the path to the macro to run. This can only be done directly in the `keybindings.json` file, however. Check the VS Code [documentation](https://code.visualstudio.com/docs/editor/keybindings#_advanced-customization) for details.
 
@@ -134,6 +139,7 @@ These tokens do not form part of contexts shared when `@macro:persistent` is use
 * `__cancellationToken`: a [CancellationToken](https://code.visualstudio.com/api/references/vscode-api#CancellationToken) used by th extension to notify about a stop request. See [Stopping a Macro](#stopping-a-macro).
 * `__disposables`: an array for adding [Disposable](https://code.visualstudio.com/api/references/vscode-api#Disposable) instances, which will be automatically disposed of when the macro completes.
 * `__runId`: Id of the current macro execution session.
+* `__startup`: Whether current macro execution session was triggered during startup.
 
 ### Macro Options
 

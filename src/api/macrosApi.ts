@@ -14,9 +14,13 @@ export interface MacrosApi {
    */
   readonly __disposables: ({ dispose: () => any })[];
   /**
-   * ID of current macro execution.
+   * ID of macro run.
    */
   readonly __runId: MacroRunId;
+  /**
+   * Macro run was triggered on startup.
+   */
+  readonly __startup?: true;
 
   /**
    * Macros namespace

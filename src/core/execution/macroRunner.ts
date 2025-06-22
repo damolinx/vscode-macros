@@ -71,14 +71,14 @@ export class MacroRunner implements vscode.Disposable {
     return this.runs.values();
   }
 
-  public async run(code: string, options: MacroOptions) {
+  public async run(code: string, options: MacroOptions, startup?: true) {
     if (this.runs.size > 0 && options.singleton) {
       throw new Error(`Singleton macro ${this.macro.name} is already running`);
     }
 
     const runInfo: MacroRunInfo = {
       cts: new vscode.CancellationTokenSource(),
-      id: `${this.macro.name}@${(++this.index).toString().padStart(3, '0')}`,
+      id: `${this.macro.name}@${startup ? 'startup' : (++this.index).toString().padStart(3, '0')}`,
       macro: this.macro,
     };
     this.runs.set(runInfo.id, runInfo);
@@ -89,6 +89,7 @@ export class MacroRunner implements vscode.Disposable {
       log: new MacrosLogOutputChannel(runInfo.id, this.context),
       persistent: !!options.persistent,
       runId: runInfo.id,
+      startup,
       token: runInfo.cts.token,
       uri: this.macro.uri,
     });
