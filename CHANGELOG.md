@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.4
+- Upgrade minimum VS Code version to 1.99.
+
 ## 0.3.3
 - Upgrade minimum VS Code version to 1.96.
 - Add startup macros.
