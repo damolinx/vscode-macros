@@ -46,7 +46,7 @@
       "category": "UI",
       "label": "Tree View (Sidebar)",
       "description": "Create a TreeView hosted in the `Macros` sidebar",
-      "path": "treeview.js"
+      "path": "treeView.js"
     },
     {
       "category": "UI",
