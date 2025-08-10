@@ -3,62 +3,68 @@
     {
       "category": "Basics",
       "label": "Cancellation",
-      "description": "Support macro cancellation",
+      "description": "Enable macro cancellation",
       "path": "cancellation.js"
     },
     {
       "category": "Basics",
       "label": "Dispose",
-      "description": "Support cleaning up of disposable objects",
+      "description": "Enable cleanup of disposable objects",
       "path": "dispose.js"
     },
     {
       "category": "Tools",
-      "label": "Git",
-      "description": "Interact with the Git API using its git.d.ts definitions",
+      "label": "Git API",
+      "description": "Interact with the Git API via `git.d.ts` definitions",
       "path": "git.js"
     },
     {
       "category": "Basics",
-      "label": "Hello World!",
-      "description": "'Hello World' macro",
+      "label": "Hello World",
+      "description": "Run a simple `Hello World` macro",
       "path": "helloWorld.js"
     },
     {
       "category": "Tools",
       "label": "Language Model",
-      "description": "Interact with a Language Model",
+      "description": "Interact with a language model",
       "path": "languageModel.js"
     },
     {
-      "category": "Basics",
-      "label": "Persistent Hello World!",
-      "description": "Leverage a persistent context",
+      "category": "Options",
+      "label": "Persistent Context",
+      "description": "Enable a persistent global context across macro invocations",
       "path": "persistent.js"
     },
     {
       "category": "Tools",
-      "label": "References",
-      "description": "Query a language service for symbol references",
+      "label": "References Provider",
+      "description": "Query symbol references via the language service API",
       "path": "references.js"
+    },
+    {
+      "category": "Options",
+      "label": "Retained Mode",
+      "description": "Enable long-lived listeners and providers",
+      "path": "retained.js"
     },
     {
       "category": "UI",
       "label": "Tree View (Sidebar)",
-      "description": "Create a TreeView hosted in the `Macros` sidebar",
+      "description": "Create a TreeView in the `Macros` sidebar",
       "path": "treeView.js"
     },
     {
       "category": "UI",
       "label": "Webview (Editor)",
-      "description": "Create a Webview hosted in the editor area",
+      "description": "Create a Webview in the editor area",
       "path": "webview.editor.js"
     },
     {
       "category": "UI",
       "label": "Webview (Sidebar)",
-      "description": "Create a Webview hosted in the `Macros` sidebar",
-      "path": "webview.view.js"
+      "description": "Create a Webview in the `Macros` sidebar",
+      "path": "webview.sidebar.js"
     }
   ]
 }

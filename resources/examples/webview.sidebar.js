@@ -1,9 +1,18 @@
 
-// @macro:singleton
-
-// Learn about the Webview API at https://code.visualstudio.com/api/extension-guides/webview
-
-// Available: "macrosView.webview1", "macrosView.webview2", "macrosView.webview3"
+// @macro: singleton
+// singleton – ensures no more than one instance runs at a time
+//
+// Creates a Webview editor in the editors container area.
+// This example omits `retained` for simplicity as the custom
+// Webview panel handles its own disposal when closed.
+//
+// References:
+//   - Webview API: https://code.visualstudio.com/api/extension-guides/webview
+//
+// Available view IDs:
+//   - macrosView.webview1
+//   - macrosView.webview2
+//   - macrosView.webview3
 const viewId = "macrosView.webview1";
 
 function createHtml() {
@@ -58,10 +67,9 @@ new Promise((resolve) => {
   __disposables.push(
     vscode.window.registerWebviewViewProvider(
       viewId,
-      createWebviewViewProvider(resolve)),
-    {
-      dispose: () => vscode.commands.executeCommand('setContext', `${viewId}.show`, false)
-    });
+      createWebviewViewProvider(resolve)), {
+    dispose: () => vscode.commands.executeCommand('setContext', `${viewId}.show`, false)
+  });
 
   vscode.commands.executeCommand('setContext', `${viewId}.show`, true);
   vscode.commands.executeCommand(`${viewId}.focus`);

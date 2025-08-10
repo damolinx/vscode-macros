@@ -1,9 +1,15 @@
-
-// @macro:singleton
-
-// Learn about the Tree View API at https://code.visualstudio.com/api/extension-guides/tree-view
-
-// Available: "macrosView.treeview1", "macrosView.treeview2", "macrosView.treeview3"
+// @macro: retained, singleton
+// retained  – keeps the TreeDataProvider alive until stopped via the
+//             `Macros: Show Running Macros` command
+// singleton – ensures no more than one instance runs at a time
+//
+// References:
+//   - Tree View API: https://code.visualstudio.com/api/extension-guides/tree-view
+//
+// Available view IDs:
+//   - macrosView.treeview1
+//   - macrosView.treeview2
+//   - macrosView.treeview3
 const viewId = "macrosView.treeview1";
 
 /** @returns {import('vscode').TreeDataProvider<string>} */
@@ -32,24 +38,17 @@ function createTreeProvider() {
 
 function createTreeView() {
   const treeView = vscode.window.createTreeView(
-    viewId,
-    {
-      treeDataProvider: createTreeProvider()
-    });
+    viewId, {
+    treeDataProvider: createTreeProvider()
+  });
   treeView.title = `Macro ${__runId}`;
   return treeView;
 }
 
-// Keep macro alive until view is disposed.
-new Promise((resolve) => {
-  const treeView = createTreeView();
-  __cancellationToken.onCancellationRequested(resolve);
-  __disposables.push(
-    treeView,
-    {
-      dispose: () => vscode.commands.executeCommand('setContext', `${viewId}.show`, false)
-    });
-
-  vscode.commands.executeCommand('setContext', `${viewId}.show`, true);
-  vscode.commands.executeCommand(`${viewId}.focus`);
+__disposables.push(
+  createTreeView(), {
+  dispose: () => vscode.commands.executeCommand('setContext', `${viewId}.show`, false)
 });
+
+vscode.commands.executeCommand('setContext', `${viewId}.show`, true);
+vscode.commands.executeCommand(`${viewId}.focus`);

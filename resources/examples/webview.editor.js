@@ -1,5 +1,13 @@
 
-// Learn about the Webview API at https://code.visualstudio.com/api/extension-guides/webview
+// @macro: singleton
+// singleton – ensures no more than one instance runs at a time
+//
+// Creates a Webview editor in the editors container area.
+// This example omits `retained` for simplicity as the custom
+// Webview panel handles its own disposal when closed.
+//
+// References:
+//   - Webview API: https://code.visualstudio.com/api/extension-guides/webview
 
 function createHtml() {
   return `
@@ -45,11 +53,9 @@ function createWebview(resolve) {
   const panel = vscode.window.createWebviewPanel(
     'mywebview.id',
     'My Webview',
-    vscode.ViewColumn.Active,
-    {
-      enableScripts: true,
-    },
-  );
+    vscode.ViewColumn.Active, {
+    enableScripts: true,
+  });
   panel.onDidDispose(resolve);
 
   panel.webview.html = createHtml();
