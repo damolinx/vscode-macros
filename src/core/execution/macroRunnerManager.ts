@@ -78,4 +78,13 @@ export class MacroRunnerManager implements vscode.Disposable {
   public get runningMacros(): MacroRunInfo[] {
     return [...this.macros.values()].flatMap((runner) => [...runner.running]);
   }
+
+  public get someRunning(): boolean {
+    for (const runner of this.macros.values()) {
+      if (runner.someRunning) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

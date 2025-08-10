@@ -16,12 +16,13 @@ export class MacroStatusBarItem implements vscode.Disposable {
     this.disposables = [
       this.item,
       this.runnerManager.onRun(() => {
-        this.item.tooltip = `Running ${this.runnerManager.runningMacros.length} macro(s): ` +
-          `${this.runnerManager.runningMacros.map((runInfo) => runInfo.id).join(', ')}`;
+        const { runningMacros } = this.runnerManager;
+        this.item.tooltip = `Running ${runningMacros.length} macro(s): ` +
+          `${runningMacros.map((runInfo) => runInfo.id).join(', ')}`;
         this.item.show();
       }),
       this.runnerManager.onStop(() => {
-        if (this.runnerManager.runningMacros.length === 0) {
+        if (!this.runnerManager.someRunning) {
           this.item.hide();
         }
       })];
