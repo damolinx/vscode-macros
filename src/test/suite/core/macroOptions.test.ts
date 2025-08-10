@@ -21,6 +21,12 @@ suite(`Suite: ${basename(__filename, '.test.js')}`, () => {
     assert.deepStrictEqual(options, { persistent: true });
   });
 
+  test('should set resident to true when @macro:resident is present', () => {
+    const code = '// @macro:resident\nconst a = 1;';
+    const options = parseOptions(code);
+    assert.deepStrictEqual(options, { resident: true });
+  });
+
   test('should set singleton to true when @macro:singleton is present', () => {
     const code = '// @macro:singleton\nconst a = 1;';
     const options = parseOptions(code);

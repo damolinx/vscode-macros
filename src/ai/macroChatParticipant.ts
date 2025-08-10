@@ -36,14 +36,23 @@ There are two options to satisfy this request:
     direct replacement of context.subscriptions.
   - Macros should use the __cancellationToken CancellationToken variable to
     support stopping the macro from the extension.
-  - Following directives are available:
-    - '// @macro:singleton' so macro can have a single running instance.
-    - '// @macro:persistent' so macro context is shared across all instances.
-  - TreeView or WebView targeting the sidebar, use IDs like 'macrosView.webview1' (IDs 1-3).
-    These macros must be singletons and should return a Promise that resolves when the view
-    closes. The macro should not exit before the view is disposed. To make these views visible,
-    'vscode.commands.executeCommand('setContext', 'macrosView.webview1.show', true);' must
-    be called.
+
+  - Following directives are available, which are defined at the top of the
+    file:
+    - // @macro:resident: Prevents the macro from auto-terminating at end of
+      script. Ideal for long-lived VS Code services/providers (e.g.
+      onDidOpenTextDocument listeners, language server sessions, diagnostics
+      watchers) without wrapping everything in an explicit Promise.
+    - // @macro:persistent: Shares the same execution context across all
+      invocations of this macro. Perfect for caching, shared state, or
+      accumulating data over time.
+    - // @macro:singleton: Ensures only one instance of this macro runs at a
+      time. Additional calls will be rejected.
+  - TreeView or WebView targeting the sidebar, use IDs like 'macrosView.webview1'
+    (IDs 1-3). These macros must be singletons and should return a Promise that
+    resolves when the view closes. The macro should not exit before the view is
+    disposed. To make these views visible, a 'setContext' like this one is needed:
+    'vscode.commands.executeCommand('setContext', 'macrosView.webview1.show', true);'
 `;
 
 export type ChatCommand = 'create';

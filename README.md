@@ -144,8 +144,9 @@ These tokens do not form part of contexts shared when `@macro:persistent` is use
 ### Macro Options
 
 An option is added to macro file as a comment in the form `//@macro:«option»`. The following options are available:
-* `persistent`: All runs of the given macro are started with the same execution context, allowing state preservation.
-* `singleton`: Only one running instance of the given macro is allowed at a time.
+* `persistent`: All invocations of the macro use the same [execution context](https://nodejs.org/api/vm.html#scriptrunincontextcontextifiedobject-options) so global variables persist across runs. Use the `Reset Context` CodeLens to reinitialize context.
+* `resident`: An instance of the macro will remain active until explicitly stopped, e.g., using the `Show Running Macros` command. This removes the need to await `__cancellationToken.onCancellationRequested` (or similar signal) to keep the macro's services and listeners running.
+* `singleton`: Only one instance of the macro may run at a time; additional invocations fail.
 
 ```javascript
 // @macro:singleton

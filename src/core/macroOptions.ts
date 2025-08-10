@@ -1,8 +1,12 @@
 export interface MacroOptions {
   /**
-   * Macro uses a persistent context. Default: false.
+   * Macro uses a shared context. Default: false.
    */
   persistent?: boolean;
+  /**
+ * Macro is not automatically terminated. Default: false.
+ */
+  resident?: boolean;
   /**
    * Macro can only have a single running instance. Default: false.
    */
@@ -16,6 +20,9 @@ export function parseOptions(code: string): MacroOptions {
       switch (match.groups.option) {
         case 'persistent':
           options.persistent = true;
+          break;
+        case 'resident':
+          options.resident = true;
           break;
         case 'singleton':
           options.singleton = true;

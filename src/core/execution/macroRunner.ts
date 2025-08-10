@@ -100,24 +100,27 @@ export class MacroRunner implements vscode.Disposable {
     this.startEventEmitter.fire(runInfo);
     let scriptFailed = false;
     try {
-      let result: any;
+      let runPromise: Promise<any>;
       if (options.persistent) {
         const initialKeys = Object.keys(context).filter((k) => !k.startsWith('__'));
-        result = await vm.runInContext(code, context, scriptOptions);
-        const currentKeys = Object.keys(context).filter((k) => !k.startsWith('__'));
-        const removedKeys = [...initialKeys].filter((key) => !currentKeys.includes(key));
-
-        if (this.sharedMacroContext) {
-          for (const key of currentKeys) {
-            this.sharedMacroContext[key] = context[key];
-          }
-          for (const key of removedKeys) {
-            delete this.sharedMacroContext[key];
-          }
-        }
+        runPromise = Promise.resolve(vm.runInContext(code, context, scriptOptions))
+          .finally(() => {
+            const currentKeys = Object.keys(context).filter((k) => !k.startsWith('__'));
+            const removedKeys = [...initialKeys].filter((key) => !currentKeys.includes(key));
+            if (this.sharedMacroContext) {
+              for (const key of currentKeys) {
+                this.sharedMacroContext[key] = context[key];
+              }
+              for (const key of removedKeys) {
+                delete this.sharedMacroContext[key];
+              }
+            }
+          });
       } else {
-        result = await vm.runInNewContext(code, context, scriptOptions);
+        runPromise = vm.runInNewContext(code, context, scriptOptions);
       }
+
+      const result = await (options.resident ? retainedExecute(runPromise) : runPromise);
       return result;
     } catch (e) {
       scriptFailed = true;
@@ -135,6 +138,14 @@ export class MacroRunner implements vscode.Disposable {
       }
     }
 
+    function retainedExecute(runPromise: Promise<any>): Promise<any> {
+      return Promise.all(
+        [
+          runPromise,
+          new Promise((resolve) => runInfo.cts.token.onCancellationRequested(resolve)),
+        ],
+      );
+    }
 
     function safeDispose(disposables: vscode.Disposable[]): Error | undefined {
       const errors: (string | Error)[] = [];

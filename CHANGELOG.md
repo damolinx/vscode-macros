@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.5
+- Add new `resident` macro directive.
+- Fix: TreeView example does not load in case-sensitive file-systems.
+
 ## 0.3.4
 - Upgrade minimum VS Code version to 1.99.
 
