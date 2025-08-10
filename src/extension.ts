@@ -11,15 +11,15 @@ import { resetSharedContext } from './commands/resetContext';
 import { runActiveEditor, runMacro } from './commands/runMacro';
 import { setupSourceDirectory } from './commands/setupSourceDirectory';
 import { showRunningMacros } from './commands/showRunningMacros';
-import { MACRO_EXTENSION, MACRO_LANGUAGE } from './core/constants';
+import { MACRO_DOCUMENT_SELECTOR } from './core/constants';
 import { SOURCE_DIRS_CONFIG } from './core/library/macroLibraryManager';
 import { expandConfigPaths } from './core/library/utils';
 import { ExtensionContext } from './extensionContext';
 import { MacroStatusBarItem } from './macroStatusBarItem';
-import { DTSCodeActionProvider } from './providers/dtsCodeActionProvider';
-import { EXECUTE_COMMAND_CHARACTERS, ExecuteCommandCompletionProvider } from './providers/executeCommandCompletionProvider';
-import { MacroCodeLensProvider } from './providers/macroCodeLensProvider';
-import { MACRO_TRIGGER_CHARACTERS, MacroOptionsCompletionProvider } from './providers/macroOptionsCompletionProvider';
+import { registerDTSCodeActionProvider } from './providers/dtsCodeActionProvider';
+import { registerExecuteCommandCompletionProvider } from './providers/executeCommandCompletionProvider';
+import { registerMacroCodeLensProvider } from './providers/macroCodeLensProvider';
+import { registerMacroOptionsCompletionProvider } from './providers/macroOptionsCompletionProvider';
 import { PathLike } from './utils/uri';
 
 /**
@@ -34,18 +34,11 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
   );
   context.log.info('Activating extension:', extensionContext.extension.packageJSON.version);
 
-  const { languages: l } = vscode;
-  const selector: vscode.DocumentSelector = [
-    { scheme: 'untitled', language: MACRO_LANGUAGE },
-    { pattern: `**/*${MACRO_EXTENSION}` },
-  ];
-  const executeCommandCompletionProvider = new ExecuteCommandCompletionProvider();
   extensionContext.subscriptions.push(
-    l.registerCodeActionsProvider(selector, new DTSCodeActionProvider()),
-    executeCommandCompletionProvider,
-    l.registerCompletionItemProvider(selector, executeCommandCompletionProvider, ...EXECUTE_COMMAND_CHARACTERS),
-    l.registerCodeLensProvider(selector, new MacroCodeLensProvider()),
-    l.registerCompletionItemProvider(selector, new MacroOptionsCompletionProvider(), ...MACRO_TRIGGER_CHARACTERS),
+    registerDTSCodeActionProvider(MACRO_DOCUMENT_SELECTOR),
+    registerExecuteCommandCompletionProvider(MACRO_DOCUMENT_SELECTOR),
+    registerMacroCodeLensProvider(MACRO_DOCUMENT_SELECTOR),
+    registerMacroOptionsCompletionProvider(MACRO_DOCUMENT_SELECTOR),
   );
 
   const { lm } = vscode;

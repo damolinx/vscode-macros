@@ -1,6 +1,14 @@
 import * as vscode from 'vscode';
 import { MacroCode } from '../core/macroCode';
 
+
+export function registerMacroCodeLensProvider(selector: vscode.DocumentSelector): vscode.Disposable {
+  return vscode.languages.registerCodeLensProvider(
+    selector,
+    new MacroCodeLensProvider(),
+  );
+}
+
 /**
  * Provides a CodeLens to initialize or reset the context of a persistent macro.
  */

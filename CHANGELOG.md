@@ -1,7 +1,8 @@
 # Changelog
 
 ## 0.3.5
-- Add new `resident` macro directive.
+- `@macro` supports multiple comma-separated options.
+- Add new `resident` macro option.
 - Fix: TreeView example does not load in case-sensitive file-systems.
 
 ## 0.3.4

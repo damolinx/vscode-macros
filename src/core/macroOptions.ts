@@ -1,3 +1,6 @@
+
+export type MacroOptionType = keyof MacroOptions;
+
 export interface MacroOptions {
   /**
    * Macro uses a shared context. Default: false.
@@ -15,9 +18,10 @@ export interface MacroOptions {
 
 export function parseOptions(code: string): MacroOptions {
   const options: MacroOptions = {};
-  for (const match of code.matchAll(/\/\/\s*@macro:\s*(?<option>\w+)\s*$/gm)) {
-    if (match.groups?.option) {
-      switch (match.groups.option) {
+  for (const match of code.matchAll(/\/\/\s*@macro:\s*(.+)$/gm)) {
+    const optionsText = match[1];
+    for (const option of optionsText.split(/\s*,\s*/)) {
+      switch (option) {
         case 'persistent':
           options.persistent = true;
           break;
@@ -30,5 +34,6 @@ export function parseOptions(code: string): MacroOptions {
       }
     }
   }
+
   return options;
 }

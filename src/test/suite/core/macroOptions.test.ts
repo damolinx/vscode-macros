@@ -33,7 +33,13 @@ suite(`Suite: ${basename(__filename, '.test.js')}`, () => {
     assert.deepStrictEqual(options, { singleton: true });
   });
 
-  test('should set both persistent and singleton to true when both options are present', () => {
+  test('should set both persistent and resident to true when both options are present (comma-separated)', () => {
+    const code = '// @macro:persistent,resident\nconst a = 1;';
+    const options = parseOptions(code);
+    assert.deepStrictEqual(options, { persistent: true, resident: true });
+  });
+
+  test('should set both persistent and singleton to true when both options are present (new-line)', () => {
     const code = '// @macro:persistent\n// @macro:singleton\nconst a = 1;';
     const options = parseOptions(code);
     assert.deepStrictEqual(options, { persistent: true, singleton: true });

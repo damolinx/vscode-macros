@@ -1,5 +1,13 @@
 import * as vscode from 'vscode';
 
+
+export function registerDTSCodeActionProvider(selector: vscode.DocumentSelector): vscode.Disposable {
+  return vscode.languages.registerCodeActionsProvider(
+    selector,
+    new DTSCodeActionProvider(),
+  );
+}
+
 /**
  * Provides a code action to download .d.ts files locally.
  */

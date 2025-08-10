@@ -3,6 +3,14 @@ import { Lazy } from '../utils/lazy';
 
 export const EXECUTE_COMMAND_CHARACTERS: readonly string[] = ['(', '"', '\'', '`'];
 
+export function registerExecuteCommandCompletionProvider(selector: vscode.DocumentSelector): vscode.Disposable {
+  return vscode.languages.registerCompletionItemProvider(
+    selector,
+    new ExecuteCommandCompletionProvider(),
+    ...EXECUTE_COMMAND_CHARACTERS,
+  );
+}
+
 /**
  * Provide autocompletion for `executeCommand`.
  */

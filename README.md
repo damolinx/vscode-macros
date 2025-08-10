@@ -143,7 +143,7 @@ These tokens do not form part of contexts shared when `@macro:persistent` is use
 
 ### Macro Options
 
-An option is added to macro file as a comment in the form `//@macro:«option»`. The following options are available:
+An option is added to macro file as a comment in the form `//@macro:«option»[,…«option»]`. The following options are available:
 * `persistent`: All invocations of the macro use the same [execution context](https://nodejs.org/api/vm.html#scriptrunincontextcontextifiedobject-options) so global variables persist across runs. Use the `Reset Context` CodeLens to reinitialize context.
 * `resident`: An instance of the macro will remain active until explicitly stopped, e.g., using the `Show Running Macros` command. This removes the need to await `__cancellationToken.onCancellationRequested` (or similar signal) to keep the macro's services and listeners running.
 * `singleton`: Only one instance of the macro may run at a time; additional invocations fail.
