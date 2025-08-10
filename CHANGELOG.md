@@ -1,12 +1,10 @@
 # Changelog
 
-## 0.3.5
+## 0.3.4
+- Upgrade minimum VS Code version to 1.99.
 - `@macro` supports multiple comma-separated options.
 - Add new `resident` macro option.
 - Fix: TreeView example does not load in case-sensitive file-systems.
-
-## 0.3.4
-- Upgrade minimum VS Code version to 1.99.
 
 ## 0.3.3
 - Upgrade minimum VS Code version to 1.96.
