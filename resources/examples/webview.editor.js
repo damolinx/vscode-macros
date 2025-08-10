@@ -4,7 +4,7 @@
 //
 // Creates a Webview editor in the editors container area.
 // This example omits `retained` for simplicity as the custom
-// Webview panel handles its own disposal when closed.
+// Webview editor handles disposal when closed.
 //
 // References:
 //   - Webview API: https://code.visualstudio.com/api/extension-guides/webview
