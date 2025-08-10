@@ -120,7 +120,7 @@ export class MacroRunner implements vscode.Disposable {
         runPromise = vm.runInNewContext(code, context, scriptOptions);
       }
 
-      const result = await (options.resident ? retainedExecute(runPromise) : runPromise);
+      const result = await (options.retained ? retainedExecute(runPromise) : runPromise);
       return result;
     } catch (e) {
       scriptFailed = true;

@@ -21,10 +21,10 @@ suite(`Suite: ${basename(__filename, '.test.js')}`, () => {
     assert.deepStrictEqual(options, { persistent: true });
   });
 
-  test('should set resident to true when @macro:resident is present', () => {
-    const code = '// @macro:resident\nconst a = 1;';
+  test('should set retained to true when @macro:retained is present', () => {
+    const code = '// @macro:retained\nconst a = 1;';
     const options = parseOptions(code);
-    assert.deepStrictEqual(options, { resident: true });
+    assert.deepStrictEqual(options, { retained: true });
   });
 
   test('should set singleton to true when @macro:singleton is present', () => {
@@ -33,10 +33,10 @@ suite(`Suite: ${basename(__filename, '.test.js')}`, () => {
     assert.deepStrictEqual(options, { singleton: true });
   });
 
-  test('should set both persistent and resident to true when both options are present (comma-separated)', () => {
-    const code = '// @macro:persistent,resident\nconst a = 1;';
+  test('should set both persistent and retained to true when both options are present (comma-separated)', () => {
+    const code = '// @macro:persistent,retained\nconst a = 1;';
     const options = parseOptions(code);
-    assert.deepStrictEqual(options, { persistent: true, resident: true });
+    assert.deepStrictEqual(options, { persistent: true, retained: true });
   });
 
   test('should set both persistent and singleton to true when both options are present (new-line)', () => {

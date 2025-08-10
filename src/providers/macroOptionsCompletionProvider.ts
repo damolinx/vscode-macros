@@ -115,7 +115,7 @@ export class MacroOptionsCompletionProvider implements vscode.CompletionItemProv
             'All instances of this macro share the same execution context, ' +
             'allowing you to cache state or accumulate data over multiple runs.';
           break;
-        case 'resident':
+        case 'retained':
           item.detail = 'Prevent auto-termination';
           item.documentation =
             'Prevents the macro from auto-terminating at the end of the script. ' +
@@ -133,7 +133,7 @@ export class MacroOptionsCompletionProvider implements vscode.CompletionItemProv
     });
 
     function getAvailableOptions(optionsText = '', current = '') {
-      const options: MacroOptionType[] = ['persistent', 'resident', 'singleton'];
+      const options: MacroOptionType[] = ['persistent', 'retained', 'singleton'];
       const usedOptions = optionsText.split(',').map((s) => s.trim()).filter(Boolean);
       return usedOptions.length
         ? options.filter((o) => !usedOptions.includes(o) && o.startsWith(current))

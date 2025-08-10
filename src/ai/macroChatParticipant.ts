@@ -39,7 +39,7 @@ There are two options to satisfy this request:
 
   - Following directives are available, which are defined at the top of the
     file:
-    - // @macro:resident: Prevents the macro from auto-terminating at end of
+    - // @macro:retained: Prevents the macro from auto-terminating at end of
       script. Ideal for long-lived VS Code services/providers (e.g.
       onDidOpenTextDocument listeners, language server sessions, diagnostics
       watchers) without wrapping everything in an explicit Promise.

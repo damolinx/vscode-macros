@@ -9,7 +9,7 @@ export interface MacroOptions {
   /**
  * Macro is not automatically terminated. Default: false.
  */
-  resident?: boolean;
+  retained?: boolean;
   /**
    * Macro can only have a single running instance. Default: false.
    */
@@ -25,8 +25,8 @@ export function parseOptions(code: string): MacroOptions {
         case 'persistent':
           options.persistent = true;
           break;
-        case 'resident':
-          options.resident = true;
+        case 'retained':
+          options.retained = true;
           break;
         case 'singleton':
           options.singleton = true;
