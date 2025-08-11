@@ -2,17 +2,17 @@ import * as vscode from 'vscode';
 import { CREATE_MACRO_TOOL_ID } from './macroCreateTool';
 import { ExtensionContext } from '../extensionContext';
 import { ManifestRaw } from '../macroTemplates';
-import { Lazy } from '../utils/lazy';
-import { readFile } from '../utils/resources';
 
 export const MACROS_CHAT_PARTICIPANT_ID = 'macros.chatParticipant';
 
 export const MACRO_PROMPT = `
-You are a subject matter expert on VS Code Macros. The following message will
-provide basic documentation on macros for context.
-`;
+You are a subject matter expert on VS Code Macros. A macro is a
+JavaScript script that automates tasks or adds custom tools to VS Code
+via its standard extensibility APIs—without the overhead of a full extension.
+These scripts run sandboxed in a Node.js VM inside this extension’s process,
+giving you isolated execution with full access to both the vscode and NodeJS
+APIs.
 
-export const CREATION_PROMPT = `
 Follow these rules exactly when creating macros.
 
 1. Template Selection
@@ -30,7 +30,7 @@ Macro Creation Rules
 • Single-File Entrypoint
   - The macro is one JavaScript/TypeScript file executed as an entrypoint script.
   - Do not split code into multiple files.
-  - Top-level scope must not use \`return\`, \`await\`, or any \`export\` statements.
+  - Top-level scope must not ever use \`return\`, \`await\`, or \`export\` statements.
   - The result is the value of the last evaluated expression.
 
 • Async and Promises
@@ -38,6 +38,11 @@ Macro Creation Rules
   - Rely on the implicit last expression—avoid explicit \`return\`.
   - If last statement returns Promise, the macro only completes when the
     Promise resolves.
+
+• Variable Generation
+  - When generating code for a persistent macro (// @macro:persistent), always
+    use \`var\` for all top-level variable declarations. Never use \`const\` or
+    \`let\` at the top level.
 
 • Injected Context
   - \`vscode\` API
@@ -70,9 +75,6 @@ Directives
 
 - \`// @macro:persistent\`
   Share a single execution context across all invocations.
-  When writing macros with \`// @macro:persistent\`, always use \`var\` for all
-  top-level variables. Do not use \`const\` or \`let\` at the top level, as this
-  will cause errors on repeated runs.
 
 - \`// @macro:singleton\`
   Allow only one instance to run concurrently.
@@ -106,7 +108,6 @@ export type ChatTag = 'macro' | 'create';
 export class MacroChatParticipant implements vscode.Disposable {
   private readonly context: vscode.ExtensionContext;
   private readonly participant: vscode.ChatParticipant;
-  private readonly readme: Lazy<Promise<string>>;
 
   constructor({ extensionContext }: ExtensionContext) {
     this.context = extensionContext;
@@ -121,7 +122,6 @@ export class MacroChatParticipant implements vscode.Disposable {
       },
     );
     this.participant.iconPath = new vscode.ThemeIcon('run-all');
-    this.readme = new Lazy(() => readFile(this.context, '../README.md'));
   }
 
   dispose() {
@@ -132,8 +132,7 @@ export class MacroChatParticipant implements vscode.Disposable {
     const messages = this.getMessages(context);
     if (messages.length === 0) {
       messages.push(
-        vscode.LanguageModelChatMessage.User(CREATION_PROMPT),
-        vscode.LanguageModelChatMessage.User(await this.readme.get())
+        vscode.LanguageModelChatMessage.User(MACRO_PROMPT),
       );
     }
     if (!this.hasCommandHistory(context, 'create')) {
@@ -168,8 +167,6 @@ export class MacroChatParticipant implements vscode.Disposable {
     if (messages.length === 0) {
       messages.push(
         vscode.LanguageModelChatMessage.User(MACRO_PROMPT),
-        vscode.LanguageModelChatMessage.User(CREATION_PROMPT),
-        vscode.LanguageModelChatMessage.User(await this.readme.get()),
       );
     }
     messages.push(vscode.LanguageModelChatMessage.User(`User prompt: ${request.prompt}`));
