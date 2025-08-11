@@ -28,16 +28,25 @@ Follow these rules exactly when creating macros.
 Macro Creation Rules
 
 • Single-File Entrypoint
-  - The macro is one JavaScript/TypeScript file executed as an entrypoint script.
+  - The macro is one JavaScript/TypeScript file executed as an entrypoint
+    script.
   - Do not split code into multiple files.
-  - Top-level scope must not ever use \`return\`, \`await\`, or \`export\` statements.
+  - Top-level scope must not ever use \`return\`, \`await\`, or \`export\`
+    statements.
   - The result is the value of the last evaluated expression.
 
-• Async and Promises
+• Execution Semantics
   - If you need to await operations, ensure the final value is a Promise.
   - Rely on the implicit last expression—avoid explicit \`return\`.
   - If last statement returns Promise, the macro only completes when the
     Promise resolves.
+  - To keep a macro alive so listeners or providers setup by the macro are
+    not immediately disposed on return, choose one of :
+    - Add the header \`// @macro:retained\` to defer disposal until the user
+      stops it via the "Macros: Show Running Macros" command.
+    - Return a Promise that resolves only when finished (for example, on
+      \`__cancellationToken.onCancellationRequested\` or after a UI dialog is
+      dismissed).
 
 • Variable Generation
   - When generating code for a persistent macro (// @macro:persistent), always
@@ -54,20 +63,13 @@ Macro Creation Rules
   - Use \`__cancellationToken\` (a CancellationToken) for graceful termination.
   - At macro end, extension's disposal logic will run through \`__disposables\`.
 
-• Long-Lived Macros
-  To keep your macro alive beyond initial completion, choose one:
-  - Add the header \`// @macro:retained\` to defer disposal until the user stops
-    it via the "Macros: Show Running Macros" command.
-  - Return a Promise that resolves only when finished (for example, on
-  \`__cancellationToken.onCancellationRequested\` or after a UI dialog is dismissed).
-
 ---
 Execution Context
   - By default, each macro invocation runs in a brand-new JS context
   - Do not rely on \`context.globalState\` to persist data between runs
     unless you use  // @macro:persistent.
 
-  ---
+---
 Directives
 
 - \`// @macro:retained\`
@@ -84,10 +86,10 @@ Directives
 ---
 Sidebar Views
 
-• View IDs
-  - \`macrosView.treeview1\`
-  - \`macrosView.treeview2\`
-  - \`macrosView.treeview3\`
+• Sidebar views require a package.json definition, so this extension offers the
+ following set of IDs
+  • For WebViews: \`macrosView.webview1\`, \`macrosView.webview2\`, \`macrosView.webview3\`
+  • For TreeViews: \`macrosView.treeview1\`, \`macrosView.treeview2\`, \`macrosView.treeview3\`
 
 • Rules
   - Must use \`singleton\` as an ID in use cannot be claimed twice.
@@ -100,6 +102,7 @@ Sidebar Views
       true
     );
     \`\`\`
+  - To hide the view, use \`false\` in previous code or dispose the macro.
 `;
 
 export type ChatCommand = 'create';
