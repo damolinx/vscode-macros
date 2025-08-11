@@ -13,46 +13,91 @@ provide basic documentation on macros for context.
 `;
 
 export const CREATION_PROMPT = `
-You are an assistant to create a VS Code Macro.
-There are two options to satisfy this request:
-- Use an existing template. The list of available templates is provided next.
-  They can be instantiated via the ${CREATE_MACRO_TOOL_ID} tool. If there are
-  multiple matches, ask the user to refine the request. If a given template
-  partially satisfies the request, load it and then suggest modifications.
-- Generate new code if no template satisfies the request. Do not ask the user
-  for confirmation, just generate the code. Basic rules for macro creation:
-  - A macro is a JavaScript file that is run as an entry point script. DO NOT
-    use return, module.exports or await in any top level statements.
-  - The script runs in a context where vscode and NodeJS global namespaces
-    are already included, do not import them. Any NodeJS library, however,
-    can be required. Only use CommonJS' require statements.
-  - If there is any async code, OR need to wait for completion, the script
-    result should be a Promise (do not use return, last statement is the
-    implicit result).
-  - If any UI component is created, also use a Promise as result, and only
-    resolve the promise when the UI component is closed / disposed.
-  - Macros should use the built-in __disposables variable to register any
-    objects that must be explicitly disposed when macro exits. This is the
-    direct replacement of context.subscriptions.
-  - Macros should use the __cancellationToken CancellationToken variable to
-    support stopping the macro from the extension.
+Follow these rules exactly when creating macros.
 
-  - Following directives are available, which are defined at the top of the
-    file:
-    - // @macro:retained: Prevents the macro from auto-terminating at end of
-      script. Ideal for long-lived VS Code services/providers (e.g.
-      onDidOpenTextDocument listeners, language server sessions, diagnostics
-      watchers) without wrapping everything in an explicit Promise.
-    - // @macro:persistent: Shares the same execution context across all
-      invocations of this macro. Perfect for caching, shared state, or
-      accumulating data over time.
-    - // @macro:singleton: Ensures only one instance of this macro runs at a
-      time. Additional calls will be rejected.
-  - TreeView or WebView targeting the sidebar, use IDs like 'macrosView.webview1'
-    (IDs 1-3). These macros must be singletons and should return a Promise that
-    resolves when the view closes. The macro should not exit before the view is
-    disposed. To make these views visible, a 'setContext' like this one is needed:
-    'vscode.commands.executeCommand('setContext', 'macrosView.webview1.show', true);'
+1. Template Selection
+   - Use an existing template from the provided list.
+   - Instantiate via the ${CREATE_MACRO_TOOL_ID} tool.
+   - If multiple templates match, ask the user to refine their request.
+   - If a template partly satisfies the request, load it and suggest modifications.
+
+2. Code Generation
+   - If no template applies, generate new code without asking for confirmation.
+
+---
+Macro Creation Rules
+
+• Single-File Entrypoint
+  - The macro is one JavaScript/TypeScript file executed as an entrypoint script.
+  - Do not split code into multiple files.
+  - Top-level scope must not use \`return\`, \`await\`, or any \`export\` statements.
+  - The result is the value of the last evaluated expression.
+
+• Async and Promises
+  - If you need to await operations, ensure the final value is a Promise.
+  - Rely on the implicit last expression—avoid explicit \`return\`.
+  - If last statement returns Promise, the macro only completes when the
+    Promise resolves.
+
+• Injected Context
+  - \`vscode\` API
+  - Node.js globals: \`require\`, \`process\`, \`console\`, \`Buffer\`, etc.
+  - Do not re-import or shadow these variables.
+
+• Disposal and Cancellation
+  - Use the built-in \`__disposables\` array to register disposables.
+  - Use \`__cancellationToken\` (a CancellationToken) for graceful termination.
+  - At macro end, extension's disposal logic will run through \`__disposables\`.
+
+• Long-Lived Macros
+  To keep your macro alive beyond initial completion, choose one:
+  - Add the header \`// @macro:retained\` to defer disposal until the user stops
+    it via the "Macros: Show Running Macros" command.
+  - Return a Promise that resolves only when finished (for example, on
+  \`__cancellationToken.onCancellationRequested\` or after a UI dialog is dismissed).
+
+---
+Execution Context
+  - By default, each macro invocation runs in a brand-new JS context
+  - Do not rely on \`context.globalState\` to persist data between runs
+    unless you use  // @macro:persistent.
+
+  ---
+Directives
+
+- \`// @macro:retained\`
+  Keep the macro running until manually stopped. Ideal for listeners or providers.
+
+- \`// @macro:persistent\`
+  Share a single execution context across all invocations.
+  When writing macros with \`// @macro:persistent\`, always use \`var\` for all
+  top-level variables. Do not use \`const\` or \`let\` at the top level, as this
+  will cause errors on repeated runs.
+
+- \`// @macro:singleton\`
+  Allow only one instance to run concurrently.
+
+- Multiple directives can be added as comma-separated values after \`@macro\`, e.g.
+  \`// @macro:persistent,singleton\`
+---
+Sidebar Views
+
+• View IDs
+  - \`macrosView.treeview1\`
+  - \`macrosView.treeview2\`
+  - \`macrosView.treeview3\`
+
+• Rules
+  - Must use \`singleton\` as an ID in use cannot be claimed twice.
+  - Return a Promise that resolves when the view closes.
+  - To show the view, call:
+    \`\`\`js
+    vscode.commands.executeCommand(
+      'setContext',
+      '<viewId>.show',
+      true
+    );
+    \`\`\`
 `;
 
 export type ChatCommand = 'create';
@@ -86,12 +131,14 @@ export class MacroChatParticipant implements vscode.Disposable {
   private async handleCreateCommand(request: vscode.ChatRequest, context: vscode.ChatContext, responseStream: vscode.ChatResponseStream, token: vscode.CancellationToken): Promise<void> {
     const messages = this.getMessages(context);
     if (messages.length === 0) {
-      messages.push(vscode.LanguageModelChatMessage.User(await this.readme.get()));
+      messages.push(
+        vscode.LanguageModelChatMessage.User(CREATION_PROMPT),
+        vscode.LanguageModelChatMessage.User(await this.readme.get())
+      );
     }
     if (!this.hasCommandHistory(context, 'create')) {
       const manifest = await ManifestRaw.get(this.context);
       messages.push(
-        vscode.LanguageModelChatMessage.User(CREATION_PROMPT),
         vscode.LanguageModelChatMessage.User(`Available templates: ${manifest}`));
     }
 
@@ -121,6 +168,7 @@ export class MacroChatParticipant implements vscode.Disposable {
     if (messages.length === 0) {
       messages.push(
         vscode.LanguageModelChatMessage.User(MACRO_PROMPT),
+        vscode.LanguageModelChatMessage.User(CREATION_PROMPT),
         vscode.LanguageModelChatMessage.User(await this.readme.get()),
       );
     }
