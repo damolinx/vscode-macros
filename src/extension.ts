@@ -9,7 +9,7 @@ import { downloadAsset } from './commands/downloadAsset';
 import { openMacro } from './commands/openMacro';
 import { resetSharedContext } from './commands/resetContext';
 import { runActiveEditor, runMacro } from './commands/runMacro';
-import { setupSourceDirectory } from './commands/setupSourceDirectory';
+import { registerSourceDirectoryVerifier, setupSourceDirectory } from './commands/setupSourceDirectory';
 import { showRunningMacros } from './commands/showRunningMacros';
 import { MACRO_DOCUMENT_SELECTOR } from './core/constants';
 import { SOURCE_DIRS_CONFIG } from './core/library/macroLibraryManager';
@@ -61,6 +61,12 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.sourceDirectories.settings', () => c.executeCommand('workbench.action.openSettings', SOURCE_DIRS_CONFIG)),
     cr('macros.sourceDirectories.setup', () => setupSourceDirectory(context)),
   );
+
+  if (vscode.workspace.getConfiguration().get('macros.sourceDirectories.verify', true)) {
+    extensionContext.subscriptions.push(
+      registerSourceDirectoryVerifier(context),
+    );
+  }
 
   await runStartupMacros(context);
 }

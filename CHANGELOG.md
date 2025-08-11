@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.5
+- Automatically set up target directory when saving a `.macro.js` file, provided that `macros.sourceDirectories.verify` is enabled.
+
 ## 0.3.4
 - Upgrade minimum VS Code version to 1.99.
 - `@macro` supports multiple comma-separated options.

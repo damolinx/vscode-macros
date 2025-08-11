@@ -85,7 +85,7 @@ See [Debugging a Macro](#debugging-a-macro) for additional information.
 #### Development
 * **Create New REPL Terminal**: start a REPL whose context matches the one used when running macros.
   * Use `.help` for list of available commands.
-* **Setup Source Directory for Development**: adds or updates optional files used to improve IntelliSense on macro files.
+* **Setup Source Directory for Development**: adds or updates optional files used to improve IntelliSense on macro files. This is run automatically in the background when saving a `.macro.js` file, provided that `macros.sourceDirectories.verify` is enabled.
 
 #### Manage Macros
 * **Fill File with Template**: initialize an existing file with example macro content.

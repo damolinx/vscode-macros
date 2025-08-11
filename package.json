@@ -115,6 +115,11 @@
             },
             "uniqueItems": true
           },
+          "macros.sourceDirectories.verify": {
+            "type": "boolean",
+            "description": "Verify that macro source directories are set up for development on save. Requires restart.",
+            "default": true
+          },
           "macros.startupMacros": {
             "type": "array",
             "markdownDescription": "Macro **files** that run when VS Code starts or a workspace is opened. The following tokens are available:\n\n- `${userHome}`: User home directory.\n- `${workspaceFolder}`: Current workspace root directory.",
