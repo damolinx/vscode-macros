@@ -4,6 +4,15 @@ import { templates } from '../macroTemplates';
 
 export const CREATE_MACRO_TOOL_ID = 'create_macro_from_template';
 
+/**
+ * Register tool.
+ */
+export function registerMacroCreateLanguageModelTool(context: ExtensionContext): vscode.Disposable {
+  return vscode.lm.registerTool(
+    CREATE_MACRO_TOOL_ID,
+    new MacroCreateTool(context));
+}
+
 export interface MacroCreateToolArgs {
   path: string;
 }

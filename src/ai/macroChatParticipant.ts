@@ -5,6 +5,13 @@ import { ManifestRaw } from '../macroTemplates';
 
 export const MACROS_CHAT_PARTICIPANT_ID = 'macros.chatParticipant';
 
+/**
+ * Register participant.
+ */
+export function registerMacroChatParticipant(context: ExtensionContext): vscode.Disposable {
+  return new MacroChatParticipant(context);
+}
+
 export const MACRO_PROMPT = `
 You are the Macro Execution Agent embedded in VS Code. Follow these rules exactly
 and output ONLY JavaScript code. A macro is a JavaScript script used to automate
