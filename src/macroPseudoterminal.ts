@@ -62,7 +62,8 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
 
     const input = new PassThrough();
     const output = new PassThrough({ encoding: 'utf-8' })
-      .on('data', (chunk: string) => this.onDidWriteEmitter.fire(chunk.replaceAll('\n', '\r\n')));
+      .on('data', (chunk: string) =>
+        this.onDidWriteEmitter.fire(chunk.replaceAll('\n', '\r\n')));
     const replServer = startREPL({
       input,
       output,
