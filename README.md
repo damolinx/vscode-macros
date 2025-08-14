@@ -7,8 +7,8 @@ Implementation-wise, these macro scripts are executed within [sandboxes](https:/
 ## Getting Started
 
 1. Create a new macro:
-   - **Option 1**: Use the **New Macro** command.
-   - **Option 2**: Create an empty `javascript` editor and use the **Fill File with Template** command.
+   - **Option 1**: Use the **Macros: New Macro…** command.
+   - **Option 2**: Create an empty `javascript` editor and use the **Macros: Fill File with Template** command.
    - **Option 3**: Ask the `@macros` chat agent to create a macro for you.
 
    > ℹ️ Save your macro files using a `.macro.js` extension. This enables UI controls, IntelliSense, and other macro-specific features.
@@ -37,7 +37,7 @@ Implementation-wise, these macro scripts are executed within [sandboxes](https:/
     main()
     ```
 
-3. From the [Command Palette](https://code.visualstudio.com/api/references/contribution-points#contributes.commands), use the **Run Active Editor as Macro** command to execute your macro.  Alternatively, on `Untitled` `javascript` or `*.macro.js`,  editors,  use the run and debug buttons will be available on the editor title bar.
+3. From the [Command Palette](https://code.visualstudio.com/api/references/contribution-points#contributes.commands), use the **Run Active Editor as Macro** command to execute your macro. Alternatively, on `Untitled` `javascript` or `*.macro.js`, editors, use the run and debug buttons will be available on the editor title bar.
 
    <p align=center>
      <img width="400" alt="Macro editor showing Run Macro button" src="https://github.com/user-attachments/assets/53f36963-d754-4b83-912d-689d5e200f17" />
@@ -45,7 +45,7 @@ Implementation-wise, these macro scripts are executed within [sandboxes](https:/
 
 ### Stopping a Macro
 
-1. Use the **Show Running Macros** command and click the stop button to **request** the macro to stop.
+1. Use the **Macros: Show Running Macros** command and click the stop button to *request* the macro to stop.
 
 A macro sandbox cannot be terminated; instead, the `Stop` action sends a cancellation request via the `__cancellationToken` ([CancellationToken](https://code.visualstudio.com/api/references/vscode-api#CancellationToken)) variable to the macro. This variable must be wired into all async code and APIs.
 
@@ -79,23 +79,23 @@ Keybind the `macros.run` command with a single argument that is the path to the 
 
 #### Debugging
 See [Debugging a Macro](#debugging-a-macro) for additional information.
-* **Debug Active File as Macro**: debug current editor as a macro (document will be saved before running).
-* **Debug Macro…**: select a macro file to debug. Provides access to configured `macros.sourceDirectories`.
+* **Macros: Debug Active File as Macro**: debug current editor as a macro (document will be saved before running).
+* **Macro: Debug Macro…**: select a macro file to debug. Provides access to configured `macros.sourceDirectories`.
 
 #### Development
-* **Create New REPL Terminal**: start a REPL whose context matches the one used when running macros.
+* **Macros: New REPL Terminal**: start a REPL whose context matches the one used when running macros.
   * Use `.help` for list of available commands.
-* **Setup Source Directory for Development**: adds or updates optional files used to improve IntelliSense on macro files. This is run automatically in the background when saving a `.macro.js` file, provided that `macros.sourceDirectories.verify` is enabled.
+* **Macros: Setup Source Directory for Development**: adds or updates optional files used to improve IntelliSense on macro files. This action is run automatically in the background when saving a `.macro.js` file, provided that `macros.sourceDirectories.verify` is enabled.
 
 #### Manage Macros
-* **Fill File with Template**: initialize an existing file with example macro content.
-* **New Macro…**: creates a new file with example macro content.
-* **Show Running Macros**: view and manage running macros.
+* **Macros: Fill File with Template**: initialize an existing file with example macro content.
+* **Macros: New Macro…**: creates a new file with example macro content.
+* **Macros: Show Running Macros**: view and manage running macros.
 
 #### Run Macros
-* **Run Active File as Macro**: run current editor as a macro (document will be saved before running).
-* **Rerun Last Macro**: execute the most recently run macro.
-* **Run Macro…**: select a macro to run. Provides access to macros in configured `macros.sourceDirectories` directories.
+* **Macros: Run Active File as Macro**: run current editor as a macro (document will be saved before running).
+* **Macros: Rerun Last Macro**: execute the most recently run macro.
+* **Macros: Run Macro…**: select a macro to run. Provides access to macros in configured `macros.sourceDirectories` directories.
 
 ## Development
 
