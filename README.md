@@ -52,11 +52,16 @@ A macro sandbox cannot be terminated; instead, the `Stop` action sends a cancell
 If a macro does not respond to the cancellation request, it will continue running. In such cases, you can use the **Developer: Restart Extension Host** command to restart all extensions, or simply restart VS Code to stop the macro. While this is not ideal, it provides a way to recover from unresponsive or runaway macros. Note that this approach will not implicitly terminate external processes started by the macro.
 
 ### Running a Macro on startup
+
 You can run macros on startup using the `macros.startupMacros` setting. This setting accepts paths to specific macro files (not directories), which are executed when a workspace is opened or when VS Code starts without one. Paths pointing to non-existent or empty files are automatically ignored (see the *Macros* log for details), but logic errors will trigger an error dialog.
 
 Startup macros let you define logic equivalent to an extension’s activate method. When appropriate, add cleanup logic using `__disposables` member.
 
+> **Workspace Trust**
+> Startup macro execution is disabled in untrusted workspaces.
+
 ### Keybinding a Macro
+
 Keybind the `macros.run` command with a single argument that is the path to the macro to run. This can only be done directly in the `keybindings.json` file, however. Check the VS Code [documentation](https://code.visualstudio.com/docs/editor/keybindings#_advanced-customization) for details.
 
 1. Use the **Preferences: Open Keyboard Shortcuts (JSON)** command to open the `keybindings.json` file.
@@ -78,21 +83,25 @@ Keybind the `macros.run` command with a single argument that is the path to the 
 ### Commands
 
 #### Debugging
+
 See [Debugging a Macro](#debugging-a-macro) for additional information.
 * **Macros: Debug Active File as Macro**: debug current editor as a macro (document will be saved before running).
 * **Macro: Debug Macro…**: select a macro file to debug. Provides access to configured `macros.sourceDirectories`.
 
 #### Development
+
 * **Macros: New REPL Terminal**: start a REPL whose context matches the one used when running macros.
   * Use `.help` for list of available commands.
 * **Macros: Setup Source Directory for Development**: adds or updates optional files used to improve IntelliSense on macro files. This action is run automatically in the background when saving a `.macro.js` file, provided that `macros.sourceDirectories.verify` is enabled.
 
 #### Manage Macros
+
 * **Macros: Fill File with Template**: initialize an existing file with example macro content.
 * **Macros: New Macro…**: creates a new file with example macro content.
 * **Macros: Show Running Macros**: view and manage running macros.
 
 #### Run Macros
+
 * **Macros: Run Active File as Macro**: run current editor as a macro (document will be saved before running).
 * **Macros: Rerun Last Macro**: execute the most recently run macro.
 * **Macros: Run Macro…**: select a macro to run. Provides access to macros in configured `macros.sourceDirectories` directories.
@@ -100,6 +109,7 @@ See [Debugging a Macro](#debugging-a-macro) for additional information.
 ## Development
 
 ### Available Code References
+
 The following references are available from the global context of your macro:
 * `vscode`: symbol that provides access to the [VS Code APIs](https://code.visualstudio.com/api/references/vscode-api).
 * `macros`: symbol that provides access to this extension's API (see [Macros API](#macros-api)).
@@ -120,6 +130,7 @@ The following references are available from the global context of your macro:
   ```
 
 ### Predefined Views and View Container
+
 Views such as sidebars and panels cannot be created dynamically—they must first be declared in the extension's `package.json` manifest. This limitation means macros would not be able to define their own views at runtime. To overcome this limitation, the extension predefines a `Macros` view container (with the id: `macrosViews`) with generic `webview` and `treeview` views (with ids `macrosView.webview[1..3]` and `macrosView.treeview[1..3]`). Macros can then "claim" and use these predefined views to display custom content or UI as needed.
 Views are disabled by default via a context value, so to enable them you must enable that context value (see example below).
 
@@ -135,6 +146,7 @@ Remember to set this back to `false` when macro completes.
 </p>
 
 #### Special Tokens
+
 These tokens do not form part of contexts shared when `@macro:persistent` is used as they are different from session to session.
 * `__cancellationToken`: a [CancellationToken](https://code.visualstudio.com/api/references/vscode-api#CancellationToken) used by th extension to notify about a stop request. See [Stopping a Macro](#stopping-a-macro).
 * `__disposables`: an array for adding [Disposable](https://code.visualstudio.com/api/references/vscode-api#Disposable) instances, which will be automatically disposed of when the macro completes.
@@ -155,6 +167,7 @@ vscode.window.showInformationMessage("Hello, world!");
 ```
 
 ### Download Definition Files
+
 Any URL in a macro file pointing to a `.d.ts` file will automatically receive a code action, **Download .d.ts**, enabling you to download the file directly to the macro's parent folder. This simplifies adding type definitions to support IntelliSense in your macros.
 
 For GitHub URLs containing `/blob/`, the extension offers special handling by converting them to their raw equivalent. For example: `https://github.com/Microsoft/vscode/blob/main/extensions/git/src/api/git.d.ts` is automatically handled as `https://github.com/Microsoft/vscode/raw/refs/heads/main/extensions/git/src/api/git.d.ts`.
@@ -162,4 +175,5 @@ For GitHub URLs containing `/blob/`, the extension offers special handling by co
 For all other URLs, a standard HTTP GET request is sent to download the file.
 
 ## Debugging a Macro
+
 Debugging a macro leverages VS Code's extension debugging [story](https://code.visualstudio.com/api/get-started/your-first-extension#debugging-the-extension) since the macros are run in the context of this extension. This makes the experience a bit awkward as a new VS Code instance is launched, and you need to open the right context (e.g. workspace) in that new instance to debug your macro (vs, for example, launching another VS Code instance and attaching to the current one).

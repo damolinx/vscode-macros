@@ -2,6 +2,7 @@
 
 ## 0.3.5
 - Automatically set up target directory when saving a `.macro.js` file, provided that `macros.sourceDirectories.verify` is enabled.
+- Security: Startup macros are disabled in untrusted workspaces.
 - Fix: `Macros: Open` » `Open …` drop down entry does not open selected file.
 
 ## 0.3.4

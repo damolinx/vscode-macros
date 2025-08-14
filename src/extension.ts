@@ -79,18 +79,38 @@ async function runStartupMacros(context: ExtensionContext) {
 
   const existingPaths = paths.filter((path) => existsSync(path));
   if (existingPaths.length === 0) {
-    context.log.warn('Skipped all startup macros: none were found.');
-    return;
-  } else if (existingPaths.length !== paths.length) {
-    const nonExistingPaths = paths.filter((path) => !existingPaths.includes(path));
     context.log.warn(
-      'Skipped startup macros that were not found:',
-      ...nonExistingPaths.map((path) => `"${vscode.workspace.asRelativePath(path, true)}"`));
+      'No startup macros executed — none found on disk. Count:',
+      paths.length);
+    return;
   }
 
-  context.log.info('Running startup macros:',
-    ...existingPaths.map((path) => `"${vscode.workspace.asRelativePath(path, true)}"`));
+  if (!vscode.workspace.isTrusted) {
+    context.log.warn(
+      'No startup macros executed — workspace is untrusted. Count:',
+      existingPaths.length);
+
+    const manageOption = 'Manage Workspace Trust';
+    vscode.window.showWarningMessage(
+      'Startup macros are disabled in untrusted workspaces.', manageOption)
+      .then((selection) =>
+        (selection === manageOption) && vscode.commands.executeCommand('workbench.trust.manage'));
+
+    return;
+  }
+
+  if (existingPaths.length !== paths.length) {
+    context.log.warn(
+      'Some startup macros were not executed — not found on disk:',
+      ...paths
+        .filter((path) => !existingPaths.includes(path))
+        .map((path) => vscode.workspace.asRelativePath(path, true)));
+  }
+
+  context.log.info(
+    'Startup macros to be executed:',
+    ...existingPaths.map((path) => vscode.workspace.asRelativePath(path, true)));
+
   await Promise.all(
-    existingPaths.map((path) => runMacro(context, path, true)),
-  );
+    existingPaths.map((path) => runMacro(context, path, true)));
 }
