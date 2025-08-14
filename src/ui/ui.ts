@@ -14,7 +14,7 @@ export interface UriQuickPickItem extends vscode.QuickPickItem {
 }
 
 const QuickPickOpenFile: vscode.QuickPickItem = {
-  label: 'Open File …',
+  label: 'Open …',
   iconPath: new vscode.ThemeIcon('folder-opened'),
 };
 
@@ -25,8 +25,8 @@ const QuickPickConfigureSourceDirectories: vscode.QuickPickItem = {
 
 let lastSelection: vscode.Uri | undefined;
 
-export function pickMacroFile(macroFiles: vscode.Uri[] | Record<string, vscode.Uri[]>, options?: OpenMacroOptions): Promise<vscode.Uri | undefined> {
-  return new Promise((resolve) => {
+export async function pickMacroFile(macroFiles: vscode.Uri[] | Record<string, vscode.Uri[]>, options?: OpenMacroOptions): Promise<vscode.Uri | undefined> {
+  const selection = await new Promise((resolve) => {
     const quickPick = createMacroQuickPick();
     const selectUri = options?.selectUri || lastSelection;
     if (selectUri) {
@@ -41,28 +41,31 @@ export function pickMacroFile(macroFiles: vscode.Uri[] | Record<string, vscode.U
       resolve(undefined);
     });
     quickPick.onDidAccept(async () => {
-      let uri: vscode.Uri | undefined;
       const selectedItem = quickPick.selectedItems[0];
-      if (selectedItem === QuickPickOpenFile) {
-        uri = await showMacroOpenDialog();
-      }
-      else if (selectedItem === QuickPickConfigureSourceDirectories) {
-        uri = await vscode.commands.executeCommand('macros.sourceDirectories.settings');
-      }
-      else {
-        uri = selectedItem.uri;
-      }
-
-      if (uri) {
-        lastSelection = uri;
-      }
-
-      resolve(uri);
+      resolve(selectedItem);
       quickPick.hide();
     });
 
     quickPick.show();
   });
+
+  let uri: vscode.Uri | undefined;
+  if (selection) {
+    if (selection === QuickPickOpenFile) {
+      uri = await showMacroOpenDialog();
+    }
+    else if (selection === QuickPickConfigureSourceDirectories) {
+      uri = await vscode.commands.executeCommand('macros.sourceDirectories.settings');
+    }
+    else {
+      uri = (selection as UriQuickPickItem).uri;
+    }
+    if (uri) {
+      lastSelection = uri;
+    }
+  }
+
+  return uri;
 
   function createMacroQuickPick() {
     const openFileButton = options?.hideOpenPerItem
