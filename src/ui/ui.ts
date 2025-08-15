@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { relative } from 'path';
-import { showMacroOpenDialog } from './dialogs';
 import { showTextDocument } from '../utils/vscodeEx';
+import { showMacroOpenDialog } from './dialogs';
 
 export interface OpenMacroOptions {
   hideOpen?: boolean;
@@ -122,11 +122,11 @@ export async function pickMacroFile(macroFiles: vscode.Uri[] | Record<string, vs
 export function createGroupedQuickPickItems<
   TItem,
   TQuickPick extends vscode.QuickPickItem>(
-    items: TItem[],
-    options: {
-      groupBy: (item: TItem) => string,
-      itemBuilder: (item: TItem) => TQuickPick,
-    }): TQuickPick[] {
+  items: TItem[],
+  options: {
+    groupBy: (item: TItem) => string,
+    itemBuilder: (item: TItem) => TQuickPick,
+  }): TQuickPick[] {
 
   const groups = new Map<string, TItem[]>();
   for (const item of items) {
@@ -149,9 +149,9 @@ export function createGroupedQuickPickItems<
     } as any));
 
     quickPickItems.push(...
-      groups.get(groupName)!
-        .map(options.itemBuilder)
-        .sort((a, b) => a.label.localeCompare(b.label)));
+    groups.get(groupName)!
+      .map(options.itemBuilder)
+      .sort((a, b) => a.label.localeCompare(b.label)));
   }
 
   return quickPickItems;

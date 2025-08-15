@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
+import { ExtensionContext } from '../../extensionContext';
+import { MACRO_EXTENSIONS, MACRO_LANGUAGES } from '../constants';
+import { getMacroId, Macro, MacroId } from '../macro';
 import { MacroRunInfo, MacroRunStopInfo } from './macroRunInfo';
 import { MacroRunner } from './macroRunner';
-import { getMacroId, Macro, MacroId } from '../macro';
-import { MACRO_EXTENSIONS, MACRO_LANGUAGES } from '../constants';
-import { ExtensionContext } from '../../extensionContext';
 
 export class MacroRunnerManager implements vscode.Disposable {
   private readonly context: ExtensionContext;

@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { saveTextEditor } from './vscodeEx';
 import { MACROS_FILTER } from '../core/constants';
+import { saveTextEditor } from './vscodeEx';
 
 export async function activeMacroEditor(ensureSaved: boolean): Promise<vscode.TextEditor | undefined> {
   let editor = vscode.window.activeTextEditor;

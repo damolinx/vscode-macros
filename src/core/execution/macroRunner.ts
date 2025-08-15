@@ -1,12 +1,12 @@
 import * as vscode from 'vscode';
 import * as vm from 'vm';
-import { initalizeContext, initializeMacrosApi, MacroContextInitParams } from './macroRunContext';
-import { MacroRunId, MacroRunInfo, MacroRunStopInfo } from './macroRunInfo';
-import { Macro } from '../macro';
-import { MacroOptions } from '../macroOptions';
 import { MacroContext } from '../../api/macroContext';
 import { MacrosLogOutputChannel } from '../../api/macroLogOutputChannel';
 import { ExtensionContext } from '../../extensionContext';
+import { Macro } from '../macro';
+import { MacroOptions } from '../macroOptions';
+import { initalizeContext, initializeMacrosApi, MacroContextInitParams } from './macroRunContext';
+import { MacroRunId, MacroRunInfo, MacroRunStopInfo } from './macroRunInfo';
 
 export class MacroRunner implements vscode.Disposable {
   private readonly context: ExtensionContext;

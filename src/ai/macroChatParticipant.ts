@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
-import { CREATE_MACRO_TOOL_ID } from './macroCreateTool';
 import { ExtensionContext } from '../extensionContext';
 import { ManifestRaw } from '../macroTemplates';
+import { CREATE_MACRO_TOOL_ID } from './macroCreateTool';
 
 export const MACROS_CHAT_PARTICIPANT_ID = 'macros.chatParticipant';
 
@@ -156,7 +156,7 @@ export class MacroChatParticipant implements vscode.Disposable {
             (curr instanceof vscode.ChatResponseMarkdownPart)
               ? prev.concat(curr.value.value)
               : prev
-            , '')),
+          , '')),
       );
     return messages;
   }

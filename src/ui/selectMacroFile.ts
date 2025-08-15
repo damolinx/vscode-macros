@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { OpenMacroOptions, pickMacroFile, UriQuickPickItem } from './ui';
 import { MacroLibraryManager } from '../core/library/macroLibraryManager';
+import { OpenMacroOptions, pickMacroFile, UriQuickPickItem } from './ui';
 
 export async function selectMacroFile(manager: MacroLibraryManager, options?: OpenMacroOptions): Promise<vscode.Uri | undefined> {
   const macroFiles = await manager.getFiles();

@@ -2,11 +2,11 @@ import * as vscode from 'vscode';
 import { REPLServer, start as startREPL } from 'repl';
 import { PassThrough } from 'stream';
 import { Context } from 'vm';
+import { MacrosLogOutputChannel } from './api/macroLogOutputChannel';
 import { createMacro } from './commands/createMacro';
 import { initalizeContext, MacroContextInitParams } from './core/execution/macroRunContext';
 import { ExtensionContext } from './extensionContext';
 import { showMacroQuickPick } from './ui/dialogs';
-import { MacrosLogOutputChannel } from './api/macroLogOutputChannel';
 
 type REPLServerWithHistory = REPLServer & { history?: string[] };
 

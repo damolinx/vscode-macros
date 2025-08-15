@@ -2,8 +2,8 @@ import * as vscode from 'vscode';
 import { basename, dirname } from 'path';
 import { showMacroOpenDialog } from '../ui/dialogs';
 import { activeMacroEditor } from '../utils/activeMacroEditor';
-import { showTextDocument } from '../utils/vscodeEx';
 import { PathLike, toUri } from '../utils/uri';
+import { showTextDocument } from '../utils/vscodeEx';
 
 export async function debugMacro(pathOrUri?: PathLike) {
   const uri = pathOrUri ? toUri(pathOrUri) : await showMacroOpenDialog();

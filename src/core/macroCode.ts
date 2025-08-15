@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { MacroOptions, parseOptions } from './macroOptions';
 import { Lazy } from '../utils/lazy';
+import { MacroOptions, parseOptions } from './macroOptions';
 
 export class MacroCode {
   private readonly _options: Lazy<MacroOptions>;

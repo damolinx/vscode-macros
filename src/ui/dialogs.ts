@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
-import { showMacroErrorMessage } from './errors';
-import { selectMacroFile } from './selectMacroFile';
-import { OpenMacroOptions } from './ui';
 import { MACROS_FILTER } from '../core/constants';
 import { MacroRunner } from '../core/execution/macroRunner';
 import { MacroLibraryManager } from '../core/library/macroLibraryManager';
 import { MacroOptions } from '../core/macroOptions';
+import { showMacroErrorMessage } from './errors';
+import { selectMacroFile } from './selectMacroFile';
+import { OpenMacroOptions } from './ui';
 
 export function showMacroErrorDialog(runner: MacroRunner, macroOptions: MacroOptions, error: Error | string): Promise<void> {
   return showMacroErrorMessage(runner, macroOptions, error);

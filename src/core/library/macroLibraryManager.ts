@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { MacroLibrary } from './macroLibrary';
 import { Lazy } from '../../utils/lazy';
+import { MacroLibrary } from './macroLibrary';
 import { expandConfigPaths } from './utils';
 
 export const SOURCE_DIRS_CONFIG = 'macros.sourceDirectories';

@@ -2,8 +2,8 @@ import * as vscode from 'vscode';
 import { get } from 'https';
 import { posix } from 'path';
 import { MACROS_FILTER } from '../core/constants';
-import { saveTextEditor } from '../utils/vscodeEx';
 import { isUntitled, PathLike, toUri } from '../utils/uri';
+import { saveTextEditor } from '../utils/vscodeEx';
 
 const NO_OPTION: vscode.MessageItem = { title: 'No', isCloseAffordance: true };
 const YES_OPTION: vscode.MessageItem = { title: 'Yes' };
