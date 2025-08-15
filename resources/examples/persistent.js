@@ -10,7 +10,7 @@ async function main() {
   await vscode.window.showInformationMessage(
     `Hello from call ${invocation}. Run this macro a couple of times before dismissing this message.`);
   await vscode.window.showInformationMessage(
-    `Bye from call ${invocation}. You have made ${invocationCount} call(s) so far`);
+    `Bye from call ${invocation}. You have made ${invocationCount} call(s) so far.`);
 }
 
 main();

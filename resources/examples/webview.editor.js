@@ -52,7 +52,7 @@ function createHtml() {
 function createWebview(resolve) {
   const panel = vscode.window.createWebviewPanel(
     'mywebview.id',
-    'My Webview',
+    'My Webview Editor',
     vscode.ViewColumn.Active, {
     enableScripts: true,
   });
@@ -65,7 +65,7 @@ function createWebview(resolve) {
   return panel;
 }
 
-// Keep macro alive until view is disposed.
+// Keep macro alive until editor is closed, or macro is stopped.
 new Promise((resolve) => {
   __cancellationToken.onCancellationRequested(resolve);
   __disposables.push(createWebview(resolve));

@@ -11,6 +11,6 @@ async function main() {
     }));
 
   vscode.window.showInformationMessage(result);
-} ``
+}
 
 main();
