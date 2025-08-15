@@ -75,7 +75,12 @@ export class MacroChatParticipant implements vscode.Disposable {
     this.context = extensionContext;
     this.participant = vscode.chat.createChatParticipant(
       MACROS_CHAT_PARTICIPANT_ID,
-      async (request: vscode.ChatRequest, context: vscode.ChatContext, response: vscode.ChatResponseStream, token: vscode.CancellationToken) => {
+      async (
+        request: vscode.ChatRequest,
+        context: vscode.ChatContext,
+        response: vscode.ChatResponseStream,
+        token: vscode.CancellationToken,
+      ) => {
         if (this.isCommandChat(request, context, 'create')) {
           await this.handleCreateCommand(request, context, response, token);
         } else {
@@ -90,22 +95,27 @@ export class MacroChatParticipant implements vscode.Disposable {
     this.participant.dispose();
   }
 
-  private async handleCreateCommand(request: vscode.ChatRequest, context: vscode.ChatContext, responseStream: vscode.ChatResponseStream, token: vscode.CancellationToken): Promise<void> {
+  private async handleCreateCommand(
+    request: vscode.ChatRequest,
+    context: vscode.ChatContext,
+    responseStream: vscode.ChatResponseStream,
+    token: vscode.CancellationToken,
+  ): Promise<void> {
     const messages = this.getMessages(context);
     if (messages.length === 0) {
-      messages.push(
-        vscode.LanguageModelChatMessage.User(MACRO_PROMPT),
-      );
+      messages.push(vscode.LanguageModelChatMessage.User(MACRO_PROMPT));
     }
     if (!this.hasCommandHistory(context, 'create')) {
       const manifest = await ManifestRaw.get(this.context);
-      messages.push(
-        vscode.LanguageModelChatMessage.User(`Available templates: ${manifest}`));
+      messages.push(vscode.LanguageModelChatMessage.User(`Available templates: ${manifest}`));
     }
 
     messages.push(vscode.LanguageModelChatMessage.User(`User prompt: ${request.prompt}`));
     const response = await request.model.sendRequest(
-      messages, { tools: this.getChatTools('macro', 'create') }, token);
+      messages,
+      { tools: this.getChatTools('macro', 'create') },
+      token,
+    );
 
     for await (const fragment of response.stream) {
       if (fragment instanceof vscode.LanguageModelTextPart) {
@@ -115,8 +125,12 @@ export class MacroChatParticipant implements vscode.Disposable {
           input: fragment.input,
           toolInvocationToken: request.toolInvocationToken,
         });
-        for (const toolResponseContent of toolResponse.content.filter((c) => c instanceof vscode.LanguageModelTextPart)) {
-          responseStream.markdown(new vscode.MarkdownString(`\`\`\`javascript\n${toolResponseContent.value}`));
+        for (const toolResponseContent of toolResponse.content.filter(
+          (c) => c instanceof vscode.LanguageModelTextPart,
+        )) {
+          responseStream.markdown(
+            new vscode.MarkdownString(`\`\`\`javascript\n${toolResponseContent.value}`),
+          );
         }
       } else {
         responseStream.markdown('Unknwon');
@@ -124,17 +138,23 @@ export class MacroChatParticipant implements vscode.Disposable {
     }
   }
 
-  private async handleRequest(request: vscode.ChatRequest, context: vscode.ChatContext, responseStream: vscode.ChatResponseStream, token: vscode.CancellationToken): Promise<void> {
+  private async handleRequest(
+    request: vscode.ChatRequest,
+    context: vscode.ChatContext,
+    responseStream: vscode.ChatResponseStream,
+    token: vscode.CancellationToken,
+  ): Promise<void> {
     const messages = this.getMessages(context);
     if (messages.length === 0) {
-      messages.push(
-        vscode.LanguageModelChatMessage.User(MACRO_PROMPT),
-      );
+      messages.push(vscode.LanguageModelChatMessage.User(MACRO_PROMPT));
     }
     messages.push(vscode.LanguageModelChatMessage.User(`User prompt: ${request.prompt}`));
 
     const response = await request.model.sendRequest(
-      messages, { tools: this.getChatTools('macro') }, token);
+      messages,
+      { tools: this.getChatTools('macro') },
+      token,
+    );
 
     for await (const fragment of response.text) {
       responseStream.markdown(fragment);
@@ -142,8 +162,7 @@ export class MacroChatParticipant implements vscode.Disposable {
   }
 
   private getChatTools(...tags: ChatTag[]): vscode.LanguageModelChatTool[] | undefined {
-    return vscode.lm.tools.filter(
-      (tool) => tags.every((tag) => tool.tags.includes(tag)));
+    return vscode.lm.tools.filter((tool) => tags.every((tag) => tool.tags.includes(tag)));
   }
 
   private getMessages(context: vscode.ChatContext): vscode.LanguageModelChatMessage[] {
@@ -152,21 +171,29 @@ export class MacroChatParticipant implements vscode.Disposable {
       .filter((turn) => turn.participant === MACROS_CHAT_PARTICIPANT_ID)
       .map((turn) =>
         vscode.LanguageModelChatMessage.Assistant(
-          turn.response.reduce((prev, curr) =>
-            (curr instanceof vscode.ChatResponseMarkdownPart)
-              ? prev.concat(curr.value.value)
-              : prev
-          , '')),
+          turn.response.reduce(
+            (prev, curr) =>
+              curr instanceof vscode.ChatResponseMarkdownPart
+                ? prev.concat(curr.value.value)
+                : prev,
+            '',
+          ),
+        ),
       );
     return messages;
   }
 
   private hasCommandHistory(context: vscode.ChatContext, command: ChatCommand) {
     return context.history.some(
-      (turn) => turn.command === command && turn instanceof vscode.ChatRequestTurn);
+      (turn) => turn.command === command && turn instanceof vscode.ChatRequestTurn,
+    );
   }
 
-  private isCommandChat(request: vscode.ChatRequest, context: vscode.ChatContext, command: ChatCommand) {
+  private isCommandChat(
+    request: vscode.ChatRequest,
+    context: vscode.ChatContext,
+    command: ChatCommand,
+  ) {
     return request.command === command || this.hasCommandHistory(context, command);
   }
 }

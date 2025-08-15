@@ -8,7 +8,7 @@ export const MACRO_EXTENSIONS: readonly string[] = [MACRO_EXTENSION, '.js', '.cj
 
 export const MACROS_FILTER: Record<string, string[]> = {
   'JavaScript Macro': ['macro.js'],
-  'JavaScript': ['js', 'cjs'],
+  JavaScript: ['js', 'cjs'],
 };
 
 export const MACRO_DOCUMENT_SELECTOR: vscode.DocumentSelector = [

@@ -8,10 +8,10 @@ export interface MacroRunInfo {
   id: MacroRunId;
   macro: Macro;
   startup?: true;
-};
+}
 
 export interface MacroRunStopInfo extends MacroRunInfo {
   error?: Error | string;
   id: MacroRunId;
   macro: Macro;
-};
+}

@@ -5,7 +5,6 @@ import { expandConfigPaths } from './utils';
 
 export const SOURCE_DIRS_CONFIG = 'macros.sourceDirectories';
 
-
 export class MacroLibraryManager implements vscode.Disposable {
   public readonly libraries: Lazy<readonly MacroLibrary[]>;
   private readonly onDidChangeConfigDisposable: vscode.Disposable;
@@ -36,7 +35,6 @@ export class MacroLibraryManager implements vscode.Disposable {
 
   private getLibraries(): MacroLibrary[] {
     const expandedPaths = expandConfigPaths(SOURCE_DIRS_CONFIG);
-    return expandedPaths.
-      map((root) => new MacroLibrary(vscode.Uri.file(root)));
+    return expandedPaths.map((root) => new MacroLibrary(vscode.Uri.file(root)));
   }
 }

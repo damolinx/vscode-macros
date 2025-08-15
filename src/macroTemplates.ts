@@ -16,7 +16,7 @@ export interface MacroTemplate {
 
 export interface Manifest {
   templates: MacroTemplate[];
-};
+}
 
 export interface LoadableMacroTemplate extends MacroTemplate {
   load: () => Promise<string>;
@@ -24,7 +24,8 @@ export interface LoadableMacroTemplate extends MacroTemplate {
 
 // Caching manifest since it is shipped with the extension, i.e. not expected to change.
 export const ManifestRaw = new Lazy((context: vscode.ExtensionContext) =>
-  readFile(context, MACRO_TEMPLATES_MANIFEST_RESOURCE));
+  readFile(context, MACRO_TEMPLATES_MANIFEST_RESOURCE),
+);
 
 export const Manifest = new Lazy(async (context: vscode.ExtensionContext) => {
   const raw = await ManifestRaw.get(context);
@@ -33,12 +34,17 @@ export const Manifest = new Lazy(async (context: vscode.ExtensionContext) => {
   return manifest;
 });
 
-export async function templates({ extensionContext }: ExtensionContext): Promise<LoadableMacroTemplate[]> {
+export async function templates({
+  extensionContext,
+}: ExtensionContext): Promise<LoadableMacroTemplate[]> {
   const { templates } = await Manifest.get(extensionContext);
   return templates.map((t) => ({ ...t, load: () => readTemplate(extensionContext, t) }));
 }
 
-async function readTemplate(context: vscode.ExtensionContext, template: MacroTemplate): Promise<string> {
+async function readTemplate(
+  context: vscode.ExtensionContext,
+  template: MacroTemplate,
+): Promise<string> {
   const path = join(MACRO_TEMPLATES_DIR_RESOURCE, template.path);
   const content = await readFile(context, path);
   return content;

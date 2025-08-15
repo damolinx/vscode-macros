@@ -10,12 +10,16 @@ export class MacroLibrary {
   }
 
   public async getFiles(): Promise<vscode.Uri[]> {
-    const entries = await (vscode.workspace.fs.readDirectory(this.root)
-      .then((entries) => entries, (_error) => []));
+    const entries = await vscode.workspace.fs.readDirectory(this.root).then(
+      (entries) => entries,
+      (_error) => [],
+    );
     return entries
-      .filter(([name, type]) =>
-        (type === vscode.FileType.File || type === vscode.FileType.SymbolicLink) &&
-        MACRO_EXTENSIONS.includes(posix.extname(name)))
+      .filter(
+        ([name, type]) =>
+          (type === vscode.FileType.File || type === vscode.FileType.SymbolicLink) &&
+          MACRO_EXTENSIONS.includes(posix.extname(name)),
+      )
       .map(([name, _]) => vscode.Uri.joinPath(this.root, name));
   }
 }

@@ -103,19 +103,18 @@ export class MacroRunner implements vscode.Disposable {
       let runPromise: Promise<any>;
       if (options.persistent) {
         const initialKeys = Object.keys(context).filter((k) => !k.startsWith('__'));
-        runPromise = Promise.resolve(vm.runInContext(code, context, scriptOptions))
-          .finally(() => {
-            const currentKeys = Object.keys(context).filter((k) => !k.startsWith('__'));
-            const removedKeys = [...initialKeys].filter((key) => !currentKeys.includes(key));
-            if (this.sharedMacroContext) {
-              for (const key of currentKeys) {
-                this.sharedMacroContext[key] = context[key];
-              }
-              for (const key of removedKeys) {
-                delete this.sharedMacroContext[key];
-              }
+        runPromise = Promise.resolve(vm.runInContext(code, context, scriptOptions)).finally(() => {
+          const currentKeys = Object.keys(context).filter((k) => !k.startsWith('__'));
+          const removedKeys = [...initialKeys].filter((key) => !currentKeys.includes(key));
+          if (this.sharedMacroContext) {
+            for (const key of currentKeys) {
+              this.sharedMacroContext[key] = context[key];
             }
-          });
+            for (const key of removedKeys) {
+              delete this.sharedMacroContext[key];
+            }
+          }
+        });
       } else {
         runPromise = vm.runInNewContext(code, context, scriptOptions);
       }
@@ -139,12 +138,10 @@ export class MacroRunner implements vscode.Disposable {
     }
 
     function retainedExecute(runPromise: Promise<any>): Promise<any> {
-      return Promise.all(
-        [
-          runPromise,
-          new Promise((resolve) => runInfo.cts.token.onCancellationRequested(resolve)),
-        ],
-      );
+      return Promise.all([
+        runPromise,
+        new Promise((resolve) => runInfo.cts.token.onCancellationRequested(resolve)),
+      ]);
     }
 
     function safeDispose(disposables: vscode.Disposable[]): Error | undefined {
@@ -157,7 +154,9 @@ export class MacroRunner implements vscode.Disposable {
         }
       }
       return errors.length > 0
-        ? new Error(`Error(s) occurred while disposing resources:\n${errors.map((e) => typeof e === 'string' ? e : e.message).join('\n')}`)
+        ? new Error(
+            `Error(s) occurred while disposing resources:\n${errors.map((e) => (typeof e === 'string' ? e : e.message)).join('\n')}`,
+          )
         : undefined;
     }
   }

@@ -12,7 +12,7 @@ export interface MacrosApi {
   /**
    * Array of disposables to release when macro completes.
    */
-  readonly __disposables: ({ dispose: () => any })[];
+  readonly __disposables: { dispose: () => any }[];
   /**
    * ID of macro run.
    */
@@ -38,6 +38,6 @@ export interface MacrosApi {
        * URI of current macro. It can be undefined if running from an in-memory buffer.
        */
       readonly uri?: vscode.Uri;
-    }
-  }
+    };
+  };
 }

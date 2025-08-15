@@ -5,8 +5,7 @@ export const USER_HOME_TOKEN = '${userHome}';
 export const WORKSPACE_TOKEN = '${workspaceFolder}';
 
 export function expandConfigPaths(configKey: string): string[] {
-  const rawPaths = vscode.workspace.getConfiguration()
-    .get<string[]>(configKey, []);
+  const rawPaths = vscode.workspace.getConfiguration().get<string[]>(configKey, []);
   if (rawPaths.length === 0) {
     return [];
   }

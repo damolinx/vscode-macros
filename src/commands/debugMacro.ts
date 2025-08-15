@@ -22,7 +22,8 @@ export async function debugMacro(pathOrUri?: PathLike) {
 
     if (!hasBreakpoints) {
       const breakpoint = new vscode.SourceBreakpoint(
-        new vscode.Location(document.uri, new vscode.Position(0, 0)));
+        new vscode.Location(document.uri, new vscode.Position(0, 0)),
+      );
       vscode.debug.addBreakpoints([breakpoint]);
     }
   }
@@ -32,9 +33,7 @@ export async function debugMacro(pathOrUri?: PathLike) {
     name: `Debug Macro: ${basename(document.uri.fsPath)}`,
     type: 'extensionHost',
     request: 'launch',
-    args: [
-      `--extensionDevelopmentPath=${dirname(document.uri.fsPath)}`,
-    ],
+    args: [`--extensionDevelopmentPath=${dirname(document.uri.fsPath)}`],
     env: { MACROS_EXT_DEBUG: '1' },
   };
   vscode.debug.startDebugging(undefined, debugConfig);

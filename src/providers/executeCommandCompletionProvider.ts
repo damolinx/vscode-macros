@@ -1,9 +1,11 @@
 import * as vscode from 'vscode';
 import { Lazy } from '../utils/lazy';
 
-export const EXECUTE_COMMAND_CHARACTERS: readonly string[] = ['(', '"', '\'', '`'];
+export const EXECUTE_COMMAND_CHARACTERS: readonly string[] = ['(', '"', "'", '`'];
 
-export function registerExecuteCommandCompletionProvider(selector: vscode.DocumentSelector): vscode.Disposable {
+export function registerExecuteCommandCompletionProvider(
+  selector: vscode.DocumentSelector,
+): vscode.Disposable {
   return vscode.languages.registerCompletionItemProvider(
     selector,
     new ExecuteCommandCompletionProvider(),
@@ -14,15 +16,15 @@ export function registerExecuteCommandCompletionProvider(selector: vscode.Docume
 /**
  * Provide autocompletion for `executeCommand`.
  */
-export class ExecuteCommandCompletionProvider implements vscode.Disposable, vscode.CompletionItemProvider {
+export class ExecuteCommandCompletionProvider
+  implements vscode.Disposable, vscode.CompletionItemProvider
+{
   private readonly commandIds: Lazy<Thenable<string[]>>;
   private readonly disposables: vscode.Disposable[];
 
   constructor() {
     this.commandIds = new Lazy(() => vscode.commands.getCommands(true));
-    this.disposables = [
-      vscode.extensions.onDidChange(() => this.commandIds.reset()),
-    ];
+    this.disposables = [vscode.extensions.onDidChange(() => this.commandIds.reset())];
   }
 
   dispose() {
@@ -36,7 +38,9 @@ export class ExecuteCommandCompletionProvider implements vscode.Disposable, vsco
     _context: vscode.CompletionContext,
   ): Promise<vscode.CompletionItem[] | undefined> {
     const line = document.lineAt(position).text.substring(0, position.character);
-    const match = line.match(/(?:^\s*\.?|\.)executeCommand\s*\(\s*(?:(?<quote1>["'`])[a-zA-Z0-9._-]*|(?<quote2>["'`])?)$/);
+    const match = line.match(
+      /(?:^\s*\.?|\.)executeCommand\s*\(\s*(?:(?<quote1>["'`])[a-zA-Z0-9._-]*|(?<quote2>["'`])?)$/,
+    );
     if (!match) {
       return;
     }

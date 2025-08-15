@@ -5,12 +5,12 @@ import { showMacroOpenDialog } from './dialogs';
 
 export interface OpenMacroOptions {
   hideOpen?: boolean;
-  hideOpenPerItem?: boolean
+  hideOpenPerItem?: boolean;
   selectUri?: vscode.Uri;
 }
 
 export interface UriQuickPickItem extends vscode.QuickPickItem {
-  uri?: vscode.Uri
+  uri?: vscode.Uri;
 }
 
 const QuickPickOpenFile: vscode.QuickPickItem = {
@@ -25,7 +25,10 @@ const QuickPickConfigureSourceDirectories: vscode.QuickPickItem = {
 
 let lastSelection: vscode.Uri | undefined;
 
-export async function pickMacroFile(macroFiles: vscode.Uri[] | Record<string, vscode.Uri[]>, options?: OpenMacroOptions): Promise<vscode.Uri | undefined> {
+export async function pickMacroFile(
+  macroFiles: vscode.Uri[] | Record<string, vscode.Uri[]>,
+  options?: OpenMacroOptions,
+): Promise<vscode.Uri | undefined> {
   const selection = await new Promise((resolve) => {
     const quickPick = createMacroQuickPick();
     const selectUri = options?.selectUri || lastSelection;
@@ -53,11 +56,9 @@ export async function pickMacroFile(macroFiles: vscode.Uri[] | Record<string, vs
   if (selection) {
     if (selection === QuickPickOpenFile) {
       uri = await showMacroOpenDialog();
-    }
-    else if (selection === QuickPickConfigureSourceDirectories) {
+    } else if (selection === QuickPickConfigureSourceDirectories) {
       uri = await vscode.commands.executeCommand('macros.sourceDirectories.settings');
-    }
-    else {
+    } else {
       uri = (selection as UriQuickPickItem).uri;
     }
     if (uri) {
@@ -71,18 +72,15 @@ export async function pickMacroFile(macroFiles: vscode.Uri[] | Record<string, vs
     const openFileButton = options?.hideOpenPerItem
       ? undefined
       : {
-        iconPath: new vscode.ThemeIcon('go-to-file'),
-        tooltip: 'Open File',
-      };
+          iconPath: new vscode.ThemeIcon('go-to-file'),
+          tooltip: 'Open File',
+        };
     const items: UriQuickPickItem[] = createMacroFileItems(openFileButton);
     if (!options?.hideOpen) {
-      items.unshift(
-        QuickPickOpenFile,
-        QuickPickConfigureSourceDirectories,
-        {
-          label: '',
-          kind: vscode.QuickPickItemKind.Separator,
-        });
+      items.unshift(QuickPickOpenFile, QuickPickConfigureSourceDirectories, {
+        label: '',
+        kind: vscode.QuickPickItemKind.Separator,
+      });
     }
 
     const quickPick = vscode.window.createQuickPick<UriQuickPickItem>();
@@ -92,7 +90,7 @@ export async function pickMacroFile(macroFiles: vscode.Uri[] | Record<string, vs
     return quickPick;
   }
 
-  function createMacroFileItems(openFileButton?: { iconPath: vscode.ThemeIcon; tooltip: string; }) {
+  function createMacroFileItems(openFileButton?: { iconPath: vscode.ThemeIcon; tooltip: string }) {
     const items = [] as UriQuickPickItem[];
     if (macroFiles instanceof Array) {
       items.push(...createItems(macroFiles));
@@ -102,7 +100,8 @@ export async function pickMacroFile(macroFiles: vscode.Uri[] | Record<string, vs
         .forEach((root) => {
           items.push(
             { label: root, kind: vscode.QuickPickItemKind.Separator },
-            ...createItems(macroFiles[root], root));
+            ...createItems(macroFiles[root], root),
+          );
         });
     }
     return items;
@@ -119,15 +118,13 @@ export async function pickMacroFile(macroFiles: vscode.Uri[] | Record<string, vs
   }
 }
 
-export function createGroupedQuickPickItems<
-  TItem,
-  TQuickPick extends vscode.QuickPickItem>(
+export function createGroupedQuickPickItems<TItem, TQuickPick extends vscode.QuickPickItem>(
   items: TItem[],
   options: {
-    groupBy: (item: TItem) => string,
-    itemBuilder: (item: TItem) => TQuickPick,
-  }): TQuickPick[] {
-
+    groupBy: (item: TItem) => string;
+    itemBuilder: (item: TItem) => TQuickPick;
+  },
+): TQuickPick[] {
   const groups = new Map<string, TItem[]>();
   for (const item of items) {
     const groupName = options.groupBy(item);
@@ -142,16 +139,17 @@ export function createGroupedQuickPickItems<
   const quickPickItems: TQuickPick[] = [];
   const sortedGroups = [...groups.keys()].sort((a, b) => a.localeCompare(b));
   for (const groupName of sortedGroups) {
-
-    quickPickItems.push(({
+    quickPickItems.push({
       label: groupName,
       kind: vscode.QuickPickItemKind.Separator,
-    } as any));
+    } as any);
 
-    quickPickItems.push(...
-    groups.get(groupName)!
-      .map(options.itemBuilder)
-      .sort((a, b) => a.label.localeCompare(b.label)));
+    quickPickItems.push(
+      ...groups
+        .get(groupName)!
+        .map(options.itemBuilder)
+        .sort((a, b) => a.label.localeCompare(b.label)),
+    );
   }
 
   return quickPickItems;

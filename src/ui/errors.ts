@@ -3,7 +3,11 @@ import { MacroRunner } from '../core/execution/macroRunner';
 import { MacroOptions } from '../core/macroOptions';
 import { showTextDocument } from '../utils/vscodeEx';
 
-export function showMacroErrorMessage(runner: MacroRunner, macroOptions: MacroOptions, error: Error | string): Promise<void> {
+export function showMacroErrorMessage(
+  runner: MacroRunner,
+  macroOptions: MacroOptions,
+  error: Error | string,
+): Promise<void> {
   let message: string;
   let selection: vscode.Range | undefined;
   let stack: string | undefined;
@@ -30,19 +34,24 @@ export function showMacroErrorMessage(runner: MacroRunner, macroOptions: MacroOp
     let position: vscode.Position | undefined;
     if (firstMatch) {
       const { line, offset } = firstMatch.groups!;
-      position = new vscode.Position(
-        parseInt(line) - 1,
-        offset ? (parseInt(offset) - 1) : 0);
+      position = new vscode.Position(parseInt(line) - 1, offset ? parseInt(offset) - 1 : 0);
     }
     return position && new vscode.Range(position, position);
   }
 
-  async function showErrorMessage(runner: MacroRunner, message: string, stack?: string, selection?: vscode.Range, modal = false): Promise<void> {
+  async function showErrorMessage(
+    runner: MacroRunner,
+    message: string,
+    stack?: string,
+    selection?: vscode.Range,
+    modal = false,
+  ): Promise<void> {
     const actions: { title: string; execute: () => Thenable<any> | void }[] = [
       {
         title: selection ? 'Go to Error Location' : 'Open Macro',
         execute: () => showTextDocument(runner.macro.uri, { selection }),
-      }];
+      },
+    ];
 
     if (!macroOptions.singleton || !runner.someRunning) {
       actions.push({

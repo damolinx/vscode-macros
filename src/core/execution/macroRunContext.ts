@@ -12,8 +12,12 @@ export interface MacroContextInitParams {
   uri?: vscode.Uri;
 }
 
-export function initalizeContext(context: vm.Context, params: MacroContextInitParams): MacroContext {
-  const updatedContext = Object.assign(context,
+export function initalizeContext(
+  context: vm.Context,
+  params: MacroContextInitParams,
+): MacroContext {
+  const updatedContext = Object.assign(
+    context,
     {
       atob: atob,
       btoa: btoa,
@@ -27,11 +31,15 @@ export function initalizeContext(context: vm.Context, params: MacroContextInitPa
       setTimeout: setTimeout,
       vscode: vscode,
     },
-    createMacroApi(params));
+    createMacroApi(params),
+  );
   return updatedContext;
 }
 
-export function initializeMacrosApi(context: MacroContext, params: MacroContextInitParams): MacroContext {
+export function initializeMacrosApi(
+  context: MacroContext,
+  params: MacroContextInitParams,
+): MacroContext {
   const updatedContext = Object.assign(context, createMacroApi(params));
   return updatedContext;
 }

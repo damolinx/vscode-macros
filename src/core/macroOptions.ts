@@ -1,4 +1,3 @@
-
 export type MacroOptionType = keyof MacroOptions;
 
 export interface MacroOptions {
@@ -7,8 +6,8 @@ export interface MacroOptions {
    */
   persistent?: boolean;
   /**
- * Macro is not automatically terminated. Default: false.
- */
+   * Macro is not automatically terminated. Default: false.
+   */
   retained?: boolean;
   /**
    * Macro can only have a single running instance. Default: false.

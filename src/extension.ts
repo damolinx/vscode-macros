@@ -9,7 +9,10 @@ import { downloadAsset } from './commands/downloadAsset';
 import { openMacro } from './commands/openMacro';
 import { resetSharedContext } from './commands/resetContext';
 import { runActiveEditor, runMacro } from './commands/runMacro';
-import { registerSourceDirectoryVerifier, setupSourceDirectory } from './commands/setupSourceDirectory';
+import {
+  registerSourceDirectoryVerifier,
+  setupSourceDirectory,
+} from './commands/setupSourceDirectory';
 import { showRunningMacros } from './commands/showRunningMacros';
 import { MACRO_DOCUMENT_SELECTOR } from './core/constants';
 import { SOURCE_DIRS_CONFIG } from './core/library/macroLibraryManager';
@@ -25,13 +28,10 @@ import { PathLike } from './utils/uri';
 /**
  * Extension startup.
  * @param extensionContext Context.
-*/
+ */
 export async function activate(extensionContext: vscode.ExtensionContext) {
   const context = new ExtensionContext(extensionContext);
-  extensionContext.subscriptions.push(
-    context,
-    new MacroStatusBarItem(context),
-  );
+  extensionContext.subscriptions.push(context, new MacroStatusBarItem(context));
   context.log.info('Activating extension:', extensionContext.extension.packageJSON.version);
 
   extensionContext.subscriptions.push(
@@ -44,12 +44,17 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     registerMacroCreateLanguageModelTool(context),
   );
 
-  const { commands: c, commands: { registerCommand: cr } } = vscode;
+  const {
+    commands: c,
+    commands: { registerCommand: cr },
+  } = vscode;
   extensionContext.subscriptions.push(
     cr('macros.resetContext', (pathOrUri: PathLike) => resetSharedContext(context, pathOrUri)),
     cr('macros.debug', (pathOrUri?: PathLike) => debugMacro(pathOrUri)),
     cr('macros.debug.activeEditor', () => debugActiveEditor()),
-    cr('macros.downloadAsset', (assetUri: vscode.Uri, macroPathOrUri: PathLike) => downloadAsset(assetUri, macroPathOrUri)),
+    cr('macros.downloadAsset', (assetUri: vscode.Uri, macroPathOrUri: PathLike) =>
+      downloadAsset(assetUri, macroPathOrUri),
+    ),
     cr('macros.new.macro', (content?: string) => createMacro(context, content)),
     cr('macros.new.macro.activeEditor', () => updateActiveEditor(context)),
     cr('macros.new.macro.repl', () => createRepl(context)),
@@ -58,14 +63,14 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.run.activeEditor', () => runActiveEditor(context)),
     cr('macros.run.mru', () => runMacro(context, context.mruMacro)),
     cr('macros.run.show', () => showRunningMacros(context)),
-    cr('macros.sourceDirectories.settings', () => c.executeCommand('workbench.action.openSettings', SOURCE_DIRS_CONFIG)),
+    cr('macros.sourceDirectories.settings', () =>
+      c.executeCommand('workbench.action.openSettings', SOURCE_DIRS_CONFIG),
+    ),
     cr('macros.sourceDirectories.setup', () => setupSourceDirectory(context)),
   );
 
   if (vscode.workspace.getConfiguration().get('macros.sourceDirectories.verify', true)) {
-    extensionContext.subscriptions.push(
-      registerSourceDirectoryVerifier(context),
-    );
+    extensionContext.subscriptions.push(registerSourceDirectoryVerifier(context));
   }
 
   await runStartupMacros(context);
@@ -79,22 +84,23 @@ async function runStartupMacros(context: ExtensionContext) {
 
   const existingPaths = paths.filter((path) => existsSync(path));
   if (existingPaths.length === 0) {
-    context.log.warn(
-      'No startup macros executed — none found on disk. Count:',
-      paths.length);
+    context.log.warn('No startup macros executed — none found on disk. Count:', paths.length);
     return;
   }
 
   if (!vscode.workspace.isTrusted) {
     context.log.warn(
       'No startup macros executed — workspace is untrusted. Count:',
-      existingPaths.length);
+      existingPaths.length,
+    );
 
     const manageOption = 'Manage Workspace Trust';
-    vscode.window.showWarningMessage(
-      'Startup macros are disabled in untrusted workspaces.', manageOption)
-      .then((selection) =>
-        (selection === manageOption) && vscode.commands.executeCommand('workbench.trust.manage'));
+    vscode.window
+      .showWarningMessage('Startup macros are disabled in untrusted workspaces.', manageOption)
+      .then(
+        (selection) =>
+          selection === manageOption && vscode.commands.executeCommand('workbench.trust.manage'),
+      );
 
     return;
   }
@@ -104,13 +110,14 @@ async function runStartupMacros(context: ExtensionContext) {
       'Some startup macros were not executed — not found on disk:',
       ...paths
         .filter((path) => !existingPaths.includes(path))
-        .map((path) => vscode.workspace.asRelativePath(path, true)));
+        .map((path) => vscode.workspace.asRelativePath(path, true)),
+    );
   }
 
   context.log.info(
     'Startup macros to be executed:',
-    ...existingPaths.map((path) => vscode.workspace.asRelativePath(path, true)));
+    ...existingPaths.map((path) => vscode.workspace.asRelativePath(path, true)),
+  );
 
-  await Promise.all(
-    existingPaths.map((path) => runMacro(context, path, true)));
+  await Promise.all(existingPaths.map((path) => runMacro(context, path, true)));
 }

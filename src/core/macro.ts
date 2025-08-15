@@ -41,10 +41,9 @@ export class Macro {
   }
 
   public async getOptions(): Promise<Readonly<MacroCode['options']>> {
-    if (await this.ensureCodeIsUpToDate() || !this.options) {
+    if ((await this.ensureCodeIsUpToDate()) || !this.options) {
       this.options = parseOptions(this.code!);
     }
     return this.options;
   }
 }
-

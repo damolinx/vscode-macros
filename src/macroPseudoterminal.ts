@@ -17,9 +17,9 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
   private readonly onDidCloseEmitter: vscode.EventEmitter<void>;
   private readonly onDidWriteEmitter: vscode.EventEmitter<string>;
   private repl?: {
-    input: PassThrough,
-    output: PassThrough & { columns?: number; rows?: number },
-    server: REPLServerWithHistory,
+    input: PassThrough;
+    output: PassThrough & { columns?: number; rows?: number };
+    server: REPLServerWithHistory;
   } & vscode.Disposable;
 
   constructor(context: ExtensionContext, name: string) {
@@ -61,9 +61,9 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     }
 
     const input = new PassThrough();
-    const output = new PassThrough({ encoding: 'utf-8' })
-      .on('data', (chunk: string) =>
-        this.onDidWriteEmitter.fire(chunk.replaceAll('\n', '\r\n')));
+    const output = new PassThrough({ encoding: 'utf-8' }).on('data', (chunk: string) =>
+      this.onDidWriteEmitter.fire(chunk.replaceAll('\n', '\r\n')),
+    );
     const replServer = startREPL({
       input,
       output,
@@ -97,7 +97,9 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     replServer.defineCommand('load', {
       help: 'Load and evaluate a macro file',
       action: async () => {
-        const file = await showMacroQuickPick(this.context.libraryManager, { hideOpenPerItem: true });
+        const file = await showMacroQuickPick(this.context.libraryManager, {
+          hideOpenPerItem: true,
+        });
         if (file) {
           originalLoad?.action.call(replServer, file.fsPath);
         } else {
@@ -113,7 +115,9 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
       action: async () => {
         const nonCommandStmts = replServer.history?.filter((s) => !s.startsWith('.'));
         if (nonCommandStmts?.length) {
-          await createMacro(this.context, nonCommandStmts.reverse().join('\n'), { preserveFocus: true });
+          await createMacro(this.context, nonCommandStmts.reverse().join('\n'), {
+            preserveFocus: true,
+          });
         } else {
           output.write('Nothing to save\n');
         }

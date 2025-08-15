@@ -26,7 +26,11 @@ export function registerSourceDirectoryVerifier(context: ExtensionContext) {
   });
 }
 
-export async function setupSourceDirectory(context: ExtensionContext, pathOrUri?: PathLike, suppressNotifications?: true): Promise<void> {
+export async function setupSourceDirectory(
+  context: ExtensionContext,
+  pathOrUri?: PathLike,
+  suppressNotifications?: true,
+): Promise<void> {
   const uri = pathOrUri ? toUri(pathOrUri) : await selectSourceDirectory(context.libraryManager);
   if (!uri) {
     return; // Nothing to run.
@@ -34,10 +38,12 @@ export async function setupSourceDirectory(context: ExtensionContext, pathOrUri?
 
   const encoder = new TextEncoder();
   const edit = new vscode.WorkspaceEdit();
-  const updatingFiles = (await Promise.all([
-    update(uri, GLOBALS_RESOURCE, 'global.d.ts'),
-    update(uri, JSCONFIG_RESOURCE, 'jsconfig.json'),
-  ])).some((result) => result);
+  const updatingFiles = (
+    await Promise.all([
+      update(uri, GLOBALS_RESOURCE, 'global.d.ts'),
+      update(uri, JSCONFIG_RESOURCE, 'jsconfig.json'),
+    ])
+  ).some((result) => result);
 
   if (!updatingFiles) {
     if (!suppressNotifications) {
@@ -57,8 +63,10 @@ export async function setupSourceDirectory(context: ExtensionContext, pathOrUri?
 
   async function update(uri: vscode.Uri, source: string, target: string): Promise<boolean> {
     const [currentContents, newContents] = await Promise.all([
-      vscode.workspace.openTextDocument(vscode.Uri.joinPath(uri, target))
-        .then((d) => d.getText(), () => ''),
+      vscode.workspace.openTextDocument(vscode.Uri.joinPath(uri, target)).then(
+        (d) => d.getText(),
+        () => '',
+      ),
       readFile(context.extensionContext, source),
     ]);
     if (currentContents === newContents) {

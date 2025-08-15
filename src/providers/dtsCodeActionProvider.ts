@@ -1,11 +1,9 @@
 import * as vscode from 'vscode';
 
-
-export function registerDTSCodeActionProvider(selector: vscode.DocumentSelector): vscode.Disposable {
-  return vscode.languages.registerCodeActionsProvider(
-    selector,
-    new DTSCodeActionProvider(),
-  );
+export function registerDTSCodeActionProvider(
+  selector: vscode.DocumentSelector,
+): vscode.Disposable {
+  return vscode.languages.registerCodeActionsProvider(selector, new DTSCodeActionProvider());
 }
 
 /**

@@ -4,7 +4,9 @@ import { MacroOptionType } from '../core/macroOptions';
 export const MACRO_TRIGGER_CHARACTERS: readonly string[] = ['@'];
 export const MACRO_OPTIONS_TRIGGER_CHARACTERS: readonly string[] = [':', ','];
 
-export function registerMacroOptionsCompletionProvider(selector: vscode.DocumentSelector): vscode.Disposable {
+export function registerMacroOptionsCompletionProvider(
+  selector: vscode.DocumentSelector,
+): vscode.Disposable {
   return vscode.languages.registerCompletionItemProvider(
     selector,
     new MacroOptionsCompletionProvider(),
@@ -13,7 +15,8 @@ export function registerMacroOptionsCompletionProvider(selector: vscode.Document
   );
 }
 
-const MACRO_OPTIONS_REGEX = /^\s*\/\/\s*@macro(?<separator>:?)(?<options>(?:\s*\w+\s*,)*\s*)(?<current>\w*)\s*$/d;
+const MACRO_OPTIONS_REGEX =
+  /^\s*\/\/\s*@macro(?<separator>:?)(?<options>(?:\s*\w+\s*,)*\s*)(?<current>\w*)\s*$/d;
 const MACRO_REGEX = /^\s*\/\/\s*(?<trigger>@)?\s*$/;
 
 /**
@@ -101,10 +104,7 @@ export class MacroOptionsCompletionProvider implements vscode.CompletionItemProv
     );
 
     return availableMacroOptions.map((opt) => {
-      const item = new vscode.CompletionItem(
-        opt,
-        vscode.CompletionItemKind.Snippet,
-      );
+      const item = new vscode.CompletionItem(opt, vscode.CompletionItemKind.Snippet);
       item.insertText = separator ? opt : `:${opt}`;
       item.range = replaceRange;
 
@@ -134,7 +134,10 @@ export class MacroOptionsCompletionProvider implements vscode.CompletionItemProv
 
     function getAvailableOptions(optionsText = '', current = '') {
       const options: MacroOptionType[] = ['persistent', 'retained', 'singleton'];
-      const usedOptions = optionsText.split(',').map((s) => s.trim()).filter(Boolean);
+      const usedOptions = optionsText
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean);
       return usedOptions.length
         ? options.filter((o) => !usedOptions.includes(o) && o.startsWith(current))
         : options;

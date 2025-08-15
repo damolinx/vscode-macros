@@ -1,4 +1,3 @@
-
 import * as vscode from 'vscode';
 import { MACRO_LANGUAGE } from '../core/constants';
 import { ExtensionContext } from '../extensionContext';
@@ -6,8 +5,12 @@ import { templates } from '../macroTemplates';
 import { createGroupedQuickPickItems } from '../ui/ui';
 import { activeMacroEditor } from '../utils/activeMacroEditor';
 
-export async function createMacro(context: ExtensionContext, defaultContent?: string, options?: vscode.TextDocumentShowOptions): Promise<vscode.TextEditor | undefined> {
-  const content = defaultContent ?? await getTemplateContent(context);
+export async function createMacro(
+  context: ExtensionContext,
+  defaultContent?: string,
+  options?: vscode.TextDocumentShowOptions,
+): Promise<vscode.TextEditor | undefined> {
+  const content = defaultContent ?? (await getTemplateContent(context));
   if (!content) {
     return;
   }
@@ -16,19 +19,20 @@ export async function createMacro(context: ExtensionContext, defaultContent?: st
     language: MACRO_LANGUAGE,
     content,
   });
-  const editor = await vscode.window.showTextDocument(
-    document,
-    options);
+  const editor = await vscode.window.showTextDocument(document, options);
   return editor;
 }
 
-export async function updateActiveEditor(context: ExtensionContext, defaultContent?: string): Promise<void> {
+export async function updateActiveEditor(
+  context: ExtensionContext,
+  defaultContent?: string,
+): Promise<void> {
   const editor = await activeMacroEditor(false);
   if (!editor) {
     return;
   }
 
-  const content = defaultContent ?? await getTemplateContent(context);
+  const content = defaultContent ?? (await getTemplateContent(context));
   if (!content) {
     return;
   }
@@ -46,20 +50,19 @@ export async function updateActiveEditor(context: ExtensionContext, defaultConte
 
 async function getTemplateContent(context: ExtensionContext): Promise<string | undefined> {
   const selectedTemplate = await vscode.window.showQuickPick(
-    createGroupedQuickPickItems(
-      await templates(context),
-      {
-        groupBy: (template) => template.category ?? '',
-        itemBuilder: (template) => ({
-          label: template.label,
-          description: template.description,
-          template,
-        }),
+    createGroupedQuickPickItems(await templates(context), {
+      groupBy: (template) => template.category ?? '',
+      itemBuilder: (template) => ({
+        label: template.label,
+        description: template.description,
+        template,
       }),
+    }),
     {
       matchOnDescription: true,
       placeHolder: 'Select a macro template',
-    });
+    },
+  );
   if (!selectedTemplate) {
     return;
   }

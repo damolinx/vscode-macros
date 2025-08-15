@@ -2,7 +2,10 @@ import * as vscode from 'vscode';
 import { MacroLibraryManager } from '../core/library/macroLibraryManager';
 import { OpenMacroOptions, pickMacroFile, UriQuickPickItem } from './ui';
 
-export async function selectMacroFile(manager: MacroLibraryManager, options?: OpenMacroOptions): Promise<vscode.Uri | undefined> {
+export async function selectMacroFile(
+  manager: MacroLibraryManager,
+  options?: OpenMacroOptions,
+): Promise<vscode.Uri | undefined> {
   const macroFiles = await manager.getFiles();
   const targetUri = await pickMacroFile(macroFiles, options);
   if (!targetUri) {
@@ -12,11 +15,16 @@ export async function selectMacroFile(manager: MacroLibraryManager, options?: Op
   return targetUri;
 }
 
-export async function selectSourceDirectory(manager: MacroLibraryManager): Promise<vscode.Uri | undefined> {
+export async function selectSourceDirectory(
+  manager: MacroLibraryManager,
+): Promise<vscode.Uri | undefined> {
   const libraries = manager.libraries.get();
   if (libraries.length === 0) {
     const OptionConfigure = 'Configure';
-    const option = await vscode.window.showInformationMessage('No configured source directories', OptionConfigure);
+    const option = await vscode.window.showInformationMessage(
+      'No configured source directories',
+      OptionConfigure,
+    );
     if (option === OptionConfigure) {
       await vscode.commands.executeCommand('macros.sourceDirectories.settings');
       return;
@@ -24,10 +32,12 @@ export async function selectSourceDirectory(manager: MacroLibraryManager): Promi
   }
 
   const selectedItem = await vscode.window.showQuickPick<UriQuickPickItem>(
-    libraries.map((library) => ({
-      label: vscode.workspace.asRelativePath(library.root),
-      uri: library.root,
-    })).sort((t1, t2) => t1.label.localeCompare(t2.label)),
+    libraries
+      .map((library) => ({
+        label: vscode.workspace.asRelativePath(library.root),
+        uri: library.root,
+      }))
+      .sort((t1, t2) => t1.label.localeCompare(t2.label)),
     {
       placeHolder: 'Select a macro source directory …',
     },

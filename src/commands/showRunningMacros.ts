@@ -37,7 +37,9 @@ function pickRunningMacro(runInfos: MacroRunInfo[]): Promise<MacroRunInfo | unde
     };
     const buttons = [stopButton, openButton];
 
-    const quickPick = vscode.window.createQuickPick<vscode.QuickPickItem & { runInfo?: MacroRunInfo }>();
+    const quickPick = vscode.window.createQuickPick<
+      vscode.QuickPickItem & { runInfo?: MacroRunInfo }
+    >();
     quickPick.items = createGroupedQuickPickItems(runInfos, {
       groupBy: (runInfo) => runInfo.macro.name,
       itemBuilder: (runInfo) => ({
