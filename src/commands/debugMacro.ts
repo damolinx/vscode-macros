@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
+import { Macro } from '../core/macro';
 import { showMacroOpenDialog } from '../ui/dialogs';
 import { activeMacroEditor } from '../utils/activeMacroEditor';
 import { PathLike, toUri, uriBasename, uriDirname } from '../utils/uri';
 import { showTextDocument } from '../utils/vscodeEx';
-import { Macro } from '../core/macro';
 
 export async function debugMacro(pathOrUriOrMacro?: PathLike | Macro) {
   let uri: vscode.Uri | undefined;

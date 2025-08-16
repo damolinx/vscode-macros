@@ -48,6 +48,12 @@
         "icon": "$(debug-alt)"
       },
       {
+        "command": "macros.delete",
+        "title": "Delete",
+        "category": "Macros",
+        "enablement": "focusedView == macros.macroExplorer"
+      },
+      {
         "command": "macros.new.macro",
         "title": "New Macro…",
         "category": "Macros"
@@ -143,6 +149,12 @@
       }
     ],
     "menus": {
+      "commandPalette": [
+        {
+          "command": "macros.delete",
+          "when": "false"
+        }
+      ],
       "editor/title": [
         {
           "command": "macros.debug.activeEditor",
@@ -171,7 +183,12 @@
         {
           "command": "macros.debug",
           "when": "view == macros.macroExplorer && viewItem == macroFile",
-          "group": "run@2"
+          "group": "1_run@2"
+        },
+        {
+          "command": "macros.delete",
+          "when": "view == macros.macroExplorer && viewItem == macroFile",
+          "group": "2_other@1"
         },
         {
           "command": "macros.run",
@@ -181,7 +198,7 @@
         {
           "command": "macros.run",
           "when": "view == macros.macroExplorer && viewItem == macroFile",
-          "group": "run@1"
+          "group": "1_run@1"
         }
       ],
       "view/title": [

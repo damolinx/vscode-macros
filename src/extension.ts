@@ -5,6 +5,7 @@ import { registerMacroCreateLanguageModelTool } from './ai/macroCreateTool';
 import { createMacro, updateActiveEditor } from './commands/createMacro';
 import { createRepl } from './commands/createRepl';
 import { debugActiveEditor, debugMacro } from './commands/debugMacro';
+import { deleteMacro } from './commands/deleteMacro';
 import { downloadAsset } from './commands/downloadAsset';
 import { openMacro } from './commands/openMacro';
 import { resetSharedContext } from './commands/resetContext';
@@ -56,6 +57,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
   extensionContext.subscriptions.push(
     cr('macros.debug', (pathOrUriOrMacro?: PathLike | Macro) => debugMacro(pathOrUriOrMacro)),
     cr('macros.debug.activeEditor', () => debugActiveEditor()),
+    cr('macros.delete', (pathOrUriOrMacro: PathLike | Macro) => deleteMacro(pathOrUriOrMacro)),
     cr('macros.downloadAsset', (assetUri: vscode.Uri, macroPathOrUri: PathLike) =>
       downloadAsset(assetUri, macroPathOrUri),
     ),
