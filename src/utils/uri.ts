@@ -1,4 +1,6 @@
 import * as vscode from 'vscode';
+import * as path from 'path';
+import { posix } from 'path/posix';
 
 export type PathLike = string | vscode.Uri;
 
@@ -12,4 +14,14 @@ export function toPath(pathOrUri: PathLike): string {
 
 export function toUri(pathOrUri: PathLike): vscode.Uri {
   return pathOrUri instanceof vscode.Uri ? pathOrUri : vscode.Uri.file(pathOrUri);
+}
+
+export function uriBasename(pathOrUri: PathLike, removeExtension = false): string {
+  return pathOrUri instanceof vscode.Uri
+    ? posix.basename(pathOrUri.path, removeExtension ? posix.extname(pathOrUri.path) : undefined)
+    : path.basename(pathOrUri, removeExtension ? path.extname(pathOrUri) : undefined);
+}
+
+export function uriDirname(pathOrUri: PathLike): string {
+  return pathOrUri instanceof vscode.Uri ? posix.dirname(pathOrUri.path) : path.dirname(pathOrUri);
 }

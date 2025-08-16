@@ -34,8 +34,8 @@ export async function selectSourceDirectory(
   const selectedItem = await vscode.window.showQuickPick<UriQuickPickItem>(
     libraries
       .map((library) => ({
-        label: vscode.workspace.asRelativePath(library.root),
-        uri: library.root,
+        label: vscode.workspace.asRelativePath(library.uri),
+        uri: library.uri,
       }))
       .sort((t1, t2) => t1.label.localeCompare(t2.label)),
     {

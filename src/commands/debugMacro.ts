@@ -1,14 +1,22 @@
 import * as vscode from 'vscode';
-import { basename, dirname } from 'path';
 import { showMacroOpenDialog } from '../ui/dialogs';
 import { activeMacroEditor } from '../utils/activeMacroEditor';
-import { PathLike, toUri } from '../utils/uri';
+import { PathLike, toUri, uriBasename, uriDirname } from '../utils/uri';
 import { showTextDocument } from '../utils/vscodeEx';
+import { Macro } from '../core/macro';
 
-export async function debugMacro(pathOrUri?: PathLike) {
-  const uri = pathOrUri ? toUri(pathOrUri) : await showMacroOpenDialog();
-  if (!uri) {
-    return; // Nothing to run.
+export async function debugMacro(pathOrUriOrMacro?: PathLike | Macro) {
+  let uri: vscode.Uri | undefined;
+
+  if (!pathOrUriOrMacro) {
+    uri = await showMacroOpenDialog();
+    if (!uri) {
+      return; // Nothing to run.
+    }
+  } else if (pathOrUriOrMacro instanceof Macro) {
+    uri = pathOrUriOrMacro.uri;
+  } else {
+    uri = toUri(pathOrUriOrMacro);
   }
 
   // Ensure the document is open, update URI
@@ -30,10 +38,10 @@ export async function debugMacro(pathOrUri?: PathLike) {
 
   // Launch VS Code
   const debugConfig: vscode.DebugConfiguration = {
-    name: `Debug Macro: ${basename(document.uri.fsPath)}`,
+    name: `Debug Macro: ${uriBasename(document.uri)}`,
     type: 'extensionHost',
     request: 'launch',
-    args: [`--extensionDevelopmentPath=${dirname(document.uri.fsPath)}`],
+    args: [`--extensionDevelopmentPath=${uriDirname(document.uri)}`],
     env: { MACROS_EXT_DEBUG: '1' },
   };
   vscode.debug.startDebugging(undefined, debugConfig);

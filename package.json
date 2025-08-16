@@ -37,7 +37,8 @@
         "command": "macros.debug",
         "title": "Debug Macro…",
         "category": "Macros",
-        "enablement": "!inDebugMode"
+        "enablement": "!inDebugMode",
+        "icon": "$(debug-alt)"
       },
       {
         "command": "macros.debug.activeEditor",
@@ -70,7 +71,8 @@
       {
         "command": "macros.run",
         "title": "Run Macro…",
-        "category": "Macros"
+        "category": "Macros",
+        "icon": "$(run)"
       },
       {
         "command": "macros.run.activeEditor",
@@ -89,6 +91,12 @@
         "command": "macros.run.show",
         "title": "Show Running Macros",
         "category": "Macros"
+      },
+      {
+        "command": "macros.sourceDirectories.settings",
+        "title": "Configure Source Directories",
+        "category": "Macros",
+        "icon": "$(settings-gear)"
       },
       {
         "command": "macros.sourceDirectories.setup",
@@ -158,50 +166,80 @@
           "when": "resourceLangId == javascript && resourceFilename =~ /.macro.js$/",
           "group": "macro@1"
         }
+      ],
+      "view/item/context": [
+        {
+          "command": "macros.debug",
+          "when": "view == macros.macroExplorer && viewItem == macroFile",
+          "group": "run@2"
+        },
+        {
+          "command": "macros.run",
+          "when": "view == macros.macroExplorer && viewItem == macroFile",
+          "group": "inline"
+        },
+        {
+          "command": "macros.run",
+          "when": "view == macros.macroExplorer && viewItem == macroFile",
+          "group": "run@1"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "macros.sourceDirectories.settings",
+          "group": "navigation",
+          "when": "view == macros.macroExplorer"
+        }
       ]
     },
     "views": {
       "macrosView": [
         {
+          "id": "macros.macroExplorer",
+          "name": "Macro Explorer",
+          "type": "tree",
+          "icon": "$(run-all)"
+        },
+        {
           "id": "macrosView.treeview1",
           "name": "Treeview 1",
           "type": "tree",
-          "icon": "$(run-all)",
+          "icon": "$(list-tree)",
           "when": "macrosView.treeview1.show"
         },
         {
           "id": "macrosView.treeview2",
           "name": "Treeview 2",
           "type": "tree",
-          "icon": "$(run-all)",
+          "icon": "$(list-tree)",
           "when": "macrosView.treeview2.show"
         },
         {
           "id": "macrosView.treeview3",
           "name": "Treeview 3",
           "type": "tree",
-          "icon": "$(run-all)",
+          "icon": "$(list-tree)",
           "when": "macrosView.treeview3.show"
         },
         {
           "id": "macrosView.webview1",
           "name": "Webview 1",
           "type": "webview",
-          "icon": "$(run-all)",
+          "icon": "$(window)",
           "when": "macrosView.webview1.show"
         },
         {
           "id": "macrosView.webview2",
           "name": "Webview 2",
           "type": "webview",
-          "icon": "$(run-all)",
+          "icon": "$(window)",
           "when": "macrosView.webview2.show"
         },
         {
           "id": "macrosView.webview3",
           "name": "Webview 3",
           "type": "webview",
-          "icon": "$(run-all)",
+          "icon": "$(window)",
           "when": "macrosView.webview3.show"
         }
       ]

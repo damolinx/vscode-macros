@@ -1,8 +1,7 @@
 import * as vscode from 'vscode';
 import { get } from 'https';
-import { posix } from 'path';
 import { MACROS_FILTER } from '../core/constants';
-import { isUntitled, PathLike, toUri } from '../utils/uri';
+import { isUntitled, PathLike, toUri, uriBasename, uriDirname } from '../utils/uri';
 import { saveTextEditor } from '../utils/vscodeEx';
 
 const NO_OPTION: vscode.MessageItem = { title: 'No', isCloseAffordance: true };
@@ -17,7 +16,7 @@ export async function downloadAsset(
     return;
   }
 
-  const targetDownloadUri = vscode.Uri.joinPath(targetDownloadDir, posix.basename(assetUri.path));
+  const targetDownloadUri = vscode.Uri.joinPath(targetDownloadDir, uriBasename(assetUri));
   if (
     (await vscode.workspace.fs.stat(targetDownloadUri).then(
       () => true,
@@ -84,5 +83,5 @@ async function getDownloadLocation(macroPathOrUri: PathLike): Promise<vscode.Uri
     }
   }
 
-  return macroUri && macroUri.with({ path: posix.dirname(macroUri.path) });
+  return macroUri && macroUri.with({ path: uriDirname(macroUri) });
 }

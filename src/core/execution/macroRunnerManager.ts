@@ -54,8 +54,8 @@ export class MacroRunnerManager implements vscode.Disposable {
     }
   }
 
-  public getRunner(uri: vscode.Uri): MacroRunner {
-    const macro = new Macro(uri);
+  public getRunner(uriOrMacro: vscode.Uri | Macro): MacroRunner {
+    const macro = uriOrMacro instanceof Macro ? uriOrMacro : new Macro(uriOrMacro);
     let runner = this.macros.get(macro.id);
     if (!runner) {
       runner = new MacroRunner(this.context, macro);

@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.6
+- Add `Macro Explorer` view. 
+
 ## 0.3.5
 - Automatically set up target directory when saving a `.macro.js` file, provided that `macros.sourceDirectories.verify` is enabled.
 - Security: Startup macros are disabled in untrusted workspaces.

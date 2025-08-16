@@ -17,8 +17,10 @@ import { showRunningMacros } from './commands/showRunningMacros';
 import { MACRO_DOCUMENT_SELECTOR } from './core/constants';
 import { SOURCE_DIRS_CONFIG } from './core/library/macroLibraryManager';
 import { expandConfigPaths } from './core/library/utils';
+import { Macro } from './core/macro';
 import { ExtensionContext } from './extensionContext';
 import { MacroStatusBarItem } from './macroStatusBarItem';
+import { registerMacroTreeProvider } from './macroTreeDataProvider';
 import { registerDTSCodeActionProvider } from './providers/dtsCodeActionProvider';
 import { registerExecuteCommandCompletionProvider } from './providers/executeCommandCompletionProvider';
 import { registerMacroCodeLensProvider } from './providers/macroCodeLensProvider';
@@ -35,13 +37,16 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
   context.log.info('Activating extension:', extensionContext.extension.packageJSON.version);
 
   extensionContext.subscriptions.push(
-    registerDTSCodeActionProvider(MACRO_DOCUMENT_SELECTOR),
-    registerExecuteCommandCompletionProvider(MACRO_DOCUMENT_SELECTOR),
-    registerMacroCodeLensProvider(MACRO_DOCUMENT_SELECTOR),
-    registerMacroOptionsCompletionProvider(MACRO_DOCUMENT_SELECTOR),
     // AI
     registerMacroChatParticipant(context),
     registerMacroCreateLanguageModelTool(context),
+    // Explorer
+    registerMacroTreeProvider(context),
+    // Macro File Helpers
+    registerMacroCodeLensProvider(MACRO_DOCUMENT_SELECTOR),
+    registerDTSCodeActionProvider(MACRO_DOCUMENT_SELECTOR),
+    registerExecuteCommandCompletionProvider(MACRO_DOCUMENT_SELECTOR),
+    registerMacroOptionsCompletionProvider(MACRO_DOCUMENT_SELECTOR),
   );
 
   const {
@@ -49,8 +54,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     commands: { registerCommand: cr },
   } = vscode;
   extensionContext.subscriptions.push(
-    cr('macros.resetContext', (pathOrUri: PathLike) => resetSharedContext(context, pathOrUri)),
-    cr('macros.debug', (pathOrUri?: PathLike) => debugMacro(pathOrUri)),
+    cr('macros.debug', (pathOrUriOrMacro?: PathLike | Macro) => debugMacro(pathOrUriOrMacro)),
     cr('macros.debug.activeEditor', () => debugActiveEditor()),
     cr('macros.downloadAsset', (assetUri: vscode.Uri, macroPathOrUri: PathLike) =>
       downloadAsset(assetUri, macroPathOrUri),
@@ -59,7 +63,8 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.new.macro.activeEditor', () => updateActiveEditor(context)),
     cr('macros.new.macro.repl', () => createRepl(context)),
     cr('macros.open', () => openMacro(context)),
-    cr('macros.run', (pathOrUri?: PathLike) => runMacro(context, pathOrUri)),
+    cr('macros.resetContext', (pathOrUri: PathLike) => resetSharedContext(context, pathOrUri)),
+    cr('macros.run', (pathOrUriOrMacro?: PathLike | Macro) => runMacro(context, pathOrUriOrMacro)),
     cr('macros.run.activeEditor', () => runActiveEditor(context)),
     cr('macros.run.mru', () => runMacro(context, context.mruMacro)),
     cr('macros.run.show', () => showRunningMacros(context)),

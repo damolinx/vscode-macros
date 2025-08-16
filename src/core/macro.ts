@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { posix } from 'path';
+import { uriBasename } from '../utils/uri';
 import { MacroCode } from './macroCode';
 import { MacroOptions, parseOptions } from './macroOptions';
 
@@ -20,7 +20,7 @@ export class Macro {
 
   constructor(uri: vscode.Uri) {
     this.id = getMacroId(uri);
-    this.name = posix.basename(uri.path, posix.extname(uri.path));
+    this.name = uriBasename(uri, true);
     this.uri = uri;
   }
 
