@@ -1,32 +1,24 @@
 import * as vscode from 'vscode';
-import { MacroLibrary, MacroLibraryId } from './core/library/macroLibrary';
-import { Macro } from './core/macro';
-import { ExtensionContext } from './extensionContext';
-import { uriBasename } from './utils/uri';
+import { MacroLibrary, MacroLibraryId } from '../core/library/macroLibrary';
+import { getMacroId, Macro, MacroId } from '../core/macro';
+import { ExtensionContext } from '../extensionContext';
+import { uriBasename } from '../utils/uri';
 
-export const MACRO_EXPLORER_VIEW_ID = 'macros.macroExplorer';
+export type MacroExplorerTreeElement = Macro | MacroLibrary;
 
-export function registerMacroTreeProvider(context: ExtensionContext): vscode.Disposable {
-  return vscode.window.registerTreeDataProvider(
-    MACRO_EXPLORER_VIEW_ID,
-    new MacroTreeDataProvider(context),
-  );
-}
-
-type TreeElement = Macro | MacroLibrary;
 interface MonitoredLibraryData {
   disposable: vscode.Disposable;
-  files?: Set<string>;
+  files?: Set<MacroId>;
 }
 
-export class MacroTreeDataProvider
-  implements vscode.TreeDataProvider<TreeElement>, vscode.Disposable
+export class MacroExplorerTreeDataProvider
+  implements vscode.TreeDataProvider<MacroExplorerTreeElement>, vscode.Disposable
 {
   private readonly context: ExtensionContext;
   private readonly disposables: vscode.Disposable[];
   private readonly monitoredLibraries: Map<MacroLibraryId, MonitoredLibraryData>;
   private readonly onDidChangeTreeDataEmitter: vscode.EventEmitter<
-    TreeElement | TreeElement[] | undefined
+    MacroExplorerTreeElement | MacroExplorerTreeElement[] | undefined
   >;
 
   constructor(context: ExtensionContext) {
@@ -58,7 +50,7 @@ export class MacroTreeDataProvider
     }
   }
 
-  getTreeItem(element: TreeElement): vscode.TreeItem {
+  getTreeItem(element: MacroExplorerTreeElement): vscode.TreeItem {
     const treeItem = new vscode.TreeItem(uriBasename(element.uri));
     treeItem.resourceUri = element.uri;
 
@@ -77,14 +69,14 @@ export class MacroTreeDataProvider
     return treeItem;
   }
 
-  async getChildren(element?: TreeElement): Promise<TreeElement[]> {
-    let result: TreeElement[];
+  async getChildren(element?: MacroExplorerTreeElement): Promise<MacroExplorerTreeElement[]> {
+    let result: MacroExplorerTreeElement[];
     if (!element) {
       result = [...this.context.libraryManager.libraries.get()];
     } else if (element instanceof MacroLibrary) {
       const macroFiles = await element.getFiles();
       result = macroFiles.map((uri) => new Macro(uri));
-      const entry = this.monitorLibrary(element);
+      const entry = this.ensureLibraryIsMonitored(element);
       if (entry) {
         entry.files = new Set(macroFiles.map((f) => f.toString(true)));
       }
@@ -95,12 +87,12 @@ export class MacroTreeDataProvider
     return result.sort((a, b) => a.name.localeCompare(b.name));
   }
 
-  private monitorLibrary(library: MacroLibrary): MonitoredLibraryData | undefined {
-    let entry: MonitoredLibraryData | undefined;
-    if (!this.monitoredLibraries.has(library.id)) {
+  private ensureLibraryIsMonitored(library: MacroLibrary): MonitoredLibraryData {
+    let entry = this.monitoredLibraries.get(library.id);
+    if (!entry) {
       const createHandler = (uri: vscode.Uri) => {
         const files = this.monitoredLibraries.get(library.id)?.files;
-        if (files && !files.has(uri.toString())) {
+        if (files && !files.has(getMacroId(uri))) {
           files.add(uri.toString());
           this.onDidChangeTreeDataEmitter.fire(library);
         }
@@ -108,7 +100,7 @@ export class MacroTreeDataProvider
 
       const deleteHandler = (uri: vscode.Uri) => {
         const files = this.monitoredLibraries.get(library.id)?.files;
-        if (files && files.has(uri.toString())) {
+        if (files && files.has(getMacroId(uri))) {
           this.onDidChangeTreeDataEmitter.fire(library);
         }
       };
@@ -128,7 +120,9 @@ export class MacroTreeDataProvider
     return entry;
   }
 
-  get onDidChangeTreeData(): vscode.Event<TreeElement | TreeElement[] | undefined> {
+  get onDidChangeTreeData(): vscode.Event<
+    MacroExplorerTreeElement | MacroExplorerTreeElement[] | undefined
+  > {
     return this.onDidChangeTreeDataEmitter.event;
   }
 }

@@ -19,9 +19,9 @@ import { MACRO_DOCUMENT_SELECTOR } from './core/constants';
 import { SOURCE_DIRS_CONFIG } from './core/library/macroLibraryManager';
 import { expandConfigPaths } from './core/library/utils';
 import { Macro } from './core/macro';
+import { registerMacroExplorerTreeview } from './explorer/macroExplorerTreeView';
 import { ExtensionContext } from './extensionContext';
 import { MacroStatusBarItem } from './macroStatusBarItem';
-import { registerMacroTreeProvider } from './macroTreeDataProvider';
 import { registerDTSCodeActionProvider } from './providers/dtsCodeActionProvider';
 import { registerExecuteCommandCompletionProvider } from './providers/executeCommandCompletionProvider';
 import { registerMacroCodeLensProvider } from './providers/macroCodeLensProvider';
@@ -42,7 +42,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     registerMacroChatParticipant(context),
     registerMacroCreateLanguageModelTool(context),
     // Explorer
-    registerMacroTreeProvider(context),
+    ...registerMacroExplorerTreeview(context),
     // Macro File Helpers
     registerMacroCodeLensProvider(MACRO_DOCUMENT_SELECTOR),
     registerDTSCodeActionProvider(MACRO_DOCUMENT_SELECTOR),

@@ -22,6 +22,10 @@ export function uriBasename(pathOrUri: PathLike, removeExtension = false): strin
     : path.basename(pathOrUri, removeExtension ? path.extname(pathOrUri) : undefined);
 }
 
+export function uriExtname(pathOrUri: PathLike): string {
+  return pathOrUri instanceof vscode.Uri ? posix.extname(pathOrUri.path) : path.extname(pathOrUri);
+}
+
 export function uriDirname(pathOrUri: PathLike): string {
   return pathOrUri instanceof vscode.Uri ? posix.dirname(pathOrUri.path) : path.dirname(pathOrUri);
 }
