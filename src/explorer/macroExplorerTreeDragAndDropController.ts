@@ -65,8 +65,8 @@ export class MacroExplorerTreeDragAndDropController
 
     if (
       !moveOps.length ||
-      !(await this.handleConsent(moveOps, target)) ||
-      !(await this.handleCollisions(moveOps, target))
+      !(await this.handleConsent(moveOps, target.name)) ||
+      !(await this.handleCollisions(moveOps, target.name))
     ) {
       return;
     }
@@ -82,12 +82,12 @@ export class MacroExplorerTreeDragAndDropController
 
   private async handleConsent(
     moveOps: { source: vscode.Uri; target: vscode.Uri }[],
-    target: MacroLibrary,
+    targetName: string,
   ): Promise<boolean> {
     const movePrompt =
       moveOps.length === 1
-        ? `Are you sure you want to move '${uriBasename(moveOps[0].source)}' into '${target.name}'?`
-        : `Are you sure you want to move ${moveOps.length} files into '${target.name}'?`;
+        ? `Are you sure you want to move '${uriBasename(moveOps[0].source)}' into '${targetName}'?`
+        : `Are you sure you want to move ${moveOps.length} files into '${targetName}'?`;
     if (!(await vscode.window.showInformationMessage(movePrompt, { modal: true }, 'Move'))) {
       return false;
     }
@@ -97,7 +97,7 @@ export class MacroExplorerTreeDragAndDropController
 
   private async handleCollisions(
     moveOps: { source: vscode.Uri; target: vscode.Uri }[],
-    library: MacroLibrary,
+    targetName: string,
   ): Promise<boolean> {
     const collisions: string[] = [];
     for (const { target } of moveOps) {
@@ -115,9 +115,9 @@ export class MacroExplorerTreeDragAndDropController
     let collisionPrompt: string;
     let detail = 'This action is irreversible!';
     if (collisions.length === 1) {
-      collisionPrompt = `A file or folder with the name '${uriBasename(moveOps[0].source)}' already exists in '${library.name}'. Do you want to replace it?`;
+      collisionPrompt = `A file or folder with the name '${uriBasename(moveOps[0].source)}' already exists in '${targetName}'. Do you want to replace it?`;
     } else {
-      collisionPrompt = `The following ${collisions.length} names exist in '${library.name}'. Do you want to replace them?`;
+      collisionPrompt = `The following ${collisions.length} names exist in '${targetName}'. Do you want to replace them?`;
       detail = collisions.join('\n') + '\n\n' + detail;
     }
     if (
