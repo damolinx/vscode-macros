@@ -37,7 +37,7 @@ Implementation-wise, these macro scripts are executed within [sandboxes](https:/
     main()
     ```
 
-3. From the [Command Palette](https://code.visualstudio.com/api/references/contribution-points#contributes.commands), use the **Run Active Editor as Macro** command to execute your macro. Alternatively, on `Untitled` `javascript` or `*.macro.js`, editors, use the run and debug buttons will be available on the editor title bar.
+3. From the [Command Palette](https://code.visualstudio.com/api/references/contribution-points#contributes.commands), use the **Macros: Run Active Editor as Macro** command to execute your macro. Alternatively, on `untitled`, `javascript` or `*.macro.js`, editors, use the run and debug buttons will be available on the editor title bar.
 
    <p align=center>
      <img width="400" alt="Macro editor showing Run Macro button" src="https://github.com/user-attachments/assets/53f36963-d754-4b83-912d-689d5e200f17" />
@@ -110,7 +110,8 @@ See [Debugging a Macro](#debugging-a-macro) for additional information.
 
 ## Macro Explorer View
 
-The **Macro Explorer** provides a management view for macros:
+The **Macro Explorer** provides a management view for macros. Use the **Macros: Show Macro Explorer** command to bring it into view.
+
 * **Macro Library Folders**: configure macro folders, browse their contents, and quickly add, delete, or move macro files around.
 
 <p align=center>
@@ -118,7 +119,8 @@ The **Macro Explorer** provides a management view for macros:
 </p>
 
 * **Macros**: edit, run, or debug macros with a once-click.
-* **Macro Run Instances**: see active runs. Stop existing ones directly from the view. This is more convenient than the `Macros: Show Running Macros` command but it does not replace it as in-memory runs do not have a representation here.
+
+* **Macro Run Instances**: see active runs. Stop existing ones directly from the view. This is more convenient than the **Macros: Show Running Macros** command but it does not replace it as in-memory runs do not have a representation here.
   - This view shows options used when a given instance was created.
 
 <p align=center>
@@ -150,13 +152,15 @@ The following references are available from the global context of your macro:
 
 ### Predefined Views and View Container
 
-Views such as sidebars and panels cannot be created dynamically—they must first be declared in the extension's `package.json` manifest. This limitation means macros would not be able to define their own views at runtime. To overcome this limitation, the extension predefines a `Macros` view container (with the id: `macrosViews`) with generic `webview` and `treeview` views (with ids `macrosView.webview[1..3]` and `macrosView.treeview[1..3]`). Macros can then "claim" and use these predefined views to display custom content or UI as needed.
+Views such as sidebars and panels cannot be created dynamically—they must first be declared in the extension's `package.json` manifest. This limitation means macros would not be able to define their own views at runtime. To overcome this limitation, the extension predefines a **Macros** view container (with the id: `macrosViews`) with generic `webview` and `treeview` views (with ids `macrosView.webview[1..3]` and `macrosView.treeview[1..3]`). Macros can then claim and use these predefined views to display custom content or UI as needed.
+
 Views are disabled by default via a context value, so to enable them you must enable that context value (see example below).
 
   **Example: Enabling `macrosView.webview1` view**
   ```
   vscode.commands.executeCommand('setContext', 'macrosView.webview1.show', true);
   ```
+
 Remember to set this back to `false` when macro completes.
 
 **Macro-backed tree view ("Tree View" template)**
@@ -176,7 +180,7 @@ These tokens do not form part of contexts shared when `@macro:persistent` is use
 
 An option is added to macro file as a comment in the form `//@macro:«option»[,…«option»]`. The following options are available:
 * `persistent`: All invocations of the macro use the same [execution context](https://nodejs.org/api/vm.html#scriptrunincontextcontextifiedobject-options) so global variables persist across runs. Use the `Reset Context` CodeLens to reinitialize context.
-* `retained`: An instance of the macro will remain active until explicitly stopped, e.g., using the `Show Running Macros` command. This removes the need to await `__cancellationToken.onCancellationRequested` (or similar signal) to keep the macro's services and listeners running.
+* `retained`: An instance of the macro will remain active until explicitly stopped, e.g., using the **Macros: Show Running Macros** command. This removes the need to await `__cancellationToken.onCancellationRequested` (or similar signal) to keep the macro's services and listeners running.
 * `singleton`: Only one instance of the macro may run at a time; additional invocations fail.
 
 ```javascript

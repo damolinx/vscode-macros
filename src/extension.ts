@@ -22,7 +22,10 @@ import { MacroRunInfo } from './core/execution/macroRunInfo';
 import { SOURCE_DIRS_CONFIG } from './core/library/macroLibraryManager';
 import { expandConfigPaths } from './core/library/utils';
 import { Macro } from './core/macro';
-import { registerMacroExplorerTreeview } from './explorer/macroExplorerTreeView';
+import {
+  MACRO_EXPLORER_VIEW_ID,
+  registerMacroExplorerTreeview,
+} from './explorer/macroExplorerTreeView';
 import { ExtensionContext } from './extensionContext';
 import { MacroStatusBarItem } from './macroStatusBarItem';
 import { registerDTSCodeActionProvider } from './providers/dtsCodeActionProvider';
@@ -74,6 +77,9 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.run.activeEditor', () => runActiveEditor(context)),
     cr('macros.run.mru', () => runMacro(context, context.mruMacro)),
     cr('macros.run.show', () => showRunningMacros(context)),
+    cr('macros.showmacroExplorer', () =>
+      vscode.commands.executeCommand(`${MACRO_EXPLORER_VIEW_ID}.focus`),
+    ),
     cr('macros.sourceDirectories.settings', () =>
       c.executeCommand('workbench.action.openSettings', SOURCE_DIRS_CONFIG),
     ),

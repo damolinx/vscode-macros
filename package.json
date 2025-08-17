@@ -115,6 +115,11 @@
         "category": "Macros"
       },
       {
+        "command": "macros.showmacroExplorer",
+        "title": "Show Macro Explorer",
+        "category": "Macros"
+      },
+      {
         "command": "macros.sourceDirectories.settings",
         "title": "Configure Source Directories",
         "category": "Macros",
