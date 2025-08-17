@@ -6,11 +6,15 @@ async function main() {
     cancellable: true,
   },
     (progress, token) => new Promise((resolve) => {
-      token.onCancellationRequested(() => resolve('Canceled from notification'));
-      __cancellationToken.onCancellationRequested(() => resolve('Canceled from \'Show Running Macros\''));
+      token.onCancellationRequested(() => {
+        progress.message = 'Canceled from notification';
+        resolve();
+      });
+      __cancellationToken.onCancellationRequested(() => {
+        progress.message = 'Canceled from \'Show Running Macros\'';
+        resolve();
+      });
     }));
-
-  vscode.window.showInformationMessage(result);
 }
 
 main();
