@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { ExtensionContext } from '../extensionContext';
 import { fromLocator, Locator, toUri } from '../utils/uri';
+import { stopMacro } from './stopMacro';
 
 export async function deleteMacro(context: ExtensionContext, locator: Locator) {
   const uri = toUri(fromLocator(locator));
@@ -22,7 +23,7 @@ export async function deleteMacro(context: ExtensionContext, locator: Locator) {
     if (!result || result.title === 'Cancel') {
       return;
     } else if (result.title === 'Stop and Delete') {
-      await vscode.commands.executeCommand('macros.stop', uri, { noPrompt: true });
+      await stopMacro(context, uri, { noPrompt: true });
     }
   }
 

@@ -33,6 +33,10 @@ export function uriBasename(pathOrUri: PathLike, removeExtension = false): strin
     : path.basename(pathOrUri, removeExtension ? path.extname(pathOrUri) : undefined);
 }
 
+export function uriEqual(a: vscode.Uri, b: vscode.Uri): boolean {
+  return a.toString() === b.toString();
+}
+
 export function uriExtname(pathOrUri: PathLike): string {
   return pathOrUri instanceof vscode.Uri ? posix.extname(pathOrUri.path) : path.extname(pathOrUri);
 }

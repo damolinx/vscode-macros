@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { relative } from 'path';
+import { uriEqual } from '../utils/uri';
 import { showTextDocument } from '../utils/vscodeEx';
 import { showMacroOpenDialog } from './dialogs';
 
@@ -33,7 +34,7 @@ export async function pickMacroFile(
     const quickPick = createMacroQuickPick();
     const selectUri = options?.selectUri || lastSelection;
     if (selectUri) {
-      const preselect = quickPick.items.find(({ uri }) => uri?.toString() === selectUri.toString());
+      const preselect = quickPick.items.find(({ uri }) => uri && uriEqual(uri, selectUri));
       if (preselect) {
         quickPick.activeItems = [preselect];
       }

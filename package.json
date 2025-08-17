@@ -56,7 +56,8 @@
       {
         "command": "macros.new.macro",
         "title": "New Macro",
-        "category": "Macros"
+        "category": "Macros",
+        "icon": "$(add)"
       },
       {
         "command": "macros.new.macro.activeEditor",
@@ -226,6 +227,11 @@
           "command": "macros.delete",
           "when": "view == macros.macroExplorer && viewItem =~ /macroFile/",
           "group": "5_other@1"
+        },
+        {
+          "command": "macros.new.macro",
+          "when": "view == macros.macroExplorer && viewItem == macroLibrary",
+          "group": "inline"
         },
         {
           "command": "macros.revealInExplorer",

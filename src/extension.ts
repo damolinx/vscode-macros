@@ -62,7 +62,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.debug.activeEditor', debugActiveEditor),
     cr('macros.delete', (locator: Locator) => deleteMacro(context, locator)),
     cr('macros.downloadAsset', downloadAsset),
-    cr('macros.new.macro', (content?: string) => createMacro(context, content)),
+    cr('macros.new.macro', (locator: Locator) => createMacro(context, locator)),
     cr('macros.new.macro.activeEditor', () => updateActiveEditor(context)),
     cr('macros.new.macro.repl', () => createRepl(context)),
     cr('macros.open', () => openMacro(context)),

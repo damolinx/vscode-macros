@@ -1,26 +1,58 @@
 import * as vscode from 'vscode';
-import { MACRO_LANGUAGE } from '../core/constants';
+import { MACRO_EXTENSION, MACRO_LANGUAGE } from '../core/constants';
 import { ExtensionContext } from '../extensionContext';
 import { templates } from '../macroTemplates';
 import { createGroupedQuickPickItems } from '../ui/ui';
 import { activeMacroEditor } from '../utils/activeMacroEditor';
+import { fromLocator, Locator, toUri, uriEqual } from '../utils/uri';
 
 export async function createMacro(
   context: ExtensionContext,
-  defaultContent?: string,
-  options?: vscode.TextDocumentShowOptions,
-): Promise<vscode.TextEditor | undefined> {
-  const content = defaultContent ?? (await getTemplateContent(context));
+  locator?: Locator,
+  options?: vscode.TextDocumentShowOptions & {
+    defaultContent?: string;
+  },
+): Promise<void> {
+  const content = options?.defaultContent ?? (await getTemplateContent(context));
   if (!content) {
     return;
   }
 
-  const document = await vscode.workspace.openTextDocument({
-    language: MACRO_LANGUAGE,
-    content,
-  });
-  const editor = await vscode.window.showTextDocument(document, options);
-  return editor;
+  let document: vscode.TextDocument;
+  const uri =
+    locator !== undefined ? await createUntitledUri(toUri(fromLocator(locator))) : undefined;
+  if (uri) {
+    document = await vscode.workspace.openTextDocument(uri);
+    const editor = await vscode.window.showTextDocument(document, options);
+    if (content) {
+      await editor.edit((editBuilder) => editBuilder.insert(new vscode.Position(0, 0), content));
+    }
+  } else {
+    document = await vscode.workspace.openTextDocument({
+      language: MACRO_LANGUAGE,
+      content,
+    });
+    await vscode.window.showTextDocument(document, options);
+  }
+
+  async function createUntitledUri(parentUri: vscode.Uri, maxAttempts = 1000) {
+    let uri: vscode.Uri | undefined;
+    for (let i = 1; !uri && i <= maxAttempts; i++) {
+      const fsCandidate = vscode.Uri.joinPath(parentUri, `Untitled-${i}${MACRO_EXTENSION}`);
+      if (
+        await vscode.workspace.fs.stat(fsCandidate).then(
+          () => false,
+          () => true,
+        )
+      ) {
+        const untitledCandidate = fsCandidate.with({ scheme: 'untitled' });
+        if (!vscode.workspace.textDocuments.some(({ uri }) => uriEqual(uri, untitledCandidate))) {
+          uri = untitledCandidate;
+        }
+      }
+    }
+    return uri;
+  }
 }
 
 export async function updateActiveEditor(

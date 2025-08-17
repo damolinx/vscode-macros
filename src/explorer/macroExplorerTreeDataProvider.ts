@@ -153,7 +153,7 @@ export class MacroExplorerTreeDataProvider
       };
       if (runCount) {
         item.contextValue += ',running';
-        item.description = 'running';
+        item.description = runCount === 1 ? '1 instance' : `${runCount} instances`;
         item.tooltip = `${macro.uri.scheme === 'file' ? macro.uri.fsPath : macro.uri.toString(true)} · ${runCount === 1 ? '1 instance' : `${runCount} instances`}`;
       } else {
         item.iconPath = new vscode.ThemeIcon('symbol-function');
