@@ -45,7 +45,9 @@ Implementation-wise, these macro scripts are executed within [sandboxes](https:/
 
 ### Stopping a Macro
 
-1. Use the **Macros: Show Running Macros** command and click the stop button to *request* the macro to stop.
+1. Use the [**Macro Explorer** View](#macro-explorer-view) to stop specific run isntances or all instances for a given macro.
+
+2. Use the **Macros: Show Running Macros** command and click the stop button to *request* the macro to stop.
 
 A macro sandbox cannot be terminated; instead, the `Stop` action sends a cancellation request via the `__cancellationToken` ([CancellationToken](https://code.visualstudio.com/api/references/vscode-api#CancellationToken)) variable to the macro. This variable must be wired into all async code and APIs.
 
@@ -105,6 +107,14 @@ See [Debugging a Macro](#debugging-a-macro) for additional information.
 * **Macros: Run Active File as Macro**: run current editor as a macro (document will be saved before running).
 * **Macros: Rerun Last Macro**: execute the most recently run macro.
 * **Macros: Run Macro**: select a macro to run. Provides access to macros in configured `macros.sourceDirectories` directories.
+
+## Macro Explorer View
+
+The **Macro Explorer** provides a management view for macros:
+* **Macro Library Folders**: configure macro folders, browse their contents, and quickly add, delete, or move macro files around.
+* **Macros**: edit, run, or debug macros with a once-click.
+* **Macro Run Instances**: see active runs. Stop existing ones directly from the view. This is more convenient than the `Macros: Show Running Macros` command but it does not replace it as in-memory runs do not have a representation here.
+  - This view shows options used when a given instance was created.  
 
 ## Development
 
@@ -174,6 +184,6 @@ For GitHub URLs containing `/blob/`, the extension offers special handling by co
 
 For all other URLs, a standard HTTP GET request is sent to download the file.
 
-## Debugging a Macro
+### Debugging a Macro
 
 Debugging a macro leverages VS Code's extension debugging [story](https://code.visualstudio.com/api/get-started/your-first-extension#debugging-the-extension) since the macros are run in the context of this extension. This makes the experience a bit awkward as a new VS Code instance is launched, and you need to open the right context (e.g. workspace) in that new instance to debug your macro (vs, for example, launching another VS Code instance and attaching to the current one).
