@@ -53,54 +53,79 @@ export class MacroExplorerTreeDragAndDropController
 
     const moveOps = (await item.asString())
       .split(FILELIST_SEP)
-      .filter((uriStr) => MACRO_EXTENSIONS.includes(extname(uriStr)))
-      .map((uriStr) => {
-        const source = vscode.Uri.parse(uriStr, true);
+      .filter((str) => MACRO_EXTENSIONS.includes(extname(str)))
+      .map((str) => {
+        const source = vscode.Uri.parse(str, true);
         return {
           source,
           target: vscode.Uri.joinPath(target.uri, uriBasename(source)),
         };
-      });
-    if (moveOps.length === 0) {
+      })
+      .filter(({ source, target }) => source.toString() !== target.toString());
+
+    if (
+      !moveOps.length ||
+      !(await this.handleConsent(moveOps, target)) ||
+      !(await this.handleCollisions(moveOps, target))
+    ) {
       return;
     }
 
+    for (const { source, target } of moveOps) {
+      try {
+        await vscode.workspace.fs.rename(source, target, { overwrite: true });
+      } catch (error: any) {
+        this.context.log.error('Failed to move file', source, error.message || error);
+      }
+    }
+  }
+
+  private async handleConsent(
+    moveOps: { source: vscode.Uri; target: vscode.Uri }[],
+    target: MacroLibrary,
+  ): Promise<boolean> {
     const movePrompt =
       moveOps.length === 1
         ? `Are you sure you want to move '${uriBasename(moveOps[0].source)}' into '${target.name}'?`
         : `Are you sure you want to move ${moveOps.length} files into '${target.name}'?`;
     if (!(await vscode.window.showInformationMessage(movePrompt, { modal: true }, 'Move'))) {
-      return;
+      return false;
     }
 
+    return true;
+  }
+
+  private async handleCollisions(
+    moveOps: { source: vscode.Uri; target: vscode.Uri }[],
+    library: MacroLibrary,
+  ): Promise<boolean> {
     const collisions: string[] = [];
     for (const { target } of moveOps) {
-      await vscode.workspace.fs.stat(target).then(() => collisions.push(uriBasename(target)));
+      try {
+        await vscode.workspace.fs.stat(target);
+        collisions.push(uriBasename(target));
+      } catch (error: any) {
+        this.context.log.trace('Stat failed', target, error.message || error);
+      }
     }
-    if (collisions.length) {
-      let collisionPrompt: string;
-      let detail = 'This action is irreversible!';
-      if (collisions.length === 1) {
-        collisionPrompt = `A file or folder with the name '${uriBasename(moveOps[0].source)}' already exists in '${target.name}'. Do you want to replace it?`;
-      } else {
-        collisionPrompt = `The following ${collisions.length} names exist in '${target.name}'. Do you want to replace them?`;
-        detail = collisions.join('\n') + '\n\n' + detail;
-      }
-      if (
-        !(await vscode.window.showWarningMessage(
-          collisionPrompt,
-          { detail, modal: true },
-          'Replace',
-        ))
-      ) {
-        return;
-      }
+    if (collisions.length === 0) {
+      return true;
     }
 
-    for (const { source, target } of moveOps) {
-      await vscode.workspace.fs
-        .rename(source, target, { overwrite: true })
-        .then(undefined, (reason) => this.context.log.error(`Failed to move file`, source, reason));
+    let collisionPrompt: string;
+    let detail = 'This action is irreversible!';
+    if (collisions.length === 1) {
+      collisionPrompt = `A file or folder with the name '${uriBasename(moveOps[0].source)}' already exists in '${library.name}'. Do you want to replace it?`;
+    } else {
+      collisionPrompt = `The following ${collisions.length} names exist in '${library.name}'. Do you want to replace them?`;
+      detail = collisions.join('\n') + '\n\n' + detail;
     }
+    if (
+      !(await vscode.window.showWarningMessage(collisionPrompt, { detail, modal: true }, 'Replace'))
+    ) {
+      return false;
+    }
+
+    return true;
   }
 }
