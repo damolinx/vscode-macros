@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
 import { uriBasename } from '../utils/uri';
-import { MacroCode } from './macroCode';
 import { MacroOptions, parseOptions } from './macroOptions';
 
 export type MacroId = string;
@@ -29,6 +28,7 @@ export class Macro {
     const document = await vscode.workspace.openTextDocument(this.uri);
     if (document.version !== this.version || !this.code) {
       this.code = document.getText();
+      this.options = undefined;
       this.version = document.version;
       updated = true;
     }
@@ -40,8 +40,9 @@ export class Macro {
     return this.code!;
   }
 
-  public async getOptions(): Promise<Readonly<MacroCode['options']>> {
-    if ((await this.ensureCodeIsUpToDate()) || !this.options) {
+  public async getOptions(): Promise<MacroOptions> {
+    const updated = await this.ensureCodeIsUpToDate();
+    if (updated || !this.options) {
       this.options = parseOptions(this.code!);
     }
     return this.options;
