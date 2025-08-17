@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.3.6
+## 0.4.0
 - Add `Macro Explorer` view. 
 
 ## 0.3.5
