@@ -16,7 +16,9 @@ import {
   setupSourceDirectory,
 } from './commands/setupSourceDirectory';
 import { showRunningMacros } from './commands/showRunningMacros';
+import { stopMacro } from './commands/stopMacro';
 import { MACRO_DOCUMENT_SELECTOR } from './core/constants';
+import { MacroRunInfo } from './core/execution/macroRunInfo';
 import { SOURCE_DIRS_CONFIG } from './core/library/macroLibraryManager';
 import { expandConfigPaths } from './core/library/utils';
 import { Macro } from './core/macro';
@@ -27,7 +29,7 @@ import { registerDTSCodeActionProvider } from './providers/dtsCodeActionProvider
 import { registerExecuteCommandCompletionProvider } from './providers/executeCommandCompletionProvider';
 import { registerMacroCodeLensProvider } from './providers/macroCodeLensProvider';
 import { registerMacroOptionsCompletionProvider } from './providers/macroOptionsCompletionProvider';
-import { PathLike } from './utils/uri';
+import { Locator, PathLike } from './utils/uri';
 
 /**
  * Extension startup.
@@ -58,7 +60,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
   extensionContext.subscriptions.push(
     cr('macros.debug', debugMacro),
     cr('macros.debug.activeEditor', debugActiveEditor),
-    cr('macros.delete', deleteMacro),
+    cr('macros.delete', (locator: Locator) => deleteMacro(context, locator)),
     cr('macros.downloadAsset', downloadAsset),
     cr('macros.new.macro', (content?: string) => createMacro(context, content)),
     cr('macros.new.macro.activeEditor', () => updateActiveEditor(context)),
@@ -68,7 +70,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.revealInExplorer', revealFileInOs),
     cr('macros.revealInFinder', revealFileInOs),
     cr('macros.revealInFiles', revealFileInOs),
-    cr('macros.run', (pathOrUriOrMacro?: PathLike | Macro) => runMacro(context, pathOrUriOrMacro)),
+    cr('macros.run', (pathOrUriOrMacro?: Locator) => runMacro(context, pathOrUriOrMacro)),
     cr('macros.run.activeEditor', () => runActiveEditor(context)),
     cr('macros.run.mru', () => runMacro(context, context.mruMacro)),
     cr('macros.run.show', () => showRunningMacros(context)),
@@ -76,6 +78,9 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
       c.executeCommand('workbench.action.openSettings', SOURCE_DIRS_CONFIG),
     ),
     cr('macros.sourceDirectories.setup', () => setupSourceDirectory(context)),
+    cr('macros.stop', (uriOrMacroOrRunInfo: vscode.Uri | Macro | MacroRunInfo, ...args: any[]) =>
+      stopMacro(context, uriOrMacroOrRunInfo, ...args),
+    ),
   );
 
   if (vscode.workspace.getConfiguration().get('macros.sourceDirectories.verify', true)) {

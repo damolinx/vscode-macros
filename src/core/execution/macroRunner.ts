@@ -6,7 +6,7 @@ import { ExtensionContext } from '../../extensionContext';
 import { Macro } from '../macro';
 import { MacroOptions } from '../macroOptions';
 import { initalizeContext, initializeMacrosApi, MacroContextInitParams } from './macroRunContext';
-import { MacroRunId, MacroRunInfo, MacroRunStopInfo } from './macroRunInfo';
+import { MacroRunId, MacroRunInfo, MacroRunResult } from './macroRunInfo';
 
 export class MacroRunner implements vscode.Disposable {
   private readonly context: ExtensionContext;
@@ -15,7 +15,7 @@ export class MacroRunner implements vscode.Disposable {
   private readonly runs: Map<MacroRunId, MacroRunInfo>;
   private sharedMacroContext?: MacroContext;
   private startEventEmitter: vscode.EventEmitter<MacroRunInfo>;
-  private stopEventEmitter: vscode.EventEmitter<MacroRunStopInfo>;
+  private stopEventEmitter: vscode.EventEmitter<MacroRunResult>;
 
   constructor(context: ExtensionContext, macro: Macro) {
     this.context = context;
@@ -59,7 +59,7 @@ export class MacroRunner implements vscode.Disposable {
     return this.startEventEmitter.event(listener);
   }
 
-  public onStopRun(listener: (runStopInfo: MacroRunStopInfo) => void): vscode.Disposable {
+  public onStopRun(listener: (runStopInfo: MacroRunResult) => void): vscode.Disposable {
     return this.stopEventEmitter.event(listener);
   }
 
@@ -67,11 +67,15 @@ export class MacroRunner implements vscode.Disposable {
     this.sharedMacroContext = undefined;
   }
 
-  public get running(): Iterable<MacroRunInfo> {
+  public get runInstanceCount(): number {
+    return this.runs.size;
+  }
+
+  public get runInstances(): Iterable<MacroRunInfo> {
     return this.runs.values();
   }
 
-  public async run(code: string, options: MacroOptions, startup?: true) {
+  public async run(code: string, options: MacroOptions, startup?: true): Promise<void> {
     if (this.runs.size > 0 && options.singleton) {
       throw new Error(`Singleton macro ${this.macro.name} is already running`);
     }
@@ -80,6 +84,11 @@ export class MacroRunner implements vscode.Disposable {
       cts: new vscode.CancellationTokenSource(),
       id: `${this.macro.name}@${startup ? 'startup' : (++this.index).toString().padStart(3, '0')}`,
       macro: this.macro,
+      snapshot: {
+        code,
+        options,
+      },
+      startup,
     };
     this.runs.set(runInfo.id, runInfo);
 
@@ -99,6 +108,7 @@ export class MacroRunner implements vscode.Disposable {
 
     this.startEventEmitter.fire(runInfo);
     let scriptFailed = false;
+    let result: any;
     try {
       let runPromise: Promise<any>;
       if (options.persistent) {
@@ -119,8 +129,7 @@ export class MacroRunner implements vscode.Disposable {
         runPromise = vm.runInNewContext(code, context, scriptOptions);
       }
 
-      const result = await (options.retained ? retainedExecute(runPromise) : runPromise);
-      return result;
+      result = await (options.retained ? retainedExecute(runPromise) : runPromise);
     } catch (e) {
       scriptFailed = true;
       throw e;
@@ -128,8 +137,9 @@ export class MacroRunner implements vscode.Disposable {
       this.runs.delete(runInfo.id);
       const disposeError = safeDispose(macroDisposables);
       this.stopEventEmitter.fire({
-        ...runInfo,
         error: disposeError,
+        result,
+        runInfo,
       });
       if (!scriptFailed && disposeError) {
         /* eslint-disable no-unsafe-finally */
@@ -159,9 +169,5 @@ export class MacroRunner implements vscode.Disposable {
           )
         : undefined;
     }
-  }
-
-  public get someRunning(): boolean {
-    return this.runs.size > 0;
   }
 }

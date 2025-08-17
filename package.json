@@ -35,7 +35,7 @@
     "commands": [
       {
         "command": "macros.debug",
-        "title": "Debug Macro…",
+        "title": "Debug Macro",
         "category": "Macros",
         "enablement": "!inDebugMode",
         "icon": "$(debug-alt)"
@@ -55,7 +55,7 @@
       },
       {
         "command": "macros.new.macro",
-        "title": "New Macro…",
+        "title": "New Macro",
         "category": "Macros"
       },
       {
@@ -91,9 +91,9 @@
       },
       {
         "command": "macros.run",
-        "title": "Run Macro…",
+        "title": "Run Macro",
         "category": "Macros",
-        "icon": "$(run)"
+        "icon": "$(debug-start)"
       },
       {
         "command": "macros.run.activeEditor",
@@ -123,6 +123,12 @@
         "command": "macros.sourceDirectories.setup",
         "title": "Setup Source Directory for Development",
         "category": "Macros"
+      },
+      {
+        "command": "macros.stop",
+        "title": "Request to Stop",
+        "category": "Macros",
+        "icon": "$(debug-stop)"
       }
     ],
     "configuration": [
@@ -180,6 +186,10 @@
         {
           "command": "macros.revealInFiles",
           "when": "false"
+        },
+        {
+          "command": "macros.stop",
+          "when": "false"
         }
       ],
       "editor/title": [
@@ -209,38 +219,48 @@
       "view/item/context": [
         {
           "command": "macros.debug",
-          "when": "view == macros.macroExplorer && viewItem == macroFile",
+          "when": "view == macros.macroExplorer && viewItem =~ /macroFile/",
           "group": "1_execution@2"
         },
         {
           "command": "macros.delete",
-          "when": "view == macros.macroExplorer && viewItem == macroFile",
+          "when": "view == macros.macroExplorer && viewItem =~ /macroFile/",
           "group": "5_other@1"
         },
         {
           "command": "macros.revealInExplorer",
-          "when": "isWindows && view == macros.macroExplorer",
+          "when": "isWindows && view == macros.macroExplorer && viewItem != macroRun",
           "group": "3_navigation"
         },
         {
           "command": "macros.revealInFinder",
-          "when": "isMac && view == macros.macroExplorer",
+          "when": "isMac && view == macros.macroExplorer && viewItem != macroRun",
           "group": "3_navigation"
         },
         {
           "command": "macros.revealInFiles",
-          "when": "isLinux && view == macros.macroExplorer",
+          "when": "isLinux && view == macros.macroExplorer && viewItem != macroRun",
           "group": "3_navigation"
         },
         {
           "command": "macros.run",
-          "when": "view == macros.macroExplorer && viewItem == macroFile",
+          "when": "view == macros.macroExplorer && viewItem =~ /macroFile/",
           "group": "inline"
         },
         {
           "command": "macros.run",
-          "when": "view == macros.macroExplorer && viewItem == macroFile",
+          "when": "view == macros.macroExplorer && viewItem =~ /macroFile/",
           "group": "1_execution@1"
+        },
+        {
+          "command": "macros.stop",
+          "when": "view == macros.macroExplorer && (viewItem == macroRun || viewItem =~ /running/)",
+          "group": "1_execution@3"
+        },
+        {
+          "command": "macros.stop",
+          "when": "view == macros.macroExplorer && (viewItem == macroRun || viewItem =~ /running/)",
+          "group": "inline"
         }
       ],
       "view/title": [

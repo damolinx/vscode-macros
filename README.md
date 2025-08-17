@@ -7,7 +7,7 @@ Implementation-wise, these macro scripts are executed within [sandboxes](https:/
 ## Getting Started
 
 1. Create a new macro:
-   - **Option 1**: Use the **Macros: New Macro…** command.
+   - **Option 1**: Use the **Macros: New Macro** command.
    - **Option 2**: Create an empty `javascript` editor and use the **Macros: Fill File with Template** command.
    - **Option 3**: Ask the `@macros` chat agent to create a macro for you.
 
@@ -86,7 +86,7 @@ Keybind the `macros.run` command with a single argument that is the path to the 
 
 See [Debugging a Macro](#debugging-a-macro) for additional information.
 * **Macros: Debug Active File as Macro**: debug current editor as a macro (document will be saved before running).
-* **Macro: Debug Macro…**: select a macro file to debug. Provides access to configured `macros.sourceDirectories`.
+* **Macro: Debug Macro**: select a macro file to debug. Provides access to configured `macros.sourceDirectories`.
 
 #### Development
 
@@ -97,14 +97,14 @@ See [Debugging a Macro](#debugging-a-macro) for additional information.
 #### Manage Macros
 
 * **Macros: Fill File with Template**: initialize an existing file with example macro content.
-* **Macros: New Macro…**: creates a new file with example macro content.
+* **Macros: New Macro**: creates a new file with example macro content.
 * **Macros: Show Running Macros**: view and manage running macros.
 
 #### Run Macros
 
 * **Macros: Run Active File as Macro**: run current editor as a macro (document will be saved before running).
 * **Macros: Rerun Last Macro**: execute the most recently run macro.
-* **Macros: Run Macro…**: select a macro to run. Provides access to macros in configured `macros.sourceDirectories` directories.
+* **Macros: Run Macro**: select a macro to run. Provides access to macros in configured `macros.sourceDirectories` directories.
 
 ## Development
 

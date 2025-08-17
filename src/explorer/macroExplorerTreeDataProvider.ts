@@ -1,10 +1,11 @@
 import * as vscode from 'vscode';
+import { MacroRunInfo } from '../core/execution/macroRunInfo';
+import { MacroRunner } from '../core/execution/macroRunner';
 import { MacroLibrary, MacroLibraryId } from '../core/library/macroLibrary';
 import { getMacroId, Macro, MacroId } from '../core/macro';
 import { ExtensionContext } from '../extensionContext';
-import { uriBasename } from '../utils/uri';
 
-export type MacroExplorerTreeElement = Macro | MacroLibrary;
+export type MacroExplorerTreeElement = MacroLibrary | Macro | MacroRunInfo;
 
 interface MonitoredLibraryData {
   disposable: vscode.Disposable;
@@ -32,6 +33,12 @@ export class MacroExplorerTreeDataProvider
         this.disposeMonitoredLibraries();
         this.onDidChangeTreeDataEmitter.fire(undefined);
       }),
+      this.context.runnerManager.onRun(({ macro }) =>
+        this.onDidChangeTreeDataEmitter.fire(this.context.libraryManager.getLibrary(macro.uri)),
+      ),
+      this.context.runnerManager.onStop(({ runInfo: { macro } }) =>
+        this.onDidChangeTreeDataEmitter.fire(this.context.libraryManager.getLibrary(macro.uri)),
+      ),
     ];
   }
 
@@ -56,7 +63,7 @@ export class MacroExplorerTreeDataProvider
       const createHandler = (uri: vscode.Uri) => {
         const files = this.monitoredLibraries.get(library.id)?.files;
         if (files && !files.has(getMacroId(uri))) {
-          files.add(uri.toString());
+          files.add(getMacroId(uri));
           this.onDidChangeTreeDataEmitter.fire(library);
         }
       };
@@ -84,38 +91,97 @@ export class MacroExplorerTreeDataProvider
   }
 
   getTreeItem(element: MacroExplorerTreeElement): vscode.TreeItem {
-    const treeItem = new vscode.TreeItem(uriBasename(element.uri));
-    treeItem.resourceUri = element.uri;
+    let treeItem: vscode.TreeItem;
 
     if (element instanceof MacroLibrary) {
-      treeItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
-      treeItem.contextValue = 'macroLibrary';
+      treeItem = createUriTreeItem(
+        element,
+        'macroLibrary',
+        vscode.TreeItemCollapsibleState.Collapsed,
+      );
+    } else if (element instanceof Macro) {
+      const runner = this.context.runnerManager.getRunner(element);
+      treeItem = createMacroTreeItem(element, runner);
     } else {
-      treeItem.collapsibleState = vscode.TreeItemCollapsibleState.None;
-      treeItem.command = {
-        arguments: [element.uri],
+      treeItem = createMacroRunInfoTreeItem(element);
+    }
+
+    return treeItem;
+
+    function createUriTreeItem(
+      { uri }: any,
+      contextValue: 'macroLibrary' | 'macroFile',
+      collapsibleState?: vscode.TreeItemCollapsibleState,
+    ) {
+      const item = new vscode.TreeItem(uri, collapsibleState);
+      item.contextValue = contextValue;
+      return item;
+    }
+
+    function createMacroRunInfoTreeItem(runInfo: MacroRunInfo) {
+      const item = new vscode.TreeItem(runInfo.id);
+      item.contextValue = 'macroRun';
+      item.tooltip = getTooltip();
+
+      if (runInfo.startup) {
+        item.description = 'startup';
+        item.iconPath = new vscode.ThemeIcon('circle-filled');
+      } else {
+        item.iconPath = new vscode.ThemeIcon('circle-outline');
+      }
+      return item;
+
+      function getTooltip(): string | vscode.MarkdownString | undefined {
+        const options = Object.entries(runInfo.snapshot.options)
+          .filter(([_, v]) => v)
+          .map(([k]) => k);
+        return `${runInfo.startup ? 'Startup run instance' : 'Run instance'}${options.length ? ` · ${options.join(' · ')}` : ''}`;
+      }
+    }
+
+    function createMacroTreeItem(macro: Macro, runner: MacroRunner) {
+      const { runInstanceCount: runCount } = runner;
+      const item = createUriTreeItem(
+        macro,
+        'macroFile',
+        runCount ? vscode.TreeItemCollapsibleState.Collapsed : undefined,
+      );
+      item.command = {
+        arguments: [macro.uri],
         command: 'vscode.open',
         title: 'Open Macro',
       };
-      treeItem.contextValue = 'macroFile';
+      if (runCount) {
+        item.contextValue += ',running';
+        item.description = 'running';
+        item.tooltip = `${macro.uri.scheme === 'file' ? macro.uri.fsPath : macro.uri.toString(true)} · ${runCount === 1 ? '1 instance' : `${runCount} instances`}`;
+      } else {
+        item.iconPath = new vscode.ThemeIcon('symbol-function');
+      }
+      return item;
     }
-    return treeItem;
   }
 
   async getChildren(element?: MacroExplorerTreeElement): Promise<MacroExplorerTreeElement[]> {
-    let result: MacroExplorerTreeElement[];
+    let chidren: MacroExplorerTreeElement[];
+
     if (!element) {
-      result = [...this.context.libraryManager.libraries.get()];
+      chidren = [...this.context.libraryManager.libraries.get()].sort((a, b) =>
+        a.name.localeCompare(b.name),
+      );
     } else if (element instanceof MacroLibrary) {
-      const macroFiles = await element.getFiles();
-      result = macroFiles.map((uri) => new Macro(uri));
+      const uris = await element.getFiles();
+      chidren = uris.map((uri) => new Macro(uri)).sort((a, b) => a.name.localeCompare(b.name));
       const entry = this.ensureLibraryIsMonitored(element);
-      entry.files = new Set(macroFiles.map((f) => f.toString(true)));
+      entry.files = new Set(chidren.map((macro) => macro.id));
+    } else if (element instanceof Macro) {
+      const runner = this.context.runnerManager.getRunner(element);
+      chidren = [...runner.runInstances].sort((a, b) => a.id.localeCompare(b.id));
     } else {
-      result = [];
+      chidren = [];
     }
 
-    return result.sort((a, b) => a.name.localeCompare(b.name));
+    return chidren;
   }
 
   get onDidChangeTreeData(): vscode.Event<

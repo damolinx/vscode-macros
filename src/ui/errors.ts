@@ -53,7 +53,7 @@ export function showMacroErrorMessage(
       },
     ];
 
-    if (!macroOptions.singleton || !runner.someRunning) {
+    if (!macroOptions.singleton || runner.runInstanceCount === 0) {
       actions.push({
         title: 'Retry',
         execute: () => vscode.commands.executeCommand('macros.run', runner.macro.uri),
