@@ -9,6 +9,7 @@ import { MacroExplorerTreeElement } from './macroExplorerTreeDataProvider';
 
 export const FILELIST_MIMETYPE = 'text/uri-list';
 export const FILELIST_SEP = '\r\n';
+export const TREE_MIMETYPE = 'application/vnd.code.tree.macros.macroexplorer';
 
 export class MacroExplorerTreeDragAndDropController
   implements vscode.TreeDragAndDropController<MacroExplorerTreeElement>
@@ -34,6 +35,7 @@ export class MacroExplorerTreeDragAndDropController
         FILELIST_MIMETYPE,
         new vscode.DataTransferItem(macros.map((macro) => macro.uri.toString()).join(FILELIST_SEP)),
       );
+      dataTransfer.set(TREE_MIMETYPE, new vscode.DataTransferItem(macros));
     }
   }
 
@@ -46,16 +48,13 @@ export class MacroExplorerTreeDragAndDropController
       return;
     }
 
-    const item = dataTransfer.get(FILELIST_MIMETYPE);
-    if (!item) {
+    const sources = await getSourceUris();
+    if (!sources) {
       return;
     }
 
-    const moveOps = (await item.asString())
-      .split(FILELIST_SEP)
-      .filter((str) => MACRO_EXTENSIONS.includes(extname(str)))
-      .map((str) => {
-        const source = vscode.Uri.parse(str, true);
+    const moveOps = sources
+      .map((source) => {
         return {
           source,
           target: vscode.Uri.joinPath(target.uri, uriBasename(source)),
@@ -65,8 +64,8 @@ export class MacroExplorerTreeDragAndDropController
 
     if (
       !moveOps.length ||
-      !(await this.handleConsent(moveOps, target.name)) ||
-      !(await this.handleCollisions(moveOps, target.name))
+      !(await this.promptForConsent(moveOps, target.name)) ||
+      !(await this.promptForCollisions(moveOps, target.name))
     ) {
       return;
     }
@@ -78,9 +77,23 @@ export class MacroExplorerTreeDragAndDropController
         this.context.log.error('Failed to move file', source, error.message || error);
       }
     }
+
+    async function getSourceUris() {
+      let uris: vscode.Uri[] | undefined;
+      let item: vscode.DataTransferItem | undefined;
+      if ((item = dataTransfer.get(TREE_MIMETYPE))) {
+        uris = (item.value as Macro[]).map(({ uri }) => uri);
+      } else if ((item = dataTransfer.get(FILELIST_MIMETYPE))) {
+        uris = (await item.asString())
+          .split(FILELIST_SEP)
+          .filter((str) => MACRO_EXTENSIONS.includes(extname(str)))
+          .map((str) => vscode.Uri.parse(str, true));
+      }
+      return uris;
+    }
   }
 
-  private async handleConsent(
+  private async promptForConsent(
     moveOps: { source: vscode.Uri; target: vscode.Uri }[],
     targetName: string,
   ): Promise<boolean> {
@@ -95,7 +108,7 @@ export class MacroExplorerTreeDragAndDropController
     return true;
   }
 
-  private async handleCollisions(
+  private async promptForCollisions(
     moveOps: { source: vscode.Uri; target: vscode.Uri }[],
     targetName: string,
   ): Promise<boolean> {
