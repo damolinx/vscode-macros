@@ -50,43 +50,6 @@ export class MacroExplorerTreeDataProvider
     }
   }
 
-  getTreeItem(element: MacroExplorerTreeElement): vscode.TreeItem {
-    const treeItem = new vscode.TreeItem(uriBasename(element.uri));
-    treeItem.resourceUri = element.uri;
-
-    if (element instanceof MacroLibrary) {
-      treeItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
-      treeItem.contextValue = 'macroLibrary';
-    } else {
-      treeItem.collapsibleState = vscode.TreeItemCollapsibleState.None;
-      treeItem.command = {
-        arguments: [element.uri],
-        command: 'vscode.open',
-        title: 'Open Macro',
-      };
-      treeItem.contextValue = 'macroFile';
-    }
-    return treeItem;
-  }
-
-  async getChildren(element?: MacroExplorerTreeElement): Promise<MacroExplorerTreeElement[]> {
-    let result: MacroExplorerTreeElement[];
-    if (!element) {
-      result = [...this.context.libraryManager.libraries.get()];
-    } else if (element instanceof MacroLibrary) {
-      const macroFiles = await element.getFiles();
-      result = macroFiles.map((uri) => new Macro(uri));
-      const entry = this.ensureLibraryIsMonitored(element);
-      if (entry) {
-        entry.files = new Set(macroFiles.map((f) => f.toString(true)));
-      }
-    } else {
-      result = [];
-    }
-
-    return result.sort((a, b) => a.name.localeCompare(b.name));
-  }
-
   private ensureLibraryIsMonitored(library: MacroLibrary): MonitoredLibraryData {
     let entry = this.monitoredLibraries.get(library.id);
     if (!entry) {
@@ -118,6 +81,41 @@ export class MacroExplorerTreeDataProvider
       this.monitoredLibraries.set(library.id, entry);
     }
     return entry;
+  }
+
+  getTreeItem(element: MacroExplorerTreeElement): vscode.TreeItem {
+    const treeItem = new vscode.TreeItem(uriBasename(element.uri));
+    treeItem.resourceUri = element.uri;
+
+    if (element instanceof MacroLibrary) {
+      treeItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+      treeItem.contextValue = 'macroLibrary';
+    } else {
+      treeItem.collapsibleState = vscode.TreeItemCollapsibleState.None;
+      treeItem.command = {
+        arguments: [element.uri],
+        command: 'vscode.open',
+        title: 'Open Macro',
+      };
+      treeItem.contextValue = 'macroFile';
+    }
+    return treeItem;
+  }
+
+  async getChildren(element?: MacroExplorerTreeElement): Promise<MacroExplorerTreeElement[]> {
+    let result: MacroExplorerTreeElement[];
+    if (!element) {
+      result = [...this.context.libraryManager.libraries.get()];
+    } else if (element instanceof MacroLibrary) {
+      const macroFiles = await element.getFiles();
+      result = macroFiles.map((uri) => new Macro(uri));
+      const entry = this.ensureLibraryIsMonitored(element);
+      entry.files = new Set(macroFiles.map((f) => f.toString(true)));
+    } else {
+      result = [];
+    }
+
+    return result.sort((a, b) => a.name.localeCompare(b.name));
   }
 
   get onDidChangeTreeData(): vscode.Event<
