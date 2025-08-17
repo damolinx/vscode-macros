@@ -9,6 +9,7 @@ import { deleteMacro } from './commands/deleteMacro';
 import { downloadAsset } from './commands/downloadAsset';
 import { openMacro } from './commands/openMacro';
 import { resetSharedContext } from './commands/resetContext';
+import { revealFileInOs } from './commands/revealFileInOS';
 import { runActiveEditor, runMacro } from './commands/runMacro';
 import {
   registerSourceDirectoryVerifier,
@@ -55,17 +56,18 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     commands: { registerCommand: cr },
   } = vscode;
   extensionContext.subscriptions.push(
-    cr('macros.debug', (pathOrUriOrMacro?: PathLike | Macro) => debugMacro(pathOrUriOrMacro)),
-    cr('macros.debug.activeEditor', () => debugActiveEditor()),
-    cr('macros.delete', (pathOrUriOrMacro: PathLike | Macro) => deleteMacro(pathOrUriOrMacro)),
-    cr('macros.downloadAsset', (assetUri: vscode.Uri, macroPathOrUri: PathLike) =>
-      downloadAsset(assetUri, macroPathOrUri),
-    ),
+    cr('macros.debug', debugMacro),
+    cr('macros.debug.activeEditor', debugActiveEditor),
+    cr('macros.delete', deleteMacro),
+    cr('macros.downloadAsset', downloadAsset),
     cr('macros.new.macro', (content?: string) => createMacro(context, content)),
     cr('macros.new.macro.activeEditor', () => updateActiveEditor(context)),
     cr('macros.new.macro.repl', () => createRepl(context)),
     cr('macros.open', () => openMacro(context)),
     cr('macros.resetContext', (pathOrUri: PathLike) => resetSharedContext(context, pathOrUri)),
+    cr('macros.revealInExplorer', revealFileInOs),
+    cr('macros.revealInFinder', revealFileInOs),
+    cr('macros.revealInFiles', revealFileInOs),
     cr('macros.run', (pathOrUriOrMacro?: PathLike | Macro) => runMacro(context, pathOrUriOrMacro)),
     cr('macros.run.activeEditor', () => runActiveEditor(context)),
     cr('macros.run.mru', () => runMacro(context, context.mruMacro)),

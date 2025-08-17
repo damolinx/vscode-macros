@@ -75,6 +75,21 @@
         "category": "Macros"
       },
       {
+        "command": "macros.revealInExplorer",
+        "title": "Reveal in File Explorer",
+        "enablement": "isWindows"
+      },
+      {
+        "command": "macros.revealInFinder",
+        "title": "Reveal in Finder",
+        "enablement": "isMac"
+      },
+      {
+        "command": "macros.revealInFiles",
+        "title": "Reveal in Files",
+        "enablement": "isLinux"
+      },
+      {
         "command": "macros.run",
         "title": "Run Macro…",
         "category": "Macros",
@@ -153,6 +168,18 @@
         {
           "command": "macros.delete",
           "when": "false"
+        },
+        {
+          "command": "macros.revealInExplorer",
+          "when": "false"
+        },
+        {
+          "command": "macros.revealInFinder",
+          "when": "false"
+        },
+        {
+          "command": "macros.revealInFiles",
+          "when": "false"
         }
       ],
       "editor/title": [
@@ -183,12 +210,27 @@
         {
           "command": "macros.debug",
           "when": "view == macros.macroExplorer && viewItem == macroFile",
-          "group": "1_run@2"
+          "group": "1_execution@2"
         },
         {
           "command": "macros.delete",
           "when": "view == macros.macroExplorer && viewItem == macroFile",
-          "group": "2_other@1"
+          "group": "5_other@1"
+        },
+        {
+          "command": "macros.revealInExplorer",
+          "when": "isWindows && view == macros.macroExplorer",
+          "group": "3_navigation"
+        },
+        {
+          "command": "macros.revealInFinder",
+          "when": "isMac && view == macros.macroExplorer",
+          "group": "3_navigation"
+        },
+        {
+          "command": "macros.revealInFiles",
+          "when": "isLinux && view == macros.macroExplorer",
+          "group": "3_navigation"
         },
         {
           "command": "macros.run",
@@ -198,7 +240,7 @@
         {
           "command": "macros.run",
           "when": "view == macros.macroExplorer && viewItem == macroFile",
-          "group": "1_run@1"
+          "group": "1_execution@1"
         }
       ],
       "view/title": [

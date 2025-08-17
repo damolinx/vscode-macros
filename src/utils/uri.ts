@@ -3,6 +3,17 @@ import * as path from 'path';
 import { posix } from 'path/posix';
 
 export type PathLike = string | vscode.Uri;
+export type Locator = PathLike | { path: string } | { uri: vscode.Uri };
+
+export function fromLocator(locator: Locator): PathLike {
+  if (locator instanceof vscode.Uri || typeof locator === 'string') {
+    return locator;
+  } else if ('uri' in locator) {
+    return locator.uri;
+  } else {
+    return locator.path;
+  }
+}
 
 export function isUntitled(pathOrUri: PathLike): boolean {
   return pathOrUri instanceof vscode.Uri && pathOrUri.scheme === 'untitled';

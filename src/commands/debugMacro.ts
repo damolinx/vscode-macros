@@ -1,22 +1,13 @@
 import * as vscode from 'vscode';
-import { Macro } from '../core/macro';
 import { showMacroOpenDialog } from '../ui/dialogs';
 import { activeMacroEditor } from '../utils/activeMacroEditor';
-import { PathLike, toUri, uriBasename, uriDirname } from '../utils/uri';
+import { fromLocator, Locator, toUri, uriBasename, uriDirname } from '../utils/uri';
 import { showTextDocument } from '../utils/vscodeEx';
 
-export async function debugMacro(pathOrUriOrMacro?: PathLike | Macro) {
-  let uri: vscode.Uri | undefined;
-
-  if (!pathOrUriOrMacro) {
-    uri = await showMacroOpenDialog();
-    if (!uri) {
-      return; // Nothing to run.
-    }
-  } else if (pathOrUriOrMacro instanceof Macro) {
-    uri = pathOrUriOrMacro.uri;
-  } else {
-    uri = toUri(pathOrUriOrMacro);
+export async function debugMacro(locator?: Locator) {
+  const uri = locator ? toUri(fromLocator(locator)) : await showMacroOpenDialog();
+  if (!uri) {
+    return; // Nothing to run.
   }
 
   // Ensure the document is open, update URI

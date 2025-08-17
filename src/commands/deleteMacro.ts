@@ -1,9 +1,8 @@
 import * as vscode from 'vscode';
-import { Macro } from '../core/macro';
-import { PathLike, toUri } from '../utils/uri';
+import { fromLocator, Locator, toUri } from '../utils/uri';
 
-export async function deleteMacro(pathOrUriOrMacro: PathLike | Macro) {
-  const uri = pathOrUriOrMacro instanceof Macro ? pathOrUriOrMacro.uri : toUri(pathOrUriOrMacro);
+export async function deleteMacro(locator: Locator) {
+  const uri = toUri(fromLocator(locator));
 
   try {
     await vscode.workspace.fs.delete(uri, { useTrash: true });
