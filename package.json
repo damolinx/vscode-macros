@@ -78,17 +78,17 @@
       {
         "command": "macros.revealInExplorer",
         "title": "Reveal in File Explorer",
-        "enablement": "isWindows"
+        "enablement": "!remoteName && !isWeb && isWindows"
       },
       {
         "command": "macros.revealInFinder",
         "title": "Reveal in Finder",
-        "enablement": "isMac"
+        "enablement": "!remoteName && !isWeb && isMac"
       },
       {
         "command": "macros.revealInFiles",
         "title": "Reveal in Files",
-        "enablement": "isLinux"
+        "enablement": "!remoteName && !isWeb && isLinux"
       },
       {
         "command": "macros.run",
@@ -240,17 +240,17 @@
         },
         {
           "command": "macros.revealInExplorer",
-          "when": "isWindows && view == macros.macroExplorer && viewItem != macroRun",
+          "when": "!remoteName && !isWeb && isWindows && view == macros.macroExplorer && viewItem != macroRun",
           "group": "3_navigation"
         },
         {
           "command": "macros.revealInFinder",
-          "when": "isMac && view == macros.macroExplorer && viewItem != macroRun",
+          "when": "!remoteName && !isWeb && isMac && view == macros.macroExplorer && viewItem != macroRun",
           "group": "3_navigation"
         },
         {
           "command": "macros.revealInFiles",
-          "when": "isLinux && view == macros.macroExplorer && viewItem != macroRun",
+          "when": "!remoteName && !isWeb && isLinux && view == macros.macroExplorer && viewItem != macroRun",
           "group": "3_navigation"
         },
         {
