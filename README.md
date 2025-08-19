@@ -115,19 +115,14 @@ The **Macro Explorer** provides a central management view for macros. You can us
 * **Macro Library Folders**: configure macro folders, browse their contents, and quickly add, delete, or move macro files around using drag-and-drop.
   * **"Temporary"**: this is a virtual library node that shows all `untitled` macro documents allowing to easily manage all your in-memory macros.  
 
-<p align=center>
-<img width="540" height="248" alt="Macro Explorer View Settings" src="https://github.com/user-attachments/assets/57de75d2-5411-44d7-a0a3-f9fff3743493" />
-</p>
-
 * **Macros**: edit, run, or debug macros with a once-click.
 
 * **Macro Run Instances**: see active runs. Stop existing ones directly from the view. This is more convenient than the **Macros: Show Running Macros** command but it does not replace it as in-memory runs do not have a representation here.
   - This view shows options used when a given instance was created.
 
 <p align=center>
-<img width="192" height="122" alt="Macro Explorer showing running instanaces" src="https://github.com/user-attachments/assets/cf27d2b0-c6ed-4ea1-984e-08d439517cd7" />
+   <img width="627" height="263" alt=""Macro Explorer View" src="https://github.com/user-attachments/assets/51c22abd-50ae-4c0e-92fa-edfa474ff736" />
 </p>
-
 
 ## Development
 
