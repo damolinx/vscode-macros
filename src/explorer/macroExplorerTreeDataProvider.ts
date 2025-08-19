@@ -159,10 +159,7 @@ export class MacroExplorerTreeDataProvider
       const item = new vscode.TreeItem(uri, vscode.TreeItemCollapsibleState.Collapsed);
       item.contextValue = 'macroLibrary';
       if (!isUntitled(uri)) {
-        item.description = vscode.workspace.asRelativePath(
-          uri.with({ path: uriDirname(uri) }),
-          true,
-        );
+        item.description = vscode.workspace.asRelativePath(uri.with({ path: uriDirname(uri) }));
       } else {
         item.label = 'Temporary';
         item.contextValue += ',untitled';
