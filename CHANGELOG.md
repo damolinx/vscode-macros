@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.1
+- `Macro Explorer` view:
+  - Display parent path as description for library nodes to disambiguate duplicate names.
+  - Hide `Reveal` commands in Remote scenarios.
+- Fix: `Cancellation` template incorrect use of `withProgress` API. 
+
 ## 0.4.0
 - Add `Macro Explorer` view. 
 
