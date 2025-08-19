@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "ES2022",
+    "target": "es2024",
     "rootDir": "src",
     "outDir": "out",
     "noFallthroughCasesInSwitch": true,

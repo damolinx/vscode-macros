@@ -4,7 +4,7 @@ import { ExtensionContext } from '../extensionContext';
 import { templates } from '../macroTemplates';
 import { createGroupedQuickPickItems } from '../ui/ui';
 import { activeMacroEditor } from '../utils/activeMacroEditor';
-import { fromLocator, Locator, toUri, uriEqual } from '../utils/uri';
+import { fromLocator, isUntitled, Locator, toUri, uriEqual } from '../utils/uri';
 
 export async function createMacro(
   context: ExtensionContext,
@@ -19,8 +19,14 @@ export async function createMacro(
   }
 
   let document: vscode.TextDocument;
-  const uri =
-    locator !== undefined ? await createUntitledUri(toUri(fromLocator(locator))) : undefined;
+  let uri: vscode.Uri | undefined;
+  if (locator !== undefined) {
+    const parentUri = toUri(fromLocator(locator));
+    if (!isUntitled(parentUri)) {
+      uri = await createUntitledUri(parentUri);
+    }
+  }
+
   if (uri) {
     document = await vscode.workspace.openTextDocument(uri);
     const editor = await vscode.window.showTextDocument(document, options);

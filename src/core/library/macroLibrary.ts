@@ -6,17 +6,17 @@ import { MACRO_EXTENSIONS, MACRO_FILE_GLOB } from '../constants';
 export type MacroLibraryId = string;
 
 export class MacroLibrary implements vscode.Disposable {
-  private readonly disposables: vscode.Disposable[];
+  protected readonly disposables: vscode.Disposable[];
   public readonly id: MacroLibraryId;
   public readonly name: string;
-  private readonly onDidCreateMacroEmitter: vscode.EventEmitter<vscode.Uri>;
-  private readonly onDidChangeMacroEmitter: vscode.EventEmitter<vscode.Uri>;
-  private readonly onDidDeleteMacroEmitter: vscode.EventEmitter<vscode.Uri>;
+  protected readonly onDidCreateMacroEmitter: vscode.EventEmitter<vscode.Uri>;
+  protected readonly onDidChangeMacroEmitter: vscode.EventEmitter<vscode.Uri>;
+  protected readonly onDidDeleteMacroEmitter: vscode.EventEmitter<vscode.Uri>;
   public readonly uri: vscode.Uri;
   private watcher?: vscode.FileSystemWatcher;
 
-  constructor(uri: vscode.Uri) {
-    this.id = uri.toString(true);
+  constructor(uri: vscode.Uri, id: string = uri.toString(true)) {
+    this.id = id;
     this.name = uriBasename(uri);
     this.uri = uri;
 
@@ -36,7 +36,7 @@ export class MacroLibrary implements vscode.Disposable {
     vscode.Disposable.from(...this.disposables).dispose();
   }
 
-  private ensureWatcher() {
+  protected ensureWatcher() {
     if (!this.watcher && this.uri.scheme === 'file') {
       const pattern = new vscode.RelativePattern(this.uri, MACRO_FILE_GLOB);
       this.watcher = vscode.workspace.createFileSystemWatcher(pattern);

@@ -15,8 +15,9 @@ export function fromLocator(locator: Locator): PathLike {
   }
 }
 
-export function isUntitled(pathOrUri: PathLike): boolean {
-  return pathOrUri instanceof vscode.Uri && pathOrUri.scheme === 'untitled';
+export function isUntitled(uriOrUriLocator: vscode.Uri | { uri: vscode.Uri }): boolean {
+  const { scheme } = 'uri' in uriOrUriLocator ? uriOrUriLocator.uri : uriOrUriLocator;
+  return scheme === 'untitled';
 }
 
 export function toPath(pathOrUri: PathLike): string {

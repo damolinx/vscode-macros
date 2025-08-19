@@ -4,15 +4,15 @@ import { MACRO_EXTENSIONS } from '../core/constants';
 import { MacroLibrary } from '../core/library/macroLibrary';
 import { Macro } from '../core/macro';
 import { ExtensionContext } from '../extensionContext';
-import { uriBasename } from '../utils/uri';
-import { MacroExplorerTreeElement } from './macroExplorerTreeDataProvider';
+import { isUntitled, uriBasename } from '../utils/uri';
+import { TreeElement } from './macroExplorerTreeDataProvider';
 
 export const FILELIST_MIMETYPE = 'text/uri-list';
 export const FILELIST_SEP = '\r\n';
 export const TREE_MIMETYPE = 'application/vnd.code.tree.macros.macroexplorer';
 
 export class MacroExplorerTreeDragAndDropController
-  implements vscode.TreeDragAndDropController<MacroExplorerTreeElement>
+  implements vscode.TreeDragAndDropController<TreeElement>
 {
   private readonly context: ExtensionContext;
   public readonly dropMimeTypes: readonly string[];
@@ -25,11 +25,13 @@ export class MacroExplorerTreeDragAndDropController
   }
 
   public handleDrag(
-    source: MacroExplorerTreeElement[],
+    source: TreeElement[],
     dataTransfer: vscode.DataTransfer,
     _token: vscode.CancellationToken,
   ): void {
-    const macros = source.filter((item) => item instanceof Macro);
+    const macros = source.filter(
+      (item): item is Macro => item instanceof Macro && isUntitled(item),
+    );
     if (macros.length) {
       dataTransfer.set(
         FILELIST_MIMETYPE,
@@ -40,11 +42,11 @@ export class MacroExplorerTreeDragAndDropController
   }
 
   public async handleDrop(
-    target: MacroExplorerTreeElement | undefined,
+    target: TreeElement | undefined,
     dataTransfer: vscode.DataTransfer,
     _token: vscode.CancellationToken,
   ): Promise<void> {
-    if (!(target instanceof MacroLibrary)) {
+    if (!(target instanceof MacroLibrary) || isUntitled(target.uri)) {
       return;
     }
 

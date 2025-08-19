@@ -123,7 +123,7 @@
         "command": "macros.sourceDirectories.settings",
         "title": "Configure Source Directories",
         "category": "Macros",
-        "icon": "$(settings-gear)"
+        "icon": "$(settings)"
       },
       {
         "command": "macros.sourceDirectories.setup",
@@ -230,28 +230,33 @@
         },
         {
           "command": "macros.delete",
-          "when": "view == macros.macroExplorer && viewItem =~ /macroFile/",
+          "when": "view == macros.macroExplorer && viewItem =~ /macroFile/ && !(viewItem =~ /untitled/)",
           "group": "5_other@1"
         },
         {
           "command": "macros.new.macro",
-          "when": "view == macros.macroExplorer && viewItem == macroLibrary",
+          "when": "view == macros.macroExplorer && viewItem =~ /macroLibrary/",
           "group": "inline"
         },
         {
+          "command": "macros.new.macro",
+          "when": "view == macros.macroExplorer && viewItem =~ /macroLibrary/",
+          "group": "3_navigation@1"
+        },
+        {
           "command": "macros.revealInExplorer",
-          "when": "!remoteName && !isWeb && isWindows && view == macros.macroExplorer && viewItem != macroRun",
-          "group": "3_navigation"
+          "when": "!remoteName && !isWeb && isWindows && view == macros.macroExplorer && viewItem != macroRun && !(viewItem =~ /untitled/)",
+          "group": "3_navigation@2"
         },
         {
           "command": "macros.revealInFinder",
-          "when": "!remoteName && !isWeb && isMac && view == macros.macroExplorer && viewItem != macroRun",
-          "group": "3_navigation"
+          "when": "!remoteName && !isWeb && isMac && view == macros.macroExplorer && viewItem != macroRun && !(viewItem =~ /untitled/)",
+          "group": "3_navigation@2"
         },
         {
           "command": "macros.revealInFiles",
-          "when": "!remoteName && !isWeb && isLinux && view == macros.macroExplorer && viewItem != macroRun",
-          "group": "3_navigation"
+          "when": "!remoteName && !isWeb && isLinux && view == macros.macroExplorer && viewItem != macroRun && !(viewItem =~ /untitled/)",
+          "group": "3_navigation@2"
         },
         {
           "command": "macros.run",

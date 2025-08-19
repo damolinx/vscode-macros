@@ -2,6 +2,7 @@
 
 ## 0.4.1
 - `Macro Explorer` view:
+  - Add `Temporary` node to complete macro-management. 
   - Display parent path as description for library nodes to disambiguate duplicate names.
   - Hide `Reveal` commands in Remote scenarios.
 - Fix: `Cancellation` template incorrect use of `withProgress` API. 

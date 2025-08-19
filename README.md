@@ -110,9 +110,10 @@ See [Debugging a Macro](#debugging-a-macro) for additional information.
 
 ## Macro Explorer View
 
-The **Macro Explorer** provides a management view for macros. Use the **Macros: Show Macro Explorer** command to bring it into view.
+The **Macro Explorer** provides a central management view for macros. You can use the **Macros: Show Macro Explorer** command to bring it into view.
 
-* **Macro Library Folders**: configure macro folders, browse their contents, and quickly add, delete, or move macro files around.
+* **Macro Library Folders**: configure macro folders, browse their contents, and quickly add, delete, or move macro files around using drag-and-drop.
+  * **"Temporary"**: this is a virtual library node that shows all `untitled` macro documents allowing to easily manage all your in-memory macros.  
 
 <p align=center>
 <img width="540" height="248" alt="Macro Explorer View Settings" src="https://github.com/user-attachments/assets/57de75d2-5411-44d7-a0a3-f9fff3743493" />
@@ -126,6 +127,7 @@ The **Macro Explorer** provides a management view for macros. Use the **Macros: 
 <p align=center>
 <img width="192" height="122" alt="Macro Explorer showing running instanaces" src="https://github.com/user-attachments/assets/cf27d2b0-c6ed-4ea1-984e-08d439517cd7" />
 </p>
+
 
 ## Development
 

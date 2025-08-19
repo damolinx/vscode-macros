@@ -4,29 +4,33 @@ import { MacroRunner } from '../core/execution/macroRunner';
 import { MacroLibrary, MacroLibraryId } from '../core/library/macroLibrary';
 import { getMacroId, Macro, MacroId } from '../core/macro';
 import { ExtensionContext } from '../extensionContext';
-import { uriDirname } from '../utils/uri';
+import { isUntitled, uriDirname } from '../utils/uri';
+import { UntitledLibrary } from './untitledLibrary';
 
-export type MacroExplorerTreeElement = MacroLibrary | Macro | MacroRunInfo;
+export type TreeElement = MacroLibrary | Macro | MacroRunInfo;
 
 interface MonitoredLibraryData {
   disposable: vscode.Disposable;
-  files?: Set<MacroId>;
+  files: Set<MacroId>;
 }
 
 export class MacroExplorerTreeDataProvider
-  implements vscode.TreeDataProvider<MacroExplorerTreeElement>, vscode.Disposable
+  implements vscode.TreeDataProvider<TreeElement>, vscode.Disposable
 {
   private readonly context: ExtensionContext;
   private readonly disposables: vscode.Disposable[];
   private readonly monitoredLibraries: Map<MacroLibraryId, MonitoredLibraryData>;
   private readonly onDidChangeTreeDataEmitter: vscode.EventEmitter<
-    MacroExplorerTreeElement | MacroExplorerTreeElement[] | undefined
+    TreeElement | TreeElement[] | undefined
   >;
+  private readonly untitledLibrary: UntitledLibrary;
 
   constructor(context: ExtensionContext) {
     this.context = context;
     this.monitoredLibraries = new Map();
     this.onDidChangeTreeDataEmitter = new vscode.EventEmitter();
+    this.untitledLibrary = new UntitledLibrary(this.context);
+    this.ensureLibraryIsMonitored(this.untitledLibrary);
 
     this.disposables = [
       this.onDidChangeTreeDataEmitter,
@@ -34,12 +38,11 @@ export class MacroExplorerTreeDataProvider
         this.disposeMonitoredLibraries();
         this.onDidChangeTreeDataEmitter.fire(undefined);
       }),
-      this.context.runnerManager.onRun(({ macro }) =>
-        this.onDidChangeTreeDataEmitter.fire(this.context.libraryManager.getLibrary(macro.uri)),
+      this.context.runnerManager.onRun(({ macro }) => this.fireOnDidChangeTreeData(macro)),
+      this.context.runnerManager.onStop(({ runInfo }) =>
+        this.fireOnDidChangeTreeData(runInfo.macro),
       ),
-      this.context.runnerManager.onStop(({ runInfo: { macro } }) =>
-        this.onDidChangeTreeDataEmitter.fire(this.context.libraryManager.getLibrary(macro.uri)),
-      ),
+      this.untitledLibrary,
     ];
   }
 
@@ -63,24 +66,27 @@ export class MacroExplorerTreeDataProvider
     if (!entry) {
       const createHandler = (uri: vscode.Uri) => {
         const files = this.monitoredLibraries.get(library.id)?.files;
-        if (files && !files.has(getMacroId(uri))) {
-          files.add(getMacroId(uri));
-          this.onDidChangeTreeDataEmitter.fire(library);
+        if (files) {
+          const macroId = getMacroId(uri);
+          if (!files.has(macroId)) {
+            files.add(macroId);
+            this.fireOnDidChangeTreeData(new Macro(uri), library);
+          }
         }
       };
 
       const deleteHandler = (uri: vscode.Uri) => {
         const files = this.monitoredLibraries.get(library.id)?.files;
         if (files && files.has(getMacroId(uri))) {
-          this.onDidChangeTreeDataEmitter.fire(library);
+          this.fireOnDidChangeTreeData(new Macro(uri), library);
         }
       };
 
       entry = {
-        files: undefined,
+        files: new Set(),
         disposable: vscode.Disposable.from(
           // VS Code does not report first-time saved files as
-          // created but rather as changed,, for reasons.
+          // created but rather as changed, for reasons.
           library.onDidCreateMacro(createHandler),
           library.onDidChangeMacro(createHandler),
           library.onDidDeleteMacro(deleteHandler),
@@ -91,7 +97,51 @@ export class MacroExplorerTreeDataProvider
     return entry;
   }
 
-  getTreeItem(element: MacroExplorerTreeElement): vscode.TreeItem {
+  private fireOnDidChangeTreeData(macro: Macro, library?: MacroLibrary): void {
+    // Refresh parent as Macro changes collapsible state, and
+    // that won't be refreshed unless parent changes.
+    const parent = library ?? this.getParent(macro);
+    return this.onDidChangeTreeDataEmitter.fire(parent ? [parent, macro] : macro);
+  }
+
+  async getChildren(element?: TreeElement): Promise<TreeElement[]> {
+    let children: TreeElement[];
+
+    if (!element) {
+      children = [...this.context.libraryManager.libraries.get()].sort((a, b) =>
+        a.name.localeCompare(b.name),
+      );
+      children.push(this.untitledLibrary);
+    } else if (element instanceof MacroLibrary) {
+      const uris = await element.getFiles();
+      children = uris.map((uri) => new Macro(uri)).sort((a, b) => a.name.localeCompare(b.name));
+      const entry = this.ensureLibraryIsMonitored(element);
+      entry.files = new Set(children.map((macro) => macro.id));
+    } else if (element instanceof Macro) {
+      const runner = this.context.runnerManager.getRunner(element);
+      children = [...runner.runInstances].sort((a, b) => a.id.localeCompare(b.id));
+    } else {
+      children = [];
+    }
+
+    return children;
+  }
+
+  getParent(element: TreeElement): TreeElement | undefined {
+    let parent: TreeElement | undefined;
+    if (element instanceof MacroLibrary) {
+      parent = undefined;
+    } else if (element instanceof Macro) {
+      parent = isUntitled(element)
+        ? this.untitledLibrary
+        : this.context.libraryManager.getLibrary(element.uri);
+    } else {
+      parent = element.macro;
+    }
+    return parent;
+  }
+
+  getTreeItem(element: TreeElement): vscode.TreeItem {
     let treeItem: vscode.TreeItem;
 
     if (element instanceof MacroLibrary) {
@@ -108,7 +158,17 @@ export class MacroExplorerTreeDataProvider
     function getLibraryItem({ uri }: MacroLibrary) {
       const item = new vscode.TreeItem(uri, vscode.TreeItemCollapsibleState.Collapsed);
       item.contextValue = 'macroLibrary';
-      item.description = vscode.workspace.asRelativePath(uri.with({ path: uriDirname(uri) }), true);
+      if (!isUntitled(uri)) {
+        item.description = vscode.workspace.asRelativePath(
+          uri.with({ path: uriDirname(uri) }),
+          true,
+        );
+      } else {
+        item.label = 'Temporary';
+        item.contextValue += ',untitled';
+        item.tooltip = 'Unsaved documents being treated as macros.';
+        item.iconPath = new vscode.ThemeIcon('server-process');
+      }
       return item;
     }
 
@@ -156,31 +216,7 @@ export class MacroExplorerTreeDataProvider
     }
   }
 
-  async getChildren(element?: MacroExplorerTreeElement): Promise<MacroExplorerTreeElement[]> {
-    let chidren: MacroExplorerTreeElement[];
-
-    if (!element) {
-      chidren = [...this.context.libraryManager.libraries.get()].sort((a, b) =>
-        a.name.localeCompare(b.name),
-      );
-    } else if (element instanceof MacroLibrary) {
-      const uris = await element.getFiles();
-      chidren = uris.map((uri) => new Macro(uri)).sort((a, b) => a.name.localeCompare(b.name));
-      const entry = this.ensureLibraryIsMonitored(element);
-      entry.files = new Set(chidren.map((macro) => macro.id));
-    } else if (element instanceof Macro) {
-      const runner = this.context.runnerManager.getRunner(element);
-      chidren = [...runner.runInstances].sort((a, b) => a.id.localeCompare(b.id));
-    } else {
-      chidren = [];
-    }
-
-    return chidren;
-  }
-
-  get onDidChangeTreeData(): vscode.Event<
-    MacroExplorerTreeElement | MacroExplorerTreeElement[] | undefined
-  > {
+  get onDidChangeTreeData(): vscode.Event<TreeElement | TreeElement[] | undefined> {
     return this.onDidChangeTreeDataEmitter.event;
   }
 }
