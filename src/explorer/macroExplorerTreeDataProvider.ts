@@ -16,8 +16,7 @@ interface MonitoredLibraryData {
 }
 
 export class MacroExplorerTreeDataProvider
-  implements vscode.TreeDataProvider<TreeElement>, vscode.Disposable
-{
+  implements vscode.TreeDataProvider<TreeElement>, vscode.Disposable {
   private readonly context: ExtensionContext;
   private readonly disposables: vscode.Disposable[];
   private readonly monitoredLibraries: Map<MacroLibraryId, MonitoredLibraryData>;
@@ -162,7 +161,7 @@ export class MacroExplorerTreeDataProvider
       } else {
         item.label = 'Temporary';
         item.contextValue += ',untitled';
-        item.tooltip = 'Unsaved documents being treated as macros.';
+        item.tooltip = 'In-memory macro documents.';
         item.iconPath = new vscode.ThemeIcon('server-process');
       }
       return item;

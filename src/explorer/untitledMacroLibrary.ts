@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { MACRO_EXTENSION } from '../core/constants';
+import { isCreatingMacro } from '../commands/createMacro';
 import { MacroLibrary } from '../core/library/macroLibrary';
 import { getMacroId, MacroId } from '../core/macro';
 import { ExtensionContext } from '../extensionContext';
@@ -30,7 +30,7 @@ export class UntitledMacroLibrary extends MacroLibrary {
         }
       }),
       vscode.workspace.onDidOpenTextDocument(({ uri }) => {
-        if (isUntitled(uri) && uri.path.endsWith(MACRO_EXTENSION)) {
+        if (isUntitled(uri) && isCreatingMacro()) {
           const macroId = getMacroId(uri);
           if (!this.untitledMacros.has(macroId)) {
             this.untitledMacros.set(macroId, uri);

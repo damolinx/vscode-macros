@@ -6,6 +6,12 @@ import { createGroupedQuickPickItems } from '../ui/ui';
 import { activeMacroEditor } from '../utils/activeMacroEditor';
 import { fromLocator, isUntitled, Locator, toUri, uriEqual } from '../utils/uri';
 
+let creatingMacro = false;
+
+export function isCreatingMacro(): boolean {
+  return creatingMacro;
+}
+
 export async function createMacro(
   context: ExtensionContext,
   locator?: Locator,
@@ -18,7 +24,6 @@ export async function createMacro(
     return;
   }
 
-  let document: vscode.TextDocument;
   let uri: vscode.Uri | undefined;
   if (locator !== undefined) {
     const parentUri = toUri(fromLocator(locator));
@@ -27,18 +32,24 @@ export async function createMacro(
     }
   }
 
-  if (uri) {
-    document = await vscode.workspace.openTextDocument(uri);
-    const editor = await vscode.window.showTextDocument(document, options);
-    if (content) {
-      await editor.edit((editBuilder) => editBuilder.insert(new vscode.Position(0, 0), content));
+  creatingMacro = true;
+  try {
+    let document: vscode.TextDocument;
+    if (uri) {
+      document = await vscode.workspace.openTextDocument(uri);
+      const editor = await vscode.window.showTextDocument(document, options);
+      if (content) {
+        await editor.edit((editBuilder) => editBuilder.insert(new vscode.Position(0, 0), content));
+      }
+    } else {
+      document = await vscode.workspace.openTextDocument({
+        language: MACRO_LANGUAGE,
+        content,
+      });
+      await vscode.window.showTextDocument(document, options);
     }
-  } else {
-    document = await vscode.workspace.openTextDocument({
-      language: MACRO_LANGUAGE,
-      content,
-    });
-    await vscode.window.showTextDocument(document, options);
+  } finally {
+    creatingMacro = false;
   }
 
   async function createUntitledUri(parentUri: vscode.Uri, maxAttempts = 1000) {

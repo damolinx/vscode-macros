@@ -2,6 +2,7 @@
 
 ## 0.4.2
 - `Macro Explorer` view:
+  - `Temporary` virtual library tracks untitled macros created with `New Macro` command. 
   - Fix: Untitled files removed on run stop when editor still open.
 - More interesting `Cancellation` template. 
 
