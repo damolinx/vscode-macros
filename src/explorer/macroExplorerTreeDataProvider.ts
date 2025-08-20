@@ -5,9 +5,10 @@ import { MacroLibrary, MacroLibraryId } from '../core/library/macroLibrary';
 import { getMacroId, Macro, MacroId } from '../core/macro';
 import { ExtensionContext } from '../extensionContext';
 import { isUntitled, uriDirname } from '../utils/uri';
-import { UntitledLibrary } from './untitledLibrary';
+import { UntitledMacroLibrary } from './untitledMacroLibrary';
 
 export type TreeElement = MacroLibrary | Macro | MacroRunInfo;
+export type TreeEvent = TreeElement | TreeElement[] | undefined;
 
 interface MonitoredLibraryData {
   disposable: vscode.Disposable;
@@ -20,16 +21,14 @@ export class MacroExplorerTreeDataProvider
   private readonly context: ExtensionContext;
   private readonly disposables: vscode.Disposable[];
   private readonly monitoredLibraries: Map<MacroLibraryId, MonitoredLibraryData>;
-  private readonly onDidChangeTreeDataEmitter: vscode.EventEmitter<
-    TreeElement | TreeElement[] | undefined
-  >;
-  private readonly untitledLibrary: UntitledLibrary;
+  private readonly onDidChangeTreeDataEmitter: vscode.EventEmitter<TreeEvent>;
+  private readonly untitledLibrary: UntitledMacroLibrary;
 
   constructor(context: ExtensionContext) {
     this.context = context;
     this.monitoredLibraries = new Map();
     this.onDidChangeTreeDataEmitter = new vscode.EventEmitter();
-    this.untitledLibrary = new UntitledLibrary(this.context);
+    this.untitledLibrary = new UntitledMacroLibrary(this.context);
     this.ensureLibraryIsMonitored(this.untitledLibrary);
 
     this.disposables = [
@@ -213,7 +212,7 @@ export class MacroExplorerTreeDataProvider
     }
   }
 
-  get onDidChangeTreeData(): vscode.Event<TreeElement | TreeElement[] | undefined> {
+  get onDidChangeTreeData(): vscode.Event<TreeEvent> {
     return this.onDidChangeTreeDataEmitter.event;
   }
 }

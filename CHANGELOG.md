@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.2
+- `Macro Explorer` view:
+  - Fix: Untitled files removed on run stop when editor still open.
+
 ## 0.4.1
 - `Macro Explorer` view:
   - Add `Temporary` node to complete macro-management. 

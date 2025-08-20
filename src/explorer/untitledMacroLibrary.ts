@@ -5,7 +5,7 @@ import { getMacroId, MacroId } from '../core/macro';
 import { ExtensionContext } from '../extensionContext';
 import { isUntitled, uriEqual } from '../utils/uri';
 
-export class UntitledLibrary extends MacroLibrary {
+export class UntitledMacroLibrary extends MacroLibrary {
   private readonly untitledMacros: Map<MacroId, vscode.Uri>;
 
   constructor(context: ExtensionContext) {
@@ -23,7 +23,7 @@ export class UntitledLibrary extends MacroLibrary {
         if (
           isUntitled(macro) &&
           this.untitledMacros.has(macro.id) &&
-          vscode.workspace.textDocuments.some(({ uri }) => !uriEqual(uri, macro.uri))
+          vscode.workspace.textDocuments.every(({ uri }) => !uriEqual(uri, macro.uri))
         ) {
           this.untitledMacros.delete(macro.id);
           this.onDidDeleteMacroEmitter.fire(macro.uri);
