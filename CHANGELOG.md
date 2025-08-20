@@ -3,6 +3,7 @@
 ## 0.4.2
 - `Macro Explorer` view:
   - Fix: Untitled files removed on run stop when editor still open.
+- More interesting `Cancellation` template. 
 
 ## 0.4.1
 - `Macro Explorer` view:
