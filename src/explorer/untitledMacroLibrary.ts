@@ -58,8 +58,6 @@ export class UntitledMacroLibrary extends MacroLibrary {
     );
   }
 
-  protected ensureWatcher(): void {}
-
   public getFiles(): Promise<vscode.Uri[]> {
     return Promise.resolve([...this.untitledMacros.values()]);
   }
