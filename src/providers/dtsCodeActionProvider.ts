@@ -22,8 +22,7 @@ export class DTSCodeActionProvider implements vscode.CodeActionProvider {
 
     const url = document.getText(urlRange);
     const downloadAction = new vscode.CodeAction(
-      'Download .d.ts file',
-      vscode.CodeActionKind.QuickFix,
+      'Download .d.ts file'
     );
     downloadAction.command = {
       title: downloadAction.title,

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.3
+- Update `Git` template.
+- Fix: 'Download .d.ts file' is not a QuickFix.
+
 ## 0.4.2
 - `Macro Explorer` view:
   - `Temporary` virtual library tracks untitled macros created with `New Macro` command. 
