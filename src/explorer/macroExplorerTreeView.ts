@@ -19,13 +19,12 @@ export function registerMacroExplorerTreeview(context: ExtensionContext): vscode
     treeView,
     treeProvider.onDidChangeTreeData((elementOrElements) => {
       if (elementOrElements) {
-        let target: TreeElement | undefined;
-        if (elementOrElements instanceof Array) {
-          target = elementOrElements.findLast(isUntitledMacro);
-        } else if (isUntitledMacro(elementOrElements)) {
-          target = elementOrElements;
-        }
-
+        const target =
+          elementOrElements instanceof Array
+            ? elementOrElements.findLast(isUntitledMacro)
+            : isUntitledMacro(elementOrElements)
+              ? elementOrElements
+              : undefined;
         if (target) {
           treeView.reveal(target);
         }
@@ -34,6 +33,6 @@ export function registerMacroExplorerTreeview(context: ExtensionContext): vscode
   ];
 
   function isUntitledMacro(e: TreeElement) {
-    return e instanceof Macro && 'uri' in e && isUntitled(e);
+    return e instanceof Macro && isUntitled(e);
   }
 }

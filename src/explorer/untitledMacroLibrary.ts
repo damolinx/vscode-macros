@@ -3,7 +3,7 @@ import { isCreatingMacro } from '../commands/createMacro';
 import { MacroLibrary } from '../core/library/macroLibrary';
 import { getMacroId, MacroId } from '../core/macro';
 import { ExtensionContext } from '../extensionContext';
-import { isUntitled, uriEqual } from '../utils/uri';
+import { isUntitled, uriEqual, UriLocator } from '../utils/uri';
 
 export class UntitledMacroLibrary extends MacroLibrary {
   private readonly untitledMacros: Map<MacroId, vscode.Uri>;
@@ -60,5 +60,9 @@ export class UntitledMacroLibrary extends MacroLibrary {
 
   public getFiles(): Promise<vscode.Uri[]> {
     return Promise.resolve([...this.untitledMacros.values()]);
+  }
+
+  public owns(locator: UriLocator): boolean {
+    return isUntitled(locator);
   }
 }

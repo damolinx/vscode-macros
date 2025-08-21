@@ -4,7 +4,7 @@ import { MacroRunner } from '../core/execution/macroRunner';
 import { MacroLibrary, MacroLibraryId } from '../core/library/macroLibrary';
 import { getMacroId, Macro, MacroId } from '../core/macro';
 import { ExtensionContext } from '../extensionContext';
-import { isUntitled, uriDirname } from '../utils/uri';
+import { getLibraryItem, getMacroItem, getRunItem } from './macroExplorerTreeItems';
 import { UntitledMacroLibrary } from './untitledMacroLibrary';
 
 export type TreeElement = MacroLibrary | Macro | MacroRunInfo;
@@ -128,13 +128,11 @@ export class MacroExplorerTreeDataProvider
 
   getParent(element: TreeElement): TreeElement | undefined {
     let parent: TreeElement | undefined;
-    if (element instanceof MacroLibrary) {
-      parent = undefined;
-    } else if (element instanceof Macro) {
-      parent = isUntitled(element)
+    if (element instanceof Macro) {
+      parent = this.untitledLibrary.owns(element)
         ? this.untitledLibrary
-        : this.context.libraryManager.getLibrary(element.uri);
-    } else {
+        : this.context.libraryManager.getLibrary(element);
+    } else if (element instanceof MacroRunner) {
       parent = element.macro;
     }
     return parent;
@@ -153,63 +151,6 @@ export class MacroExplorerTreeDataProvider
     }
 
     return treeItem;
-
-    function getLibraryItem({ uri }: MacroLibrary) {
-      const item = new vscode.TreeItem(uri, vscode.TreeItemCollapsibleState.Collapsed);
-      item.contextValue = 'macroLibrary';
-      if (!isUntitled(uri)) {
-        item.description = vscode.workspace.asRelativePath(uri.with({ path: uriDirname(uri) }));
-      } else {
-        item.label = 'Temporary';
-        item.contextValue += ',untitled';
-        item.tooltip = 'In-memory macro documents.';
-        item.iconPath = new vscode.ThemeIcon('server-process');
-      }
-      return item;
-    }
-
-    function getMacroItem({ uri }: Macro, runner: MacroRunner) {
-      const { runInstanceCount: runCount } = runner;
-      const item = new vscode.TreeItem(
-        uri,
-        runCount ? vscode.TreeItemCollapsibleState.Collapsed : undefined,
-      );
-      item.contextValue = 'macroFile';
-      item.command = {
-        arguments: [uri],
-        command: 'vscode.open',
-        title: 'Open Macro',
-      };
-      if (runCount) {
-        item.contextValue += ',running';
-        item.description = runCount === 1 ? '1 instance' : `${runCount} instances`;
-        item.tooltip = `${uri.scheme === 'file' ? uri.fsPath : uri.toString(true)} · ${runCount === 1 ? '1 instance' : `${runCount} instances`}`;
-      } else {
-        item.iconPath = new vscode.ThemeIcon('symbol-function');
-      }
-      return item;
-    }
-
-    function getRunItem(runInfo: MacroRunInfo) {
-      const item = new vscode.TreeItem(runInfo.id);
-      item.contextValue = 'macroRun';
-      item.tooltip = getTooltip();
-
-      if (runInfo.startup) {
-        item.description = 'startup';
-        item.iconPath = new vscode.ThemeIcon('circle-filled');
-      } else {
-        item.iconPath = new vscode.ThemeIcon('circle-outline');
-      }
-      return item;
-
-      function getTooltip(): string | vscode.MarkdownString | undefined {
-        const options = Object.entries(runInfo.snapshot.options)
-          .filter(([_, v]) => v)
-          .map(([k]) => k);
-        return `${runInfo.startup ? 'Startup run instance' : 'Run instance'}${options.length ? ` · ${options.join(' · ')}` : ''}`;
-      }
-    }
   }
 
   get onDidChangeTreeData(): vscode.Event<TreeEvent> {

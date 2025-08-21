@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { Lazy } from '../../utils/lazy';
-import { uriDirname } from '../../utils/uri';
+import { UriLocator } from '../../utils/uri';
 import { MacroLibrary } from './macroLibrary';
 import { expandConfigPaths } from './utils';
 
@@ -54,17 +54,7 @@ export class MacroLibraryManager implements vscode.Disposable {
     return allFiles;
   }
 
-  public getLibrary(uri: vscode.Uri): MacroLibrary | undefined {
-    const expectedParentPath = uriDirname(uri);
-    for (const library of this.libraries.get()) {
-      if (
-        library.uri.scheme === uri.scheme &&
-        library.uri.authority == uri.authority &&
-        library.uri.path === expectedParentPath
-      ) {
-        return library;
-      }
-    }
-    return undefined;
+  public getLibrary(locator: UriLocator): MacroLibrary | undefined {
+    return this.libraries.get().find((library) => library.owns(locator));
   }
 }

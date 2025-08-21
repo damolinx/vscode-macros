@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { posix } from 'path';
-import { uriBasename } from '../../utils/uri';
+import { uriBasename, uriDirname, UriLocator } from '../../utils/uri';
 import { MACRO_EXTENSIONS, MACRO_FILE_GLOB } from '../constants';
 
 export type MacroLibraryId = string;
@@ -73,5 +73,14 @@ export class MacroLibrary implements vscode.Disposable {
   public get onDidDeleteMacro(): vscode.Event<vscode.Uri> {
     this.ensureWatcher();
     return this.onDidDeleteMacroEmitter.event;
+  }
+
+  public owns(locator: UriLocator): boolean {
+    const uri = locator instanceof vscode.Uri ? locator : locator.uri;
+    return (
+      this.uri.scheme === uri.scheme &&
+      this.uri.authority == uri.authority &&
+      this.uri.path === uriDirname(uri)
+    );
   }
 }
