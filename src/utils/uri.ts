@@ -6,7 +6,6 @@ import { posix } from 'path/posix';
 export type PathLike = string | vscode.Uri;
 export type Locator = PathLike | { path: string } | { uri: vscode.Uri };
 export type UriLocator = vscode.Uri | { uri: vscode.Uri };
-
 export function fromLocator(locator: Locator): PathLike {
   if (locator instanceof vscode.Uri || typeof locator === 'string') {
     return locator;
@@ -17,8 +16,24 @@ export function fromLocator(locator: Locator): PathLike {
   }
 }
 
-export function isInUserHome(pathOrUri: PathLike): boolean {
-  return toPath(pathOrUri).startsWith(os.homedir());
+export function asTildeRelativePath(pathOrUri: PathLike): string | undefined {
+  if (process.platform === 'win32') {
+    // Windows has no concept of `tilde` and VSCode uses some unique casing behaviors.
+    return;
+  }
+  const uri = toUri(pathOrUri);
+  if (uri.scheme !== 'file') {
+    return;
+  }
+
+  let homedir = os.homedir();
+  if (!homedir.endsWith(posix.sep)) {
+    homedir += posix.sep;
+  }
+
+  return uri.fsPath.startsWith(homedir)
+    ? `~${posix.sep}${uri.fsPath.slice(homedir.length)}`
+    : undefined;
 }
 
 export function isUntitled(locator: UriLocator): boolean {
