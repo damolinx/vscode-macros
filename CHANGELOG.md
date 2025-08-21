@@ -4,6 +4,8 @@
 - `Macro Explorer` view:
   - Library nodes use `~/` on descriptions for simplicity in non-Windows platforms.
   - Fix: Drag-and-drop broken on 0.4.2 with introduction of the `Temporary` node.
+  - Fix: `Delete` fails under WSL (and other remote scenarios).
+  - Fix: `Reveal in File Explorer` does not show nor work under WSL.
 - Update `Git` template.
 - Fix: 'Download .d.ts file' is not a QuickFix.
 

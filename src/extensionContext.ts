@@ -5,12 +5,14 @@ import { MacroLibraryManager } from './core/library/macroLibraryManager';
 export class ExtensionContext implements vscode.Disposable {
   private _mruMacro?: vscode.Uri;
   public readonly extensionContext: vscode.ExtensionContext;
+  public readonly isRemote: boolean;
   public readonly libraryManager: MacroLibraryManager;
   public readonly log: vscode.LogOutputChannel;
   public readonly runnerManager: MacroRunnerManager;
 
   constructor(extensionContext: vscode.ExtensionContext) {
     this.extensionContext = extensionContext;
+    this.isRemote = Boolean(vscode.env.remoteName);
     this.libraryManager = new MacroLibraryManager();
     this.log = vscode.window.createOutputChannel('Macros', { log: true });
     this.runnerManager = new MacroRunnerManager(this);

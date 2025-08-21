@@ -78,7 +78,7 @@
       {
         "command": "macros.revealInExplorer",
         "title": "Reveal in File Explorer",
-        "enablement": "!remoteName && !isWeb && isWindows"
+        "enablement": "!isWeb && isWindows"
       },
       {
         "command": "macros.revealInFinder",
@@ -245,7 +245,7 @@
         },
         {
           "command": "macros.revealInExplorer",
-          "when": "!remoteName && !isWeb && isWindows && view == macros.macroExplorer && viewItem != macroRun && !(viewItem =~ /untitled/)",
+          "when": "!isWeb && isWindows && view == macros.macroExplorer && viewItem != macroRun && !(viewItem =~ /untitled/)",
           "group": "3_navigation@2"
         },
         {

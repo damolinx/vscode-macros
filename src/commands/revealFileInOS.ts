@@ -3,5 +3,7 @@ import { fromLocator, Locator, toUri } from '../utils/uri';
 
 export async function revealFileInOs(locator: Locator): Promise<void> {
   const uri = toUri(fromLocator(locator));
-  await vscode.commands.executeCommand('revealFileInOS', uri);
+  const command =
+    vscode.env.remoteName === 'wsl' ? 'remote-wsl.revealInExplorer' : 'revealFileInOS';
+  await vscode.commands.executeCommand(command, uri);
 }
