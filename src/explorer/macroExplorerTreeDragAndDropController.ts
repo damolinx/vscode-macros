@@ -30,7 +30,7 @@ export class MacroExplorerTreeDragAndDropController
     _token: vscode.CancellationToken,
   ): void {
     const macros = source.filter(
-      (item): item is Macro => item instanceof Macro && isUntitled(item),
+      (item): item is Macro => item instanceof Macro && !isUntitled(item),
     );
     if (macros.length) {
       dataTransfer.set(
@@ -46,7 +46,7 @@ export class MacroExplorerTreeDragAndDropController
     dataTransfer: vscode.DataTransfer,
     _token: vscode.CancellationToken,
   ): Promise<void> {
-    if (!(target instanceof MacroLibrary) || isUntitled(target.uri)) {
+    if (!(target instanceof MacroLibrary) || isUntitled(target)) {
       return;
     }
 

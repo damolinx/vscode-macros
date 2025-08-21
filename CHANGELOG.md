@@ -3,6 +3,7 @@
 ## 0.4.3
 - Update `Git` template.
 - Fix: 'Download .d.ts file' is not a QuickFix.
+- Fix: Drag-and-drop broken on 0.4.2 with introduction of the `Temporary` node.
 
 ## 0.4.2
 - `Macro Explorer` view:

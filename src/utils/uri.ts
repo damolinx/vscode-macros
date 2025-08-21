@@ -1,9 +1,11 @@
 import * as vscode from 'vscode';
+import * as os from 'os';
 import * as path from 'path';
 import { posix } from 'path/posix';
 
 export type PathLike = string | vscode.Uri;
 export type Locator = PathLike | { path: string } | { uri: vscode.Uri };
+export type UriLocator = vscode.Uri | { uri: vscode.Uri };
 
 export function fromLocator(locator: Locator): PathLike {
   if (locator instanceof vscode.Uri || typeof locator === 'string') {
@@ -15,8 +17,12 @@ export function fromLocator(locator: Locator): PathLike {
   }
 }
 
-export function isUntitled(uriOrUriLocator: vscode.Uri | { uri: vscode.Uri }): boolean {
-  const { scheme } = 'uri' in uriOrUriLocator ? uriOrUriLocator.uri : uriOrUriLocator;
+export function isInUserHome(pathOrUri: PathLike): boolean {
+  return toPath(pathOrUri).startsWith(os.homedir());
+}
+
+export function isUntitled(locator: UriLocator): boolean {
+  const { scheme } = locator instanceof vscode.Uri ? locator : locator.uri;
   return scheme === 'untitled';
 }
 
