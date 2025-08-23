@@ -40,6 +40,23 @@ export function asWorkspaceRelativePath(locator: Locator): string {
   return vscode.workspace.asRelativePath(fromLocator(locator));
 }
 
+export function isParent(parent: vscode.Uri, candidate: vscode.Uri): boolean {
+  if (parent.scheme !== candidate.scheme || parent.authority !== candidate.authority) {
+    return false;
+  }
+
+  const normalizedParent = parent.scheme === 'file' ? normalize(parent.fsPath) : parent.path;
+  const normalizedCandidateParent =
+    candidate.scheme === 'file'
+      ? path.dirname(normalize(candidate.fsPath))
+      : posix.dirname(candidate.path);
+  return normalizedParent === normalizedCandidateParent;
+
+  function normalize(path: string) {
+    return process.platform === 'win32' ? path.toLowerCase() : path;
+  }
+}
+
 export function isUntitled(locator: UriLocator): boolean {
   const { scheme } = locator instanceof vscode.Uri ? locator : locator.uri;
   return scheme === 'untitled';
