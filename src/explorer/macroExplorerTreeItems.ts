@@ -31,12 +31,11 @@ export function getMacroItem({ uri }: Macro, { runInstanceCount: runCount }: Mac
     command: 'vscode.open',
     title: 'Open Macro',
   };
+  item.iconPath = new vscode.ThemeIcon('symbol-function');
   if (runCount) {
     item.contextValue += ',running';
     item.description = runCount === 1 ? '1 instance' : `${runCount} instances`;
     item.tooltip = `${uri.scheme === 'file' ? uri.fsPath : uri.toString(true)} · ${runCount === 1 ? '1 instance' : `${runCount} instances`}`;
-  } else {
-    item.iconPath = new vscode.ThemeIcon('symbol-function');
   }
   return item;
 }

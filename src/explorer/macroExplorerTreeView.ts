@@ -1,8 +1,7 @@
 import * as vscode from 'vscode';
 import { Macro } from '../core/macro';
 import { ExtensionContext } from '../extensionContext';
-import { isUntitled } from '../utils/uri';
-import { MacroExplorerTreeDataProvider, TreeElement } from './macroExplorerTreeDataProvider';
+import { MacroExplorerTreeDataProvider } from './macroExplorerTreeDataProvider';
 import { MacroExplorerTreeDragAndDropController } from './macroExplorerTreeDragAndDropController';
 
 export const MACRO_EXPLORER_VIEW_ID = 'macros.macroExplorer';
@@ -17,22 +16,16 @@ export function registerMacroExplorerTreeview(context: ExtensionContext): vscode
   return [
     treeProvider,
     treeView,
-    treeProvider.onDidChangeTreeData((elementOrElements) => {
-      if (elementOrElements) {
-        const target =
-          elementOrElements instanceof Array
-            ? elementOrElements.findLast(isUntitledMacro)
-            : isUntitledMacro(elementOrElements)
-              ? elementOrElements
-              : undefined;
-        if (target) {
-          treeView.reveal(target);
-        }
+    treeProvider.onDidChangeTreeData(async (elementOrElements) => {
+      const element =
+        elementOrElements instanceof Array
+          ? elementOrElements.findLast((elem) => elem instanceof Macro)
+          : elementOrElements instanceof Macro
+            ? elementOrElements
+            : undefined;
+      if (element) {
+        await treeView.reveal(element);
       }
     }),
   ];
-
-  function isUntitledMacro(e: TreeElement) {
-    return e instanceof Macro && isUntitled(e);
-  }
 }

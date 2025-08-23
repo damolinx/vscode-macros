@@ -78,7 +78,7 @@ export class MacroExplorerTreeDataProvider
       const deleteHandler = (uri: vscode.Uri) => {
         const files = this.monitoredLibraries.get(library.id)?.files;
         if (files && files.has(getMacroId(uri))) {
-          this.fireOnDidChangeTreeData(new Macro(uri), library);
+          this.fireOnDidChangeTreeData(library);
         }
       };
 
@@ -97,11 +97,18 @@ export class MacroExplorerTreeDataProvider
     return entry;
   }
 
-  private fireOnDidChangeTreeData(macro: Macro, library?: MacroLibrary): void {
-    // Refresh parent as Macro changes collapsible state, and
-    // that won't be refreshed unless parent changes.
-    const parent = library ?? this.getParent(macro);
-    return this.onDidChangeTreeDataEmitter.fire(parent ? [parent, macro] : macro);
+  private fireOnDidChangeTreeData(
+    macroOrLibrary: Macro | MacroLibrary,
+    library?: MacroLibrary,
+  ): void {
+    if (macroOrLibrary instanceof MacroLibrary) {
+      this.onDidChangeTreeDataEmitter.fire(macroOrLibrary);
+    } else {
+      // Refresh parent as Macro changes collapsible state, and
+      // that won't be refreshed unless parent changes.
+      const parent = library ?? this.getParent(macroOrLibrary);
+      this.onDidChangeTreeDataEmitter.fire(parent ? [parent, macroOrLibrary] : macroOrLibrary);
+    }
   }
 
   async getChildren(element?: TreeElement): Promise<TreeElement[]> {
