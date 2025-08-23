@@ -30,7 +30,10 @@ export class MacroExplorerTreeDataProvider
     this.monitoredLibraries = new Map();
     this.onDidChangeTreeDataEmitter = new vscode.EventEmitter();
     this.untitledLibrary = new UntitledMacroLibrary(this.context);
-    this.ensureLibraryIsMonitored(this.untitledLibrary);
+
+    [...this.context.libraryManager.libraries.get(), this.untitledLibrary].forEach((library) =>
+      this.ensureLibraryIsMonitored(library),
+    );
 
     this.disposables = [
       this.onDidChangeTreeDataEmitter,

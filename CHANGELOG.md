@@ -4,6 +4,7 @@
 - Use natural sorting in UI lists. 
 - `Macro Explorer` view:
   - Add `New REPL Terminal` command.
+  - Update handling change events.
 
 ## 0.4.3
 - `Macro Explorer` view:
