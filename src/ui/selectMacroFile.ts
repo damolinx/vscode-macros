@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { MacroLibraryManager } from '../core/library/macroLibraryManager';
+import { asWorkspaceRelativePath } from '../utils/uri';
 import { OpenMacroOptions, pickMacroFile, UriQuickPickItem } from './ui';
 
 export async function selectMacroFile(
@@ -34,7 +35,7 @@ export async function selectSourceDirectory(
   const selectedItem = await vscode.window.showQuickPick<UriQuickPickItem>(
     libraries
       .map((library) => ({
-        label: vscode.workspace.asRelativePath(library.uri),
+        label: asWorkspaceRelativePath(library),
         uri: library.uri,
       }))
       .sort((t1, t2) => t1.label.localeCompare(t2.label)),

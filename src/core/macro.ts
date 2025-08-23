@@ -27,7 +27,7 @@ export class Macro {
     let updated = false;
     const document = await vscode.workspace.openTextDocument(this.uri);
     if (document.version !== this.version || !this.code) {
-      this.code = document.getText();
+      this.code = document.getText().trim();
       this.options = undefined;
       this.version = document.version;
       updated = true;

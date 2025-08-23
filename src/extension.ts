@@ -32,7 +32,7 @@ import { registerDTSCodeActionProvider } from './providers/dtsCodeActionProvider
 import { registerExecuteCommandCompletionProvider } from './providers/executeCommandCompletionProvider';
 import { registerMacroCodeLensProvider } from './providers/macroCodeLensProvider';
 import { registerMacroOptionsCompletionProvider } from './providers/macroOptionsCompletionProvider';
-import { Locator, PathLike } from './utils/uri';
+import { asWorkspaceRelativePath, Locator, PathLike } from './utils/uri';
 
 /**
  * Extension startup.
@@ -41,7 +41,7 @@ import { Locator, PathLike } from './utils/uri';
 export async function activate(extensionContext: vscode.ExtensionContext) {
   const context = new ExtensionContext(extensionContext);
   extensionContext.subscriptions.push(context, new MacroStatusBarItem(context));
-  context.log.info('Activating extension:', extensionContext.extension.packageJSON.version);
+  context.log.info('Activating extension', extensionContext.extension.packageJSON.version);
 
   extensionContext.subscriptions.push(
     // AI
@@ -99,45 +99,44 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
 async function runStartupMacros(context: ExtensionContext) {
   const paths = expandConfigPaths('macros.startupMacros');
   if (paths.length === 0) {
+    context.log.info('No startup macros to execute — none registered');
     return;
   }
 
   const existingPaths = paths.filter((path) => existsSync(path));
   if (existingPaths.length === 0) {
-    context.log.warn('No startup macros executed — none found on disk. Count:', paths.length);
+    context.log.info(
+      'No startup macros to execute,',
+      paths.length,
+      'registered — none found on disk',
+    );
     return;
   }
 
   if (!vscode.workspace.isTrusted) {
     context.log.warn(
-      'No startup macros executed — workspace is untrusted. Count:',
+      'No startup macros executed,',
       existingPaths.length,
+      'registered — Untrusted workspace',
     );
 
-    const manageOption = 'Manage Workspace Trust';
     vscode.window
-      .showWarningMessage('Startup macros are disabled in untrusted workspaces.', manageOption)
-      .then(
-        (selection) =>
-          selection === manageOption && vscode.commands.executeCommand('workbench.trust.manage'),
-      );
+      .showWarningMessage(
+        `Startup macros are disabled in untrusted workspaces — ${existingPaths.length} registered`,
+        'Manage Workspace Trust',
+      )
+      .then((selection) => selection && vscode.commands.executeCommand('workbench.trust.manage'));
 
     return;
   }
 
+  context.log.info('Executing', existingPaths.length, 'out of', paths.length, 'registered macros.');
   if (existingPaths.length !== paths.length) {
-    context.log.warn(
-      'Some startup macros were not executed — not found on disk:',
-      ...paths
-        .filter((path) => !existingPaths.includes(path))
-        .map((path) => vscode.workspace.asRelativePath(path, true)),
+    context.log.debug(
+      'Not Found:',
+      ...paths.filter((path) => !existingPaths.includes(path)).map(asWorkspaceRelativePath),
     );
   }
-
-  context.log.info(
-    'Startup macros to be executed:',
-    ...existingPaths.map((path) => vscode.workspace.asRelativePath(path, true)),
-  );
 
   await Promise.all(existingPaths.map((path) => runMacro(context, path, true)));
 }

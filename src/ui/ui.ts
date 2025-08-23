@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { relative } from 'path';
-import { uriEqual } from '../utils/uri';
+import { asWorkspaceRelativePath, uriEqual } from '../utils/uri';
 import { showTextDocument } from '../utils/vscodeEx';
 import { showMacroOpenDialog } from './dialogs';
 
@@ -111,7 +111,7 @@ export async function pickMacroFile(
       return uris
         .map((uri) => ({
           buttons: openFileButton && [openFileButton],
-          label: root ? relative(root, uri.fsPath) : vscode.workspace.asRelativePath(uri),
+          label: root ? relative(root, uri.fsPath) : asWorkspaceRelativePath(uri),
           uri,
         }))
         .sort((t1, t2) => t1.label.localeCompare(t2.label));

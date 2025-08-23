@@ -36,6 +36,10 @@ export function asTildeRelativePath(pathOrUri: PathLike): string | undefined {
     : undefined;
 }
 
+export function asWorkspaceRelativePath(locator: Locator): string {
+  return vscode.workspace.asRelativePath(fromLocator(locator));
+}
+
 export function isUntitled(locator: UriLocator): boolean {
   const { scheme } = locator instanceof vscode.Uri ? locator : locator.uri;
   return scheme === 'untitled';
