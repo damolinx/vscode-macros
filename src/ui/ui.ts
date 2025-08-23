@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { relative } from 'path';
+import { NaturalComparer } from '../utils/ui';
 import { asWorkspaceRelativePath, uriEqual } from '../utils/uri';
 import { showTextDocument } from '../utils/vscodeEx';
 import { showMacroOpenDialog } from './dialogs';
@@ -97,7 +98,7 @@ export async function pickMacroFile(
       items.push(...createItems(macroFiles));
     } else {
       Object.keys(macroFiles)
-        .sort((r1, r2) => r1.localeCompare(r2))
+        .sort(NaturalComparer.compare)
         .forEach((root) => {
           items.push(
             { label: root, kind: vscode.QuickPickItemKind.Separator },
@@ -114,7 +115,7 @@ export async function pickMacroFile(
           label: root ? relative(root, uri.fsPath) : asWorkspaceRelativePath(uri),
           uri,
         }))
-        .sort((t1, t2) => t1.label.localeCompare(t2.label));
+        .sort((t1, t2) => NaturalComparer.compare(t1.label, t2.label));
     }
   }
 }
@@ -138,7 +139,7 @@ export function createGroupedQuickPickItems<TItem, TQuickPick extends vscode.Qui
   }
 
   const quickPickItems: TQuickPick[] = [];
-  const sortedGroups = [...groups.keys()].sort((a, b) => a.localeCompare(b));
+  const sortedGroups = [...groups.keys()].sort(NaturalComparer.compare);
   for (const groupName of sortedGroups) {
     quickPickItems.push({
       label: groupName,
@@ -149,7 +150,7 @@ export function createGroupedQuickPickItems<TItem, TQuickPick extends vscode.Qui
       ...groups
         .get(groupName)!
         .map(options.itemBuilder)
-        .sort((a, b) => a.label.localeCompare(b.label)),
+        .sort((a, b) => NaturalComparer.compare(a.label, b.label)),
     );
   }
 

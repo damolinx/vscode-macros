@@ -1,7 +1,9 @@
 # Changelog
 
-##
-- Add `New REPL Terminal` to `Macro Explorer`.
+## 0.4.4
+- Use natural sorting in UI lists. 
+- `Macro Explorer` view:
+  - Add `New REPL Terminal` command.
 
 ## 0.4.3
 - `Macro Explorer` view:

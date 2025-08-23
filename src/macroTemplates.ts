@@ -3,6 +3,7 @@ import { join } from 'path';
 import { ExtensionContext } from './extensionContext';
 import { Lazy } from './utils/lazy';
 import { readFile } from './utils/resources';
+import { NaturalComparer } from './utils/ui';
 
 export const MACRO_TEMPLATES_DIR_RESOURCE = 'examples/';
 export const MACRO_TEMPLATES_MANIFEST_RESOURCE = `${MACRO_TEMPLATES_DIR_RESOURCE}/manifest.json`;
@@ -30,7 +31,7 @@ export const ManifestRaw = new Lazy((context: vscode.ExtensionContext) =>
 export const Manifest = new Lazy(async (context: vscode.ExtensionContext) => {
   const raw = await ManifestRaw.get(context);
   const manifest = JSON.parse(raw) as Manifest;
-  manifest.templates.sort((t1, t2) => t1.label.localeCompare(t2.label));
+  manifest.templates.sort((t1, t2) => NaturalComparer.compare(t1.label, t2.label));
   return manifest;
 });
 

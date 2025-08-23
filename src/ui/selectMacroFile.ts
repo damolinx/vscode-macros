@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { MacroLibraryManager } from '../core/library/macroLibraryManager';
+import { NaturalComparer } from '../utils/ui';
 import { asWorkspaceRelativePath } from '../utils/uri';
 import { OpenMacroOptions, pickMacroFile, UriQuickPickItem } from './ui';
 
@@ -38,7 +39,7 @@ export async function selectSourceDirectory(
         label: asWorkspaceRelativePath(library),
         uri: library.uri,
       }))
-      .sort((t1, t2) => t1.label.localeCompare(t2.label)),
+      .sort((t1, t2) => NaturalComparer.compare(t1.label, t2.label)),
     {
       placeHolder: 'Select a macro source directory …',
     },

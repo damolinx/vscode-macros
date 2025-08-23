@@ -4,6 +4,7 @@ import { MacroRunner } from '../core/execution/macroRunner';
 import { MacroLibrary, MacroLibraryId } from '../core/library/macroLibrary';
 import { getMacroId, Macro, MacroId } from '../core/macro';
 import { ExtensionContext } from '../extensionContext';
+import { NaturalComparer } from '../utils/ui';
 import { getLibraryItem, getMacroItem, getRunItem } from './macroExplorerTreeItems';
 import { UntitledMacroLibrary } from './untitledMacroLibrary';
 
@@ -108,17 +109,19 @@ export class MacroExplorerTreeDataProvider
 
     if (!element) {
       children = [...this.context.libraryManager.libraries.get()].sort((a, b) =>
-        a.name.localeCompare(b.name),
+        NaturalComparer.compare(a.name, b.name),
       );
       children.push(this.untitledLibrary);
     } else if (element instanceof MacroLibrary) {
       const uris = await element.getFiles();
-      children = uris.map((uri) => new Macro(uri)).sort((a, b) => a.name.localeCompare(b.name));
+      children = uris
+        .map((uri) => new Macro(uri))
+        .sort((a, b) => NaturalComparer.compare(a.name, b.name));
       const entry = this.ensureLibraryIsMonitored(element);
       entry.files = new Set(children.map((macro) => macro.id));
     } else if (element instanceof Macro) {
       const runner = this.context.runnerManager.getRunner(element);
-      children = [...runner.runInstances].sort((a, b) => a.id.localeCompare(b.id));
+      children = [...runner.runInstances].sort((a, b) => NaturalComparer.compare(a.id, b.id));
     } else {
       children = [];
     }
