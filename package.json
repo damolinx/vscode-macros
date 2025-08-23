@@ -281,9 +281,14 @@
       ],
       "view/title": [
         {
+          "command": "macros.new.macro.repl",
+          "when": "view == macros.macroExplorer",
+          "group": "1_tools"
+        },
+        {
           "command": "macros.sourceDirectories.settings",
-          "group": "navigation",
-          "when": "view == macros.macroExplorer"
+          "when": "view == macros.macroExplorer",
+          "group": "9_settings"
         }
       ]
     },

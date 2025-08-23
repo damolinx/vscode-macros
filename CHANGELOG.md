@@ -1,5 +1,8 @@
 # Changelog
 
+##
+- Add `New REPL Terminal` to `Macro Explorer`.
+
 ## 0.4.3
 - `Macro Explorer` view:
   - Library nodes use `~/` on descriptions for simplicity in non-Windows platforms.
