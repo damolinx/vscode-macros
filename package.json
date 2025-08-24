@@ -367,30 +367,6 @@
           }
         ]
       }
-    ],
-    "languageModelTools": [
-      {
-        "name": "create_macro_from_template",
-        "toolReferenceName": "createMacro",
-        "tags": [
-          "macro",
-          "create"
-        ],
-        "displayName": "Create a Macro from a known template",
-        "modelDescription": "Given a macro template name, return the code for the macro",
-        "inputSchema": {
-          "type": "object",
-          "properties": {
-            "path": {
-              "type": "string",
-              "description": "Template path"
-            }
-          },
-          "required": [
-            "path"
-          ]
-        }
-      }
     ]
   },
   "scripts": {

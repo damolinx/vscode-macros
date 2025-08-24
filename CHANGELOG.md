@@ -1,10 +1,13 @@
 # Changelog
 
 ## 0.4.4
-- Use natural sorting in UI lists. 
+- Improve `@macros` chat agent accuracy when supportign macros.
+  - `/create` tool is a shotcut for template-based creation.
+
 - `Macro Explorer` view:
   - Add `New REPL Terminal` command.
   - Update handling change events.
+- Use natural sorting in UI lists.
 
 ## 0.4.3
 - `Macro Explorer` view:
@@ -17,19 +20,19 @@
 
 ## 0.4.2
 - `Macro Explorer` view:
-  - `Temporary` virtual library tracks untitled macros created with `New Macro` command. 
+  - `Temporary` virtual library tracks untitled macros created with `New Macro` command.
   - Fix: Untitled files removed on run stop when editor still open.
-- More interesting `Cancellation` template. 
+- More interesting `Cancellation` template.
 
 ## 0.4.1
 - `Macro Explorer` view:
-  - Add `Temporary` node to complete macro-management. 
+  - Add `Temporary` node to complete macro-management.
   - Display parent path as description for library nodes to disambiguate duplicate names.
   - Hide `Reveal` commands in Remote scenarios.
-- Fix: `Cancellation` template incorrect use of `withProgress` API. 
+- Fix: `Cancellation` template incorrect use of `withProgress` API.
 
 ## 0.4.0
-- Add `Macro Explorer` view. 
+- Add `Macro Explorer` view.
 
 ## 0.3.5
 - Automatically set up target directory when saving a `.macro.js` file, provided that `macros.sourceDirectories.verify` is enabled.

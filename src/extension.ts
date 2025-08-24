@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 import { existsSync } from 'fs';
 import { registerMacroChatParticipant } from './ai/macroChatParticipant';
-import { registerMacroCreateLanguageModelTool } from './ai/macroCreateTool';
 import { createMacro, updateActiveEditor } from './commands/createMacro';
 import { createRepl } from './commands/createRepl';
 import { debugActiveEditor, debugMacro } from './commands/debugMacro';
@@ -46,7 +45,6 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
   extensionContext.subscriptions.push(
     // AI
     registerMacroChatParticipant(context),
-    registerMacroCreateLanguageModelTool(context),
     // Explorer
     ...registerMacroExplorerTreeview(context),
     // Macro File Helpers
