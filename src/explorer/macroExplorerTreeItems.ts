@@ -14,7 +14,7 @@ export function getLibraryItem({ uri }: MacroLibrary) {
   } else {
     item.label = 'Temporary';
     item.contextValue += ',untitled';
-    item.tooltip = 'In-memory macro documents.';
+    item.tooltip = 'Unsaved macros. Save as .macro.js to enable autocomplete,\nIntelliSense, and macro tooling.';
     item.iconPath = new vscode.ThemeIcon('server-process');
   }
   return item;
