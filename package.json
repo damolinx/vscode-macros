@@ -67,7 +67,7 @@
       },
       {
         "command": "macros.new.macro.repl",
-        "title": "New REPL Terminal",
+        "title": "New REPL",
         "category": "Macros"
       },
       {

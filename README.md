@@ -92,7 +92,7 @@ See [Debugging a Macro](#debugging-a-macro) for additional information.
 
 #### Development
 
-* **Macros: New REPL Terminal**: start a REPL whose context matches the one used when running macros.
+* **Macros: New REPL**: start a REPL whose context matches the one used when running macros.
   * Use `.help` for list of available commands.
 * **Macros: Setup Source Directory for Development**: adds or updates optional files used to improve IntelliSense on macro files. This action is run automatically in the background when saving a `.macro.js` file, provided that `macros.sourceDirectories.verify` is enabled.
 
@@ -113,7 +113,7 @@ See [Debugging a Macro](#debugging-a-macro) for additional information.
 The **Macro Explorer** provides a central management view for macros. You can use the **Macros: Show Macro Explorer** command to bring it into view.
 
 * **Macro Library Folders**: configure macro folders, browse their contents, and quickly add, delete, or move macro files around using drag-and-drop.
-  * **"Temporary"**: this is a virtual library node that shows all `untitled` macro documents allowing to easily manage all your in-memory macros.  
+  * **"Temporary"**: this is a virtual library node that shows all `untitled` macro documents allowing to easily manage all your in-memory macros.
 
 * **Macros**: edit, run, or debug macros with a once-click.
 

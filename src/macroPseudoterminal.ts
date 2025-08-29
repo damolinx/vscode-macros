@@ -60,6 +60,8 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
       return;
     }
 
+    this.onDidWriteEmitter.fire('Macro REPL — same APIs as in a macro file ara available\r\nType .help for available commands\r\n\r\n');
+
     const input = new PassThrough();
     const output = new PassThrough({ encoding: 'utf-8' }).on('data', (chunk: string) =>
       this.onDidWriteEmitter.fire(chunk.replaceAll('\n', '\r\n')),
@@ -113,9 +115,10 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     replServer.defineCommand('save', {
       help: 'Save all evaluated commands into a new editor',
       action: async () => {
-        const nonCommandStmts = replServer.history?.filter((s) => !s.startsWith('.'));
+        const nonCommandStmts = replServer.history?.filter((s) => !s.trimStart().startsWith('.'));
         if (nonCommandStmts?.length) {
-          await createMacro(this.context, nonCommandStmts.reverse().join('\n'), {
+          await createMacro(this.context, undefined, {
+            content: `\n// History: ${new Date().toLocaleString()}\n\n` + nonCommandStmts.reverse().join('\n'),
             preserveFocus: true,
           });
         } else {

@@ -1,9 +1,16 @@
 # Changelog
 
+## 0.4.5
+- REPL:
+  - Rename command to `New REPL`.
+  - Help header.
+  - `.save` includes a time hint.
+  - Fix: `.save` opens up the template selector instead of an editor with the command history.
+  - Fix: leading spaces leads to internal commands beign saved.
+
 ## 0.4.4
 - Improve `@macros` chat agent accuracy when supportign macros.
   - `/create` tool is a shotcut for template-based creation.
-
 - `Macro Explorer` view:
   - Add `New REPL Terminal` command.
   - Update handling change events.

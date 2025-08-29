@@ -16,10 +16,10 @@ export async function createMacro(
   context: ExtensionContext,
   locator?: Locator,
   options?: vscode.TextDocumentShowOptions & {
-    defaultContent?: string;
+    content?: string;
   },
 ): Promise<void> {
-  const content = options?.defaultContent ?? (await getTemplateContent(context));
+  const content = options?.content ?? (await getTemplateContent(context));
   if (!content) {
     return;
   }
