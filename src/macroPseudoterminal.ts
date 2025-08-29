@@ -4,7 +4,7 @@ import { PassThrough } from 'stream';
 import { Context } from 'vm';
 import { MacrosLogOutputChannel } from './api/macroLogOutputChannel';
 import { createMacro } from './commands/createMacro';
-import { initalizeContext, MacroContextInitParams } from './core/execution/macroRunContext';
+import { initializeContext, MacroContextInitParams } from './core/execution/macroRunContext';
 import { ExtensionContext } from './extensionContext';
 import { showMacroQuickPick } from './ui/dialogs';
 
@@ -149,6 +149,6 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     // REPL's context contains additional values that would not normally be
     // available to a macro and could cause confusion, so resetting first.
     Object.keys(context).forEach((k) => delete context[k]);
-    initalizeContext(context, this.macroInitParams);
+    initializeContext(context, this.macroInitParams);
   }
 }

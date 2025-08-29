@@ -5,7 +5,7 @@ import { MacrosLogOutputChannel } from '../../api/macroLogOutputChannel';
 import { ExtensionContext } from '../../extensionContext';
 import { Macro } from '../macro';
 import { MacroOptions } from '../macroOptions';
-import { initalizeContext, initializeMacrosApi, MacroContextInitParams } from './macroRunContext';
+import { initializeContext, initializeMacrosApi, MacroContextInitParams } from './macroRunContext';
 import { MacroRunId, MacroRunInfo, MacroRunResult } from './macroRunInfo';
 
 export class MacroRunner implements vscode.Disposable {
@@ -40,12 +40,12 @@ export class MacroRunner implements vscode.Disposable {
       if (this.sharedMacroContext) {
         initializeMacrosApi(this.sharedMacroContext, params);
       } else {
-        this.sharedMacroContext = initalizeContext({}, params);
+        this.sharedMacroContext = initializeContext({}, params);
       }
       context = this.sharedMacroContext;
     } else {
       delete this.sharedMacroContext;
-      context = initalizeContext({}, params);
+      context = initializeContext({}, params);
     }
 
     return vm.createContext(context, { name });

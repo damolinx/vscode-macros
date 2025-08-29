@@ -12,7 +12,7 @@ export interface MacroContextInitParams {
   uri?: vscode.Uri;
 }
 
-export function initalizeContext(
+export function initializeContext(
   context: vm.Context,
   params: MacroContextInitParams,
 ): MacroContext {
