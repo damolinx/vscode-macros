@@ -60,7 +60,9 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
       return;
     }
 
-    this.onDidWriteEmitter.fire('Macro REPL — same APIs as in a macro file ara available\r\nType .help for available commands\r\n\r\n');
+    this.onDidWriteEmitter.fire(
+      'Macro REPL — same APIs as in a macro file ara available\r\nType .help for available commands\r\n\r\n',
+    );
 
     const input = new PassThrough();
     const output = new PassThrough({ encoding: 'utf-8' }).on('data', (chunk: string) =>
@@ -118,7 +120,9 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
         const nonCommandStmts = replServer.history?.filter((s) => !s.trimStart().startsWith('.'));
         if (nonCommandStmts?.length) {
           await createMacro(this.context, undefined, {
-            content: `\n// History: ${new Date().toLocaleString()}\n\n` + nonCommandStmts.reverse().join('\n'),
+            content:
+              `\n// History: ${new Date().toLocaleString()}\n\n` +
+              nonCommandStmts.reverse().join('\n'),
             preserveFocus: true,
           });
         } else {
