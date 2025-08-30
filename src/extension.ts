@@ -16,7 +16,7 @@ import {
 } from './commands/setupSourceDirectory';
 import { showRunningMacros } from './commands/showRunningMacros';
 import { stopMacro } from './commands/stopMacro';
-import { MACRO_DOCUMENT_SELECTOR, MACRO_LANGUAGES } from './core/constants';
+import { MACRO_DOCUMENT_SELECTOR } from './core/constants';
 import { MacroRunInfo } from './core/execution/macroRunInfo';
 import { SOURCE_DIRS_CONFIG } from './core/library/macroLibraryManager';
 import { expandConfigPaths } from './core/library/utils';
@@ -26,6 +26,7 @@ import {
   registerMacroExplorerTreeview,
 } from './explorer/macroExplorerTreeView';
 import { ExtensionContext } from './extensionContext';
+import { registerSetContextHandlers } from './extensionContextKeys';
 import { MacroStatusBarItem } from './macroStatusBarItem';
 import { registerDTSCodeActionProvider } from './providers/dtsCodeActionProvider';
 import { registerExecuteCommandCompletionProvider } from './providers/executeCommandCompletionProvider';
@@ -53,10 +54,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     registerExecuteCommandCompletionProvider(MACRO_DOCUMENT_SELECTOR),
     registerMacroOptionsCompletionProvider(MACRO_DOCUMENT_SELECTOR),
     // Context Helper
-    vscode.window.onDidChangeActiveTextEditor((e) => {
-      const isLangSupported = e && MACRO_LANGUAGES.includes(e.document.languageId);
-      vscode.commands.executeCommand('setContext', 'macros:supportedEditorLangId', isLangSupported);
-    }),
+    ...registerSetContextHandlers(context),
   );
 
   const {
@@ -99,7 +97,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
   await runStartupMacros(context);
 }
 
-async function runStartupMacros(context: ExtensionContext) {
+async function runStartupMacros(context: ExtensionContext): Promise<void> {
   const paths = expandConfigPaths('macros.startupMacros');
   if (paths.length === 0) {
     context.log.info('No startup macros to execute — none registered');
