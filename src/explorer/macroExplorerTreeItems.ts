@@ -3,14 +3,18 @@ import { MacroRunInfo } from '../core/execution/macroRunInfo';
 import { MacroRunner } from '../core/execution/macroRunner';
 import { MacroLibrary } from '../core/library/macroLibrary';
 import { Macro } from '../core/macro';
-import { asTildeRelativePath, asWorkspaceRelativePath, isUntitled, uriDirname } from '../utils/uri';
+import {
+  asTildeRelativePath,
+  asWorkspaceRelativePath,
+  isUntitled,
+  toParentUri,
+} from '../utils/uri';
 
 export function getLibraryItem({ uri }: MacroLibrary) {
   const item = new vscode.TreeItem(uri, vscode.TreeItemCollapsibleState.Collapsed);
   item.contextValue = 'macroLibrary';
   if (!isUntitled(uri)) {
-    item.description =
-      asTildeRelativePath(uri) || asWorkspaceRelativePath(uri.with({ path: uriDirname(uri) }));
+    item.description = asTildeRelativePath(uri) || asWorkspaceRelativePath(toParentUri(uri));
   } else {
     item.label = 'Temporary';
     item.contextValue += ',untitled';

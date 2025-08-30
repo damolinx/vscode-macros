@@ -2,17 +2,17 @@ import * as vscode from 'vscode';
 import { MACROS_FILTER } from '../core/constants';
 import { MacroRunner } from '../core/execution/macroRunner';
 import { MacroLibraryManager } from '../core/library/macroLibraryManager';
-import { MacroOptions } from '../core/macroOptions';
+import { MacroCode } from '../core/macroCode';
 import { showMacroErrorMessage } from './errors';
 import { selectMacroFile } from './selectMacroFile';
 import { OpenMacroOptions } from './ui';
 
 export function showMacroErrorDialog(
   runner: MacroRunner,
-  macroOptions: MacroOptions,
+  macroCode: MacroCode,
   error: Error | string,
 ): Promise<void> {
-  return showMacroErrorMessage(runner, macroOptions, error);
+  return showMacroErrorMessage(runner, macroCode, error);
 }
 
 export async function showMacroOpenDialog(

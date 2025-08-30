@@ -66,14 +66,18 @@ export function toPath(pathOrUri: PathLike): string {
   return pathOrUri instanceof vscode.Uri ? pathOrUri.fsPath : pathOrUri;
 }
 
+export function toParentUri(pathOrUri: PathLike): vscode.Uri {
+  const uri = toUri(pathOrUri);
+  return uri.with({ path: uriDirname(uri) });
+}
+
 export function toUri(pathOrUri: PathLike): vscode.Uri {
-  return pathOrUri instanceof vscode.Uri ? pathOrUri : vscode.Uri.file(pathOrUri);
+  return pathOrUri instanceof vscode.Uri ? pathOrUri : vscode.Uri.parse(pathOrUri);
 }
 
 export function uriBasename(pathOrUri: PathLike, removeExtension = false): string {
-  return pathOrUri instanceof vscode.Uri
-    ? posix.basename(pathOrUri.path, removeExtension ? posix.extname(pathOrUri.path) : undefined)
-    : path.basename(pathOrUri, removeExtension ? path.extname(pathOrUri) : undefined);
+  const uri = toUri(pathOrUri);
+  return posix.basename(uri.path, removeExtension ? posix.extname(uri.path) : undefined);
 }
 
 export function uriEqual(a: vscode.Uri, b: vscode.Uri): boolean {

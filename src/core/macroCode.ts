@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as ts from 'typescript';
 import { Lazy } from '../utils/lazy';
+import { uriBasename, toParentUri } from '../utils/uri';
 import { getMacroId, MacroId } from './macroId';
 import { MacroOptions, parseOptions } from './macroOptions';
 
@@ -29,15 +30,15 @@ export class MacroCode {
    */
   public getRunnableCode(): string {
     if (this.transpileDiags?.length) {
-      throw new Error(formatDiagnostics(this.transpileDiags));
+      throw new Error(formatDiagnostics(this.transpileDiags, this.macroId));
     }
 
     if (!this.runnableCode) {
       if (this.languageId === 'typescript') {
-        const [code, diags] = transpile(this.rawCode);
+        const [code, diags] = transpile(this.rawCode, this.macroId);
         if (diags) {
           this.transpileDiags = diags;
-          throw new Error(formatDiagnostics(this.transpileDiags));
+          throw new Error(formatDiagnostics(this.transpileDiags, this.macroId));
         }
         this.runnableCode = code;
       } else {
@@ -47,18 +48,30 @@ export class MacroCode {
 
     return this.runnableCode;
 
-    function formatDiagnostics(diags: ts.Diagnostic[]): string {
+    function formatDiagnostics(diags: ts.Diagnostic[], macroId: MacroId): string {
       return ts.formatDiagnostics(diags, {
-        getCurrentDirectory: () => process.cwd(),
+        getCurrentDirectory: () => toParentUri(macroId).toString(),
         getCanonicalFileName: (f) => f,
         getNewLine: () => '\n',
       });
     }
 
-    function transpile(code: string): [string, undefined] | [undefined, ts.Diagnostic[]] {
-      const diags: ts.Diagnostic[] = [];
-      const transpiledCode = ts.transpile(code, {}, undefined, diags);
-      return diags.length ? [undefined, diags] : [transpiledCode, undefined];
+    function transpile(
+      code: string,
+      macroId: MacroId,
+    ): [string, undefined] | [undefined, ts.Diagnostic[]] {
+      const result = ts.transpileModule(code, {
+        compilerOptions: {
+          target: ts.ScriptTarget.ES2024,
+          module: ts.ModuleKind.None,
+        },
+        fileName: uriBasename(macroId),
+        reportDiagnostics: true,
+      });
+
+      return result.diagnostics?.length
+        ? [undefined, result.diagnostics]
+        : [result.outputText, undefined];
     }
   }
 

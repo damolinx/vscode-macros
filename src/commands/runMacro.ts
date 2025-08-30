@@ -22,7 +22,7 @@ export async function runMacro(
     const code = macroCode.getRunnableCode();
     await runner.run(code, macroCode.options, startup);
   } catch (error: any) {
-    await showMacroErrorDialog(runner, macroCode.options, error as Error | string);
+    await showMacroErrorDialog(runner, macroCode, error as Error | string);
   }
 }
 
