@@ -17,7 +17,7 @@ export class MacroRunnerManager implements vscode.Disposable {
     this.context = context;
     this.runners = new Map();
     vscode.workspace.onDidCloseTextDocument((doc) => {
-      if (doc.isUntitled && MACRO_LANGUAGES.some((lang) => doc.languageId === lang)) {
+      if (doc.isUntitled && MACRO_LANGUAGES.includes(doc.languageId)) {
         this.cleanUpMacroRunner(doc.uri);
       }
     });
@@ -41,7 +41,7 @@ export class MacroRunnerManager implements vscode.Disposable {
     const macroId = getMacroId(uri);
     const runner = this.runners.get(macroId);
     if (runner) {
-      if (runner.runInstanceCount > 0) {
+      if (runner.runInstanceCount === 0) {
         runner.dispose();
         this.runners.delete(macroId);
       } else {

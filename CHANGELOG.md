@@ -2,6 +2,7 @@
 
 ## 0.4.6
 - Support for TypeScript macros.
+- Fix: Prevent orphaned run when untitled macro editor is closed.
 
 ## 0.4.5
 - REPL:
