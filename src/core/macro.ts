@@ -20,6 +20,11 @@ export class Macro {
     }
   }
 
+  /**
+   * Returns a {@link MacroCode} snapshot of the current state of the document
+   * associated with this macro's {@link uri}. A new instance may be returned
+   * if cached one is stale.
+   */
   public async getCode(): Promise<MacroCode> {
     const document = await vscode.workspace.openTextDocument(this.uri);
     if (!this.code?.isCurrentForKnown(document)) {

@@ -16,7 +16,7 @@ import {
 } from './commands/setupSourceDirectory';
 import { showRunningMacros } from './commands/showRunningMacros';
 import { stopMacro } from './commands/stopMacro';
-import { MACRO_DOCUMENT_SELECTOR } from './core/constants';
+import { MACRO_DOCUMENT_SELECTOR, MACRO_LANGUAGES } from './core/constants';
 import { MacroRunInfo } from './core/execution/macroRunInfo';
 import { SOURCE_DIRS_CONFIG } from './core/library/macroLibraryManager';
 import { expandConfigPaths } from './core/library/utils';
@@ -52,6 +52,11 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     registerDTSCodeActionProvider(MACRO_DOCUMENT_SELECTOR),
     registerExecuteCommandCompletionProvider(MACRO_DOCUMENT_SELECTOR),
     registerMacroOptionsCompletionProvider(MACRO_DOCUMENT_SELECTOR),
+    // Context Helper
+    vscode.window.onDidChangeActiveTextEditor((e) => {
+      const isLangSupported = e && MACRO_LANGUAGES.includes(e.document.languageId);
+      vscode.commands.executeCommand('setContext', 'macros:supportedEditorLangId', isLangSupported);
+    })
   );
 
   const {
@@ -75,7 +80,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.run.activeEditor', () => runActiveEditor(context)),
     cr('macros.run.mru', () => runMacro(context, context.mruMacro)),
     cr('macros.run.show', () => showRunningMacros(context)),
-    cr('macros.showmacroExplorer', () =>
+    cr('macros.showMacroExplorer', () =>
       vscode.commands.executeCommand(`${MACRO_EXPLORER_VIEW_ID}.focus`),
     ),
     cr('macros.sourceDirectories.settings', () =>

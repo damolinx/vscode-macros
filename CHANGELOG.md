@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.4.6
+- Support for TypeScript macros.
+
 ## 0.4.5
 - REPL:
   - Rename command to `New REPL`.

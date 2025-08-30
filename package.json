@@ -44,7 +44,7 @@
         "command": "macros.debug.activeEditor",
         "title": "Debug Active Editor as a Macro",
         "category": "Macros",
-        "enablement": "!inDebugMode && editorLangId == javascript && resourceScheme != untitled",
+        "enablement": "!inDebugMode && resourceScheme != untitled && macros:supportedEditorLangId",
         "icon": "$(debug-alt)"
       },
       {
@@ -63,7 +63,7 @@
         "command": "macros.new.macro.activeEditor",
         "title": "Fill File with Template",
         "category": "Macros",
-        "when": "editorLangId == javascript && (resourceScheme == untitled || resourceFilename =~ /.macro.js$/)"
+        "when": "macros:supportedEditorLangId && (resourceScheme == untitled || resourceFilename =~ /\\.macro\\.(js|ts)$/)"
       },
       {
         "command": "macros.new.macro.repl",
@@ -100,7 +100,7 @@
         "command": "macros.run.activeEditor",
         "title": "Run Active File as a Macro",
         "category": "Macros",
-        "enablement": "editorLangId == javascript",
+        "enablement": "macros:supportedEditorLangId && (resourceScheme == untitled || resourceFilename =~ /\\.macro\\.(js|ts)$/)",
         "icon": "$(run-all)"
       },
       {
@@ -115,7 +115,7 @@
         "category": "Macros"
       },
       {
-        "command": "macros.showmacroExplorer",
+        "command": "macros.showMacroExplorer",
         "title": "Show Macro Explorer",
         "category": "Macros"
       },
@@ -202,24 +202,12 @@
         {
           "command": "macros.debug.activeEditor",
           "group": "navigation",
-          "when": "!inDebugMode && resourceFilename =~ /.macro.js$/"
+          "when": "!inDebugMode && resourceFilename =~ /\\.macro\\.(js|ts)$/"
         },
         {
           "command": "macros.run.activeEditor",
           "group": "navigation",
-          "when": "editorLangId == javascript && (resourceScheme == untitled || resourceFilename =~ /.macro.js$/)"
-        }
-      ],
-      "explorer/context": [
-        {
-          "command": "macros.debug",
-          "when": "!inDebugMode && resourceLangId == javascript && resourceFilename =~ /.macro.js$/",
-          "group": "macro@2"
-        },
-        {
-          "command": "macros.run",
-          "when": "resourceLangId == javascript && resourceFilename =~ /.macro.js$/",
-          "group": "macro@1"
+          "when": "macros:supportedEditorLangId && (resourceScheme == untitled || resourceFilename =~ /\\.macro\\.(js|ts)$/)"
         }
       ],
       "view/item/context": [

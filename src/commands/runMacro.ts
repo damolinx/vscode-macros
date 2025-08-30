@@ -16,12 +16,13 @@ export async function runMacro(
   }
 
   const runner = runnerManager.getRunner(uri);
-  const { code, options } = await runner.macro.getCode();
+  const macroCode = await runner.macro.getCode();
 
   try {
-    await runner.run(code, options, startup);
+    const code = macroCode.getRunnableCode();
+    await runner.run(code, macroCode.options, startup);
   } catch (error: any) {
-    await showMacroErrorDialog(runner, options, error as Error | string);
+    await showMacroErrorDialog(runner, macroCode.options, error as Error | string);
   }
 }
 
