@@ -1,50 +1,30 @@
 import * as vscode from 'vscode';
 import { uriBasename } from '../utils/uri';
-import { MacroOptions, parseOptions } from './macroOptions';
-
-export type MacroId = string;
-
-export function getMacroId(uri: vscode.Uri): string {
-  return uri.toString(true);
-}
+import { MacroCode } from './macroCode';
+import { getMacroId, MacroId } from './macroId';
 
 export class Macro {
-  private code?: string;
-  private options?: MacroOptions;
-  private version?: number;
-
+  private code?: MacroCode;
   public readonly id: MacroId;
   public readonly name: string;
   public readonly uri: vscode.Uri;
 
-  constructor(uri: vscode.Uri) {
-    this.id = getMacroId(uri);
-    this.name = uriBasename(uri, true);
-    this.uri = uri;
+  constructor(uriOrDocument: vscode.Uri | vscode.TextDocument, id?: MacroId) {
+    const isUri = uriOrDocument instanceof vscode.Uri;
+    this.uri = isUri ? uriOrDocument : uriOrDocument.uri;
+    this.id = id ?? getMacroId(this.uri);
+    this.name = uriBasename(this.uri, true);
+
+    if (!isUri) {
+      this.code = new MacroCode(uriOrDocument, this.id);
+    }
   }
 
-  private async ensureCodeIsUpToDate(): Promise<boolean> {
-    let updated = false;
+  public async getCode(): Promise<MacroCode> {
     const document = await vscode.workspace.openTextDocument(this.uri);
-    if (document.version !== this.version || !this.code) {
-      this.code = document.getText().trim();
-      this.options = undefined;
-      this.version = document.version;
-      updated = true;
+    if (!this.code?.isCurrentForKnown(document)) {
+      this.code = new MacroCode(document, this.id);
     }
-    return updated;
-  }
-
-  public async getCode(): Promise<string> {
-    await this.ensureCodeIsUpToDate();
-    return this.code!;
-  }
-
-  public async getOptions(): Promise<MacroOptions> {
-    const updated = await this.ensureCodeIsUpToDate();
-    if (updated || !this.options) {
-      this.options = parseOptions(this.code!);
-    }
-    return this.options;
+    return this.code;
   }
 }

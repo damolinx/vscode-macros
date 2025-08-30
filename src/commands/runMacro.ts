@@ -1,10 +1,10 @@
 import { ExtensionContext } from '../extensionContext';
 import { showMacroErrorDialog, showMacroQuickPick } from '../ui/dialogs';
 import { activeMacroEditor } from '../utils/activeMacroEditor';
-import { asWorkspaceRelativePath, fromLocator, Locator, toUri } from '../utils/uri';
+import { fromLocator, Locator, toUri } from '../utils/uri';
 
 export async function runMacro(
-  { libraryManager, log, runnerManager, mruMacro }: ExtensionContext,
+  { libraryManager, runnerManager, mruMacro }: ExtensionContext,
   locator?: Locator,
   startup?: true,
 ) {
@@ -16,12 +16,7 @@ export async function runMacro(
   }
 
   const runner = runnerManager.getRunner(uri);
-  const [code, options] = await runner.getMacroCode();
-
-  if (code.length === 0) {
-    log.warn('Cannot run empty macro —', asWorkspaceRelativePath(runner.macro));
-    return;
-  }
+  const { code, options } = await runner.macro.getCode();
 
   try {
     await runner.run(code, options, startup);

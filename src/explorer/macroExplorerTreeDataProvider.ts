@@ -2,7 +2,8 @@ import * as vscode from 'vscode';
 import { MacroRunInfo } from '../core/execution/macroRunInfo';
 import { MacroRunner } from '../core/execution/macroRunner';
 import { MacroLibrary, MacroLibraryId } from '../core/library/macroLibrary';
-import { getMacroId, Macro, MacroId } from '../core/macro';
+import { Macro } from '../core/macro';
+import { MacroId, getMacroId } from '../core/macroId';
 import { ExtensionContext } from '../extensionContext';
 import { NaturalComparer } from '../utils/ui';
 import { getLibraryItem, getMacroItem, getRunItem } from './macroExplorerTreeItems';
@@ -73,7 +74,7 @@ export class MacroExplorerTreeDataProvider
           const macroId = getMacroId(uri);
           if (!files.has(macroId)) {
             files.add(macroId);
-            this.fireOnDidChangeTreeData(new Macro(uri), library);
+            this.fireOnDidChangeTreeData(new Macro(uri, macroId), library);
           }
         }
       };
@@ -128,7 +129,7 @@ export class MacroExplorerTreeDataProvider
         .map((uri) => new Macro(uri))
         .sort((a, b) => NaturalComparer.compare(a.name, b.name));
       const entry = this.ensureLibraryIsMonitored(element);
-      entry.files = new Set(children.map((macro) => macro.id));
+      entry.files = new Set((children as Macro[]).map((macro) => macro.id));
     } else if (element instanceof Macro) {
       const runner = this.context.runnerManager.getRunner(element);
       children = [...runner.runInstances].sort((a, b) => NaturalComparer.compare(a.id, b.id));

@@ -22,7 +22,7 @@ declare global {
   /**
    * ID of macro run.
    */
-  const __runId: MacroRunId;
+  const __runId: string;
 
   /**
    * Macro run was triggered on startup.

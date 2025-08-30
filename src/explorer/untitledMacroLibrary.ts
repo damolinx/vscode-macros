@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { isCreatingMacro } from '../commands/createMacro';
 import { MacroLibrary } from '../core/library/macroLibrary';
-import { getMacroId, MacroId } from '../core/macro';
+import { getMacroId, MacroId } from '../core/macroId';
 import { ExtensionContext } from '../extensionContext';
 import { isUntitled, uriEqual, UriLocator } from '../utils/uri';
 

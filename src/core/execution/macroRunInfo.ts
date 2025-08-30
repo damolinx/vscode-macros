@@ -1,8 +1,7 @@
 import * as vscode from 'vscode';
 import { Macro } from '../macro';
 import { MacroOptions } from '../macroOptions';
-
-export type MacroRunId = string;
+import { MacroRunId } from './macroRunId';
 
 export interface MacroRunSnapshot {
   code: string;

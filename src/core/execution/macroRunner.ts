@@ -6,7 +6,8 @@ import { ExtensionContext } from '../../extensionContext';
 import { Macro } from '../macro';
 import { MacroOptions } from '../macroOptions';
 import { initializeContext, initializeMacrosApi, MacroContextInitParams } from './macroRunContext';
-import { MacroRunId, MacroRunInfo, MacroRunResult } from './macroRunInfo';
+import { getMacroRunId, MacroRunId } from './macroRunId';
+import { MacroRunInfo, MacroRunResult } from './macroRunInfo';
 
 export class MacroRunner implements vscode.Disposable {
   private readonly context: ExtensionContext;
@@ -51,10 +52,6 @@ export class MacroRunner implements vscode.Disposable {
     return vm.createContext(context, { name });
   }
 
-  public getMacroCode(): Promise<[string, MacroOptions]> {
-    return Promise.all([this.macro.getCode(), this.macro.getOptions()]);
-  }
-
   public onStartRun(listener: (runInfo: MacroRunInfo) => void): vscode.Disposable {
     return this.startEventEmitter.event(listener);
   }
@@ -82,7 +79,7 @@ export class MacroRunner implements vscode.Disposable {
 
     const runInfo: MacroRunInfo = {
       cts: new vscode.CancellationTokenSource(),
-      id: `${this.macro.name}@${startup ? 'startup' : (++this.index).toString().padStart(3, '0')}`,
+      id: getMacroRunId(this.macro.name, ++this.index, startup),
       macro: this.macro,
       snapshot: {
         code,

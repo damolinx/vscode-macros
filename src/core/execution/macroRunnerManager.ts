@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
 import { ExtensionContext } from '../../extensionContext';
 import { MACRO_EXTENSIONS, MACRO_LANGUAGES } from '../constants';
-import { getMacroId, Macro, MacroId } from '../macro';
+import { Macro } from '../macro';
+import { getMacroId, MacroId } from '../macroId';
 import { MacroRunInfo, MacroRunResult } from './macroRunInfo';
 import { MacroRunner } from './macroRunner';
 

@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import { MacroRunId } from '../core/execution/macroRunInfo';
 
 /**
  * Macro-API unique to a given macro run.
@@ -16,7 +15,7 @@ export interface MacrosApi {
   /**
    * ID of macro run.
    */
-  readonly __runId: MacroRunId;
+  readonly __runId: string;
   /**
    * Macro run was triggered on startup.
    */
