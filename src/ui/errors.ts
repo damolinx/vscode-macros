@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { MacroRunner } from '../core/execution/macroRunner';
 import { MacroOptions } from '../core/macroOptions';
+import { cleanError } from '../utils/errors';
 import { showTextDocument } from '../utils/vscodeEx';
 
 export function showMacroErrorMessage(
@@ -10,26 +11,22 @@ export function showMacroErrorMessage(
 ): Promise<void> {
   let message: string;
   let selection: vscode.Range | undefined;
-  let stack: string | undefined;
+  let filteredStack: string | undefined;
 
   if (typeof error === 'string') {
     message = error;
   } else {
-    message = error.message;
-    if (error.stack) {
-      stack = filterStack(error.stack);
-      selection = parseStack(stack);
+    const displayError = cleanError(error);
+    message = displayError.message;
+    if (displayError.stack) {
+      filteredStack = displayError.stack;
+      selection = findErrorLocation(displayError.stack);
     }
   }
 
-  return showErrorMessage(runner, message, stack, selection);
+  return showErrorMessage(runner, `Macro Error — ${message}`, filteredStack, selection);
 
-  function filterStack(stack: string): string {
-    const match = stack.match(/\n.+?vscode-macros/);
-    return match ? stack.slice(0, match.index) : stack;
-  }
-
-  function parseStack(stack: string): vscode.Range | undefined {
+  function findErrorLocation(stack: string): vscode.Range | undefined {
     const firstMatch = stack.match(/.+?:(?<line>\d+)(:(?<offset>\d+))?$/m);
     let position: vscode.Position | undefined;
     if (firstMatch) {

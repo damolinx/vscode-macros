@@ -56,7 +56,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     vscode.window.onDidChangeActiveTextEditor((e) => {
       const isLangSupported = e && MACRO_LANGUAGES.includes(e.document.languageId);
       vscode.commands.executeCommand('setContext', 'macros:supportedEditorLangId', isLangSupported);
-    })
+    }),
   );
 
   const {

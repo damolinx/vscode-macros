@@ -48,7 +48,7 @@ export class MacroCode {
     return this.runnableCode;
 
     function formatDiagnostics(diags: ts.Diagnostic[]): string {
-      return ts.formatDiagnosticsWithColorAndContext(diags, {
+      return ts.formatDiagnostics(diags, {
         getCurrentDirectory: () => process.cwd(),
         getCanonicalFileName: (f) => f,
         getNewLine: () => '\n',

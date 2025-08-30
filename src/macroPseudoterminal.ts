@@ -1,12 +1,14 @@
 import * as vscode from 'vscode';
 import { REPLServer, start as startREPL } from 'repl';
 import { PassThrough } from 'stream';
+import { inspect } from 'util';
 import { Context } from 'vm';
 import { MacrosLogOutputChannel } from './api/macroLogOutputChannel';
 import { createMacro } from './commands/createMacro';
 import { initializeContext, MacroContextInitParams } from './core/execution/macroRunContext';
 import { ExtensionContext } from './extensionContext';
 import { showMacroQuickPick } from './ui/dialogs';
+import { cleanError } from './utils/errors';
 
 type REPLServerWithHistory = REPLServer & { history?: string[] };
 
@@ -73,6 +75,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
       output,
       prompt: '\x1b[90m≫ \x1b[0m',
       terminal: true,
+      writer: (obj: any) => this.write(obj),
       useColors: true,
     }).on('exit', () => {
       this.onDidCloseEmitter.fire();
@@ -157,5 +160,18 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     // available to a macro and could cause confusion, so resetting first.
     Object.keys(context).forEach((k) => delete context[k]);
     initializeContext(context, this.macroInitParams);
+  }
+
+  private write(obj: any): string {
+    let targetObj = obj;
+    if (obj instanceof Error) {
+      targetObj = cleanError(obj);
+    }
+
+    return inspect(targetObj, {
+      colors: this.repl?.server.useColors,
+      compact: false,
+      depth: 2,
+    });
   }
 }

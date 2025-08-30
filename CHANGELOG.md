@@ -1,8 +1,9 @@
 # Changelog
 
 ## 0.4.6
-- Support for TypeScript macros.
-- Fix: Prevent orphaned macro run when untitled macro editor is closed.
+- Support TypeScript macros.
+- Error reporting now omits internal stack frames and noisy messages for cleaner diagnostics.
+- Fix: Prevent orphaned macro runs when backing untitled editor is closed.
 
 ## 0.4.5
 - REPL:
