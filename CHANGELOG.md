@@ -2,7 +2,7 @@
 
 ## 0.4.6
 - Support for TypeScript macros.
-- Fix: Prevent orphaned run when untitled macro editor is closed.
+- Fix: Prevent orphaned macro run when untitled macro editor is closed.
 
 ## 0.4.5
 - REPL:
@@ -10,11 +10,11 @@
   - Help header.
   - `.save` includes a time hint.
   - Fix: `.save` opens up the template selector instead of an editor with the command history.
-  - Fix: leading spaces leads to internal commands beign saved.
+  - Fix: leading spaces leads to internal commands being saved.
 
 ## 0.4.4
-- Improve `@macros` chat agent accuracy when supportign macros.
-  - `/create` tool is a shotcut for template-based creation.
+- Improve `@macros` chat agent accuracy when supporting macros.
+  - `/create` tool is a shortcut for template-based creation.
 - `Macro Explorer` view:
   - Add `New REPL Terminal` command.
   - Update handling change events.
@@ -32,7 +32,7 @@
 ## 0.4.2
 - `Macro Explorer` view:
   - `Temporary` virtual library tracks untitled macros created with `New Macro` command.
-  - Fix: Untitled files removed on run stop when editor still open.
+  - Fix: Untitled files are removed when a run stops, even if the editor is still open.
 - More interesting `Cancellation` template.
 
 ## 0.4.1
@@ -48,7 +48,7 @@
 ## 0.3.5
 - Automatically set up target directory when saving a `.macro.js` file, provided that `macros.sourceDirectories.verify` is enabled.
 - Security: Startup macros are disabled in untrusted workspaces.
-- Fix: `Macros: Open` » `Open …` drop down entry does not open selected file.
+- Fix: `Macros: Open` » `Open …` dropdown entry does not open selected file.
 
 ## 0.3.4
 - Upgrade minimum VS Code version to 1.99.
@@ -88,7 +88,7 @@
 
 ## 0.2.4
 - `macros` chat agent uses history as context.
-- Add autocomplete support for `executeCommand` method (command id -only).
+- Add autocomplete support for `executeCommand` method (command ID -only).
 - Macro templates are grouped by category.
 
 ## 0.2.3
