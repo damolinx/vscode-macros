@@ -1,13 +1,14 @@
 {
   "compilerOptions": {
     "module": "CommonJS",
-    "target": "ES2022",
+    "target": "ES2023",
     "allowJs": true,
     "checkJs": true,
     "noEmit": true,
   },
   "include": [
     "*.js",
+    "*.ts",
     "*.d.ts"
   ]
 }
