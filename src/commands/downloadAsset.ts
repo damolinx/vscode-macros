@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { get } from 'https';
-import { macroFilter } from '../core/language';
-import { isUntitled, PathLike, toParentUri, toUri, uriBasename } from '../utils/uri';
+import { macroFilter } from '../utils/ui';
+import { isUntitled, PathLike, parent, toUri, uriBasename } from '../utils/uri';
 import { saveTextEditor } from '../utils/vscodeEx';
 
 const NO_OPTION: vscode.MessageItem = { title: 'No', isCloseAffordance: true };
@@ -83,5 +83,5 @@ async function getDownloadLocation(macroPathOrUri: PathLike): Promise<vscode.Uri
     }
   }
 
-  return macroUri && toParentUri(macroUri);
+  return macroUri && parent(macroUri);
 }

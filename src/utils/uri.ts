@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import * as os from 'os';
 import * as path from 'path';
 import { posix } from 'path/posix';
 
@@ -16,40 +15,40 @@ export function fromLocator(locator: Locator): PathLike {
   }
 }
 
-export function asTildeRelativePath(pathOrUri: PathLike): string | undefined {
-  if (process.platform === 'win32') {
-    // Windows has no concept of `tilde` and VSCode uses some unique casing behaviors.
-    return;
-  }
-  const uri = toUri(pathOrUri);
-  if (uri.scheme !== 'file') {
-    return;
-  }
-
-  let homedir = os.homedir();
-  if (!homedir.endsWith(posix.sep)) {
-    homedir += posix.sep;
-  }
-
-  return uri.fsPath.startsWith(homedir)
-    ? `~${posix.sep}${uri.fsPath.slice(homedir.length)}`
-    : undefined;
+export function toPath(pathOrUri: PathLike): string {
+  return pathOrUri instanceof vscode.Uri ? pathOrUri.fsPath : pathOrUri;
 }
 
-export function asWorkspaceRelativePath(locator: Locator): string {
-  return vscode.workspace.asRelativePath(fromLocator(locator));
+export function toUri(pathOrUri: PathLike): vscode.Uri {
+  return pathOrUri instanceof vscode.Uri ? pathOrUri : vscode.Uri.file(pathOrUri);
 }
 
+/**
+ * Checks if two URIs should be considered equal.
+ */
+export function areUriEqual(locatorA: UriLocator, locatorB: UriLocator): boolean {
+  const a = locatorA instanceof vscode.Uri ? locatorA : locatorA.uri;
+  const b = locatorB instanceof vscode.Uri ? locatorB : locatorB.uri;
+  return a.scheme === b.scheme && a.authority === b.authority && a.path === b.path;
+}
+
+/**
+ * Check if {@link parent} is a aprent of {@link candidate}.
+ */
 export function isParent(parent: vscode.Uri, candidate: vscode.Uri): boolean {
   if (parent.scheme !== candidate.scheme || parent.authority !== candidate.authority) {
     return false;
   }
 
-  const normalizedParent = parent.scheme === 'file' ? normalize(parent.fsPath) : parent.path;
-  const normalizedCandidateParent =
-    candidate.scheme === 'file'
-      ? path.dirname(normalize(candidate.fsPath))
-      : posix.dirname(candidate.path);
+  let normalizedParent, normalizedCandidateParent: string;
+  if (parent.scheme === 'file') {
+    normalizedParent = normalize(parent.fsPath);
+    normalizedCandidateParent = normalize(path.dirname(candidate.fsPath));
+  } else {
+    normalizedParent = parent.path;
+    normalizedCandidateParent = posix.dirname(candidate.path);
+  }
+
   return normalizedParent === normalizedCandidateParent;
 
   function normalize(path: string) {
@@ -57,37 +56,37 @@ export function isParent(parent: vscode.Uri, candidate: vscode.Uri): boolean {
   }
 }
 
+/**
+ * Check if {@link locator} describes an `untitled:` document.
+ */
 export function isUntitled(locator: UriLocator): boolean {
   const { scheme } = locator instanceof vscode.Uri ? locator : locator.uri;
   return scheme === 'untitled';
 }
 
-export function toPath(pathOrUri: PathLike): string {
-  return pathOrUri instanceof vscode.Uri ? pathOrUri.fsPath : pathOrUri;
+/**
+ * Get parent URI.
+ */
+export function parent(locator: UriLocator): vscode.Uri {
+  const uri = locator instanceof vscode.Uri ? locator : locator.uri;
+  return uri.with({ path: posix.dirname(uri.path) });
 }
 
-export function toParentUri(pathOrUri: PathLike): vscode.Uri {
-  const uri = toUri(pathOrUri);
-  return uri.with({ path: uriDirname(uri) });
+/**
+ * Converts a string that represents a path or a URI into a {@link vscode.Uri}
+ * instance. This in particular handles Windows paths that confuse the
+ * {@link vscode.Uri.parse} method.
+ */
+export function resolveAsUri(pathOrUri: string): vscode.Uri {
+  const candidate = vscode.Uri.parse(pathOrUri);
+  return candidate.scheme.length > 1 ? candidate : vscode.Uri.file(pathOrUri);
 }
 
-export function toUri(pathOrUri: PathLike): vscode.Uri {
-  return pathOrUri instanceof vscode.Uri ? pathOrUri : vscode.Uri.file(pathOrUri);
-}
-
-export function uriBasename(pathOrUri: PathLike, removeExtension = false): string {
-  const uri = toUri(pathOrUri);
-  return posix.basename(uri.path, removeExtension ? posix.extname(uri.path) : undefined);
-}
-
-export function uriEqual(a: vscode.Uri, b: vscode.Uri): boolean {
-  return a.toString() === b.toString();
-}
-
-export function uriExtname(pathOrUri: PathLike): string {
-  return pathOrUri instanceof vscode.Uri ? posix.extname(pathOrUri.path) : path.extname(pathOrUri);
-}
-
-export function uriDirname(pathOrUri: PathLike): string {
-  return pathOrUri instanceof vscode.Uri ? posix.dirname(pathOrUri.path) : path.dirname(pathOrUri);
+/**
+ * Return the last portion of a path. Similar to the Unix basename command.
+ */
+export function uriBasename(pathOrUri: PathLike, removeExt?: true): string {
+  return pathOrUri instanceof vscode.Uri
+    ? posix.basename(pathOrUri.path, removeExt && posix.extname(pathOrUri.path))
+    : path.basename(pathOrUri, removeExt && path.extname(pathOrUri));
 }

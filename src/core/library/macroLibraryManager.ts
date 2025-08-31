@@ -1,31 +1,27 @@
 import * as vscode from 'vscode';
-import { Lazy } from '../../utils/lazy';
-import { UriLocator } from '../../utils/uri';
+import { LazyDisposable } from '../../utils/lazy';
 import { MacroLibrary } from './macroLibrary';
-import { expandConfigPaths } from './utils';
+import { loadConfigUris } from './utils';
 
 export const SOURCE_DIRS_CONFIG = 'macros.sourceDirectories';
 
 export class MacroLibraryManager implements vscode.Disposable {
+  private readonly _libraries: LazyDisposable<readonly MacroLibrary[]>;
   private readonly disposables: vscode.Disposable[];
-  public readonly libraries: Lazy<readonly MacroLibrary[]>;
   private readonly onDidChangeLibrariesEmitter: vscode.EventEmitter<void>;
 
   constructor() {
-    this.libraries = new Lazy(() => {
-      const expandedPaths = expandConfigPaths(SOURCE_DIRS_CONFIG);
-      return expandedPaths.map((root) => new MacroLibrary(vscode.Uri.file(root)));
-    });
+    this._libraries = new LazyDisposable(() =>
+      loadConfigUris(SOURCE_DIRS_CONFIG).map((root) => new MacroLibrary(root)),
+    );
     this.onDidChangeLibrariesEmitter = new vscode.EventEmitter();
 
     this.disposables = [
+      this._libraries,
       this.onDidChangeLibrariesEmitter,
       vscode.workspace.onDidChangeConfiguration((e) => {
         if (e.affectsConfiguration(SOURCE_DIRS_CONFIG)) {
-          if (this.libraries.isInitialized()) {
-            vscode.Disposable.from(...this.libraries.get()).dispose();
-            this.libraries.reset();
-          }
+          this._libraries.reset();
           this.onDidChangeLibrariesEmitter.fire();
         }
       }),
@@ -33,28 +29,25 @@ export class MacroLibraryManager implements vscode.Disposable {
   }
 
   dispose() {
-    if (this.libraries.isInitialized()) {
-      this.disposables.push(...this.libraries.get());
-    }
     vscode.Disposable.from(...this.disposables).dispose();
+  }
+
+  public async getFiles(): Promise<Record<string, vscode.Uri[]>> {
+    const files = await Promise.all(
+      this.libraries.map(async (lib) => [lib.uri.fsPath, await lib.getFiles()]),
+    );
+    return Object.fromEntries(files.filter(([_, files]) => files.length));
+  }
+
+  public get libraries(): readonly MacroLibrary[] {
+    return this._libraries.get();
+  }
+
+  public libraryFor(uri: vscode.Uri): MacroLibrary | undefined {
+    return this.libraries.find((lib) => lib.owns(uri));
   }
 
   public get onDidChangeLibraries(): vscode.Event<void> {
     return this.onDidChangeLibrariesEmitter.event;
-  }
-
-  public async getFiles(): Promise<Record<string, vscode.Uri[]>> {
-    const allFiles: Record<string, vscode.Uri[]> = {};
-    for (const library of this.libraries.get()) {
-      const files = await library.getFiles();
-      if (files.length) {
-        allFiles[library.uri.fsPath] = files;
-      }
-    }
-    return allFiles;
-  }
-
-  public getLibrary(locator: UriLocator): MacroLibrary | undefined {
-    return this.libraries.get().find((library) => library.owns(locator));
   }
 }

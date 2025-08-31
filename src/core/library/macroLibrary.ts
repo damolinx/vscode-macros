@@ -1,8 +1,7 @@
 import * as vscode from 'vscode';
 import { isParent, uriBasename, UriLocator } from '../../utils/uri';
-import { isMacroPath, macroGlobPattern } from '../language';
-
-export type MacroLibraryId = string;
+import { isMacro, macroGlobPattern } from '../language';
+import { getMacroLibraryId, MacroLibraryId } from './macroLibraryId';
 
 export class MacroLibrary implements vscode.Disposable {
   protected readonly disposables: vscode.Disposable[];
@@ -14,9 +13,9 @@ export class MacroLibrary implements vscode.Disposable {
   public readonly uri: vscode.Uri;
   private watcher?: vscode.FileSystemWatcher;
 
-  constructor(uri: vscode.Uri, id: string = uri.toString(true)) {
-    this.id = id;
-    this.name = uriBasename(uri);
+  constructor(uri: vscode.Uri, id?: MacroLibraryId, name?: string) {
+    this.id = id ?? getMacroLibraryId(uri);
+    this.name = name ?? uriBasename(uri);
     this.uri = uri;
 
     this.onDidCreateMacroEmitter = new vscode.EventEmitter();
@@ -37,8 +36,7 @@ export class MacroLibrary implements vscode.Disposable {
 
   protected ensureWatcher() {
     if (!this.watcher && this.uri.scheme === 'file') {
-      const pattern = new vscode.RelativePattern(this.uri, macroGlobPattern());
-      this.watcher = vscode.workspace.createFileSystemWatcher(pattern);
+      this.watcher = vscode.workspace.createFileSystemWatcher(macroGlobPattern(this.uri));
       this.watcher.onDidCreate((uri) => this.onDidCreateMacroEmitter.fire(uri));
       this.watcher.onDidChange((uri) => this.onDidChangeMacroEmitter.fire(uri));
       this.watcher.onDidDelete((uri) => this.onDidDeleteMacroEmitter.fire(uri));
@@ -53,8 +51,7 @@ export class MacroLibrary implements vscode.Disposable {
     return entries
       .filter(
         ([name, type]) =>
-          (type === vscode.FileType.File || type === vscode.FileType.SymbolicLink) &&
-          isMacroPath(name),
+          (type === vscode.FileType.File || type === vscode.FileType.SymbolicLink) && isMacro(name),
       )
       .map(([name, _]) => vscode.Uri.joinPath(this.uri, name));
   }

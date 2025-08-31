@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { uriEqual } from './uri';
+import { areUriEqual } from './uri';
 
 // Saving an editor with an untitled document will return a new editor, which
 // is confusing. This method will return the proper editor after saving.
@@ -32,7 +32,7 @@ export async function showTextDocument(
   options?: vscode.TextDocumentShowOptions,
 ): Promise<vscode.TextEditor> {
   const alreadyOpenEditor = vscode.window.visibleTextEditors.find((editor) =>
-    uriEqual(editor.document.uri, uri),
+    areUriEqual(editor.document, uri),
   );
 
   const editor = await vscode.window.showTextDocument(uri, {

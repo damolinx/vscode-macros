@@ -1,28 +1,43 @@
 import * as vscode from 'vscode';
+import * as os from 'os';
 import { MacroRunInfo } from '../core/execution/macroRunInfo';
 import { MacroRunner } from '../core/execution/macroRunner';
 import { MacroLibrary } from '../core/library/macroLibrary';
 import { Macro } from '../core/macro';
-import {
-  asTildeRelativePath,
-  asWorkspaceRelativePath,
-  isUntitled,
-  toParentUri,
-} from '../utils/uri';
+import { isUntitled, parent } from '../utils/uri';
 
 export function getLibraryItem({ uri }: MacroLibrary) {
   const item = new vscode.TreeItem(uri, vscode.TreeItemCollapsibleState.Collapsed);
   item.contextValue = 'macroLibrary';
   if (!isUntitled(uri)) {
-    item.description = asTildeRelativePath(uri) || asWorkspaceRelativePath(toParentUri(uri));
+    item.description = homeRelativePath(uri) || vscode.workspace.asRelativePath(parent(uri));
   } else {
-    item.label = 'Temporary';
+    // item.label = 'Temporary';
     item.contextValue += ',untitled';
     item.tooltip =
       'Unsaved macros. Save as .macro.js to enable autocomplete,\nIntelliSense, and macro tooling.';
     item.iconPath = new vscode.ThemeIcon('server-process');
   }
   return item;
+
+  function homeRelativePath({ scheme, fsPath }: vscode.Uri): string | undefined {
+    if (scheme !== 'file') {
+      return;
+    }
+
+    let homedir = os.homedir();
+    let homePrefix: string;
+    if (process.platform === 'win32') {
+      homedir = homedir[0].toLowerCase() + homedir.slice(1);
+      homePrefix = 'home › ';
+    } else {
+      homePrefix = '~/';
+    }
+
+    return fsPath.startsWith(homedir)
+      ? `${homePrefix}${fsPath.slice(homedir.length + 1)}`
+      : undefined;
+  }
 }
 
 export function getMacroItem({ uri }: Macro, { runInstanceCount: runCount }: MacroRunner) {

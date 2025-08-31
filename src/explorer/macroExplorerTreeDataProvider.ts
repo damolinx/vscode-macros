@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
 import { MacroRunInfo } from '../core/execution/macroRunInfo';
 import { MacroRunner } from '../core/execution/macroRunner';
-import { MacroLibrary, MacroLibraryId } from '../core/library/macroLibrary';
+import { MacroLibrary } from '../core/library/macroLibrary';
+import { MacroLibraryId } from '../core/library/macroLibraryId';
 import { Macro } from '../core/macro';
 import { MacroId, getMacroId } from '../core/macroId';
 import { ExtensionContext } from '../extensionContext';
@@ -32,7 +33,7 @@ export class MacroExplorerTreeDataProvider
     this.onDidChangeTreeDataEmitter = new vscode.EventEmitter();
     this.untitledLibrary = new UntitledMacroLibrary(this.context);
 
-    [...this.context.libraryManager.libraries.get(), this.untitledLibrary].forEach((library) =>
+    [...this.context.libraryManager.libraries, this.untitledLibrary].forEach((library) =>
       this.ensureLibraryIsMonitored(library),
     );
 
@@ -119,7 +120,7 @@ export class MacroExplorerTreeDataProvider
     let children: TreeElement[];
 
     if (!element) {
-      children = [...this.context.libraryManager.libraries.get()].sort((a, b) =>
+      children = [...this.context.libraryManager.libraries].sort((a, b) =>
         NaturalComparer.compare(a.name, b.name),
       );
       children.push(this.untitledLibrary);
@@ -145,7 +146,7 @@ export class MacroExplorerTreeDataProvider
     if (element instanceof Macro) {
       parent = this.untitledLibrary.owns(element)
         ? this.untitledLibrary
-        : this.context.libraryManager.getLibrary(element);
+        : this.context.libraryManager.libraryFor(element.uri);
     } else if (element instanceof MacroRunner) {
       parent = element.macro;
     }

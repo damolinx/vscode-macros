@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 import { MacroLibraryManager } from '../core/library/macroLibraryManager';
 import { NaturalComparer } from '../utils/ui';
-import { asWorkspaceRelativePath } from '../utils/uri';
 import { OpenMacroOptions, pickMacroFile, UriQuickPickItem } from './ui';
 
 export async function selectMacroFile(
@@ -20,7 +19,7 @@ export async function selectMacroFile(
 export async function selectSourceDirectory(
   manager: MacroLibraryManager,
 ): Promise<vscode.Uri | undefined> {
-  const libraries = manager.libraries.get();
+  const libraries = manager.libraries;
   if (libraries.length === 0) {
     const OptionConfigure = 'Configure';
     const option = await vscode.window.showInformationMessage(
@@ -36,7 +35,7 @@ export async function selectSourceDirectory(
   const selectedItem = await vscode.window.showQuickPick<UriQuickPickItem>(
     libraries
       .map((library) => ({
-        label: asWorkspaceRelativePath(library),
+        label: vscode.workspace.asRelativePath(library.uri),
         uri: library.uri,
       }))
       .sort((t1, t2) => NaturalComparer.compare(t1.label, t2.label)),

@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { isMacroPath } from '../core/language';
+import { isMacro } from '../core/language';
 import { MacroLibrary } from '../core/library/macroLibrary';
 import { Macro } from '../core/macro';
 import { ExtensionContext } from '../extensionContext';
@@ -87,7 +87,7 @@ export class MacroExplorerTreeDragAndDropController
       } else if ((item = dataTransfer.get(FILELIST_MIMETYPE))) {
         uris = (await item.asString())
           .split(FILELIST_SEP)
-          .filter(isMacroPath)
+          .filter(isMacro)
           .map((str) => vscode.Uri.parse(str, true));
       }
       return uris;

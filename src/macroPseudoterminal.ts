@@ -63,7 +63,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     }
 
     this.onDidWriteEmitter.fire(
-      'Macro REPL — same APIs as in a macro file arr available.\r\nType .help for available commands\r\n\r\n',
+      'Macro REPL — same APIs as in a macro file are available.\r\nType .help for available commands\r\n\r\n',
     );
 
     const input = new PassThrough();

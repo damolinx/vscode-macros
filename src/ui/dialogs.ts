@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 import { MacroRunner } from '../core/execution/macroRunner';
-import { macroFilter } from '../core/language';
 import { MacroLibraryManager } from '../core/library/macroLibraryManager';
 import { MacroCode } from '../core/macroCode';
+import { macroFilter } from '../utils/ui';
 import { showMacroErrorMessage } from './errors';
 import { selectMacroFile } from './selectMacroFile';
 import { OpenMacroOptions } from './ui';

@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as ts from 'typescript';
 import { Lazy } from '../utils/lazy';
-import { uriBasename, toParentUri } from '../utils/uri';
+import { uriBasename, parent } from '../utils/uri';
 import { getMacroId, MacroId } from './macroId';
 import { MacroOptions, parseOptions } from './macroOptions';
 
@@ -12,6 +12,7 @@ export class MacroCode {
   public readonly rawCode: string;
   private runnableCode?: string;
   private transpileDiags?: ts.Diagnostic[];
+  private uri: vscode.Uri;
   public readonly version: number;
 
   constructor(document: vscode.TextDocument, macroId = getMacroId(document.uri)) {
@@ -19,6 +20,7 @@ export class MacroCode {
     this.languageId = document.languageId;
     this.macroId = macroId;
     this.rawCode = document.getText();
+    this.uri = document.uri;
     this.version = document.version;
   }
 
@@ -30,7 +32,7 @@ export class MacroCode {
    */
   public getRunnableCode(): string {
     if (this.transpileDiags?.length) {
-      throw new Error(formatDiagnostics(this.transpileDiags, this.macroId));
+      throw new Error(formatDiagnostics(this.transpileDiags, this.uri));
     }
 
     if (!this.runnableCode) {
@@ -38,7 +40,7 @@ export class MacroCode {
         const [code, diags] = transpile(this.rawCode, this.macroId);
         if (diags) {
           this.transpileDiags = diags;
-          throw new Error(formatDiagnostics(this.transpileDiags, this.macroId));
+          throw new Error(formatDiagnostics(this.transpileDiags, this.uri));
         }
         this.runnableCode = code;
       } else {
@@ -48,9 +50,9 @@ export class MacroCode {
 
     return this.runnableCode;
 
-    function formatDiagnostics(diags: ts.Diagnostic[], macroId: MacroId): string {
+    function formatDiagnostics(diags: ts.Diagnostic[], uri: vscode.Uri): string {
       return ts.formatDiagnostics(diags, {
-        getCurrentDirectory: () => toParentUri(macroId).toString(),
+        getCurrentDirectory: () => parent(uri).toString(),
         getCanonicalFileName: (f) => f,
         getNewLine: () => '\n',
       });

@@ -1,13 +1,21 @@
 import * as vscode from 'vscode';
 import { showMacroOpenDialog } from '../ui/dialogs';
 import { activeMacroEditor } from '../utils/activeMacroEditor';
-import { fromLocator, Locator, toUri, uriBasename, uriDirname } from '../utils/uri';
+import { fromLocator, Locator, parent, toUri, uriBasename } from '../utils/uri';
 import { showTextDocument } from '../utils/vscodeEx';
 
 export async function debugMacro(locator?: Locator) {
   const uri = locator ? toUri(fromLocator(locator)) : await showMacroOpenDialog();
   if (!uri) {
     return; // Nothing to run.
+  }
+
+  if (uri.scheme !== 'file') {
+    await vscode.window.showErrorMessage('Debugging of non-local macros is not supported.', {
+      modal: true,
+      detail: 'Save your macro to a local librar for debugging',
+    });
+    return;
   }
 
   // Ensure the document is open, update URI
@@ -32,7 +40,7 @@ export async function debugMacro(locator?: Locator) {
     name: `Debug Macro: ${uriBasename(document.uri)}`,
     type: 'extensionHost',
     request: 'launch',
-    args: [`--extensionDevelopmentPath=${uriDirname(document.uri)}`],
+    args: [`--extensionDevelopmentPath=${parent(document.uri).fsPath}`],
     env: { MACROS_EXT_DEBUG: '1' },
   };
   vscode.debug.startDebugging(undefined, debugConfig);

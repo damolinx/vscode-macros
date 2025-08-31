@@ -1,10 +1,10 @@
 import * as vscode from 'vscode';
-import { MACRO_DOCUMENT_EXTENSION, MACRO_LANGUAGE } from '../core/language';
+import { MACRO_PREFERRED_EXTENSION, MACRO_PREFERRED_LANGUAGE } from '../core/language';
 import { ExtensionContext } from '../extensionContext';
 import { templates } from '../macroTemplates';
 import { createGroupedQuickPickItems } from '../ui/ui';
 import { activeMacroEditor } from '../utils/activeMacroEditor';
-import { fromLocator, isUntitled, Locator, toUri, uriEqual } from '../utils/uri';
+import { fromLocator, isUntitled, Locator, toUri, areUriEqual } from '../utils/uri';
 
 let creatingMacro = false;
 
@@ -43,7 +43,7 @@ export async function createMacro(
       }
     } else {
       document = await vscode.workspace.openTextDocument({
-        language: MACRO_LANGUAGE,
+        language: MACRO_PREFERRED_LANGUAGE,
         content,
       });
       await vscode.window.showTextDocument(document, options);
@@ -57,7 +57,7 @@ export async function createMacro(
     for (let i = 1; !uri && i <= maxAttempts; i++) {
       const fsCandidate = vscode.Uri.joinPath(
         parentUri,
-        `Untitled-${i}${MACRO_DOCUMENT_EXTENSION}`,
+        `Untitled-${i}${MACRO_PREFERRED_EXTENSION}`,
       );
       if (
         await vscode.workspace.fs.stat(fsCandidate).then(
@@ -66,7 +66,9 @@ export async function createMacro(
         )
       ) {
         const untitledCandidate = fsCandidate.with({ scheme: 'untitled' });
-        if (!vscode.workspace.textDocuments.some(({ uri }) => uriEqual(uri, untitledCandidate))) {
+        if (
+          !vscode.workspace.textDocuments.some(({ uri }) => areUriEqual(uri, untitledCandidate))
+        ) {
           uri = untitledCandidate;
         }
       }

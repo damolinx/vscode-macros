@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { macroFilter } from '../core/language';
+import { macroFilter } from './ui';
 import { saveTextEditor } from './vscodeEx';
 
 export async function activeMacroEditor(

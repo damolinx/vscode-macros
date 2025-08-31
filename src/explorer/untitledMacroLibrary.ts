@@ -3,13 +3,15 @@ import { isCreatingMacro } from '../commands/createMacro';
 import { MacroLibrary } from '../core/library/macroLibrary';
 import { getMacroId, MacroId } from '../core/macroId';
 import { ExtensionContext } from '../extensionContext';
-import { isUntitled, uriEqual, UriLocator } from '../utils/uri';
+import { isUntitled, areUriEqual, UriLocator } from '../utils/uri';
+
+export const UNTITLED_MACRO_LIBRARY_NAME = 'Temporary';
 
 export class UntitledMacroLibrary extends MacroLibrary {
   private readonly untitledMacros: Map<MacroId, vscode.Uri>;
 
   constructor(context: ExtensionContext) {
-    super(vscode.Uri.parse('untitled:'), 'untitled-library');
+    super(vscode.Uri.from({ scheme: 'untitled', path: UNTITLED_MACRO_LIBRARY_NAME }));
     this.untitledMacros = new Map();
 
     this.disposables.push(
@@ -23,7 +25,7 @@ export class UntitledMacroLibrary extends MacroLibrary {
         if (
           isUntitled(macro) &&
           this.untitledMacros.has(macro.id) &&
-          vscode.workspace.textDocuments.every(({ uri }) => !uriEqual(uri, macro.uri))
+          vscode.workspace.textDocuments.every(({ uri }) => !areUriEqual(uri, macro))
         ) {
           this.untitledMacros.delete(macro.id);
           this.onDidDeleteMacroEmitter.fire(macro.uri);

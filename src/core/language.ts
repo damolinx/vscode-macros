@@ -1,60 +1,55 @@
 import * as vscode from 'vscode';
-import { PathLike, toPath } from '../utils/uri';
+import { PathLike, uriBasename } from '../utils/uri';
 
-interface Language {
+export interface Language {
+  readonly id: string;
   readonly name: string;
   readonly extensions: readonly string[];
+  readonly accepts: (filename: string) => boolean;
 }
 
-export const MACRO_DOCUMENT_EXTENSION = '.macro.js';
-
-export const MACRO_LANGUAGE = 'javascript';
-
-export const MACRO_LANGUAGES: Readonly<Record<string, Language>> = {
-  javascript: {
+export const MACRO_LANGUAGES: readonly Language[] = [
+  {
+    id: 'javascript',
     name: 'JavaScript',
     extensions: ['js', 'cjs'] as const,
+    accepts: (filename: string) => ['.js', '.cjs'].some((ext) => filename.endsWith(ext)),
   },
-  typescript: {
+  {
+    id: 'typescript',
     name: 'TypeScript',
     extensions: ['ts'] as const,
+    accepts: (filename: string) => filename.endsWith('.ts') && !filename.endsWith('.d.ts'),
   },
-};
+];
+
+export const MACRO_PREFERRED_EXTENSION = '.macro.js';
+
+export const MACRO_PREFERRED_LANGUAGE = 'javascript';
 
 export function macroDocumentSelector(): vscode.DocumentSelector {
   return [
-    { scheme: 'untitled', language: MACRO_LANGUAGE },
-    ...Object.values(MACRO_LANGUAGES).map((l) => ({
-      pattern: `**/*.macro.{${l.extensions.join(',')}}`,
+    { scheme: 'untitled', language: MACRO_PREFERRED_LANGUAGE },
+    ...MACRO_LANGUAGES.map((lang) => ({
+      pattern: `**/*.macro.{${lang.extensions.join(',')}}`,
     })),
   ];
 }
 
-export function macroFilter(): Record<string, string[]> {
-  return Object.fromEntries(
-    Object.values(MACRO_LANGUAGES).map(({ name, extensions }) => [name, [...extensions]]),
-  );
+export function macroGlobPattern(pathOrUri: PathLike): vscode.RelativePattern {
+  const extensions = MACRO_LANGUAGES.flatMap((lang) => lang.extensions);
+  return new vscode.RelativePattern(pathOrUri, `*.{${extensions.join(',')}}`);
 }
 
-export function macroGlobPattern() {
-  const extensions = Object.values(MACRO_LANGUAGES).flatMap((l) => l.extensions);
-  return `*.${extensions.join(',')}`;
+export function isFeatureEnabledMacro(pathOrUri: PathLike): boolean {
+  return isMacro(pathOrUri) && uriBasename(pathOrUri, true).endsWith('.macro');
 }
 
-export function isMacroFeaturePath(pathOrUri: PathLike): boolean {
-  const path = toPath(pathOrUri);
-  return Object.values(MACRO_LANGUAGES).some((l) =>
-    l.extensions.some((ext) => path.endsWith(`.macro.${ext}`)),
-  );
+export function isMacro(pathOrUri: PathLike): boolean {
+  const name = uriBasename(pathOrUri);
+  return MACRO_LANGUAGES.some((lang) => lang.accepts(name));
 }
 
-export function isMacroLangId(language: string): boolean {
-  return Object.hasOwn(MACRO_LANGUAGES, language);
-}
-
-export function isMacroPath(pathOrUri: PathLike): boolean {
-  const path = toPath(pathOrUri);
-  return Object.values(MACRO_LANGUAGES).some((l) =>
-    l.extensions.some((ext) => path.endsWith(`.${ext}`)),
-  );
+export function isMacroLangId(langId: string): boolean {
+  return MACRO_LANGUAGES.some((lang) => lang.id === langId);
 }

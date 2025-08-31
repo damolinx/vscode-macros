@@ -1,7 +1,9 @@
+import * as vscode from 'vscode';
+
 export class Lazy<T, TArgs extends unknown[] = []> {
   private readonly factory: (...args: TArgs) => T;
   private initialized: boolean;
-  private value?: T;
+  protected value?: T;
 
   constructor(factory: (...args: TArgs) => T) {
     this.factory = factory;
@@ -17,7 +19,7 @@ export class Lazy<T, TArgs extends unknown[] = []> {
     return this.value!;
   }
 
-  public isInitialized(): boolean {
+  public isInitialized(): this is { value: T } {
     return this.initialized;
   }
 
@@ -26,5 +28,28 @@ export class Lazy<T, TArgs extends unknown[] = []> {
       this.initialized = false;
       this.value = undefined;
     }
+  }
+}
+
+export class LazyDisposable<
+    T extends vscode.Disposable | vscode.Disposable[] | readonly vscode.Disposable[],
+    TArgs extends unknown[] = [],
+  >
+  extends Lazy<T, TArgs>
+  implements vscode.Disposable
+{
+  dispose() {
+    this.reset();
+  }
+
+  public reset(): void {
+    if (this.isInitialized()) {
+      if (this.value instanceof Array) {
+        vscode.Disposable.from(...this.value).dispose();
+      } else {
+        this.value.dispose();
+      }
+    }
+    super.reset();
   }
 }

@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { relative } from 'path';
 import { NaturalComparer } from '../utils/ui';
-import { asWorkspaceRelativePath, uriEqual } from '../utils/uri';
+import { areUriEqual } from '../utils/uri';
 import { showTextDocument } from '../utils/vscodeEx';
 import { showMacroOpenDialog } from './dialogs';
 
@@ -35,7 +35,7 @@ export async function pickMacroFile(
     const quickPick = createMacroQuickPick();
     const selectUri = options?.selectUri || lastSelection;
     if (selectUri) {
-      const preselect = quickPick.items.find(({ uri }) => uri && uriEqual(uri, selectUri));
+      const preselect = quickPick.items.find(({ uri }) => uri && areUriEqual(uri, selectUri));
       if (preselect) {
         quickPick.activeItems = [preselect];
       }
@@ -112,7 +112,7 @@ export async function pickMacroFile(
       return uris
         .map((uri) => ({
           buttons: openFileButton && [openFileButton],
-          label: root ? relative(root, uri.fsPath) : asWorkspaceRelativePath(uri),
+          label: root ? relative(root, uri.fsPath) : vscode.workspace.asRelativePath(uri),
           uri,
         }))
         .sort((t1, t2) => NaturalComparer.compare(t1.label, t2.label));

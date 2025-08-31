@@ -1,13 +1,15 @@
 # Changelog
 
 ## 0.4.6
-- Support TypeScript macros.
+- Support **TypeScript** macros.
+- **Macro Explorer** view updates descriptions for libraries under user directory in Windows.
+- Debugging is offered only for locally-saved macros.
 - Error reporting now omits internal stack frames and noisy messages for cleaner diagnostics.
 - Fix: Prevent orphaned macro runs when backing untitled editor is closed.
 
 ## 0.4.5
 - REPL:
-  - Rename command to `New REPL`.
+  - Rename **New REPL Terminal** command to **New REPL**.
   - Help header.
   - `.save` includes a time hint.
   - Fix: `.save` opens up the template selector instead of an editor with the command history.
@@ -16,40 +18,40 @@
 ## 0.4.4
 - Improve `@macros` chat agent accuracy when supporting macros.
   - `/create` tool is a shortcut for template-based creation.
-- `Macro Explorer` view:
-  - Add `New REPL Terminal` command.
+- **Macro Explorer** view:
+  - Add **New REPL Terminal** command.
   - Update handling change events.
 - Use natural sorting in UI lists.
 
 ## 0.4.3
-- `Macro Explorer` view:
+- **Macro Explorer** view:
   - Library nodes use `~/` on descriptions for simplicity in non-Windows platforms.
-  - Fix: Drag-and-drop broken on 0.4.2 with introduction of the `Temporary` node.
-  - Fix: `Delete` fails under WSL (and other remote scenarios).
-  - Fix: `Reveal in File Explorer` does not show nor work under WSL.
+  - Fix: Drag-and-drop broken on 0.4.2 with introduction of the **Temporary** node.
+  - Fix: **Delete** fails under WSL, and other remote scenarios.
+  - Fix: **Reveal in File Explorer** does not work under WSL.
 - Update `Git` template.
-- Fix: 'Download .d.ts file' is not a QuickFix.
+- Fix: **Download .d.ts file** is not a QuickFix.
 
 ## 0.4.2
-- `Macro Explorer` view:
-  - `Temporary` virtual library tracks untitled macros created with `New Macro` command.
+- **Macro Explorer** view:
+  - **Temporary** virtual library tracks untitled macros created with **New Macro** command.
   - Fix: Untitled files are removed when a run stops, even if the editor is still open.
 - More interesting `Cancellation` template.
 
 ## 0.4.1
-- `Macro Explorer` view:
-  - Add `Temporary` node to complete macro-management.
+- **Macro Explorer** view:
+  - Add **Temporary** node to complete macro-management.
   - Display parent path as description for library nodes to disambiguate duplicate names.
-  - Hide `Reveal` commands in Remote scenarios.
+  - Hide **Reveal …** commands in Remote scenarios.
 - Fix: `Cancellation` template incorrect use of `withProgress` API.
 
 ## 0.4.0
-- Add `Macro Explorer` view.
+- Add **Macro Explorer** view.
 
 ## 0.3.5
 - Automatically set up target directory when saving a `.macro.js` file, provided that `macros.sourceDirectories.verify` is enabled.
 - Security: Startup macros are disabled in untrusted workspaces.
-- Fix: `Macros: Open` » `Open …` dropdown entry does not open selected file.
+- Fix: **Macros: Open**'s **Open …** dropdown-entry does not open selected file.
 
 ## 0.3.4
 - Upgrade minimum VS Code version to 1.99.
@@ -61,7 +63,7 @@
 ## 0.3.3
 - Upgrade minimum VS Code version to 1.96.
 - Add startup macros.
-- Add `Macros` output channel.
+- Add **Macros** output channel.
   - Introduce `macros.log` accessor for macro-specific logging.
 - Fix: `sourceDirectories` ignores non-tokenized paths.
 
@@ -71,14 +73,14 @@
 
 ## 0.3.1
 - Support multi-root workspaces.
-- Simplify `Run Macro…` behavior when no libraries have been configured.
-- `Run|Debug Macro` actions available from context menu on `.macro.js` files.
+- Simplify **Run Macro…** behavior when no libraries have been configured.
+- **Run Macro…** and **Debug Macro…** actions available from context menu on `.macro.js` files.
 
 ## 0.3.0
 - General logic review and code clean-up.
   - Better tracking of macro documents.
   - Download `.d.ts` supports any FS.
-- New `Fill File with Template` command replaces `Initialize` CodeLens.
+- New **Fill File with Template** command replaces **Initialize** CodeLens.
 - Updated templates.
 
 ## 0.2.6
@@ -88,20 +90,20 @@
 - Fix: Duplicate capture group name.
 
 ## 0.2.4
-- `macros` chat agent uses history as context.
+- `@macros` chat agent uses history as context.
 - Add autocomplete support for `executeCommand` method (command ID -only).
 - Macro templates are grouped by category.
 
 ## 0.2.3
-- New `Macros` view container on the Activity Bar allows to create a new type of webview.
+- New **Macros** view container on the Activity Bar allows to create a new type of webview.
 - New `Language Model`, `Tree View (Sidebar)`, `Webview (Sidebar)` templates.
 - Update `Webview` template:
    - Renamed to `Webview (Editor)` and style changes.
    - Fix: stopping macro disposes view correctly.
-- Add a `macros` chat agent (experimental).
+- Add a `@macros` chat agent (experimental).
 
 ## 0.2.2
-- Add `Download .d.ts` code action on `.d.ts` URLs.
+- Add **Download .d.ts** code action on `.d.ts` URLs.
 - New `Git` template.
 
 ## 0.2.1
@@ -111,7 +113,7 @@
 - Remove `javascriptmacro` language and lean on `.macro.js` whenever surfacing a feature would cause confusion with standard JavaScript files (e.g. UI buttons).
 - Add `__disposable` API. Check README and example template.
 - Add`.load` and `.save` commands in REPL, fully leveraging VS Code integration.
-- Add `Reset Context` CodeLens on `@macro:persistent` macros.
+- Add **Reset Context** CodeLens on `@macro:persistent` macros.
 - Add autocomplete support for `@macro` options.
 - Updated and new macro templates.
 - Statusbar item shows running macros on click.
@@ -133,7 +135,7 @@
 ## 0.1.7
 - Add initialization CodeLens for `javascriptmacro` editors:
   - Initial implementation, missing escape actions.
-- Add `Create New REPL Terminal` command and REPL Terminal.
+- Add **Create New REPL Terminal** command and REPL Terminal.
 - Update macro selection picker.
 - Fix: `persistent` does not save root-scoped variables.
 
@@ -150,10 +152,10 @@
 - Improve supporting development files.
 
 ## 0.1.4
-- Fix: `WorkspaceEditor` unexpected behavior where no files are updated by `Setup Source Directory for Development`.
+- Fix: Unexpected behavior where no files are updated by **Setup Source Directory for Development**.
 
 ## 0.1.3
-- Add `Setup Source Directory for Development` command to add optional files to support macro development.
+- Add **Setup Source Directory for Development** command to add optional files to support macro development.
 
 ## 0.1.2
 - Prefer `TextDocument` version of macro content (over file-system version):
@@ -171,27 +173,27 @@
 
 ## 0.0.9
 - Macro selection dropdown remembers the last selection.
-- Error dialog for `persistent` macros allows `Reset State`.
+- Error dialog for `persistent` macros allows **Reset State**.
 - Add support for cooperative macro stop via a `CancellationToken`.
 
 ## 0.0.8
-- Add `Open Macro…` command.
+- Add **Open Macro…** command.
 - Fix: incorrect tracking of running macros in case of error.
 - Open-macro dropdown is configurable.
 
 ## 0.0.7
-- `[Run|Debug] Macro…` commands take an optional `pathOrUri` argument.
+- **Run Macro…** and **Debug Macro…** commands take an optional `pathOrUri` argument.
 - Better error dialog: `Rerun`, `Details`, and navigation to the error location.
 
 ## 0.0.6
-- `[Run|Debug] Macro…` commands subsume `[Run|Debug] Macro (Source Directories)` commands to simplify UX.
+- **Run Macro…** and **Debug Macro…** commands subsume **Run Macro (Source Directories)** and **Debug Macro (Source Directories)** commands to simplify UX.
 
 ## 0.0.5
 - Initial `macros` API definition.
 - Fix handling of untitled JavaScript documents.
 - Command updates:
-  - Add `New Macro…` command.
-  - Add `Debug *` family of commands.
+  - Add **New Macro…** command.
+  - Add **Debug …** family of commands.
 
 ## 0.0.4
 - Fix packaging issue (stale file name).
@@ -204,4 +206,4 @@
 - Add "Source Directories" concept to create macro libraries.
 
 ## 0.0.1
-- Initial MVP version.
+- Initial version.

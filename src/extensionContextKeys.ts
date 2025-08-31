@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { isMacroFeaturePath, isMacroLangId } from './core/language';
+import { isFeatureEnabledMacro, isMacroLangId } from './core/language';
 import { ExtensionContext } from './extensionContext';
 
 export function registerSetContextHandlers(context: ExtensionContext): vscode.Disposable[] {
@@ -22,7 +22,7 @@ function registerSupportedEditorLangId(): vscode.Disposable[] {
   const supportHandler = (editorOrDoc?: vscode.TextEditor | vscode.TextDocument) => {
     const doc = editorOrDoc && 'document' in editorOrDoc ? editorOrDoc.document : editorOrDoc;
     const supportedLangId = !!doc && isMacroLangId(doc.languageId);
-    const supportedFeatureExt = supportedLangId && isMacroFeaturePath(doc.fileName);
+    const supportedFeatureExt = supportedLangId && isFeatureEnabledMacro(doc.uri);
 
     setContext(supportedExtKey, supportedFeatureExt);
     setContext(supportedLangKey, supportedLangId);

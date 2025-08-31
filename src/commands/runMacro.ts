@@ -1,7 +1,8 @@
+import * as vscode from 'vscode';
 import { ExtensionContext } from '../extensionContext';
 import { showMacroErrorDialog, showMacroQuickPick } from '../ui/dialogs';
 import { activeMacroEditor } from '../utils/activeMacroEditor';
-import { asWorkspaceRelativePath, fromLocator, Locator, toUri } from '../utils/uri';
+import { fromLocator, Locator, toUri } from '../utils/uri';
 
 export async function runMacro(
   { libraryManager, log, mruMacro, runnerManager }: ExtensionContext,
@@ -20,7 +21,7 @@ export async function runMacro(
 
   try {
     const code = macroCode.getRunnableCode();
-    log.info('Executing macro', asWorkspaceRelativePath(uri));
+    log.info('Executing macro', vscode.workspace.asRelativePath(uri));
     await runner.run(code, macroCode.options, startup);
   } catch (error: any) {
     await showMacroErrorDialog(runner, macroCode, error as Error | string);
