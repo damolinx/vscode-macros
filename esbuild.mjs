@@ -6,7 +6,7 @@ const production = process.argv.includes('--production');
 async function main() {
   const context = await esbuild.context({
     entryPoints: ['./src/extension.ts'],
-    external: ['vscode'],
+    external: ['vscode', 'typescript'],
     outfile: './out/extension.js',
     platform: 'node',
 

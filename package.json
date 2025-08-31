@@ -369,6 +369,9 @@
     "vsce-package": "vsce package",
     "vscode:prepublish": "npm run package"
   },
+  "dependencies": {
+    "typescript": "^5.x"
+  },
   "devDependencies": {
     "@eslint/js": "^9.30.0",
     "@stylistic/eslint-plugin": "^5.2.0",
