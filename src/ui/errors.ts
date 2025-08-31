@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { MacroRunner } from '../core/execution/macroRunner';
 import { MacroCode } from '../core/macroCode';
 import { cleanError } from '../utils/errors';
+import { TranspilationError } from '../utils/typescript';
 import { showTextDocument } from '../utils/vscodeEx';
 
 export function showMacroErrorMessage(
@@ -10,17 +11,22 @@ export function showMacroErrorMessage(
   error: Error | string,
 ): Promise<void> {
   let message: string;
-  let errorLocation: vscode.Range | undefined;
+  let errorPos: vscode.Position | undefined;
   let filteredStack: string | undefined;
 
   if (typeof error === 'string') {
     message = error;
   } else {
-    const displayError = cleanError(error);
-    message = displayError.message;
-    if (displayError.stack) {
-      filteredStack = displayError.stack;
-      errorLocation = findErrorLocation(displayError.stack);
+    if (error instanceof TranspilationError) {
+      message = error.message;
+      errorPos = findTranspilationErrorPos(error);
+    } else {
+      const displayError = cleanError(error);
+      message = displayError.message;
+      if (displayError.stack) {
+        filteredStack = displayError.stack;
+        errorPos = findErrorPos(filteredStack);
+      }
     }
   }
 
@@ -29,14 +35,23 @@ export function showMacroErrorMessage(
     macroCode,
     `Macro Error — ${message}`,
     filteredStack,
-    errorLocation,
+    errorPos && new vscode.Range(errorPos, errorPos),
   );
 
-  function findErrorLocation(stack: string): vscode.Range | undefined {
-    let firstMatch: RegExpMatchArray | undefined;
-    if (macroCode.languageId === 'typescript') {
-      firstMatch = stack.match(/.+\((?<line>\d+),(?<offset>\d+)\): error TS/) ?? undefined;
+  function findTranspilationErrorPos(error: TranspilationError): vscode.Position | undefined {
+    const first = error.diagnostics[0];
+
+    let position: vscode.Position | undefined;
+    if (first?.file && first.start !== undefined) {
+      const { line, character } = first.file.getLineAndCharacterOfPosition(first.start);
+      position = new vscode.Position(line, character);
     }
+
+    return position;
+  }
+
+  function findErrorPos(stack: string): vscode.Position | undefined {
+    let firstMatch: RegExpMatchArray | undefined;
     if (!firstMatch) {
       firstMatch = stack.match(/.+?:(?<line>\d+)(:(?<offset>\d+))?$/m) ?? undefined;
     }
@@ -46,7 +61,7 @@ export function showMacroErrorMessage(
       const { line, offset } = firstMatch.groups!;
       position = new vscode.Position(parseInt(line) - 1, offset ? parseInt(offset) - 1 : 0);
     }
-    return position && new vscode.Range(position, position);
+    return position;
   }
 }
 

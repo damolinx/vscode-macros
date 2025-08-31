@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
-import * as ts from 'typescript';
 import { Lazy } from '../utils/lazy';
-import { uriBasename, parent } from '../utils/uri';
+import { TranspilationError, transpileOrThrow } from '../utils/typescript';
 import { getMacroId, MacroId } from './macroId';
 import { MacroOptions, parseOptions } from './macroOptions';
 
@@ -11,7 +10,7 @@ export class MacroCode {
   public readonly macroId: MacroId;
   public readonly rawCode: string;
   private runnableCode?: string;
-  private transpileDiags?: ts.Diagnostic[];
+  private transpilationError?: TranspilationError;
   private uri: vscode.Uri;
   public readonly version: number;
 
@@ -31,50 +30,26 @@ export class MacroCode {
    *   cached, and a failed result will end on error every time.
    */
   public getRunnableCode(): string {
-    if (this.transpileDiags?.length) {
-      throw new Error(formatDiagnostics(this.transpileDiags, this.uri));
+    if (this.transpilationError) {
+      throw this.transpilationError;
     }
 
     if (!this.runnableCode) {
       if (this.languageId === 'typescript') {
-        const [code, diags] = transpile(this.rawCode, this.macroId);
-        if (diags) {
-          this.transpileDiags = diags;
-          throw new Error(formatDiagnostics(this.transpileDiags, this.uri));
+        try {
+          this.runnableCode = transpileOrThrow(this.rawCode, this.uri);
+        } catch (err) {
+          if (err instanceof TranspilationError) {
+            this.transpilationError = err;
+          }
+          throw err;
         }
-        this.runnableCode = code;
       } else {
         this.runnableCode = this.rawCode.trimEnd();
       }
     }
 
     return this.runnableCode;
-
-    function formatDiagnostics(diags: ts.Diagnostic[], uri: vscode.Uri): string {
-      return ts.formatDiagnostics(diags, {
-        getCurrentDirectory: () => parent(uri).toString(),
-        getCanonicalFileName: (f) => f,
-        getNewLine: () => '\n',
-      });
-    }
-
-    function transpile(
-      code: string,
-      macroId: MacroId,
-    ): [string, undefined] | [undefined, ts.Diagnostic[]] {
-      const result = ts.transpileModule(code, {
-        compilerOptions: {
-          target: ts.ScriptTarget.ES2024,
-          module: ts.ModuleKind.None,
-        },
-        fileName: uriBasename(macroId),
-        reportDiagnostics: true,
-      });
-
-      return result.diagnostics?.length
-        ? [undefined, result.diagnostics]
-        : [result.outputText, undefined];
-    }
   }
 
   /**
