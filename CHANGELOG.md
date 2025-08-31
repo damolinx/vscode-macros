@@ -2,6 +2,8 @@
 
 ## 0.4.6
 - Support **TypeScript** macros.
+  - REPL support via `.ts` and `.tsv` commands.
+
 - **Macro Explorer** view updates descriptions for libraries under user directory in Windows.
 - Debugging is offered only for locally-saved macros.
 - Error reporting now omits internal stack frames and noisy messages for cleaner diagnostics.

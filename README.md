@@ -98,7 +98,9 @@ See [Debugging a Macro](#debugging-a-macro) for additional information.
 #### Development
 
 * **Macros: New REPL**: start a REPL whose context matches the one used when running macros.
+  * Use `.ts` and `.tsv` commands to evaluate TypeScript expressions.
   * Use `.help` for list of available commands.
+
 * **Macros: Setup Source Directory for Development**: adds or updates optional files used to improve IntelliSense on macro files. This action is run automatically in the background when saving a `.macro.js` or `.macro.ts` file, provided that `macros.sourceDirectories.verify` is enabled.
 
 #### Manage Macros

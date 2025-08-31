@@ -9,6 +9,9 @@ import { initializeContext, MacroContextInitParams } from './core/execution/macr
 import { ExtensionContext } from './extensionContext';
 import { showMacroQuickPick } from './ui/dialogs';
 import { cleanError } from './utils/errors';
+import { transpileOrThrow } from './utils/typescript';
+
+const REPL_NEWLINE = '\r\n';
 
 type REPLServerWithHistory = REPLServer & { history?: string[] };
 
@@ -49,6 +52,19 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     this.repl?.input.write(data);
   }
 
+  private inspectObj(obj: any): string {
+    let targetObj = obj;
+    if (obj instanceof Error) {
+      targetObj = cleanError(obj);
+    }
+
+    return inspect(targetObj, {
+      colors: this.repl?.server.useColors,
+      compact: false,
+      depth: 2,
+    });
+  }
+
   public get onDidClose(): vscode.Event<void> {
     return this.onDidCloseEmitter.event;
   }
@@ -63,19 +79,19 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     }
 
     this.onDidWriteEmitter.fire(
-      'Macro REPL — same APIs as in a macro file are available.\r\nType .help for available commands\r\n\r\n',
+      `Macro REPL — same APIs as in a macro file are available.${REPL_NEWLINE}Type .help for available commands${REPL_NEWLINE}${REPL_NEWLINE}`,
     );
 
     const input = new PassThrough();
     const output = new PassThrough({ encoding: 'utf-8' }).on('data', (chunk: string) =>
-      this.onDidWriteEmitter.fire(chunk.replaceAll('\n', '\r\n')),
+      this.onDidWriteEmitter.fire(chunk.replaceAll('\n', REPL_NEWLINE)),
     );
     const replServer = startREPL({
       input,
       output,
       prompt: '\x1b[90m≫ \x1b[0m',
       terminal: true,
-      writer: (obj: any) => this.write(obj),
+      writer: (obj: any) => this.inspectObj(obj),
       useColors: true,
     }).on('exit', () => {
       this.onDidCloseEmitter.fire();
@@ -110,7 +126,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
         if (file) {
           originalLoad?.action.call(replServer, file.fsPath);
         } else {
-          output.write('Nothing to load\n');
+          output.write(`Nothing to load$${REPL_NEWLINE}`);
         }
         replServer.displayPrompt();
       },
@@ -129,10 +145,20 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
             preserveFocus: true,
           });
         } else {
-          output.write('Nothing to save\n');
+          output.write(`Nothing to save${REPL_NEWLINE}`);
         }
         replServer.displayPrompt();
       },
+    });
+
+    // Typescript
+    replServer.defineCommand('ts', {
+      help: 'Evaluate the argument as TypeScript. Usage: .ts «your code here»',
+      action: (code) => this.evaluateAsTypeScript(code),
+    });
+    replServer.defineCommand('tsv', {
+      help: 'Evaluate the argument as TypeScript, echoing the transpiled JavaScript first. Usage: .tsv «your code here»',
+      action: (code) => this.evaluateAsTypeScript(code, true),
     });
 
     this.setupContext(replServer.context);
@@ -148,6 +174,26 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     };
   }
 
+  private evaluateAsTypeScript(code: string, verbose?: true) {
+    if (this.repl) {
+      const { server } = this.repl;
+
+      const transpiledCode = transpileOrThrow(code);
+      if (verbose) {
+        this.onDidWriteEmitter.fire(
+          `${transpiledCode}${REPL_NEWLINE}`.replaceAll('\n', REPL_NEWLINE),
+        );
+      }
+
+      this.repl.server.eval(transpiledCode, server.context, 'repl', (err, result) => {
+        server.output.write(`${this.inspectObj(err ?? result)}${REPL_NEWLINE}`);
+        server.displayPrompt();
+      });
+
+      server.history!.unshift(code);
+    }
+  }
+
   public setDimensions(dimensions: vscode.TerminalDimensions): void {
     if (this.repl) {
       this.repl.output.columns = dimensions.columns;
@@ -160,18 +206,5 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     // available to a macro and could cause confusion, so resetting first.
     Object.keys(context).forEach((k) => delete context[k]);
     initializeContext(context, this.macroInitParams);
-  }
-
-  private write(obj: any): string {
-    let targetObj = obj;
-    if (obj instanceof Error) {
-      targetObj = cleanError(obj);
-    }
-
-    return inspect(targetObj, {
-      colors: this.repl?.server.useColors,
-      compact: false,
-      depth: 2,
-    });
   }
 }
