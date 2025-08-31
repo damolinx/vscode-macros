@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { MACRO_EXTENSION, MACRO_LANGUAGE } from '../core/constants';
+import { MACRO_DOCUMENT_EXTENSION, MACRO_LANGUAGE } from '../core/language';
 import { ExtensionContext } from '../extensionContext';
 import { templates } from '../macroTemplates';
 import { createGroupedQuickPickItems } from '../ui/ui';
@@ -55,7 +55,10 @@ export async function createMacro(
   async function createUntitledUri(parentUri: vscode.Uri, maxAttempts = 1000) {
     let uri: vscode.Uri | undefined;
     for (let i = 1; !uri && i <= maxAttempts; i++) {
-      const fsCandidate = vscode.Uri.joinPath(parentUri, `Untitled-${i}${MACRO_EXTENSION}`);
+      const fsCandidate = vscode.Uri.joinPath(
+        parentUri,
+        `Untitled-${i}${MACRO_DOCUMENT_EXTENSION}`,
+      );
       if (
         await vscode.workspace.fs.stat(fsCandidate).then(
           () => false,

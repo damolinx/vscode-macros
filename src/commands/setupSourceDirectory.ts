@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { posix } from 'path';
-import { MACRO_EXTENSION } from '../core/constants';
+import { MACRO_DOCUMENT_EXTENSION } from '../core/language';
 import { ExtensionContext } from '../extensionContext';
 import { selectSourceDirectory } from '../ui/selectMacroFile';
 import { readFile } from '../utils/resources';
@@ -12,7 +12,7 @@ export const JSCONFIG_RESOURCE = 'api/jsconfig.json';
 export function registerSourceDirectoryVerifier(context: ExtensionContext) {
   const verifiedDir = new Set<string>();
   return vscode.workspace.onDidSaveTextDocument(async ({ uri }) => {
-    if (!uri.path.endsWith(MACRO_EXTENSION)) {
+    if (!uri.path.endsWith(MACRO_DOCUMENT_EXTENSION)) {
       return;
     }
 

@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
-import { posix } from 'path';
 import { isParent, uriBasename, UriLocator } from '../../utils/uri';
-import { MACRO_EXTENSIONS, MACRO_FILE_GLOB } from '../constants';
+import { isMacroPath, macroGlobPattern } from '../language';
 
 export type MacroLibraryId = string;
 
@@ -38,7 +37,7 @@ export class MacroLibrary implements vscode.Disposable {
 
   protected ensureWatcher() {
     if (!this.watcher && this.uri.scheme === 'file') {
-      const pattern = new vscode.RelativePattern(this.uri, MACRO_FILE_GLOB);
+      const pattern = new vscode.RelativePattern(this.uri, macroGlobPattern());
       this.watcher = vscode.workspace.createFileSystemWatcher(pattern);
       this.watcher.onDidCreate((uri) => this.onDidCreateMacroEmitter.fire(uri));
       this.watcher.onDidChange((uri) => this.onDidChangeMacroEmitter.fire(uri));
@@ -55,7 +54,7 @@ export class MacroLibrary implements vscode.Disposable {
       .filter(
         ([name, type]) =>
           (type === vscode.FileType.File || type === vscode.FileType.SymbolicLink) &&
-          MACRO_EXTENSIONS.includes(posix.extname(name)),
+          isMacroPath(name),
       )
       .map(([name, _]) => vscode.Uri.joinPath(this.uri, name));
   }

@@ -44,7 +44,7 @@
         "command": "macros.debug.activeEditor",
         "title": "Debug Active Editor as a Macro",
         "category": "Macros",
-        "enablement": "!inDebugMode && resourceScheme != untitled && macros:supportedEditorLangId",
+        "enablement": "!inDebugMode && resourceScheme != untitled && macros:supportedFeatureExt",
         "icon": "$(debug-alt)"
       },
       {
@@ -63,7 +63,7 @@
         "command": "macros.new.macro.activeEditor",
         "title": "Fill File with Template",
         "category": "Macros",
-        "when": "macros:supportedEditorLangId && (resourceScheme == untitled || resourceFilename =~ /\\.macro\\.(js|ts)$/)"
+        "when": "macros:supportedEditorLangId"
       },
       {
         "command": "macros.new.macro.repl",
@@ -100,7 +100,7 @@
         "command": "macros.run.activeEditor",
         "title": "Run Active File as a Macro",
         "category": "Macros",
-        "enablement": "macros:supportedEditorLangId && (resourceScheme == untitled || resourceFilename =~ /\\.macro\\.(js|ts)$/)",
+        "enablement": "macros:supportedEditorLangId && (resourceScheme == untitled || macros:supportedFeatureExt)",
         "icon": "$(run-all)"
       },
       {
@@ -202,12 +202,12 @@
         {
           "command": "macros.debug.activeEditor",
           "group": "navigation",
-          "when": "!inDebugMode && resourceFilename =~ /\\.macro\\.(js|ts)$/"
+          "when": "!inDebugMode && resourceScheme != untitled && macros:supportedFeatureExt"
         },
         {
           "command": "macros.run.activeEditor",
           "group": "navigation",
-          "when": "macros:supportedEditorLangId && (resourceScheme == untitled || resourceFilename =~ /\\.macro\\.(js|ts)$/)"
+          "when": "macros:supportedEditorLangId && (resourceScheme == untitled || macros:supportedFeatureExt)"
         }
       ],
       "view/item/context": [

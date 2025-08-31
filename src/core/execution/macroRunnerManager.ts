@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { ExtensionContext } from '../../extensionContext';
-import { MACRO_EXTENSIONS, MACRO_LANGUAGES } from '../constants';
+import { isMacroLangId, isMacroPath } from '../language';
 import { Macro } from '../macro';
 import { getMacroId, MacroId } from '../macroId';
 import { MacroRunInfo, MacroRunResult } from './macroRunInfo';
@@ -17,14 +17,12 @@ export class MacroRunnerManager implements vscode.Disposable {
     this.context = context;
     this.runners = new Map();
     vscode.workspace.onDidCloseTextDocument((doc) => {
-      if (doc.isUntitled && MACRO_LANGUAGES.includes(doc.languageId)) {
+      if (doc.isUntitled && isMacroLangId(doc.languageId)) {
         this.cleanUpMacroRunner(doc.uri);
       }
     });
     this.onDidDeleteFilesDisposable = vscode.workspace.onDidDeleteFiles((ev) =>
-      ev.files
-        .filter((uri) => MACRO_EXTENSIONS.some((ext) => uri.path.endsWith(ext)))
-        .forEach((uri) => this.cleanUpMacroRunner(uri)),
+      ev.files.filter(isMacroPath).forEach((uri) => this.cleanUpMacroRunner(uri)),
     );
     this.runEventEmitter = new vscode.EventEmitter();
     this.stopEventEmitter = new vscode.EventEmitter();

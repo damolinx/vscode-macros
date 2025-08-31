@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import { existsSync } from 'fs';
 import { registerMacroChatParticipant } from './ai/macroChatParticipant';
 import { createMacro, updateActiveEditor } from './commands/createMacro';
 import { createRepl } from './commands/createRepl';
@@ -16,8 +15,8 @@ import {
 } from './commands/setupSourceDirectory';
 import { showRunningMacros } from './commands/showRunningMacros';
 import { stopMacro } from './commands/stopMacro';
-import { MACRO_DOCUMENT_SELECTOR } from './core/constants';
 import { MacroRunInfo } from './core/execution/macroRunInfo';
+import { macroDocumentSelector } from './core/language';
 import { SOURCE_DIRS_CONFIG } from './core/library/macroLibraryManager';
 import { expandConfigPaths } from './core/library/utils';
 import { Macro } from './core/macro';
@@ -32,7 +31,7 @@ import { registerDTSCodeActionProvider } from './providers/dtsCodeActionProvider
 import { registerExecuteCommandCompletionProvider } from './providers/executeCommandCompletionProvider';
 import { registerMacroCodeLensProvider } from './providers/macroCodeLensProvider';
 import { registerMacroOptionsCompletionProvider } from './providers/macroOptionsCompletionProvider';
-import { asWorkspaceRelativePath, Locator, PathLike } from './utils/uri';
+import { asWorkspaceRelativePath, Locator, PathLike, toUri } from './utils/uri';
 
 /**
  * Extension startup.
@@ -43,16 +42,17 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
   extensionContext.subscriptions.push(context, new MacroStatusBarItem(context));
   context.log.info('Activating extension', extensionContext.extension.packageJSON.version);
 
+  const documentSelector = macroDocumentSelector();
   extensionContext.subscriptions.push(
     // AI
     registerMacroChatParticipant(context),
     // Explorer
     ...registerMacroExplorerTreeview(context),
     // Macro File Helpers
-    registerMacroCodeLensProvider(MACRO_DOCUMENT_SELECTOR),
-    registerDTSCodeActionProvider(MACRO_DOCUMENT_SELECTOR),
-    registerExecuteCommandCompletionProvider(MACRO_DOCUMENT_SELECTOR),
-    registerMacroOptionsCompletionProvider(MACRO_DOCUMENT_SELECTOR),
+    registerMacroCodeLensProvider(documentSelector),
+    registerDTSCodeActionProvider(documentSelector),
+    registerExecuteCommandCompletionProvider(documentSelector),
+    registerMacroOptionsCompletionProvider(documentSelector),
     // Context Helper
     ...registerSetContextHandlers(context),
   );
@@ -104,7 +104,17 @@ async function runStartupMacros(context: ExtensionContext): Promise<void> {
     return;
   }
 
-  const existingPaths = paths.filter((path) => existsSync(path));
+  const existingPaths = (
+    await Promise.all(
+      paths.map((path) =>
+        vscode.workspace.fs.stat(toUri(path)).then(
+          (stat) => (stat.type === vscode.FileType.File ? path : undefined),
+          () => undefined,
+        ),
+      ),
+    )
+  ).filter((path) => !!path);
+
   if (existingPaths.length === 0) {
     context.log.info(
       'No startup macros to execute,',
@@ -131,12 +141,17 @@ async function runStartupMacros(context: ExtensionContext): Promise<void> {
     return;
   }
 
-  context.log.info('Executing', existingPaths.length, 'out of', paths.length, 'registered macros.');
   if (existingPaths.length !== paths.length) {
-    context.log.debug(
-      'Not Found:',
+    context.log.info(
+      'Executing',
+      existingPaths.length,
+      'out of',
+      paths.length,
+      'registered macros — not found:',
       ...paths.filter((path) => !existingPaths.includes(path)).map(asWorkspaceRelativePath),
     );
+  } else {
+    context.log.info('Executing', existingPaths.length, 'registered macros.');
   }
 
   await Promise.all(existingPaths.map((path) => runMacro(context, path, true)));

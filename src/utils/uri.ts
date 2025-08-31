@@ -72,7 +72,7 @@ export function toParentUri(pathOrUri: PathLike): vscode.Uri {
 }
 
 export function toUri(pathOrUri: PathLike): vscode.Uri {
-  return pathOrUri instanceof vscode.Uri ? pathOrUri : vscode.Uri.parse(pathOrUri);
+  return pathOrUri instanceof vscode.Uri ? pathOrUri : vscode.Uri.file(pathOrUri);
 }
 
 export function uriBasename(pathOrUri: PathLike, removeExtension = false): string {

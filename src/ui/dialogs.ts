@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { MACROS_FILTER } from '../core/constants';
 import { MacroRunner } from '../core/execution/macroRunner';
+import { macroFilter } from '../core/language';
 import { MacroLibraryManager } from '../core/library/macroLibraryManager';
 import { MacroCode } from '../core/macroCode';
 import { showMacroErrorMessage } from './errors';
@@ -19,7 +19,7 @@ export async function showMacroOpenDialog(
   options?: vscode.OpenDialogOptions,
 ): Promise<vscode.Uri | undefined> {
   const selectedUris = await vscode.window.showOpenDialog({
-    filters: MACROS_FILTER,
+    filters: macroFilter(),
     ...options,
   });
 
@@ -30,7 +30,7 @@ export async function showMacroSaveDialog(
   options?: vscode.SaveDialogOptions,
 ): Promise<vscode.Uri | undefined> {
   const selectedUri = await vscode.window.showSaveDialog({
-    filters: MACROS_FILTER,
+    filters: macroFilter(),
     ...options,
   });
 

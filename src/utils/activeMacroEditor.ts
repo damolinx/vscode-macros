@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { MACROS_FILTER } from '../core/constants';
+import { macroFilter } from '../core/language';
 import { saveTextEditor } from './vscodeEx';
 
 export async function activeMacroEditor(
@@ -11,7 +11,7 @@ export async function activeMacroEditor(
   }
 
   if (editor.document.isDirty && ensureSaved) {
-    editor = await saveTextEditor(editor, { filters: MACROS_FILTER });
+    editor = await saveTextEditor(editor, { filters: macroFilter() });
   }
   return editor;
 }
