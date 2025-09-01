@@ -29,10 +29,7 @@ function registerSupportedEditorLangId(): vscode.Disposable[] {
   };
 
   supportHandler(vscode.window.activeTextEditor);
-  return [
-    vscode.window.onDidChangeActiveTextEditor(supportHandler),
-    vscode.workspace.onDidOpenTextDocument(supportHandler),
-  ];
+  return [vscode.window.onDidChangeActiveTextEditor(supportHandler)];
 }
 
 function setContext(contextKey: string, ...args: any[]) {
