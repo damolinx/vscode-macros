@@ -16,7 +16,7 @@ vscode.window.withProgress({
 
         if (countdown < 0) {
           clearInterval(interval);
-          resolve();
+          resolve(undefined);
         }
       }, 1000);
     });
