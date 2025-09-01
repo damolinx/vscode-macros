@@ -4,67 +4,100 @@
       "category": "Basics",
       "label": "Cancellation",
       "description": "Enable macro cancellation",
-      "path": "cancellation.js"
+      "path": "js/cancellation.js",
+      "alternates": {
+        "typescript": "ts/cancellation.ts"
+      }
     },
     {
       "category": "Basics",
       "label": "Dispose",
       "description": "Enable cleanup of disposable objects",
-      "path": "dispose.js"
+      "path": "js/dispose.js",
+      "alternates": {
+        "typescript": "ts/dispose.ts"
+      }
     },
     {
       "category": "Tools",
       "label": "Git API",
       "description": "Interact with the Git API via `git.d.ts` definitions",
-      "path": "git.js"
+      "path": "js/git.js",
+      "alternates": {
+        "typescript": "ts/git.ts"
+      }
     },
     {
       "category": "Basics",
       "label": "Hello World",
       "description": "Run a simple `Hello World` macro",
-      "path": "helloWorld.js"
+      "path": "js/helloWorld.js",
+      "alternates": {
+        "typescript": "ts/helloWorld.ts"
+      }
     },
     {
       "category": "Tools",
       "label": "Language Model",
       "description": "Interact with a language model",
-      "path": "languageModel.js"
+      "path": "js/languageModel.js",
+      "alternates": {
+        "typescript": "ts/languageModel.ts"
+      }
     },
     {
       "category": "Options",
       "label": "Persistent Context",
       "description": "Enable a persistent global context across macro invocations",
-      "path": "persistent.js"
+      "path": "js/persistent.js",
+      "alternates": {
+        "typescript": "ts/persistent.ts"
+      }
     },
     {
       "category": "Tools",
       "label": "References Provider",
       "description": "Query symbol references via the language service API",
-      "path": "references.js"
+      "path": "js/references.js",
+      "alternates": {
+        "typescript": "ts/references.ts"
+      }
     },
     {
       "category": "Options",
       "label": "Retained Mode",
       "description": "Enable long-lived listeners and providers",
-      "path": "retained.js"
+      "path": "js/retained.js",
+      "alternates": {
+        "typescript": "ts/retained.ts"
+      }
     },
     {
       "category": "UI",
       "label": "Tree View (Sidebar)",
       "description": "Create a TreeView in the `Macros` sidebar",
-      "path": "treeView.js"
+      "path": "js/treeView.js",
+      "alternates": {
+        "typescript": "ts/treeView.ts"
+      }
     },
     {
       "category": "UI",
       "label": "Webview (Editor)",
       "description": "Create a Webview in the editor area",
-      "path": "webview.editor.js"
+      "path": "js/webview.editor.js",
+      "alternates": {
+        "typescript": "ts/webview.editor.ts"
+      }
     },
     {
       "category": "UI",
       "label": "Webview (Sidebar)",
       "description": "Create a Webview in the `Macros` sidebar",
-      "path": "webview.sidebar.js"
+      "path": "js/webview.sidebar.js",
+      "alternates": {
+        "typescript": "ts/webview.sidebar.ts"
+      }
     }
   ]
 }

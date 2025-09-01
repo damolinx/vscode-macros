@@ -13,6 +13,7 @@ export interface MacroTemplate {
   description: string;
   label: string;
   path: string;
+  alternates?: Record<string, string>;
 }
 
 export interface Manifest {
@@ -35,18 +36,31 @@ export const Manifest = new Lazy(async (context: vscode.ExtensionContext) => {
   return manifest;
 });
 
-export async function templates({
-  extensionContext,
-}: ExtensionContext): Promise<LoadableMacroTemplate[]> {
-  const { templates } = await Manifest.get(extensionContext);
-  return templates.map((t) => ({ ...t, load: () => readTemplate(extensionContext, t) }));
+export async function templates(
+  { extensionContext: context }: ExtensionContext,
+  language?: string,
+): Promise<LoadableMacroTemplate[]> {
+  const { templates } = await Manifest.get(context);
+  return templates.map((t) => ({ ...t, load: () => readTemplate(context, t, language) }));
 }
 
 async function readTemplate(
   context: vscode.ExtensionContext,
   template: MacroTemplate,
+  language?: string,
 ): Promise<string> {
-  const path = join(MACRO_TEMPLATES_DIR_RESOURCE, template.path);
-  const content = await readFile(context, path);
+  let templatePath = template.path;
+  if (language && template.alternates) {
+    const languagePath = template.alternates[language];
+    if (languagePath) {
+      templatePath = languagePath;
+    }
+  }
+
+  const path = join(MACRO_TEMPLATES_DIR_RESOURCE, templatePath);
+  let content = await readFile(context, path);
+  if (templatePath.endsWith('.ts')) {
+    content = content.replace('// @ts-nocheck', '');
+  }
   return content;
 }

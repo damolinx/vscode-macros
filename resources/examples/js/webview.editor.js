@@ -1,6 +1,6 @@
 
 // @macro: singleton
-// singleton – ensures no more than one instance runs at a time
+//   singleton – ensures no more than one instance runs at a time
 //
 // Creates a Webview editor in the editors container area.
 // This example omits `retained` for simplicity as the custom

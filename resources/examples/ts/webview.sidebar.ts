@@ -1,11 +1,9 @@
-
+// @ts-nocheck
 // @macro: singleton
-// singleton – ensures no more than one instance runs at a time
-//
-// Creates a Webview editor in the editors container area.
-// This example omits `retained` for simplicity as the custom
-// Webview panel handles its own disposal when closed.
-//
+//   singleton – ensures no more than one instance runs at a time
+
+import * as vscode from "vscode";
+
 // References:
 //   - Webview API: https://code.visualstudio.com/api/extension-guides/webview
 //
@@ -40,8 +38,7 @@ function createHtml() {
 </html>`;
 }
 
-/** @returns {import('vscode').WebviewViewProvider } */
-function createWebviewViewProvider(resolve) {
+function createWebviewViewProvider(resolve: () => void) {
   return {
     resolveWebviewView: (webviewView) => {
       webviewView.webview.html = createHtml();
@@ -62,7 +59,7 @@ function createWebviewViewProvider(resolve) {
 }
 
 // Keep macro alive until view is disposed.
-new Promise((resolve) => {
+new Promise<void>((resolve) => {
   __cancellationToken.onCancellationRequested(resolve);
   __disposables.push(
     vscode.window.registerWebviewViewProvider(

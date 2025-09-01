@@ -1,8 +1,10 @@
+// @ts-nocheck
 // @macro: retained, singleton
-// retained  – keeps the TreeDataProvider alive until stopped via the
-//             `Macros: Show Running Macros` command
-// singleton – ensures no more than one instance runs at a time
-//
+//   retained  – keeps the TreeDataProvider alive until stopped
+//   singleton – ensures no more than one instance runs at a time
+
+import * as vscode from "vscode";
+
 // References:
 //   - Tree View API: https://code.visualstudio.com/api/extension-guides/tree-view
 //
@@ -12,10 +14,9 @@
 //   - macrosView.treeview3
 const viewId = "macrosView.treeview1";
 
-/** @returns {import('vscode').TreeDataProvider<string>} */
 function createTreeProvider() {
   return {
-    getTreeItem: (element) => {
+    getTreeItem: (element: string) => {
       switch (element) {
         case "root":
           return new vscode.TreeItem(element, vscode.TreeItemCollapsibleState.Collapsed);
@@ -23,7 +24,7 @@ function createTreeProvider() {
           return new vscode.TreeItem(element);
       }
     },
-    getChildren: (element) => {
+    getChildren: (element: string) => {
       switch (element) {
         case undefined:
           return ["root"];

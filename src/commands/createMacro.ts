@@ -86,7 +86,7 @@ export async function updateActiveEditor(
     return;
   }
 
-  const content = defaultContent ?? (await getTemplateContent(context));
+  const content = defaultContent ?? (await getTemplateContent(context, editor.document.languageId));
   if (!content) {
     return;
   }
@@ -102,9 +102,12 @@ export async function updateActiveEditor(
   );
 }
 
-async function getTemplateContent(context: ExtensionContext): Promise<string | undefined> {
+async function getTemplateContent(
+  context: ExtensionContext,
+  language?: string,
+): Promise<string | undefined> {
   const selectedTemplate = await vscode.window.showQuickPick(
-    createGroupedQuickPickItems(await templates(context), {
+    createGroupedQuickPickItems(await templates(context, language), {
       groupBy: (template) => template.category ?? '',
       itemBuilder: (template) => ({
         label: template.label,

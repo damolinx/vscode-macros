@@ -14,7 +14,8 @@
     "strict": true,
   },
   "exclude": [
+    ".vscode-test",
     "node_modules",
-    ".vscode-test"
-  ]
+    "resources"
+  ],
 }

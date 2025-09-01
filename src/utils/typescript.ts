@@ -22,7 +22,7 @@ export function transpile(
   function fixCode({ outputText }: ts.TranspileOutput) {
     return outputText.replace(
       /Object\.defineProperty\(exports, "__esModule", { value: true }\);\s*/g,
-      ''
+      '',
     );
   }
 }

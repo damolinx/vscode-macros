@@ -4,6 +4,7 @@
 - Support **TypeScript** macros.
   - Supports `.macro.ts` and `.ts` files.
   - REPL support via `.ts` and `.tsv` commands.
+  - TypeScript-specific templates, when using **Macros: Fill File with Template** on `typescript` documents.
 - **Macro Explorer** view
   - Updates descriptions for libraries under the user directory in Windows.
 - **Source Directories Verification**
