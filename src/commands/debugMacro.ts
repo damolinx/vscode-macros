@@ -42,7 +42,7 @@ export async function debugMacro(locator?: Locator) {
     name: `Debug Macro: ${uriBasename(document.uri)}`,
     type: 'extensionHost',
     request: 'launch',
-    args: [`--extensionDevelopmentPath = ${parent(document.uri).fsPath} `],
+    args: [`--extensionDevelopmentPath=${parent(document.uri).fsPath}`],
     env: { [MACROS_EXT_DEBUG_VAR]: '1' },
   };
   vscode.debug.startDebugging(undefined, debugConfig);
