@@ -10,7 +10,7 @@ async function main() {
 
   await esbuild.build({
     entryPoints: ['./src/extension.ts'],
-    external: ['vscode', 'typescript'],
+    external: ['vscode'],
     outfile: './out/extension.js',
     platform: 'node',
 
