@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as os from 'os';
 import { MacroRunInfo } from '../core/execution/macroRunInfo';
 import { MacroRunner } from '../core/execution/macroRunner';
+import { getMacroLangId } from '../core/language';
 import { MacroLibrary } from '../core/library/macroLibrary';
 import { Macro } from '../core/macro';
 import { isUntitled, parent } from '../utils/uri';
@@ -40,6 +41,9 @@ export function getLibraryItem({ uri }: MacroLibrary) {
   }
 }
 
+const JsIcon = new vscode.ThemeIcon('symbol-function', new vscode.ThemeColor('charts.purple'));
+const TsIcon = new vscode.ThemeIcon('symbol-function', new vscode.ThemeColor('charts.blue'));
+
 export function getMacroItem({ uri }: Macro, { runInstanceCount: runCount }: MacroRunner) {
   const item = new vscode.TreeItem(
     uri,
@@ -51,7 +55,7 @@ export function getMacroItem({ uri }: Macro, { runInstanceCount: runCount }: Mac
     command: 'vscode.open',
     title: 'Open Macro',
   };
-  item.iconPath = new vscode.ThemeIcon('symbol-function');
+  item.iconPath = getMacroLangId(uri) === 'typescript' ? TsIcon : JsIcon;
   if (runCount) {
     item.contextValue += ',running';
     item.description = runCount === 1 ? '1 instance' : `${runCount} instances`;
