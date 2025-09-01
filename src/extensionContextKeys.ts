@@ -1,18 +1,35 @@
 import * as vscode from 'vscode';
+import { MACROS_EXT_DEBUG_VAR } from './commands/debugMacro';
 import { isFeatureEnabledMacro, isMacroLangId } from './core/language';
 import { ExtensionContext } from './extensionContext';
 
 export function registerSetContextHandlers(context: ExtensionContext): vscode.Disposable[] {
-  return [registerMruSet(context), ...registerSupportedEditorLangId()];
+  return [
+    registerInDebugMode(context),
+    registerMruSet(context),
+    registerSupportedEditorLangId(),
+  ].flat();
 }
 
-function registerMruSet(context: ExtensionContext): vscode.Disposable {
+function registerInDebugMode({ log }: ExtensionContext): vscode.Disposable[] {
+  const contextKey = 'macros:inDebugMode';
+  const inDebugMode = process.env[MACROS_EXT_DEBUG_VAR]?.trim();
+  if (inDebugMode) {
+    log.warn('Running macros in Debug Mode');
+    setContext(contextKey, inDebugMode);
+  }
+  return [];
+}
+
+function registerMruSet(context: ExtensionContext): vscode.Disposable[] {
   const contextKey = 'macros:mruSet';
 
-  return context.runnerManager.onRun(({ macro: { uri } }) => {
-    context.mruMacro = uri;
-    setContext(contextKey, true);
-  });
+  return [
+    context.runnerManager.onRun(({ macro: { uri } }) => {
+      context.mruMacro = uri;
+      setContext(contextKey, true);
+    }),
+  ];
 }
 
 function registerSupportedEditorLangId(): vscode.Disposable[] {

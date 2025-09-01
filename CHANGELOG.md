@@ -1,19 +1,23 @@
 # Changelog
 
 ## 0.5.0
-- Support **TypeScript** macros.
-  - Supports `.macro.ts` and `.ts` files.
-  - REPL support via `.ts` and `.tsv` commands.
+- Support **TypeScript** macros:
+  - Support `typescript` documents and `.macro.ts` and `.ts` files.
+  - Add REPL support via `.ts` and `.tsv` commands.
+  - Leverage the `transpileModule` API for fast transpilation (MVP).
   - TypeScript-specific templates, when using **Macros: Fill File with Template** on `typescript` documents.
-- **Macro Explorer** view
-  - Icon theming matching `vs-seti`.
-  - Updates descriptions for libraries under the user directory in Windows.
-- **Source Directories Verification**
-  - Setting applies immediately without requiring restart.
-  - Verification occurs once per file / library on editor change (previously triggered on document save).
+  - Provide TypeScript-specific templates when using **Macros: Fill File with Template** on `typescript` documents.
+- **Macro Explorer** view:
+  - Icon theming consistent with `vs-seti`.
+  - Improve descriptions for libraries located in the user directory in Windows.
+- **Source Directories Verification** setting:
+  - Changes apply immediately—no restart needed anymore.
+  - Verification now occurs once per file or library on editor change (previously triggered on every `TextDocument` save, which was unnecessarily noisy).
   - Accessible via context menus for libraries.
 - Error reporting omits internal stack frames and noisy messages for cleaner diagnostics.
-- Fix: Debugging is available only for macros saved locally.
+- Debugging UX improvements:
+  - Available only for macros saved to disk (`file` scheme).
+  - Disabled when the current VS Code instance is being debugged to prevent recursive debugging confusion.
 - Fix: Prevent orphaned macro runs when the backing untitled editor is closed.
 
 ## 0.4.5

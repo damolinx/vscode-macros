@@ -4,6 +4,8 @@ import { activeMacroEditor } from '../utils/activeMacroEditor';
 import { fromLocator, Locator, parent, toUri, uriBasename } from '../utils/uri';
 import { showTextDocument } from '../utils/vscodeEx';
 
+export const MACROS_EXT_DEBUG_VAR = 'MACROS_EXT_DEBUG';
+
 export async function debugMacro(locator?: Locator) {
   const uri = locator ? toUri(fromLocator(locator)) : await showMacroOpenDialog();
   if (!uri) {
@@ -40,8 +42,8 @@ export async function debugMacro(locator?: Locator) {
     name: `Debug Macro: ${uriBasename(document.uri)}`,
     type: 'extensionHost',
     request: 'launch',
-    args: [`--extensionDevelopmentPath=${parent(document.uri).fsPath}`],
-    env: { MACROS_EXT_DEBUG: '1' },
+    args: [`--extensionDevelopmentPath = ${parent(document.uri).fsPath} `],
+    env: { [MACROS_EXT_DEBUG_VAR]: '1' },
   };
   vscode.debug.startDebugging(undefined, debugConfig);
 }

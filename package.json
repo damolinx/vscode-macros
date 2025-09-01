@@ -97,14 +97,14 @@
         "command": "macros.debug",
         "title": "Debug Macro",
         "category": "Macros",
-        "enablement": "!inDebugMode",
+        "enablement": "!inDebugMode && !macros:inDebugMode",
         "icon": "$(debug-alt)"
       },
       {
         "command": "macros.debug.activeEditor",
         "title": "Debug Active Editor as a Macro",
         "category": "Macros",
-        "enablement": "!inDebugMode && resourceScheme == file && macros:supportedEditorLangId",
+        "enablement": "!inDebugMode && !macros:inDebugMode && resourceScheme == file && macros:supportedEditorLangId",
         "icon": "$(debug-alt)"
       },
       {
@@ -263,7 +263,7 @@
         {
           "command": "macros.debug.activeEditor",
           "group": "navigation",
-          "when": "!inDebugMode && resourceScheme == file && macros:supportedFeatureExt"
+          "when": "!inDebugMode && !macros:inDebugMode && resourceScheme == file && macros:supportedFeatureExt"
         },
         {
           "command": "macros.run.activeEditor",
