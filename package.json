@@ -2,7 +2,7 @@
   "name": "damolinx-macros",
   "displayName": "Macros for VS Code",
   "description": "Macros are JavaScript scripts for automating VS Code using standard extensibility APIs.",
-  "version": "0.4.5",
+  "version": "0.5.0",
   "publisher": "damolinx",
   "icon": "resources/images/icon.png",
   "repository": {

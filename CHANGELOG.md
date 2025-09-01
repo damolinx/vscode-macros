@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.4.6
+## 0.5.0
 - Support **TypeScript** macros.
   - Supports `.macro.ts` and `.ts` files.
   - REPL support via `.ts` and `.tsv` commands.
