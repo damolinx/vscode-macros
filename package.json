@@ -20,9 +20,22 @@
   ],
   "keywords": [
     "automate",
+    "custom editor",
+    "custom view",
+    "explorer",
+    "extension",
+    "javascript",
     "macro",
     "macros",
-    "script"
+    "productivity",
+    "prototyping",
+    "sandbox",
+    "script",
+    "sidebar",
+    "tooling",
+    "treeview",
+    "typescript",
+    "webview"
   ],
   "extensionKind": [
     "workspace"
