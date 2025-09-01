@@ -2,7 +2,6 @@ import * as vscode from 'vscode';
 import * as os from 'os';
 import { MacroRunInfo } from '../core/execution/macroRunInfo';
 import { MacroRunner } from '../core/execution/macroRunner';
-import { getMacroLangId } from '../core/language';
 import { MacroLibrary } from '../core/library/macroLibrary';
 import { Macro } from '../core/macro';
 import { isUntitled, parent } from '../utils/uri';
@@ -13,10 +12,10 @@ export function getLibraryItem({ uri }: MacroLibrary) {
   if (!isUntitled(uri)) {
     item.description = homeRelativePath(uri) || vscode.workspace.asRelativePath(parent(uri));
   } else {
-    // item.label = 'Temporary';
     item.contextValue += ',untitled';
-    item.tooltip =
-      'Unsaved macros. Save as .macro.js or .macro.ts to enable\nautocomplete, IntelliSense, and macro tooling.';
+    item.tooltip = new vscode.MarkdownString(
+      '**Unsaved macros** — Save files as `.macro.js` or `.macro.ts`  \nto enable IntelliSense and macro tooling.',
+    );
     item.iconPath = new vscode.ThemeIcon('server-process');
   }
   return item;
@@ -41,8 +40,16 @@ export function getLibraryItem({ uri }: MacroLibrary) {
   }
 }
 
-const JsIcon = new vscode.ThemeIcon('symbol-function', new vscode.ThemeColor('charts.purple'));
-const TsIcon = new vscode.ThemeIcon('symbol-function', new vscode.ThemeColor('charts.blue'));
+const JsIcon = new vscode.ThemeIcon('symbol-function', new vscode.ThemeColor('macros.js'));
+const TsIcon = new vscode.ThemeIcon('symbol-function', new vscode.ThemeColor('macros.ts'));
+const MacroJsIcon = new vscode.ThemeIcon(
+  'symbol-function',
+  new vscode.ThemeColor('macros.macrojs'),
+);
+const MacroTsIcon = new vscode.ThemeIcon(
+  'symbol-function',
+  new vscode.ThemeColor('macros.macrots'),
+);
 
 export function getMacroItem({ uri }: Macro, { runInstanceCount: runCount }: MacroRunner) {
   const item = new vscode.TreeItem(
@@ -55,14 +62,29 @@ export function getMacroItem({ uri }: Macro, { runInstanceCount: runCount }: Mac
     command: 'vscode.open',
     title: 'Open Macro',
   };
-  item.iconPath = getMacroLangId(uri) === 'typescript' ? TsIcon : JsIcon;
+  item.iconPath = getIconPath();
   if (runCount) {
     item.contextValue += ',running';
-    item.description = runCount === 1 ? '1 instance' : `${runCount} instances`;
-    item.tooltip = `${uri.scheme === 'file' ? uri.fsPath : uri.toString(true)} · ${runCount === 1 ? '1 instance' : `${runCount} instances`}`;
+    item.description = `(${runCount})`;
+    item.tooltip = `${uri.scheme === 'file' ? uri.fsPath : uri.toString(true)}\n${runCount === 1 ? '1 running instance' : `${runCount} running instances`}`;
   }
   return item;
+
+  function getIconPath(): vscode.ThemeIcon | undefined {
+    if (uri.path.endsWith('.js')) {
+      return uri.path.endsWith('.macro.js') ? MacroJsIcon : JsIcon;
+    } else if (uri.path.endsWith('.ts')) {
+      return uri.path.endsWith('.macro.ts') ? MacroTsIcon : TsIcon;
+    }
+    return;
+  }
 }
+
+const RunningIcon = new vscode.ThemeIcon('circle-outline', new vscode.ThemeColor('macros.general'));
+const StartupRunningIcon = new vscode.ThemeIcon(
+  'record-small',
+  new vscode.ThemeColor('macros.general'),
+);
 
 export function getRunItem(runInfo: MacroRunInfo) {
   const item = new vscode.TreeItem(runInfo.id);
@@ -71,9 +93,9 @@ export function getRunItem(runInfo: MacroRunInfo) {
 
   if (runInfo.startup) {
     item.description = 'startup';
-    item.iconPath = new vscode.ThemeIcon('circle-filled');
+    item.iconPath = StartupRunningIcon;
   } else {
-    item.iconPath = new vscode.ThemeIcon('circle-outline');
+    item.iconPath = RunningIcon;
   }
   return item;
 

@@ -32,6 +32,53 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "colors": [
+      {
+        "id": "macros.general",
+        "description": "Color for general icons",
+        "defaults": {
+          "dark": "#6d8086",
+          "light": "#6d8086",
+          "highContrast": "#b0b0b0"
+        }
+      },
+      {
+        "id": "macros.js",
+        "description": "Color for JavaScript icons",
+        "defaults": {
+          "dark": "#d4b830",
+          "light": "#d4b830",
+          "highContrast": "#ffea00"
+        }
+      },
+      {
+        "id": "macros.macrojs",
+        "description": "Color for JavaScript macro icons",
+        "defaults": {
+          "dark": "#e6c94a",
+          "light": "#e6c94a",
+          "highContrast": "#fff200"
+        }
+      },
+      {
+        "id": "macros.ts",
+        "description": "Color for TypeScript icons",
+        "defaults": {
+          "dark": "#519aba",
+          "light": "#519aba",
+          "highContrast": "#00bfff"
+        }
+      },
+      {
+        "id": "macros.macrots",
+        "description": "Color for TypeScript macro icons",
+        "defaults": {
+          "dark": "#6fb0d4",
+          "light": "#6fb0d4",
+          "highContrast": "#5fd0ff"
+        }
+      }
+    ],
     "commands": [
       {
         "command": "macros.debug",

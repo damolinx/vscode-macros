@@ -6,6 +6,7 @@
   - REPL support via `.ts` and `.tsv` commands.
   - TypeScript-specific templates, when using **Macros: Fill File with Template** on `typescript` documents.
 - **Macro Explorer** view
+  - Icon theming matching `vs-seti`.
   - Updates descriptions for libraries under the user directory in Windows.
 - **Source Directories Verification**
   - Setting applies immediately without requiring restart.
