@@ -17,7 +17,14 @@ export function transpile(
 
   return result.diagnostics?.length
     ? [undefined, result.diagnostics]
-    : [result.outputText, undefined];
+    : [fixCode(result), undefined];
+
+  function fixCode({ outputText }: ts.TranspileOutput) {
+    return outputText.replace(
+      /Object\.defineProperty\(exports, "__esModule", { value: true }\);\s*/g,
+      ''
+    );
+  }
 }
 
 export function transpileOrThrow(code: string, uri?: vscode.Uri): string {
