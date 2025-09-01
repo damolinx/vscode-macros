@@ -44,17 +44,15 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
 
   const documentSelector = macroDocumentSelector();
   extensionContext.subscriptions.push(
-    // AI
     registerMacroChatParticipant(context),
-    // Explorer
     ...registerMacroExplorerTreeview(context),
-    // Macro File Helpers
+    ...registerSetContextHandlers(context),
+    ...registerSourceDirectoryVerifier(context),
+    // Editor helpers
     registerMacroCodeLensProvider(documentSelector),
     registerDTSCodeActionProvider(documentSelector),
     registerExecuteCommandCompletionProvider(documentSelector),
     registerMacroOptionsCompletionProvider(documentSelector),
-    // Context Helper
-    ...registerSetContextHandlers(context),
   );
 
   const {
@@ -84,15 +82,11 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.sourceDirectories.settings', () =>
       c.executeCommand('workbench.action.openSettings', SOURCE_DIRS_CONFIG),
     ),
-    cr('macros.sourceDirectories.setup', () => setupSourceDirectory(context)),
+    cr('macros.sourceDirectories.setup', (uri: vscode.Uri) => setupSourceDirectory(context, uri)),
     cr('macros.stop', (uriOrMacroOrRunInfo: vscode.Uri | Macro | MacroRunInfo, ...args: any[]) =>
       stopMacro(context, uriOrMacroOrRunInfo, ...args),
     ),
   );
-
-  if (vscode.workspace.getConfiguration().get('macros.sourceDirectories.verify', true)) {
-    extensionContext.subscriptions.push(registerSourceDirectoryVerifier(context));
-  }
 
   await runStartupMacros(context);
 }

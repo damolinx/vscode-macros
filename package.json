@@ -157,9 +157,9 @@
             },
             "uniqueItems": true
           },
-          "macros.sourceDirectories.verify": {
+          "macros.sourceDirectoriesVerification": {
             "type": "boolean",
-            "description": "Verify that macro source directories are set up for development on save. Requires restart.",
+            "markdownDescription": "Automatically verify that the parent folder of the current macro editor is set up for development (e.g. `jsconfig.json`, `global.d.ts`).",
             "default": true
           },
           "macros.startupMacros": {
@@ -256,6 +256,11 @@
           "command": "macros.run",
           "when": "view == macros.macroExplorer && viewItem =~ /macroFile/",
           "group": "1_execution@1"
+        },
+        {
+          "command": "macros.sourceDirectories.setup",
+          "when": "view == macros.macroExplorer && viewItem =~ /macroLibrary/ && !(viewItem =~ /untitled/)",
+          "group": "5_other@1"
         },
         {
           "command": "macros.stop",

@@ -1,41 +1,81 @@
 import * as vscode from 'vscode';
-import { posix } from 'path';
 import { isFeatureEnabledMacro } from '../core/language';
 import { ExtensionContext } from '../extensionContext';
 import { selectSourceDirectory } from '../ui/selectMacroFile';
+import { LazyDisposable } from '../utils/lazy';
 import { readFile } from '../utils/resources';
-import { PathLike, toUri } from '../utils/uri';
+import { parent, UriLocator } from '../utils/uri';
 
+export const AUTO_VERIFY_SETTING = 'macros.sourceDirectoriesVerification';
 export const GLOBALS_RESOURCE = 'api/global.d.ts';
 export const JSCONFIG_RESOURCE = 'api/jsconfig.json';
 
-export function registerSourceDirectoryVerifier(context: ExtensionContext) {
-  const verifiedDir = new Set<string>();
-  return vscode.workspace.onDidSaveTextDocument(async ({ uri }) => {
-    if (!isFeatureEnabledMacro(uri)) {
-      return;
-    }
+export function registerSourceDirectoryVerifier(context: ExtensionContext): vscode.Disposable[] {
+  const verifiedPaths = new Set<string>();
+  const onDidChangeActiveTextEditorDisposable = new LazyDisposable(() =>
+    vscode.window.onDidChangeActiveTextEditor(async (editor) => {
+      const uri = editor?.document.uri;
+      if (
+        !uri ||
+        uri.scheme !== 'file' ||
+        verifiedPaths.has(uri.toString()) ||
+        !isFeatureEnabledMacro(uri)
+      ) {
+        return;
+      }
+      verifiedPaths.add(uri.fsPath);
 
-    const parentPath = posix.dirname(uri.path);
-    if (verifiedDir.has(parentPath)) {
-      return;
-    }
+      const parentUri = parent(uri);
+      if (verifiedPaths.has(parentUri.fsPath)) {
+        return;
+      }
+      verifiedPaths.add(parentUri.fsPath);
 
-    verifiedDir.add(parentPath);
-    await setupSourceDirectory(context, uri.with({ path: parentPath }), true);
-  });
+      await setupSourceDirectory(context, parentUri, true);
+    }),
+  );
+
+  const disposables: vscode.Disposable[] = [
+    onDidChangeActiveTextEditorDisposable,
+    vscode.workspace.onDidChangeConfiguration((e) => {
+      if (e.affectsConfiguration(AUTO_VERIFY_SETTING)) {
+        if (isSettingEnabled()) {
+          onDidChangeActiveTextEditorDisposable.initialize();
+        } else {
+          onDidChangeActiveTextEditorDisposable.reset();
+          verifiedPaths.clear();
+        }
+      }
+    }),
+  ];
+
+  if (isSettingEnabled()) {
+    onDidChangeActiveTextEditorDisposable.initialize();
+  }
+
+  return disposables;
+
+  function isSettingEnabled() {
+    return vscode.workspace.getConfiguration().get(AUTO_VERIFY_SETTING, true);
+  }
 }
 
 export async function setupSourceDirectory(
   context: ExtensionContext,
-  pathOrUri?: PathLike,
+  locator?: UriLocator,
   suppressNotifications?: true,
 ): Promise<void> {
-  const uri = pathOrUri ? toUri(pathOrUri) : await selectSourceDirectory(context.libraryManager);
+  const uri = locator
+    ? locator instanceof vscode.Uri
+      ? locator
+      : locator.uri
+    : await selectSourceDirectory(context.libraryManager);
+
   if (!uri) {
     return; // Nothing to run.
   }
 
+  context.log.debug('Verifying development files', vscode.workspace.asRelativePath(uri));
   const encoder = new TextEncoder();
   const edit = new vscode.WorkspaceEdit();
   const updatingFiles = (
@@ -46,6 +86,7 @@ export async function setupSourceDirectory(
   ).some((result) => result);
 
   if (!updatingFiles) {
+    context.log.debug('  All files are up-to-date');
     if (!suppressNotifications) {
       vscode.window.showInformationMessage('All files are up-to-date.');
     }
@@ -53,9 +94,10 @@ export async function setupSourceDirectory(
   }
 
   const result = await vscode.workspace.applyEdit(edit);
+  context.log.debug('  Update complete', result);
   if (!suppressNotifications) {
     if (result) {
-      vscode.window.showInformationMessage('Updated files to the latest versions.');
+      vscode.window.showInformationMessage('Updated files to the latest version.');
     } else {
       vscode.window.showErrorMessage(`Could not update ${uri.fsPath}`);
     }
@@ -73,11 +115,13 @@ export async function setupSourceDirectory(
       return false;
     }
 
-    edit.createFile(vscode.Uri.joinPath(uri, target), {
+    const updatedUri = vscode.Uri.joinPath(uri, target);
+    edit.createFile(updatedUri, {
       overwrite: true,
       contents: encoder.encode(newContents),
     });
 
+    context.log.debug('  Updating', vscode.workspace.asRelativePath(updatedUri));
     return true;
   }
 }

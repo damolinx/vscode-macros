@@ -19,6 +19,10 @@ export class Lazy<T, TArgs extends unknown[] = []> {
     return this.value!;
   }
 
+  public initialize(...args: TArgs): void {
+    this.get(...args);
+  }
+
   public isInitialized(): this is { value: T } {
     return this.initialized;
   }

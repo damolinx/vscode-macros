@@ -2,12 +2,17 @@
 
 ## 0.4.6
 - Support **TypeScript** macros.
+  - Supports `.macro.ts` and `.ts` files.
   - REPL support via `.ts` and `.tsv` commands.
-
-- **Macro Explorer** view updates descriptions for libraries under user directory in Windows.
-- Debugging is offered only for locally-saved macros.
-- Error reporting now omits internal stack frames and noisy messages for cleaner diagnostics.
-- Fix: Prevent orphaned macro runs when backing untitled editor is closed.
+- **Macro Explorer** view
+  - Updates descriptions for libraries under the user directory in Windows.
+- **Source Directories Verification**
+  - Setting applies immediately without requiring restart.
+  - Verification occurs once per file / library on editor change (previously triggered on document save).
+  - Accessible via context menus for libraries.
+- Error reporting omits internal stack frames and noisy messages for cleaner diagnostics.
+- Fix: Debugging is available only for macros saved locally.
+- Fix: Prevent orphaned macro runs when the backing untitled editor is closed.
 
 ## 0.4.5
 - REPL:
