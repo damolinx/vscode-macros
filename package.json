@@ -94,6 +94,18 @@
     ],
     "commands": [
       {
+        "command": "macros.copy.name",
+        "title": "Copy Name",
+        "category": "Macros",
+        "enablement": "focusedView == macros.macroExplorer"
+      },
+      {
+        "command": "macros.copy.path",
+        "title": "Copy Path",
+        "category": "Macros",
+        "enablement": "focusedView == macros.macroExplorer"
+      },
+      {
         "command": "macros.debug",
         "title": "Debug Macro",
         "category": "Macros",
@@ -239,6 +251,14 @@
     "menus": {
       "commandPalette": [
         {
+          "command": "macros.copy.name",
+          "when": "false"
+        },
+        {
+          "command": "macros.copy.path",
+          "when": "false"
+        },
+        {
           "command": "macros.delete",
           "when": "false"
         },
@@ -272,6 +292,16 @@
         }
       ],
       "view/item/context": [
+        {
+          "command": "macros.copy.name",
+          "when": "view == macros.macroExplorer && viewItem =~ /macro(File|Library)/ && !(viewItem =~ /untitled/)",
+          "group": "4_tools@2"
+        },
+        {
+          "command": "macros.copy.path",
+          "when": "view == macros.macroExplorer && viewItem =~ /macro(File|Library)/ && !(viewItem =~ /untitled/)",
+          "group": "4_tools@1"
+        },
         {
           "command": "macros.debug",
           "when": "view == macros.macroExplorer && viewItem =~ /macroFile/",

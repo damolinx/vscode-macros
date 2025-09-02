@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { registerMacroChatParticipant } from './ai/macroChatParticipant';
+import { copyPath } from './commands/copyPath';
 import { createMacro, updateActiveEditor } from './commands/createMacro';
 import { createRepl } from './commands/createRepl';
 import { debugActiveEditor, debugMacro } from './commands/debugMacro';
@@ -60,6 +61,8 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     commands: { registerCommand: cr },
   } = vscode;
   extensionContext.subscriptions.push(
+    cr('macros.copy.name', (locator: Locator) => copyPath(context, locator, true)),
+    cr('macros.copy.path', (locator: Locator) => copyPath(context, locator)),
     cr('macros.debug', debugMacro),
     cr('macros.debug.activeEditor', debugActiveEditor),
     cr('macros.delete', (locator: Locator) => deleteMacro(context, locator)),
@@ -72,7 +75,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.revealInExplorer', revealFileInOs),
     cr('macros.revealInFinder', revealFileInOs),
     cr('macros.revealInFiles', revealFileInOs),
-    cr('macros.run', (pathOrUriOrMacro?: Locator) => runMacro(context, pathOrUriOrMacro)),
+    cr('macros.run', (locator?: Locator) => runMacro(context, locator)),
     cr('macros.run.activeEditor', () => runActiveEditor(context)),
     cr('macros.run.mru', () => runMacro(context, context.mruMacro)),
     cr('macros.run.show', () => showRunningMacros(context)),

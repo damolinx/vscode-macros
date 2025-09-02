@@ -7,6 +7,9 @@ run in a NodeJS sandbox by the extension itself. The sandbox is created using
 \`vm.runInContext\` or \`vm.runInNewContext\` APIs, and is run in the context
 of the "Macros for VS Code" extension itself.
 
+
+TYPESCRIPT
+
 1. Macro Authoring Requirements
   • Produce one standalone JavaScript file — no TypeScript or other languages.
     • Prefer \`.macro.js\` file extension over \`.js\`. Only \`.macro.js\` files

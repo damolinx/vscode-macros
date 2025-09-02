@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.1
+- **Macro Explorer** view:
+  - Nodes get `Copy Path` and `Copy Name` actions.
+
 ## 0.5.0
 - Support **TypeScript** macros:
   - Support `typescript` documents and `.macro.ts` and `.ts` files.
