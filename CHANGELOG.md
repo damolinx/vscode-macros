@@ -3,8 +3,10 @@
 ## 0.5.1
 - **Macro Explorer** view:
   - Nodes get `Copy Path` and `Copy Name` actions.
+  - New view icon.
 
 ## 0.5.0
+- New icon.
 - Support **TypeScript** macros:
   - Support `typescript` documents and `.macro.ts` and `.ts` files.
   - Add REPL support via `.ts` and `.tsv` commands.

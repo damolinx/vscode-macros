@@ -382,7 +382,7 @@
           "id": "macros.macroExplorer",
           "name": "Macro Explorer",
           "type": "tree",
-          "icon": "$(run-all)"
+          "icon": "resources/images/macros.svg"
         },
         {
           "id": "macrosView.treeview1",
