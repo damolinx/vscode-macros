@@ -6,6 +6,7 @@
   - Resource nodes get `Copy Path` and `Copy Name` actions.
   - Run nodes show started and document version information.
 - Fix: Stackframe clean-up not working as expected.
+- Fix: `.ts` / `.tsv` do not interact correctly with command history.
 
 ## 0.5.0
 - New icon.

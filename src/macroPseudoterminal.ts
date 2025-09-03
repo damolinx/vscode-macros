@@ -136,12 +136,26 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     replServer.defineCommand('save', {
       help: 'Save all evaluated commands into a new editor',
       action: async () => {
-        const nonCommandStmts = replServer.history?.filter((s) => !s.trimStart().startsWith('.'));
-        if (nonCommandStmts?.length) {
+        const history = replServer.history?.reduce((acc, val, _i) => {
+          let value: string | undefined = val.trim();
+          if (value.startsWith('.')) {
+            if (value.startsWith('.tsv ')) {
+              value = value.slice(5).trim();
+            } else if (value.startsWith('.ts ')) {
+              value = value.slice(4).trim();
+            } else {
+              value = undefined;
+            }
+          }
+          if (value) {
+            acc.unshift(value);
+          }
+          return acc;
+        }, [] as string[]);
+
+        if (history?.length) {
           await createMacro(this.context, undefined, {
-            content:
-              `\n// History: ${new Date().toLocaleString()}\n\n` +
-              nonCommandStmts.reverse().join('\n'),
+            content: `\n// History: ${new Date().toLocaleString()}\n\n` + history.join('\n'),
             preserveFocus: true,
           });
         } else {
@@ -189,8 +203,6 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
         server.output.write(`${this.inspectObj(err ?? result)}${REPL_NEWLINE}`);
         server.displayPrompt();
       });
-
-      server.history!.unshift(code);
     }
   }
 
