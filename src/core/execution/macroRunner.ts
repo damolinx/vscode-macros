@@ -4,7 +4,7 @@ import { MacroContext } from '../../api/macroContext';
 import { MacrosLogOutputChannel } from '../../api/macroLogOutputChannel';
 import { ExtensionContext } from '../../extensionContext';
 import { Macro } from '../macro';
-import { MacroOptions } from '../macroOptions';
+import { MacroCode } from '../macroCode';
 import { initializeContext, initializeMacrosApi, MacroContextInitParams } from './macroRunContext';
 import { getMacroRunId, MacroRunId } from './macroRunId';
 import { MacroRunInfo, MacroRunResult } from './macroRunInfo';
@@ -72,18 +72,21 @@ export class MacroRunner implements vscode.Disposable {
     return this.runs.values();
   }
 
-  public async run(code: string, options: MacroOptions, startup?: true): Promise<void> {
-    if (this.runs.size > 0 && options.singleton) {
+  public async run(macroCode: MacroCode, startup?: true): Promise<void> {
+    if (this.runs.size > 0 && macroCode.options.singleton) {
       throw new Error(`Singleton macro ${this.macro.name} is already running`);
     }
 
+    const code = macroCode.getRunnableCode();
     const runInfo: MacroRunInfo = {
       cts: new vscode.CancellationTokenSource(),
       id: getMacroRunId(this.macro.name, ++this.index, startup),
       macro: this.macro,
       snapshot: {
-        code,
-        options,
+        code: macroCode.rawCode,
+        options: macroCode.options,
+        startedOn: Date.now(),
+        version: macroCode.version,
       },
       startup,
     };
@@ -93,7 +96,7 @@ export class MacroRunner implements vscode.Disposable {
     const context = this.getContext({
       disposables: macroDisposables,
       log: new MacrosLogOutputChannel(runInfo.id, this.context),
-      persistent: !!options.persistent,
+      persistent: !!macroCode.options.persistent,
       runId: runInfo.id,
       startup,
       token: runInfo.cts.token,
@@ -108,7 +111,7 @@ export class MacroRunner implements vscode.Disposable {
     let result: any;
     try {
       let runPromise: Promise<any>;
-      if (options.persistent) {
+      if (macroCode.options.persistent) {
         const initialKeys = Object.keys(context).filter((k) => !k.startsWith('__'));
         runPromise = Promise.resolve(vm.runInContext(code, context, scriptOptions)).finally(() => {
           const currentKeys = Object.keys(context).filter((k) => !k.startsWith('__'));
@@ -126,7 +129,7 @@ export class MacroRunner implements vscode.Disposable {
         runPromise = vm.runInNewContext(code, context, scriptOptions);
       }
 
-      result = await (options.retained ? retainedExecute(runPromise) : runPromise);
+      result = await (macroCode.options.retained ? retainedExecute(runPromise) : runPromise);
     } catch (e) {
       scriptFailed = true;
       throw e;

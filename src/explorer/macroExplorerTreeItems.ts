@@ -4,6 +4,7 @@ import { MacroRunInfo } from '../core/execution/macroRunInfo';
 import { MacroRunner } from '../core/execution/macroRunner';
 import { MacroLibrary } from '../core/library/macroLibrary';
 import { Macro } from '../core/macro';
+import { MacroOptions } from '../core/macroOptions';
 import { isUntitled, parent } from '../utils/uri';
 
 export function getLibraryItem({ uri }: MacroLibrary) {
@@ -89,20 +90,49 @@ const StartupRunningIcon = new vscode.ThemeIcon(
 export function getRunItem(runInfo: MacroRunInfo) {
   const item = new vscode.TreeItem(runInfo.id);
   item.contextValue = 'macroRun';
-  item.tooltip = getTooltip();
+  item.tooltip = getTooltip(runInfo);
 
   if (runInfo.startup) {
-    item.description = 'startup';
+    item.description = '(startup)';
     item.iconPath = StartupRunningIcon;
   } else {
     item.iconPath = RunningIcon;
   }
   return item;
 
-  function getTooltip(): string | vscode.MarkdownString | undefined {
-    const options = Object.entries(runInfo.snapshot.options)
-      .filter(([_, v]) => v)
-      .map(([k]) => k);
-    return `${runInfo.startup ? 'Startup run instance' : 'Run instance'}${options.length ? ` · ${options.join(' · ')}` : ''}`;
+  function getTooltip({ snapshot }: MacroRunInfo): string | vscode.MarkdownString | undefined {
+    const options = (Object.keys(snapshot.options) as (keyof MacroOptions)[]).filter(
+      (k) => snapshot.options[k],
+    );
+    return (
+      `Options: ${options.length ? `${options.join(' · ')}` : ''}` +
+      `\nVersion: ${snapshot.version}` +
+      `\n${startedTooltip(snapshot.startedOn)}`
+    );
+  }
+
+  function startedTooltip(ts: number): string {
+    const now = new Date();
+    const date = new Date(ts);
+
+    const isSameDay =
+      now.getFullYear() === date.getFullYear() &&
+      now.getMonth() === date.getMonth() &&
+      now.getDate() === date.getDate();
+
+    const time = date.toLocaleTimeString([], {
+      hour: 'numeric',
+      minute: '2-digit',
+      second: '2-digit',
+      fractionalSecondDigits: 2,
+    });
+
+    return isSameDay
+      ? `Started at ${time}`
+      : `Started on ${date.toLocaleDateString([], {
+          year: '2-digit',
+          month: 'numeric',
+          day: 'numeric',
+        })}, ${time}`;
   }
 }

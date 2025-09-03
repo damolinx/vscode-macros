@@ -2,8 +2,9 @@
 
 ## 0.5.1
 - **Macro Explorer** view:
-  - Nodes get `Copy Path` and `Copy Name` actions.
   - New view icon.
+  - Resource nodes  get `Copy Path` and `Copy Name` actions.
+  - Run nodes show started and document version info.
 
 ## 0.5.0
 - New icon.

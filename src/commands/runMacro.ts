@@ -20,9 +20,8 @@ export async function runMacro(
   const macroCode = await runner.macro.getCode();
 
   try {
-    const code = macroCode.getRunnableCode();
     log.info('Executing macro', vscode.workspace.asRelativePath(uri));
-    await runner.run(code, macroCode.options, startup);
+    await runner.run(macroCode, startup);
   } catch (error: any) {
     await showMacroErrorDialog(runner, macroCode, error as Error | string);
   }

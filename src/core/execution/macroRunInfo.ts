@@ -6,6 +6,8 @@ import { MacroRunId } from './macroRunId';
 export interface MacroRunSnapshot {
   code: string;
   options: MacroOptions;
+  startedOn: number;
+  version: number;
 }
 
 export interface MacroRunInfo {
