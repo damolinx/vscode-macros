@@ -54,7 +54,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
 
   private inspectObj(obj: any): string {
     let targetObj = obj;
-    if (obj instanceof Error) {
+    if (obj instanceof Error || Object.prototype.toString.call(obj).endsWith('Error]')) {
       targetObj = cleanError(obj);
     }
 
