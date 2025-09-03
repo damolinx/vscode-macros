@@ -2,11 +2,11 @@ export function cleanError<T extends Error>(error: T): T {
   const clone = cloneError<T>(error);
 
   if (clone.stack) {
-    clone.stack = clone.stack.replace(/\n.+?vscode-macros.*$/s, '');
+    clone.stack = clone.stack.replace(/\n.+?(vscode|damolinx)-macros.*$/s, '');
   }
   if ('requireStack' in clone) {
     clone.message = clone.message.replace(/\nRequire stack:.*$/s, '');
-    delete clone.requireStack;
+    clone.requireStack = [];
   }
   return clone;
 }

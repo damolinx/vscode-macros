@@ -3,8 +3,9 @@
 ## 0.5.1
 - **Macro Explorer** view:
   - New view icon.
-  - Resource nodes  get `Copy Path` and `Copy Name` actions.
-  - Run nodes show started and document version info.
+  - Resource nodes get `Copy Path` and `Copy Name` actions.
+  - Run nodes show started and document version information.
+- Fix: Stackframe clean-up not working as expected.
 
 ## 0.5.0
 - New icon.
