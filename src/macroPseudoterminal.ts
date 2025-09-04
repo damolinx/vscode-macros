@@ -79,7 +79,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     }
 
     this.onDidWriteEmitter.fire(
-      `\x1b[1mMacros REPL\x1b[0m — JS/TS execution with full extension context and API access.${REPL_NEWLINE}Type ".help" for more information.${REPL_NEWLINE}${REPL_NEWLINE}`,
+      `\x1b[1mMacros REPL\x1b[0m — JS/TS execution with extension context and API access.${REPL_NEWLINE}Type ".help" for more information.${REPL_NEWLINE}${REPL_NEWLINE}`,
     );
 
     const input = new PassThrough();
