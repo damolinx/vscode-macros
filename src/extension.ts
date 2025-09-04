@@ -14,6 +14,7 @@ import {
   registerSourceDirectoryVerifier,
   setupSourceDirectory,
 } from './commands/setupSourceDirectory';
+import { showRunCode } from './commands/showRunCode';
 import { showRunningMacros } from './commands/showRunningMacros';
 import { stopMacro } from './commands/stopMacro';
 import { MacroRunInfo } from './core/execution/macroRunInfo';
@@ -32,6 +33,7 @@ import { registerDTSCodeActionProvider } from './providers/dtsCodeActionProvider
 import { registerExecuteCommandCompletionProvider } from './providers/executeCommandCompletionProvider';
 import { registerMacroCodeLensProvider } from './providers/macroCodeLensProvider';
 import { registerMacroOptionsCompletionProvider } from './providers/macroOptionsCompletionProvider';
+import { registerMacroSnapshotContentProvider } from './providers/macroSnapshotContentProvider';
 import { Locator, PathLike, areUriEqual } from './utils/uri';
 
 /**
@@ -47,12 +49,13 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
   extensionContext.subscriptions.push(
     registerMacroChatParticipant(context),
     ...registerMacroExplorerTreeview(context),
+    registerMacroSnapshotContentProvider(context),
     ...registerSetContextHandlers(context),
     ...registerSourceDirectoryVerifier(context),
-    // Editor helpers
-    registerMacroCodeLensProvider(documentSelector),
+
     registerDTSCodeActionProvider(documentSelector),
     registerExecuteCommandCompletionProvider(documentSelector),
+    registerMacroCodeLensProvider(documentSelector),
     registerMacroOptionsCompletionProvider(documentSelector),
   );
 
@@ -79,6 +82,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.run.activeEditor', () => runActiveEditor(context)),
     cr('macros.run.mru', () => runMacro(context, context.mruMacro)),
     cr('macros.run.show', () => showRunningMacros(context)),
+    cr('macros.runView', (runInfo: MacroRunInfo) => showRunCode(runInfo)),
     cr('macros.showMacroExplorer', () =>
       vscode.commands.executeCommand(`${MACRO_EXPLORER_VIEW_ID}.focus`),
     ),

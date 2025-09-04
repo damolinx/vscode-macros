@@ -3,8 +3,10 @@
 ## 0.5.1
 - **Macro Explorer** view:
   - New view icon.
-  - Resource nodes get `Copy Path` and `Copy Name` actions.
-  - Run nodes show started and document version information.
+  - Resource nodes get **Copy Path** and **Copy Name** actions.
+  - Run nodes:
+    - Show started and document version information.
+    - Get **View Running Version** action to open/compare running code with current one.
 - Fix: Stackframe clean-up not working as expected.
 - Fix: `.ts` / `.tsv` do not interact correctly with command history.
 

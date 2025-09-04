@@ -187,6 +187,12 @@
         "category": "Macros"
       },
       {
+        "command": "macros.runView",
+        "title": "View Running Version",
+        "category": "Macros",
+        "enablement": "focusedView == macros.macroExplorer"
+      },
+      {
         "command": "macros.showMacroExplorer",
         "title": "Show Macro Explorer",
         "category": "Macros"
@@ -275,6 +281,10 @@
           "when": "false"
         },
         {
+          "command": "macros.runView",
+          "when": "false"
+        },
+        {
           "command": "macros.stop",
           "when": "false"
         }
@@ -351,6 +361,11 @@
           "command": "macros.sourceDirectories.setup",
           "when": "view == macros.macroExplorer && viewItem =~ /macroLibrary/ && !(viewItem =~ /untitled/)",
           "group": "5_other@1"
+        },
+        {
+          "command": "macros.runView",
+          "when": "view == macros.macroExplorer && (viewItem == macroRun)",
+          "group": "3_other@1"
         },
         {
           "command": "macros.stop",
