@@ -1,8 +1,12 @@
 # Changelog
 
+## 0.5.2
+- REPL:
+  - Improved `.ts` error reporting and handling.
+
 ## 0.5.1
 - **Macro Explorer** view:
-  - New view icon.
+  - New sidebar view icon.
   - Resource nodes get **Copy Path** and **Copy Name** actions.
   - Run nodes:
     - Show started and document version information.
@@ -11,7 +15,7 @@
 - Fix: `.ts` / `.tsv` do not interact correctly with command history.
 
 ## 0.5.0
-- New icon.
+- New extension icon.
 - Support **TypeScript** macros:
   - Support `typescript` documents and `.macro.ts` and `.ts` files.
   - Add REPL support via `.ts` and `.tsv` commands.

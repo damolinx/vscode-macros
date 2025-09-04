@@ -168,11 +168,11 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     // Typescript
     replServer.defineCommand('ts', {
       help: 'Evaluate the argument as TypeScript. Usage: .ts «your code here»',
-      action: (code) => this.evaluateAsTypeScript(code),
+      action: (code) => this.evaluateAsTypeScript(replServer, code),
     });
     replServer.defineCommand('tsv', {
       help: 'Evaluate the argument as TypeScript, echoing the transpiled JavaScript first. Usage: .tsv «your code here»',
-      action: (code) => this.evaluateAsTypeScript(code, true),
+      action: (code) => this.evaluateAsTypeScript(replServer, code, true),
     });
 
     this.setupContext(replServer.context);
@@ -188,22 +188,33 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     };
   }
 
-  private evaluateAsTypeScript(code: string, verbose?: true) {
-    if (this.repl) {
-      const { server } = this.repl;
+  private evaluateAsTypeScript(server: REPLServerWithHistory, code: string, verbose?: true) {
+    const normalizedCode = code.trim();
+    if (!normalizedCode) {
+      server.displayPrompt();
+      return;
+    }
 
-      const transpiledCode = transpileOrThrow(code);
+    let result: string | undefined;
+    let error: Error | undefined;
+
+    try {
+      const transpiledCode = transpileOrThrow(normalizedCode, this.macroInitParams.runId);
       if (verbose) {
         this.onDidWriteEmitter.fire(
-          `${transpiledCode}${REPL_NEWLINE}`.replaceAll('\n', REPL_NEWLINE),
+          `\x1B[3m${transpiledCode}\x1B[0m`.replaceAll('\n', REPL_NEWLINE),
         );
       }
-
-      this.repl.server.eval(transpiledCode, server.context, 'repl', (err, result) => {
-        server.output.write(`${this.inspectObj(err ?? result)}${REPL_NEWLINE}`);
-        server.displayPrompt();
+      server.eval(transpiledCode, server.context, 'repl', (err, res) => {
+        error = err ?? undefined;
+        result = res ?? undefined;
       });
+    } catch (err: any) {
+      error = err;
     }
+
+    server.output.write(`${this.inspectObj(error ?? result)}${REPL_NEWLINE}`);
+    server.displayPrompt();
   }
 
   public setDimensions(dimensions: vscode.TerminalDimensions): void {
