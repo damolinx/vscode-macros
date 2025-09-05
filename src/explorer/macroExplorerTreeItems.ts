@@ -58,6 +58,9 @@ export function getMacroItem({ uri }: Macro, { runInstanceCount: runCount }: Mac
     runCount ? vscode.TreeItemCollapsibleState.Collapsed : undefined,
   );
   item.contextValue = 'macroFile';
+  if (isUntitled(uri)) {
+    item.contextValue += ',untitled';
+  }
   item.command = {
     arguments: [uri],
     command: 'vscode.open',
@@ -130,9 +133,9 @@ export function getRunItem(runInfo: MacroRunInfo) {
     return isSameDay
       ? `Started at ${time}`
       : `Started on ${date.toLocaleDateString([], {
-          year: '2-digit',
-          month: 'numeric',
-          day: 'numeric',
-        })}, ${time}`;
+        year: '2-digit',
+        month: 'numeric',
+        day: 'numeric',
+      })}, ${time}`;
   }
 }
