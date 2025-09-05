@@ -1,6 +1,8 @@
 # Changelog
 
 ## 0.5.2
+- **Macro Explorer** view:
+  - Macro nodes get **Rename** action.
 - REPL:
   - New evaluation logic avoids known cases of REPL freezing.
   - `.ts` / `.js` enable TypeScript / JavaScript evaluation.

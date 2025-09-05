@@ -148,6 +148,12 @@
         "category": "Macros"
       },
       {
+        "command": "macros.rename.macro",
+        "title": "Rename",
+        "category": "Macros",
+        "enablement": "focusedView == macros.macroExplorer"
+      },
+      {
         "command": "macros.revealInExplorer",
         "title": "Reveal in File Explorer",
         "enablement": "!isWeb && isWindows"
@@ -269,6 +275,10 @@
           "when": "false"
         },
         {
+          "command": "macros.rename.macro",
+          "when": "false"
+        },
+        {
           "command": "macros.revealInExplorer",
           "when": "false"
         },
@@ -320,7 +330,7 @@
         {
           "command": "macros.delete",
           "when": "view == macros.macroExplorer && viewItem =~ /macroFile/ && !(viewItem =~ /untitled/)",
-          "group": "5_other@1"
+          "group": "5_other@2"
         },
         {
           "command": "macros.new.macro",
@@ -331,6 +341,11 @@
           "command": "macros.new.macro",
           "when": "view == macros.macroExplorer && viewItem =~ /macroLibrary/",
           "group": "3_navigation@1"
+        },
+        {
+          "command": "macros.rename.macro",
+          "when": "view == macros.macroExplorer && viewItem =~ /macroFile/ && !(viewItem =~ /untitled/)",
+          "group": "5_other@1"
         },
         {
           "command": "macros.revealInExplorer",
@@ -358,14 +373,14 @@
           "group": "1_execution@1"
         },
         {
-          "command": "macros.sourceDirectories.setup",
-          "when": "view == macros.macroExplorer && viewItem =~ /macroLibrary/ && !(viewItem =~ /untitled/)",
-          "group": "5_other@1"
-        },
-        {
           "command": "macros.runView",
           "when": "view == macros.macroExplorer && (viewItem == macroRun)",
           "group": "3_other@1"
+        },
+        {
+          "command": "macros.sourceDirectories.setup",
+          "when": "view == macros.macroExplorer && viewItem =~ /macroLibrary/ && !(viewItem =~ /untitled/)",
+          "group": "5_other@1"
         },
         {
           "command": "macros.stop",

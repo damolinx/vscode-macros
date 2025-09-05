@@ -7,6 +7,7 @@ import { debugActiveEditor, debugMacro } from './commands/debugMacro';
 import { deleteMacro } from './commands/deleteMacro';
 import { downloadAsset } from './commands/downloadAsset';
 import { openMacro } from './commands/openMacro';
+import { renameMacro } from './commands/renameMacro';
 import { resetSharedContext } from './commands/resetContext';
 import { revealFileInOs } from './commands/revealFileInOS';
 import { runActiveEditor, runMacro } from './commands/runMacro';
@@ -74,6 +75,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.new.macro.activeEditor', () => updateActiveEditor(context)),
     cr('macros.new.macro.repl', () => createRepl(context)),
     cr('macros.open', () => openMacro(context)),
+    cr('macros.rename.macro', (locator: Locator) => renameMacro(context, locator)),
     cr('macros.resetContext', (pathOrUri: PathLike) => resetSharedContext(context, pathOrUri)),
     cr('macros.revealInExplorer', revealFileInOs),
     cr('macros.revealInFinder', revealFileInOs),
