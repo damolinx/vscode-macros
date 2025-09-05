@@ -3,6 +3,16 @@ import * as util from 'util';
 import * as ts from 'typescript';
 import { parent, uriBasename } from './uri';
 
+export const RecoverableCodes: Readonly<Set<number>> = new Set([
+  1005, // `'token' expected` — classic missing semicolon, brace, or parenthesis
+  1003, // `Identifier expected` — often mid-declaration or incomplete statement
+  1009, // `'(' expected` — likely incomplete function or call expression
+  1010, // `')' expected` — unclosed argument list or grouping
+  1109, // `Expression expected` — mid-expression, often recoverable
+  1128, // `Declaration or statement expected` — inside unclosed block or directive
+  1160, // `Unterminated string literal` — user is still typing a string
+]);
+
 export function transpile(
   code: string,
   fileNameOrUri?: string | vscode.Uri,
@@ -65,5 +75,9 @@ export class TranspilationError extends Error {
     return options.colors
       ? ts.formatDiagnosticsWithColorAndContext(this.diagnostics, host)
       : ts.formatDiagnostics(this.diagnostics, host);
+  }
+
+  public isRecoverable(): boolean {
+    return this.diagnostics.some((d) => RecoverableCodes.has(d.code));
   }
 }

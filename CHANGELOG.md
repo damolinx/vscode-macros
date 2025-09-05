@@ -2,7 +2,10 @@
 
 ## 0.5.2
 - REPL:
-  - Improved `.ts` error reporting and handling.
+  - New evaluation logic avoids known cases of REPL freezing.
+  - `.ts` / `.js` enable TypeScript / JavaScript evaluation.
+    - `.tsv` is deprecated.
+  - Improved error reporting and handling.
 
 ## 0.5.1
 - **Macro Explorer** view:

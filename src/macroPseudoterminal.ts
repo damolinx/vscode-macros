@@ -1,17 +1,19 @@
 import * as vscode from 'vscode';
-import { REPLServer, start as startREPL } from 'repl';
+import { Recoverable, REPLServer, start as startREPL } from 'repl';
 import { PassThrough } from 'stream';
 import { inspect } from 'util';
-import { Context } from 'vm';
+import { Context, runInContext } from 'vm';
 import { MacrosLogOutputChannel } from './api/macroLogOutputChannel';
 import { createMacro } from './commands/createMacro';
 import { initializeContext, MacroContextInitParams } from './core/execution/macroRunContext';
 import { ExtensionContext } from './extensionContext';
 import { showMacroQuickPick } from './ui/dialogs';
 import { cleanError } from './utils/errors';
-import { transpileOrThrow } from './utils/typescript';
+import { TranspilationError, transpileOrThrow } from './utils/typescript';
 
 const REPL_NEWLINE = '\r\n';
+export const PROMPT_JS = '\x1b[93mjs\x1b[0m\x1b[90m≫ \x1b[0m';
+export const PROMPT_TS = '\x1b[96mts\x1b[0m\x1b[90m≫ \x1b[0m';
 
 type REPLServerWithHistory = REPLServer & { history?: string[] };
 
@@ -26,10 +28,12 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     output: PassThrough & { columns?: number; rows?: number };
     server: REPLServerWithHistory;
   } & vscode.Disposable;
+  private useTS: boolean;
 
   constructor(context: ExtensionContext, name: string) {
     this.context = context;
     this.cts = new vscode.CancellationTokenSource();
+    this.useTS = false;
     this.macroInitParams = {
       disposables: [],
       log: new MacrosLogOutputChannel(name, context),
@@ -48,21 +52,44 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     this.repl?.dispose();
   }
 
+  async evaluate(
+    code: string,
+    context: Context,
+    callback: (error: Error | null, result: any) => void,
+  ) {
+    try {
+      const targetCode = this.useTS ? transpileOrThrow(code, this.macroInitParams.runId) : code;
+      const result = runInContext(targetCode, context);
+      callback(null, result);
+    } catch (e: any) {
+      const targetError = isRecoverable(e) ? new Recoverable(e) : e;
+      callback(targetError, null);
+    }
+
+    function isRecoverable(e: Error) {
+      return (
+        (e.name === 'SyntaxError' &&
+          /^(Unexpected end of input|Unexpected token|missing|expected)/.test(e.message)) ||
+        (e instanceof TranspilationError && e.isRecoverable())
+      );
+    }
+  }
+
   public handleInput(data: string): void {
     this.repl?.input.write(data);
   }
 
   private inspectObj(obj: any): string {
-    let targetObj = obj;
-    if (obj instanceof Error || Object.prototype.toString.call(obj).endsWith('Error]')) {
-      targetObj = cleanError(obj);
-    }
-
+    const targetObj = isError(obj) ? cleanError(obj) : obj;
     return inspect(targetObj, {
       colors: this.repl?.server.useColors,
       compact: false,
       depth: 2,
     });
+
+    function isError(obj: any): obj is Error {
+      return obj instanceof Error || Object.prototype.toString.call(obj).endsWith('Error]');
+    }
   }
 
   public get onDidClose(): vscode.Event<void> {
@@ -79,7 +106,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     }
 
     this.onDidWriteEmitter.fire(
-      `\x1b[1mMacros REPL\x1b[0m — JS/TS execution with extension context and API access.${REPL_NEWLINE}Type ".help" for more information.${REPL_NEWLINE}${REPL_NEWLINE}`,
+      `\x1b[1mMacros REPL\x1b[0m — JS/TS code evaluation with extension context and API access.${REPL_NEWLINE}Type ".help" for more information.${REPL_NEWLINE}${REPL_NEWLINE}`,
     );
 
     const input = new PassThrough();
@@ -87,9 +114,10 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
       this.onDidWriteEmitter.fire(chunk.replaceAll('\n', REPL_NEWLINE)),
     );
     const replServer = startREPL({
+      eval: (code, ctx, _, cb) => this.evaluate(code, ctx, cb),
       input,
       output,
-      prompt: '\x1b[90m≫ \x1b[0m',
+      prompt: PROMPT_JS,
       terminal: true,
       writer: (obj: any) => this.inspectObj(obj),
       useColors: true,
@@ -137,17 +165,8 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
       help: 'Save all evaluated commands into a new editor',
       action: async () => {
         const history = replServer.history?.reduce((acc, val, _i) => {
-          let value: string | undefined = val.trim();
-          if (value.startsWith('.')) {
-            if (value.startsWith('.tsv ')) {
-              value = value.slice(5).trim();
-            } else if (value.startsWith('.ts ')) {
-              value = value.slice(4).trim();
-            } else {
-              value = undefined;
-            }
-          }
-          if (value) {
+          const value = val.trim();
+          if (!value.startsWith('.')) {
             acc.unshift(value);
           }
           return acc;
@@ -165,14 +184,14 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
       },
     });
 
-    // Typescript
-    replServer.defineCommand('ts', {
-      help: 'Evaluate the argument as TypeScript. Usage: .ts «your code here»',
-      action: (code) => this.evaluateAsTypeScript(replServer, code),
+    // Language
+    replServer.defineCommand('js', {
+      help: 'Evaluate input as JavaScript code.',
+      action: () => this.setEvaluationMode('js'),
     });
-    replServer.defineCommand('tsv', {
-      help: 'Evaluate the argument as TypeScript, echoing the transpiled JavaScript first. Usage: .tsv «your code here»',
-      action: (code) => this.evaluateAsTypeScript(replServer, code, true),
+    replServer.defineCommand('ts', {
+      help: 'Evaluate input as TypeScript code.',
+      action: () => this.setEvaluationMode('ts'),
     });
 
     this.setupContext(replServer.context);
@@ -188,40 +207,31 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     };
   }
 
-  private evaluateAsTypeScript(server: REPLServerWithHistory, code: string, verbose?: true) {
-    const normalizedCode = code.trim();
-    if (!normalizedCode) {
-      server.displayPrompt();
-      return;
-    }
-
-    let result: string | undefined;
-    let error: Error | undefined;
-
-    try {
-      const transpiledCode = transpileOrThrow(normalizedCode, this.macroInitParams.runId);
-      if (verbose) {
-        this.onDidWriteEmitter.fire(
-          `\x1B[3m${transpiledCode}\x1B[0m`.replaceAll('\n', REPL_NEWLINE),
-        );
-      }
-      server.eval(transpiledCode, server.context, 'repl', (err, res) => {
-        error = err ?? undefined;
-        result = res ?? undefined;
-      });
-    } catch (err: any) {
-      error = err;
-    }
-
-    server.output.write(`${this.inspectObj(error ?? result)}${REPL_NEWLINE}`);
-    server.displayPrompt();
-  }
-
   public setDimensions(dimensions: vscode.TerminalDimensions): void {
     if (this.repl) {
       this.repl.output.columns = dimensions.columns;
       this.repl.output.rows = dimensions.rows;
     }
+  }
+
+  public setEvaluationMode(mode: 'js' | 'ts') {
+    let name: string, prompt: string;
+    switch (mode) {
+      case 'ts':
+        name = 'TypeScript';
+        this.useTS = true;
+        prompt = PROMPT_TS;
+        break;
+      default:
+        name = 'JavaScript';
+        this.useTS = false;
+        prompt = PROMPT_JS;
+        break;
+    }
+
+    this.onDidWriteEmitter.fire(`\x1b[2mEvaluation mode:\x1b[0m ${name}${REPL_NEWLINE}`);
+    this.repl?.server.setPrompt(prompt);
+    this.repl?.server.displayPrompt();
   }
 
   private setupContext(context: Context) {
