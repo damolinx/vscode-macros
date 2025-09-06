@@ -24,8 +24,6 @@ export function createMacroItem({ uri }: Macro, { runInstanceCount: runCount }: 
     title: 'Open Macro',
   };
 
-  item.iconPath = getIcon(uri);
-
   if (runCount) {
     item.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
     item.contextValue += ',running';
@@ -34,6 +32,8 @@ export function createMacroItem({ uri }: Macro, { runInstanceCount: runCount }: 
     const displayPath = uri.scheme === 'file' ? uri.fsPath : uri.toString(true);
     const runInstance = runCount === 1 ? '1 running instance' : `${runCount} running instances`;
     item.tooltip = `${displayPath}\n${runInstance}`;
+  } else {
+    item.iconPath = getIcon(uri);
   }
 
   return item;
