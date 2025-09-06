@@ -5,6 +5,7 @@
   - Macro nodes get **Rename** action.
   - Run nodes get **View** action.
 - REPL:
+  - New terminal icon.
   - New evaluation logic avoids known cases of REPL freezing.
   - `.ts` / `.js` enable TypeScript / JavaScript evaluation.
     - `.tsv` is deprecated.
