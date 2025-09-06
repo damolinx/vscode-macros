@@ -3,13 +3,13 @@ import { getMacroLangId } from '../core/language';
 import { Macro } from '../core/macro';
 import { explorerTreeView } from '../explorer/macroExplorerTreeView';
 import { ExtensionContext } from '../extensionContext';
-import { fromLocator, Locator, parent, toUri, uriBasename } from '../utils/uri';
+import { fromLocator, isUntitled, Locator, parent, toUri, uriBasename } from '../utils/uri';
 
 export async function renameMacro(context: ExtensionContext, locator?: Locator): Promise<void> {
   let targetLocator = locator;
   if (!targetLocator) {
     const treeSelection = explorerTreeView?.selection[0];
-    if (treeSelection instanceof Macro) {
+    if (treeSelection instanceof Macro && !isUntitled(treeSelection.uri)) {
       targetLocator = treeSelection;
     }
   }

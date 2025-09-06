@@ -2,14 +2,14 @@ import * as vscode from 'vscode';
 import { Macro } from '../core/macro';
 import { explorerTreeView } from '../explorer/macroExplorerTreeView';
 import { ExtensionContext } from '../extensionContext';
-import { fromLocator, Locator, toUri } from '../utils/uri';
+import { fromLocator, isUntitled, Locator, toUri } from '../utils/uri';
 import { stopMacro } from './stopMacro';
 
 export async function deleteMacro(context: ExtensionContext, locator?: Locator): Promise<void> {
   let targetLocator = locator;
   if (!targetLocator) {
     const treeSelection = explorerTreeView?.selection[0];
-    if (treeSelection instanceof Macro) {
+    if (treeSelection instanceof Macro && !isUntitled(treeSelection.uri)) {
       targetLocator = treeSelection;
     }
   }
