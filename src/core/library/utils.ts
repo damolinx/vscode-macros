@@ -7,8 +7,8 @@ export const WORKSPACE_TOKEN = '${workspaceFolder}';
 
 export function loadConfigPaths(configKey: string): string[] {
   const configValue = vscode.workspace.getConfiguration().get<string[]>(configKey, []);
-  const unexpandedPaths = configValue.map((p) => p.trim()).filter((p) => Boolean(p));
-  const expandedPaths = unexpandedPaths.length ? expandPaths(unexpandedPaths) : [];
+  const rawPaths = configValue.map((p) => p.trim()).filter((p) => Boolean(p));
+  const expandedPaths = rawPaths.length ? expandPaths(rawPaths) : [];
   return expandedPaths;
 }
 
@@ -22,10 +22,12 @@ export function expandPaths(paths: string[]): string[] {
 
   for (const path of paths) {
     if (path.includes(USER_HOME_TOKEN)) {
-      uniquePaths.add(trimTrailingSep(path.replace(USER_HOME_TOKEN, os.homedir())));
+      uniquePaths.add(trimTrailingSep(normalizeSep(path).replace(USER_HOME_TOKEN, os.homedir())));
     } else if (path.includes(WORKSPACE_TOKEN)) {
       workspaceFolders?.forEach((folder) => {
-        uniquePaths.add(trimTrailingSep(path.replace(WORKSPACE_TOKEN, folder.uri.fsPath)));
+        uniquePaths.add(
+          trimTrailingSep(normalizeSep(path).replace(WORKSPACE_TOKEN, folder.uri.fsPath)),
+        );
       });
     } else {
       uniquePaths.add(trimTrailingSep(path));
@@ -33,6 +35,11 @@ export function expandPaths(paths: string[]): string[] {
   }
 
   return Array.from(uniquePaths);
+
+  // Tokenized paths can work across platform (mostly a Win/WSL concern).
+  function normalizeSep(path: string): string {
+    return path.replace('\\', '/');
+  }
 }
 
 export function trimTrailingSep(path: string): string {

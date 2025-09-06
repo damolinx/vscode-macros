@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.5.2
+- Tokenized library paths are now cross-platform—e.g. `${userHome}/macros` resolves correctly on both Windows and Linux when using WSL.
 - **Macro Explorer** view:
   - Macro nodes get **Rename** action.
   - Run nodes get **View** action.
