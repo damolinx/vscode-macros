@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { getMacroLangId } from '../core/language';
+import { isMacro } from '../core/language';
 import { Macro } from '../core/macro';
 import { explorerTreeView } from '../explorer/macroExplorerTreeView';
 import { ExtensionContext } from '../extensionContext';
@@ -36,8 +36,8 @@ async function renameFronLocator(_context: ExtensionContext, locator: Locator): 
         return 'Name cannot be the current name';
       } else if (!/^[a-zA-Z0-9_.@()-]+$/.test(normalizedValue)) {
         return 'Invalid file name';
-      } else if (!getMacroLangId(normalizedValue)) {
-        return 'Unspported file extension';
+      } else if (!isMacro(normalizedValue)) {
+        return 'Invalid macro file name';
       } else if (await exists(vscode.Uri.joinPath(parentUri, normalizedValue))) {
         return 'A file or folder with the same name already exists';
       }
