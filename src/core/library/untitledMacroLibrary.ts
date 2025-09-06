@@ -1,29 +1,39 @@
 import * as vscode from 'vscode';
-import { isCreatingMacro } from '../commands/createMacro';
-import { MacroLibrary } from '../core/library/macroLibrary';
-import { getMacroId, MacroId } from '../core/macroId';
-import { ExtensionContext } from '../extensionContext';
-import { isUntitled, areUriEqual, UriLocator } from '../utils/uri';
+import { isCreatingMacro } from '../../commands/createMacro';
+import { ExtensionContext } from '../../extensionContext';
+import { isUntitled, areUriEqual, UriLocator } from '../../utils/uri';
+import { getMacroId, MacroId } from '../macroId';
+import { MacroLibrary } from './macroLibrary';
 
 export const UNTITLED_MACRO_LIBRARY_NAME = 'Temporary';
 
 export class UntitledMacroLibrary extends MacroLibrary {
+  private static _instance: UntitledMacroLibrary;
+
+  public static instance(context: ExtensionContext): UntitledMacroLibrary {
+    if (!context?.runnerManager) {
+      throw new Error('Missing RunnerManager in context');
+    }
+    this._instance ??= new UntitledMacroLibrary(context);
+    return this._instance;
+  }
+
   private readonly untitledMacros: Map<MacroId, vscode.Uri>;
 
-  constructor(context: ExtensionContext) {
-    super(vscode.Uri.from({ scheme: 'untitled', path: UNTITLED_MACRO_LIBRARY_NAME }));
+  private constructor({ runnerManager }: ExtensionContext) {
+    super(vscode.Uri.from({ scheme: 'untitled', path: UNTITLED_MACRO_LIBRARY_NAME }), 'virtual');
     this.untitledMacros = new Map();
 
     this.disposables.push(
-      context.runnerManager.onRun(({ macro }) => {
-        if (isUntitled(macro) && !this.untitledMacros.has(macro.id)) {
+      runnerManager.onRun(({ macro }) => {
+        if (this.owns(macro) && !this.untitledMacros.has(macro.id)) {
           this.untitledMacros.set(macro.id, macro.uri);
           this.onDidCreateMacroEmitter.fire(macro.uri);
         }
       }),
-      context.runnerManager.onStop(({ runInfo: { macro } }) => {
+      runnerManager.onStop(({ runInfo: { macro } }) => {
         if (
-          isUntitled(macro) &&
+          this.owns(macro) &&
           this.untitledMacros.has(macro.id) &&
           vscode.workspace.textDocuments.every(({ uri }) => !areUriEqual(uri, macro))
         ) {
@@ -32,7 +42,7 @@ export class UntitledMacroLibrary extends MacroLibrary {
         }
       }),
       vscode.workspace.onDidOpenTextDocument(({ uri }) => {
-        if (isUntitled(uri) && isCreatingMacro()) {
+        if (this.owns(uri) && isCreatingMacro()) {
           const macroId = getMacroId(uri);
           if (!this.untitledMacros.has(macroId)) {
             this.untitledMacros.set(macroId, uri);
@@ -41,16 +51,16 @@ export class UntitledMacroLibrary extends MacroLibrary {
         }
       }),
       vscode.workspace.onDidChangeTextDocument(({ document: { uri } }) => {
-        if (isUntitled(uri) && this.untitledMacros.has(getMacroId(uri))) {
+        if (this.owns(uri) && this.untitledMacros.has(getMacroId(uri))) {
           this.onDidChangeMacroEmitter.fire(uri);
         }
       }),
       vscode.workspace.onDidCloseTextDocument(({ uri }) => {
-        if (isUntitled(uri)) {
+        if (this.owns(uri)) {
           const macroId = getMacroId(uri);
           if (
             this.untitledMacros.has(macroId) &&
-            context.runnerManager.getRunner(uri).runInstanceCount === 0
+            runnerManager.getRunner(uri).runInstanceCount === 0
           ) {
             this.untitledMacros.delete(macroId);
             this.onDidDeleteMacroEmitter.fire(uri);

@@ -1,27 +1,32 @@
 import * as vscode from 'vscode';
+import { ExtensionContext } from '../../extensionContext';
 import { LazyDisposable } from '../../utils/lazy';
 import { MacroLibrary } from './macroLibrary';
+import { UntitledMacroLibrary } from './untitledMacroLibrary';
 import { loadConfigUris } from './utils';
 
 export const SOURCE_DIRS_CONFIG = 'macros.sourceDirectories';
 
 export class MacroLibraryManager implements vscode.Disposable {
-  private readonly _libraries: LazyDisposable<readonly MacroLibrary[]>;
   private readonly disposables: vscode.Disposable[];
   private readonly onDidChangeLibrariesEmitter: vscode.EventEmitter<void>;
+  private readonly persistentLibraries: LazyDisposable<readonly MacroLibrary[]>;
+  private readonly virtualLibraries: LazyDisposable<readonly MacroLibrary[]>;
 
-  constructor() {
-    this._libraries = new LazyDisposable(() =>
-      loadConfigUris(SOURCE_DIRS_CONFIG).map((root) => new MacroLibrary(root)),
-    );
+  constructor(context: ExtensionContext) {
     this.onDidChangeLibrariesEmitter = new vscode.EventEmitter();
+    this.persistentLibraries = new LazyDisposable(() =>
+      loadConfigUris(SOURCE_DIRS_CONFIG).map((uri) => new MacroLibrary(uri, 'configured')),
+    );
+    this.virtualLibraries = new LazyDisposable(() => [UntitledMacroLibrary.instance(context)]);
 
     this.disposables = [
-      this._libraries,
+      this.persistentLibraries,
+      this.virtualLibraries,
       this.onDidChangeLibrariesEmitter,
       vscode.workspace.onDidChangeConfiguration((e) => {
         if (e.affectsConfiguration(SOURCE_DIRS_CONFIG)) {
-          this._libraries.reset();
+          this.persistentLibraries.reset();
           this.onDidChangeLibrariesEmitter.fire();
         }
       }),
@@ -40,7 +45,7 @@ export class MacroLibraryManager implements vscode.Disposable {
   }
 
   public get libraries(): readonly MacroLibrary[] {
-    return this._libraries.get();
+    return [...this.persistentLibraries.get(), ...this.virtualLibraries.get()];
   }
 
   public libraryFor(uri: vscode.Uri): MacroLibrary | undefined {

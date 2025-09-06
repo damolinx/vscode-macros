@@ -13,7 +13,7 @@ export class ExtensionContext implements vscode.Disposable {
   constructor(extensionContext: vscode.ExtensionContext) {
     this.extensionContext = extensionContext;
     this.isRemote = Boolean(vscode.env.remoteName);
-    this.libraryManager = new MacroLibraryManager();
+    this.libraryManager = new MacroLibraryManager(this);
     this.log = vscode.window.createOutputChannel('Macros', { log: true });
     this.runnerManager = new MacroRunnerManager(this);
   }

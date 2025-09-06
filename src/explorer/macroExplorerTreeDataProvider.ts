@@ -10,7 +10,6 @@ import { NaturalComparer } from '../utils/ui';
 import { createLibraryItem } from './items/libraryItem';
 import { createMacroItem } from './items/macroItem';
 import { createRunInfoItem } from './items/runInfoItem';
-import { UntitledMacroLibrary } from './untitledMacroLibrary';
 
 export type TreeElement = MacroLibrary | Macro | MacroRunInfo;
 export type TreeEvent = TreeElement | TreeElement[] | undefined;
@@ -21,21 +20,18 @@ interface MonitoredLibraryData {
 }
 
 export class MacroExplorerTreeDataProvider
-  implements vscode.TreeDataProvider<TreeElement>, vscode.Disposable
-{
+  implements vscode.TreeDataProvider<TreeElement>, vscode.Disposable {
   private readonly context: ExtensionContext;
   private readonly disposables: vscode.Disposable[];
   private readonly monitoredLibraries: Map<MacroLibraryId, MonitoredLibraryData>;
   private readonly onDidChangeTreeDataEmitter: vscode.EventEmitter<TreeEvent>;
-  private readonly untitledLibrary: UntitledMacroLibrary;
 
   constructor(context: ExtensionContext) {
     this.context = context;
     this.monitoredLibraries = new Map();
     this.onDidChangeTreeDataEmitter = new vscode.EventEmitter();
-    this.untitledLibrary = new UntitledMacroLibrary(this.context);
 
-    [...this.context.libraryManager.libraries, this.untitledLibrary].forEach((library) =>
+    this.context.libraryManager.libraries.forEach((library) =>
       this.ensureLibraryIsMonitored(library),
     );
 
@@ -49,7 +45,6 @@ export class MacroExplorerTreeDataProvider
       this.context.runnerManager.onStop(({ runInfo }) =>
         this.fireOnDidChangeTreeData(runInfo.macro),
       ),
-      this.untitledLibrary,
     ];
   }
 
@@ -123,9 +118,8 @@ export class MacroExplorerTreeDataProvider
 
     if (!element) {
       children = [...this.context.libraryManager.libraries].sort((a, b) =>
-        NaturalComparer.compare(a.name, b.name),
+        a.kind === b.kind ? NaturalComparer.compare(a.name, b.name) : a.kind ? 1 : -1,
       );
-      children.push(this.untitledLibrary);
     } else if (element instanceof MacroLibrary) {
       const uris = await element.getFiles();
       children = uris
@@ -146,9 +140,7 @@ export class MacroExplorerTreeDataProvider
   getParent(element: TreeElement): TreeElement | undefined {
     let parent: TreeElement | undefined;
     if (element instanceof Macro) {
-      parent = this.untitledLibrary.owns(element)
-        ? this.untitledLibrary
-        : this.context.libraryManager.libraryFor(element.uri);
+      parent = this.context.libraryManager.libraryFor(element.uri);
     } else if (element instanceof MacroRunner) {
       parent = element.macro;
     }

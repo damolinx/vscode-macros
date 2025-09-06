@@ -3,9 +3,12 @@ import { isParent, uriBasename, UriLocator } from '../../utils/uri';
 import { isMacro, macroGlobPattern } from '../language';
 import { getMacroLibraryId, MacroLibraryId } from './macroLibraryId';
 
+export type MacroLibraryKind = 'configured' | 'virtual';
+
 export class MacroLibrary implements vscode.Disposable {
   protected readonly disposables: vscode.Disposable[];
   public readonly id: MacroLibraryId;
+  public readonly kind: MacroLibraryKind;
   public readonly name: string;
   protected readonly onDidCreateMacroEmitter: vscode.EventEmitter<vscode.Uri>;
   protected readonly onDidChangeMacroEmitter: vscode.EventEmitter<vscode.Uri>;
@@ -13,9 +16,10 @@ export class MacroLibrary implements vscode.Disposable {
   public readonly uri: vscode.Uri;
   private watcher?: vscode.FileSystemWatcher;
 
-  constructor(uri: vscode.Uri, id?: MacroLibraryId, name?: string) {
-    this.id = id ?? getMacroLibraryId(uri);
-    this.name = name ?? uriBasename(uri);
+  constructor(uri: vscode.Uri, kind: MacroLibraryKind) {
+    this.id = getMacroLibraryId(uri);
+    this.kind = kind;
+    this.name = uriBasename(uri);
     this.uri = uri;
 
     this.onDidCreateMacroEmitter = new vscode.EventEmitter();
@@ -37,9 +41,9 @@ export class MacroLibrary implements vscode.Disposable {
   protected ensureWatcher() {
     if (!this.watcher && this.uri.scheme === 'file') {
       this.watcher = vscode.workspace.createFileSystemWatcher(macroGlobPattern(this.uri));
-      this.watcher.onDidCreate((uri) => this.onDidCreateMacroEmitter.fire(uri));
-      this.watcher.onDidChange((uri) => this.onDidChangeMacroEmitter.fire(uri));
-      this.watcher.onDidDelete((uri) => this.onDidDeleteMacroEmitter.fire(uri));
+      this.watcher.onDidCreate((uri) => isMacro(uri) && this.onDidCreateMacroEmitter.fire(uri));
+      this.watcher.onDidChange((uri) => isMacro(uri) && this.onDidChangeMacroEmitter.fire(uri));
+      this.watcher.onDidDelete((uri) => isMacro(uri) && this.onDidDeleteMacroEmitter.fire(uri));
     }
   }
 
