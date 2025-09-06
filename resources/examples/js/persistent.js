@@ -4,7 +4,7 @@
 var invocationCount;
 
 async function main() {
-  invocationCount ||= 0;
+  invocationCount ??= 0;
   let invocation = ++invocationCount;
 
   await vscode.window.showInformationMessage(
