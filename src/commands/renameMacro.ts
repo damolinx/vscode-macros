@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
+import { getMacroLangId } from '../core/language';
 import { ExtensionContext } from '../extensionContext';
 import { fromLocator, Locator, parent, toUri, uriBasename } from '../utils/uri';
-import { getMacroLangId } from '../core/language';
 
 export async function renameMacro(_context: ExtensionContext, locator: Locator): Promise<void> {
   const uri = toUri(fromLocator(locator));

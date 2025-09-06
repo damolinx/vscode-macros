@@ -12,8 +12,8 @@ import { cleanError } from './utils/errors';
 import { TranspilationError, transpileOrThrow } from './utils/typescript';
 
 const REPL_NEWLINE = '\r\n';
-export const PROMPT_JS = '\x1b[93mjs\x1b[0m\x1b[90m≫ \x1b[0m';
-export const PROMPT_TS = '\x1b[96mts\x1b[0m\x1b[90m≫ \x1b[0m';
+export const PROMPT_JS = '\x1b[93mjs\x1b[0m\x1b[90m» \x1b[0m';
+export const PROMPT_TS = '\x1b[96mts\x1b[0m\x1b[90m» \x1b[0m';
 
 type REPLServerWithHistory = REPLServer & { history?: string[] };
 
@@ -218,18 +218,18 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     let name: string, prompt: string;
     switch (mode) {
       case 'ts':
-        name = 'TypeScript';
+        name = '\x1b[96mTypeScript\x1b[0m\x1b[90m';
         this.useTS = true;
         prompt = PROMPT_TS;
         break;
       default:
-        name = 'JavaScript';
+        name = '\x1b[93mJavaScript\x1b[0m\x1b[90m';
         this.useTS = false;
         prompt = PROMPT_JS;
         break;
     }
 
-    this.onDidWriteEmitter.fire(`\x1b[2mEvaluation mode:\x1b[0m ${name}${REPL_NEWLINE}`);
+    this.onDidWriteEmitter.fire(`Evaluation mode — ${name}${REPL_NEWLINE}`);
     this.repl?.server.setPrompt(prompt);
     this.repl?.server.displayPrompt();
   }
