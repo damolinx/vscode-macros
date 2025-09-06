@@ -15,3 +15,7 @@ export const MacrosDarkIcon = new Lazy(({ extensionContext }: ExtensionContext) 
 export const MacrosLightIcon = new Lazy(({ extensionContext }: ExtensionContext) =>
   vscode.Uri.file(extensionContext.asAbsolutePath(MACROS_LIGHT)),
 );
+
+export function createIcon(iconId: string, colorId: string): vscode.ThemeIcon {
+  return new vscode.ThemeIcon(iconId, new vscode.ThemeColor(colorId));
+}

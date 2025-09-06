@@ -7,7 +7,9 @@ import { Macro } from '../core/macro';
 import { MacroId, getMacroId } from '../core/macroId';
 import { ExtensionContext } from '../extensionContext';
 import { NaturalComparer } from '../utils/ui';
-import { getLibraryItem, getMacroItem, getRunItem } from './macroExplorerTreeItems';
+import { createLibraryItem } from './items/libraryItem';
+import { createMacroItem } from './items/macroItem';
+import { createRunInfoItem } from './items/runInfoItem';
 import { UntitledMacroLibrary } from './untitledMacroLibrary';
 
 export type TreeElement = MacroLibrary | Macro | MacroRunInfo;
@@ -157,12 +159,12 @@ export class MacroExplorerTreeDataProvider
     let treeItem: vscode.TreeItem;
 
     if (element instanceof MacroLibrary) {
-      treeItem = getLibraryItem(element);
+      treeItem = createLibraryItem(element);
     } else if (element instanceof Macro) {
       const runner = this.context.runnerManager.getRunner(element);
-      treeItem = getMacroItem(element, runner);
+      treeItem = createMacroItem(element, runner);
     } else {
-      treeItem = getRunItem(element);
+      treeItem = createRunInfoItem(element);
     }
 
     return treeItem;
