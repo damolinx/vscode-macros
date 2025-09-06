@@ -59,7 +59,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
   ) {
     try {
       const targetCode = this.useTS ? transpileOrThrow(code, this.macroInitParams.runId) : code;
-      const result = runInContext(targetCode, context);
+      const result = await runInContext(targetCode, context);
       callback(null, result);
     } catch (e: any) {
       const targetError = isRecoverable(e) ? new Recoverable(e) : e;

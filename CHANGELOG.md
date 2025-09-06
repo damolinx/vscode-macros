@@ -8,7 +8,9 @@
   - Run nodes support **View** action.
 - REPL:
   - New terminal icon.
-  - New evaluation logic avoids known cases of REPL freezing.
+  - New evaluation logic matches macro "top-level" evaluation
+    - Promises are evaluated directly; top-level `await` is redundant and unsupported.
+    - Fix: Avoids cases leading to  REPL freezing.
   - `.ts` / `.js` enable TypeScript / JavaScript evaluation.
     - `.tsv` is deprecated.
   - Improved error reporting and handling.
