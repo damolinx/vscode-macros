@@ -20,8 +20,7 @@ interface MonitoredLibraryData {
 }
 
 export class MacroExplorerTreeDataProvider
-  implements vscode.TreeDataProvider<TreeElement>, vscode.Disposable
-{
+  implements vscode.TreeDataProvider<TreeElement>, vscode.Disposable {
   private readonly context: ExtensionContext;
   private readonly disposables: vscode.Disposable[];
   private readonly monitoredLibraries: Map<MacroLibraryId, MonitoredLibraryData>;
@@ -62,6 +61,7 @@ export class MacroExplorerTreeDataProvider
         this.context.log.error(e.message ?? e);
       }
     }
+    this.monitoredLibraries.clear();
   }
 
   private ensureLibraryIsMonitored(library: MacroLibrary): MonitoredLibraryData {
