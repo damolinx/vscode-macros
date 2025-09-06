@@ -1,9 +1,25 @@
 import * as vscode from 'vscode';
 import { getMacroLangId } from '../core/language';
+import { Macro } from '../core/macro';
+import { explorerTreeView } from '../explorer/macroExplorerTreeView';
 import { ExtensionContext } from '../extensionContext';
 import { fromLocator, Locator, parent, toUri, uriBasename } from '../utils/uri';
 
-export async function renameMacro(_context: ExtensionContext, locator: Locator): Promise<void> {
+export async function renameMacro(context: ExtensionContext, locator?: Locator): Promise<void> {
+  let targetLocator = locator;
+  if (!targetLocator) {
+    const treeSelection = explorerTreeView?.selection[0];
+    if (treeSelection instanceof Macro) {
+      targetLocator = treeSelection;
+    }
+  }
+
+  if (targetLocator) {
+    await renameFronLocator(context, targetLocator);
+  }
+}
+
+async function renameFronLocator(_context: ExtensionContext, locator: Locator): Promise<void> {
   const uri = toUri(fromLocator(locator));
   const name = uriBasename(uri);
   const parentUri = parent(uri);

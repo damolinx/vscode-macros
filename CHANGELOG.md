@@ -3,8 +3,9 @@
 ## 0.5.2
 - Tokenized library paths are now cross-platform—e.g. `${userHome}/macros` resolves correctly on both Windows and Linux when using WSL.
 - **Macro Explorer** view:
-  - Macro nodes get **Rename** action.
-  - Run nodes get **View** action.
+  - Macro nodes support **Rename…** action.
+  - Keybindings for **Rename…** and **Delete**.
+  - Run nodes support **View** action.
 - REPL:
   - New terminal icon.
   - New evaluation logic avoids known cases of REPL freezing.
@@ -15,10 +16,10 @@
 ## 0.5.1
 - **Macro Explorer** view:
   - New sidebar view icon.
-  - Resource nodes get **Copy Path** and **Copy Name** actions.
+  - Resource nodes support **Copy Path** and **Copy Name** actions.
   - Run nodes:
     - Show started and document version information.
-    - Get **View Running Version** action to open/compare running code with current one.
+    - Support **View Running Version** action to open/compare running code with current one.
 - Fix: Stackframe clean-up not working as expected.
 - Fix: `.ts` / `.tsv` do not interact correctly with command history.
 

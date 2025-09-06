@@ -120,7 +120,7 @@
         "icon": "$(debug-alt)"
       },
       {
-        "command": "macros.delete",
+        "command": "macros.delete.macro",
         "title": "Delete",
         "category": "Macros",
         "enablement": "focusedView == macros.macroExplorer"
@@ -149,7 +149,7 @@
       },
       {
         "command": "macros.rename.macro",
-        "title": "Rename",
+        "title": "Rename…",
         "category": "Macros",
         "enablement": "focusedView == macros.macroExplorer"
       },
@@ -271,7 +271,7 @@
           "when": "false"
         },
         {
-          "command": "macros.delete",
+          "command": "macros.delete.macro",
           "when": "false"
         },
         {
@@ -328,7 +328,7 @@
           "group": "1_execution@2"
         },
         {
-          "command": "macros.delete",
+          "command": "macros.delete.macro",
           "when": "view == macros.macroExplorer && viewItem =~ /macroFile/ && !(viewItem =~ /untitled/)",
           "group": "5_other@2"
         },
@@ -467,6 +467,20 @@
         }
       ]
     },
+    "keybindings": [
+      {
+        "command": "macros.delete.macro",
+        "key": "Delete",
+        "mac": "Cmd+Backspace",
+        "when": "focusedView == macros.macroExplorer && !inputFocus"
+      },
+      {
+        "command": "macros.rename.macro",
+        "key": "F2",
+        "mac": "Enter",
+        "when": "focusedView == macros.macroExplorer && !inputFocus"
+      }
+    ],
     "chatParticipants": [
       {
         "id": "macros.chatParticipant",
