@@ -38,7 +38,7 @@ export function expandPaths(paths: string[]): string[] {
 
   // Tokenized paths can work across platform (mostly a Win/WSL concern).
   function normalizeSep(path: string): string {
-    return path.replace('\\', '/');
+    return path.replaceAll('\\', '/');
   }
 }
 
