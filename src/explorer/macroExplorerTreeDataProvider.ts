@@ -167,4 +167,8 @@ export class MacroExplorerTreeDataProvider
   get onDidChangeTreeData(): vscode.Event<TreeEvent> {
     return this.onDidChangeTreeDataEmitter.event;
   }
+
+  refresh(): void {
+    return this.onDidChangeTreeDataEmitter.fire(undefined);
+  }
 }

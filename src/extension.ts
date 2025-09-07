@@ -24,6 +24,7 @@ import { SOURCE_DIRS_CONFIG } from './core/library/macroLibraryManager';
 import { loadConfigUris } from './core/library/utils';
 import { Macro } from './core/macro';
 import {
+  explorerTreeDataProvider,
   MACRO_EXPLORER_VIEW_ID,
   registerMacroExplorerTreeview,
 } from './explorer/macroExplorerTreeView';
@@ -71,6 +72,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.debug.activeEditor', debugActiveEditor),
     cr('macros.delete.macro', (locator?: Locator) => deleteMacro(context, locator)),
     cr('macros.downloadAsset', downloadAsset),
+    cr('macros.explorer.refresh', () => explorerTreeDataProvider?.refresh()),
     cr('macros.new.macro', (locator: Locator) => createMacro(context, locator)),
     cr('macros.new.macro.activeEditor', () => updateActiveEditor(context)),
     cr('macros.new.macro.repl', () => createRepl(context)),

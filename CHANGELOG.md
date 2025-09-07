@@ -3,6 +3,7 @@
 ## 0.5.2
 - Tokenized library paths are now cross-platform—e.g. `${userHome}/macros` resolves correctly on both Windows and Linux when using WSL.
 - **Macro Explorer** view:
+  - Add **Refresh Macro Explorer** action to workaround so edge cases on FS events.
   - Macro nodes support **Rename…** action.
   - Keybindings for **Rename…** and **Delete**.
   - Run nodes support **View** action.
