@@ -2,7 +2,7 @@
   "name": "damolinx-macros",
   "displayName": "Macros for VS Code",
   "description": "Automate workflows and prototype extension features with JavaScript and TypeScript macros—no full extension required, full access to VS Code’s API.",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "publisher": "damolinx",
   "icon": "resources/images/icon.png",
   "repository": {
