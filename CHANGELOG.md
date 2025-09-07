@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.5.3
+- Fix: Missed `replace` to `replaceAll` conversation when removing regex.
+
 ## 0.5.2
 - Tokenized library paths are now cross-platform—e.g. `${userHome}/macros` resolves correctly on both Windows and Linux when using WSL.
 - **Macro Explorer** view:
