@@ -49,9 +49,9 @@ export function createRunInfoItem(runInfo: MacroRunInfo) {
     return isSameDay
       ? `Started at ${time}`
       : `Started on ${date.toLocaleDateString([], {
-        year: '2-digit',
-        month: 'numeric',
-        day: 'numeric',
-      })}, ${time}`;
+          year: '2-digit',
+          month: 'numeric',
+          day: 'numeric',
+        })}, ${time}`;
   }
 }

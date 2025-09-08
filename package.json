@@ -260,7 +260,7 @@
             "items": {
               "type": "string",
               "minLength": 4,
-              "pattern": ".+(\\.macro)?\\.c?js$"
+              "pattern": ".+\\.(js|cjs|ts)$"
             },
             "uniqueItems": true
           }
@@ -479,7 +479,7 @@
         {
           "id": "macrosView",
           "title": "Macros",
-          "icon": "$(run-all)"
+          "icon": "resources/images/macros.svg"
         }
       ]
     },

@@ -2,9 +2,11 @@
 
 ## 0.5.4
 - Improve handling of **Source Directories**:
-  - Workspace setting does not override but rather appends to User's.
-  - Support relative paths (extends to **Startup Macros**).
-  - De-duplicate equivalent paths.
+  - Workspace setting now appends to, rather than overrides, the User setting.
+  - Resolved paths are now fully normalized to prevent duplicate entries.
+- **Macro Explorer** view:
+  - Library tooltips now display Source metadata, showing path configuration provenance.
+- Fix: **Startup Macros** setting should allow `.ts` file for consistency.
 
 ## 0.5.3
 - Fix: Missed `replace` to `replaceAll` conversation when removing regex.
