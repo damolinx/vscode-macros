@@ -21,7 +21,7 @@ import { stopMacro } from './commands/stopMacro';
 import { MacroRunInfo } from './core/execution/macroRunInfo';
 import { macroDocumentSelector } from './core/language';
 import { SOURCE_DIRS_CONFIG } from './core/library/macroLibraryManager';
-import { loadConfigUris } from './core/library/utils';
+import { MacroLibrarySourceManager } from './core/library/macroLibrarySourceManager';
 import { Macro } from './core/macro';
 import {
   explorerTreeDataProvider,
@@ -103,7 +103,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
 }
 
 async function runStartupMacros(context: ExtensionContext): Promise<void> {
-  const uris = loadConfigUris('macros.startupMacros');
+  const uris = MacroLibrarySourceManager.getSources('macros.startupMacros').map((s) => s.uri);
   if (uris.length === 0) {
     context.log.info('No startup macros to execute — none registered');
     return;

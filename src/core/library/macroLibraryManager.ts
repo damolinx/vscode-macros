@@ -2,8 +2,8 @@ import * as vscode from 'vscode';
 import { ExtensionContext } from '../../extensionContext';
 import { LazyDisposable } from '../../utils/lazy';
 import { MacroLibrary } from './macroLibrary';
+import { MacroLibrarySourceManager } from './macroLibrarySourceManager';
 import { UntitledMacroLibrary } from './untitledMacroLibrary';
-import { loadConfigUris } from './utils';
 
 export const SOURCE_DIRS_CONFIG = 'macros.sourceDirectories';
 
@@ -11,24 +11,27 @@ export class MacroLibraryManager implements vscode.Disposable {
   private readonly disposables: vscode.Disposable[];
   private readonly onDidChangeLibrariesEmitter: vscode.EventEmitter<void>;
   private readonly persistentLibraries: LazyDisposable<readonly MacroLibrary[]>;
+  private readonly sourcesManager: MacroLibrarySourceManager;
   private readonly virtualLibraries: LazyDisposable<readonly MacroLibrary[]>;
 
   constructor(context: ExtensionContext) {
     this.onDidChangeLibrariesEmitter = new vscode.EventEmitter();
     this.persistentLibraries = new LazyDisposable(() =>
-      loadConfigUris(SOURCE_DIRS_CONFIG).map((uri) => new MacroLibrary(uri, 'configured')),
+      this.sourcesManager.sources.map(
+        (source) => new MacroLibrary(source.uri, 'configured', source),
+      ),
     );
+    this.sourcesManager = new MacroLibrarySourceManager(SOURCE_DIRS_CONFIG);
     this.virtualLibraries = new LazyDisposable(() => [UntitledMacroLibrary.instance(context)]);
 
     this.disposables = [
-      this.persistentLibraries,
-      this.virtualLibraries,
       this.onDidChangeLibrariesEmitter,
-      vscode.workspace.onDidChangeConfiguration((e) => {
-        if (e.affectsConfiguration(SOURCE_DIRS_CONFIG)) {
-          this.persistentLibraries.reset();
-          this.onDidChangeLibrariesEmitter.fire();
-        }
+      this.persistentLibraries,
+      this.sourcesManager,
+      this.virtualLibraries,
+      this.sourcesManager.onDidChangeSources(() => {
+        this.persistentLibraries.reset();
+        this.onDidChangeLibrariesEmitter.fire();
       }),
     ];
   }

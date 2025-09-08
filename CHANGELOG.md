@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.4
+- Improve handling of **Source Directories**:
+  - Workspace setting does not override but rather appends to User's.
+  - Support relative paths (extends to **Startup Macros**).
+  - De-duplicate equivalent paths.
+
 ## 0.5.3
 - Fix: Missed `replace` to `replaceAll` conversation when removing regex.
 

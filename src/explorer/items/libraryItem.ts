@@ -4,7 +4,7 @@ import { dirname, join } from 'path';
 import { MacroLibrary } from '../../core/library/macroLibrary';
 import { isUntitled, parent, uriBasename } from '../../utils/uri';
 
-export function createLibraryItem({ uri }: MacroLibrary) {
+export function createLibraryItem({ uri, configSource }: MacroLibrary) {
   const item = new vscode.TreeItem(uriBasename(uri), vscode.TreeItemCollapsibleState.Collapsed);
   if (isUntitled(uri)) {
     updateUntitledLibraryItem(item);
@@ -23,6 +23,9 @@ export function createLibraryItem({ uri }: MacroLibrary) {
     } else {
       item.description = parent(uri).toString(true);
       item.tooltip = uri.toString(true);
+    }
+    if (configSource) {
+      item.tooltip += `\nSource: ${configSource.sources.map((s) => s.scope)}`;
     }
   }
 

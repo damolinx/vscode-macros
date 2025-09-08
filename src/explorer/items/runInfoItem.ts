@@ -24,7 +24,7 @@ export function createRunInfoItem(runInfo: MacroRunInfo) {
       (k) => snapshot.options[k],
     );
     return (
-      `Options: ${options.length ? `${options.join(' · ')}` : ''}` +
+      `Options: ${options.length ? `${options.join(' · ')}` : '‹none›'}` +
       `\nVersion: ${snapshot.version}` +
       `\n${startedTooltip(snapshot.startedOn)}`
     );
@@ -49,9 +49,9 @@ export function createRunInfoItem(runInfo: MacroRunInfo) {
     return isSameDay
       ? `Started at ${time}`
       : `Started on ${date.toLocaleDateString([], {
-          year: '2-digit',
-          month: 'numeric',
-          day: 'numeric',
-        })}, ${time}`;
+        year: '2-digit',
+        month: 'numeric',
+        day: 'numeric',
+      })}, ${time}`;
   }
 }
