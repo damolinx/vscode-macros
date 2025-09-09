@@ -8,7 +8,7 @@
   - Update add icon, and title actions.
   - Improve keyboard bindings.
   - Library tooltips now display Source metadata, showing path configuration provenance.
-- Fix: **Startup Macros** setting should allow `.ts` file for consistency.
+- **Startup Macros** setting should allow `.ts` file for consistency.
 
 ## 0.5.3
 - Fix: Missed `replace` to `replaceAll` conversation when removing regex.
