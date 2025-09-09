@@ -15,11 +15,11 @@ export async function renameMacro(context: ExtensionContext, locator?: Locator):
   }
 
   if (targetLocator) {
-    await renameFronLocator(context, targetLocator);
+    await renameFromLocator(context, targetLocator);
   }
 }
 
-async function renameFronLocator(_context: ExtensionContext, locator: Locator): Promise<void> {
+async function renameFromLocator(_context: ExtensionContext, locator: Locator): Promise<void> {
   const uri = toUri(fromLocator(locator));
   const name = uriBasename(uri);
   const parentUri = parent(uri);

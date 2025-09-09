@@ -33,7 +33,7 @@ export function createLibraryItem({ uri, configSource }: MacroLibrary) {
     item.contextValue = 'macroLibrary,untitled';
     item.iconPath = new vscode.ThemeIcon('server-process');
     item.tooltip = new vscode.MarkdownString(
-      'Untitled macros haven\'t been saved yet.  \nSave using a `.macro.js` or `.macro.ts` extension  \nto enable IntelliSense and macro tooling.',
+      "Untitled macros haven't been saved yet.  \nSave using a `.macro.js` or `.macro.ts` extension  \nto enable IntelliSense and macro tooling.",
     );
   }
 }

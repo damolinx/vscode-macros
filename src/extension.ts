@@ -9,7 +9,7 @@ import { downloadAsset } from './commands/downloadAsset';
 import { openMacro } from './commands/openMacro';
 import { renameMacro } from './commands/renameMacro';
 import { resetSharedContext } from './commands/resetContext';
-import { revealFileInOs } from './commands/revealFileInOS';
+import { revealFileInOS } from './commands/revealFileInOS';
 import { runActiveEditor, runMacro } from './commands/runMacro';
 import {
   registerSourceDirectoryVerifier,
@@ -67,7 +67,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
   } = vscode;
   extensionContext.subscriptions.push(
     cr('macros.copy.name', (locator: Locator) => copyPath(context, locator, true)),
-    cr('macros.copy.path', (locator: Locator) => copyPath(context, locator)),
+    cr('macros.copy.path', (locator?: Locator) => copyPath(context, locator)),
     cr('macros.debug', debugMacro),
     cr('macros.debug.activeEditor', debugActiveEditor),
     cr('macros.delete.macro', (locator?: Locator) => deleteMacro(context, locator)),
@@ -79,9 +79,9 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.open', () => openMacro(context)),
     cr('macros.rename.macro', (locator?: Locator) => renameMacro(context, locator)),
     cr('macros.resetContext', (pathOrUri: PathLike) => resetSharedContext(context, pathOrUri)),
-    cr('macros.revealInExplorer', revealFileInOs),
-    cr('macros.revealInFinder', revealFileInOs),
-    cr('macros.revealInFiles', revealFileInOs),
+    cr('macros.revealInExplorer', (locator?: Locator) => revealFileInOS(locator)),
+    cr('macros.revealInFinder', (locator?: Locator) => revealFileInOS(locator)),
+    cr('macros.revealInFiles', (locator?: Locator) => revealFileInOS(locator)),
     cr('macros.run', (locator?: Locator) => runMacro(context, locator)),
     cr('macros.run.activeEditor', () => runActiveEditor(context)),
     cr('macros.run.mru', () => runMacro(context, context.mruMacro)),
