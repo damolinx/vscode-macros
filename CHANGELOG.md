@@ -9,6 +9,7 @@
   - Improve keyboard bindings.
   - Library tooltips now display Source metadata, showing path configuration provenance.
 - **Startup Macros** setting should allow `.ts` file for consistency.
+- Update `@macros` agent to support TypeScript macros. 
 
 ## 0.5.3
 - Fix: Missed `replace` to `replaceAll` conversation when removing regex.
