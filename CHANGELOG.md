@@ -5,6 +5,7 @@
   - Workspace setting now appends to, rather than overrides, the User setting.
   - Resolved paths are now fully normalized to prevent duplicate entries.
 - **Macro Explorer** view:
+  - Update add icon, and title actions.
   - Library tooltips now display Source metadata, showing path configuration provenance.
 - Fix: **Startup Macros** setting should allow `.ts` file for consistency.
 

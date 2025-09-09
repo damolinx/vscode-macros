@@ -135,7 +135,7 @@
         "command": "macros.new.macro",
         "title": "New Macro",
         "category": "Macros",
-        "icon": "$(add)"
+        "icon": "$(new-file)"
       },
       {
         "command": "macros.new.macro.activeEditor",
@@ -408,17 +408,12 @@
         {
           "command": "macros.explorer.refresh",
           "when": "view == macros.macroExplorer",
-          "group": "5_misc"
-        },
-        {
-          "command": "macros.new.macro.repl",
-          "when": "view == macros.macroExplorer",
-          "group": "1_tools"
+          "group": "navigation@10"
         },
         {
           "command": "macros.sourceDirectories.settings",
           "when": "view == macros.macroExplorer",
-          "group": "3_config"
+          "group": "navigation@1"
         }
       ]
     },

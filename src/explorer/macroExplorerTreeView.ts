@@ -15,6 +15,7 @@ export function registerMacroExplorerTreeview(context: ExtensionContext): vscode
   explorerTreeDataProvider = new MacroExplorerTreeDataProvider(context);
   explorerTreeView = vscode.window.createTreeView(MACRO_EXPLORER_VIEW_ID, {
     dragAndDropController: new MacroExplorerTreeDragAndDropController(context),
+    showCollapseAll: true,
     treeDataProvider: explorerTreeDataProvider,
   });
 
