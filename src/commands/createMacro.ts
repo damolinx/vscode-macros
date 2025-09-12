@@ -20,7 +20,7 @@ export async function createMacro(
   },
 ): Promise<void> {
   const content = options?.content ?? (await getTemplateContent(context));
-  if (!content) {
+  if (content === undefined) {
     return;
   }
 
@@ -117,7 +117,7 @@ async function getTemplateContent(
     }),
     {
       matchOnDescription: true,
-      placeHolder: 'Select a macro template',
+      placeHolder: 'Select a template',
     },
   );
   if (!selectedTemplate) {

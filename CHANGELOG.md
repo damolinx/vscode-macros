@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.5.5
+- Add **(empty)** template.
+
 ## 0.5.4
 - Improve handling of **Source Directories**:
   - Workspace setting now appends to, rather than overrides, the User setting.
@@ -9,7 +12,7 @@
   - Improve keyboard bindings.
   - Library tooltips now display Source metadata, showing path configuration provenance.
 - **Startup Macros** setting should allow `.ts` file for consistency.
-- Update `@macros` agent to support TypeScript macros. 
+- Update `@macros` agent to support TypeScript macros.
 
 ## 0.5.3
 - Fix: Missed `replace` to `replaceAll` conversation when removing regex.

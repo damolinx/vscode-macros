@@ -1,6 +1,12 @@
 {
   "templates": [
     {
+      "category": "",
+      "label": "(empty)",
+      "description": "Untitled empty macro",
+      "path": ""
+    },
+    {
       "category": "Basics",
       "label": "Cancellation",
       "description": "Enable macro cancellation",

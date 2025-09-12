@@ -50,6 +50,9 @@ async function readTemplate(
   language?: string,
 ): Promise<string> {
   let templatePath = template.path;
+  if (!templatePath) {
+    return '';
+  }
   if (language && template.alternates) {
     const languagePath = template.alternates[language];
     if (languagePath) {

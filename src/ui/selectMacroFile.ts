@@ -40,7 +40,7 @@ export async function selectSourceDirectory(
       }))
       .sort((t1, t2) => NaturalComparer.compare(t1.label, t2.label)),
     {
-      placeHolder: 'Select a macro source directory …',
+      placeHolder: 'Select a source directory …',
     },
   );
 
