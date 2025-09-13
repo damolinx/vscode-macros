@@ -92,12 +92,12 @@ export class MacroChatParticipant {
     }
 
     if (toolRequests.length) {
-      await this.handlToolRequests(toolRequests, response, token);
+      await this.handleToolRequests(toolRequests, response, token);
     }
     return result;
   }
 
-  private async handlToolRequests(
+  private async handleToolRequests(
     toolRequests: ToolRequest[],
     response: vscode.ChatResponseStream,
     token: vscode.CancellationToken,
