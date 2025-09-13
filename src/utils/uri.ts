@@ -34,7 +34,7 @@ export function areUriEqual(locatorA: UriLocator, locatorB: UriLocator): boolean
 }
 
 /**
- * Check if {@link parent} is a aprent of {@link candidate}.
+ * Check if {@link parent} is a parent of {@link candidate}.
  */
 export function isParent(parent: vscode.Uri, candidate: vscode.Uri): boolean {
   if (parent.scheme !== candidate.scheme || parent.authority !== candidate.authority) {
