@@ -154,7 +154,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
         if (file) {
           originalLoad?.action.call(replServer, file.fsPath);
         } else {
-          output.write(`Nothing to load$${REPL_NEWLINE}`);
+          output.write(`Nothing to load${REPL_NEWLINE}`);
         }
         replServer.displayPrompt();
       },
