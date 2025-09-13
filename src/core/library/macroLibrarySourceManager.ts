@@ -15,6 +15,7 @@ export class MacroLibrarySourceManager implements vscode.Disposable {
 
   private readonly _sources: Lazy<readonly MacroLibrarySource[]>;
   private readonly configKey: string;
+  private readonly disposables: vscode.Disposable[];
   private readonly onDidChangeSourcesEmitter: vscode.EventEmitter<void>;
 
   constructor(configKey: string) {
@@ -22,16 +23,19 @@ export class MacroLibrarySourceManager implements vscode.Disposable {
     this.configKey = configKey;
     this.onDidChangeSourcesEmitter = new vscode.EventEmitter();
 
-    vscode.workspace.onDidChangeConfiguration((e) => {
-      if (e.affectsConfiguration(this.configKey)) {
-        this._sources.reset();
-        this.onDidChangeSourcesEmitter.fire();
-      }
-    });
+    this.disposables = [
+      this.onDidChangeSourcesEmitter,
+      vscode.workspace.onDidChangeConfiguration((e) => {
+        if (e.affectsConfiguration(this.configKey)) {
+          this._sources.reset();
+          this.onDidChangeSourcesEmitter.fire();
+        }
+      }),
+    ];
   }
 
   dispose() {
-    this.onDidChangeSourcesEmitter.dispose();
+    vscode.Disposable.from(...this.disposables).dispose();
   }
 
   public get onDidChangeSources(): vscode.Event<void> {
