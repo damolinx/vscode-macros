@@ -2,6 +2,8 @@
 
 ## 0.5.5
 - Add **(empty)** template.
+- **Macro Explorer** view:
+  - Replace **Configure Source Directories** button with **Add Library Folder…** button for easier use.
 
 ## 0.5.4
 - Improve handling of **Source Directories**:

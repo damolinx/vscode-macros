@@ -138,6 +138,12 @@
         "icon": "$(new-file)"
       },
       {
+        "command": "macros.new.macroLibrary",
+        "title": "Add Library Folder…",
+        "category": "Macros",
+        "icon": "$(new-folder)"
+      },
+      {
         "command": "macros.new.macro.activeEditor",
         "title": "Fill File with Template",
         "category": "Macros",
@@ -411,7 +417,7 @@
           "group": "navigation@10"
         },
         {
-          "command": "macros.sourceDirectories.settings",
+          "command": "macros.new.macroLibrary",
           "when": "view == macros.macroExplorer",
           "group": "navigation@1"
         }

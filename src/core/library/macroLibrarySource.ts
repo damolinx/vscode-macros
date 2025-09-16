@@ -1,9 +1,7 @@
 import * as vscode from 'vscode';
 
-export type ConfigurationScope = 'user' | 'workspace';
-
 export interface ConfigurationSource {
-  scope: ConfigurationScope;
+  target: vscode.ConfigurationTarget;
   value: string;
 }
 

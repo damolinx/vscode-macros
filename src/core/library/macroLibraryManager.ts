@@ -11,7 +11,7 @@ export class MacroLibraryManager implements vscode.Disposable {
   private readonly disposables: vscode.Disposable[];
   private readonly onDidChangeLibrariesEmitter: vscode.EventEmitter<void>;
   private readonly persistentLibraries: LazyDisposable<readonly MacroLibrary[]>;
-  private readonly sourcesManager: MacroLibrarySourceManager;
+  public readonly sourcesManager: MacroLibrarySourceManager;
   private readonly virtualLibraries: LazyDisposable<readonly MacroLibrary[]>;
 
   constructor(context: ExtensionContext) {

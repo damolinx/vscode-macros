@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { registerMacroChatParticipant } from './ai/macroChatParticipant';
 import { copyPath } from './commands/copyPath';
+import { createLibrary } from './commands/createLibrary';
 import { createMacro, updateActiveEditor } from './commands/createMacro';
 import { createRepl } from './commands/createRepl';
 import { debugActiveEditor, debugMacro } from './commands/debugMacro';
@@ -76,6 +77,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.new.macro', (locator: Locator) => createMacro(context, locator)),
     cr('macros.new.macro.activeEditor', () => updateActiveEditor(context)),
     cr('macros.new.macro.repl', () => createRepl(context)),
+    cr('macros.new.macroLibrary', () => createLibrary(context)),
     cr('macros.open', () => openMacro(context)),
     cr('macros.rename.macro', (locator?: Locator) => renameMacro(context, locator)),
     cr('macros.resetContext', (pathOrUri: PathLike) => resetSharedContext(context, pathOrUri)),

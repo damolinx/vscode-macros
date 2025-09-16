@@ -25,7 +25,7 @@ export function createLibraryItem({ uri, configSource }: MacroLibrary) {
       item.tooltip = uri.toString(true);
     }
     if (configSource) {
-      item.tooltip += `\nSource: ${configSource.sources.map((s) => s.scope)}`;
+      item.tooltip += `\nSource Settings: ${configSource.sources.map((s) => (s.target === vscode.ConfigurationTarget.Global ? 'User' : vscode.ConfigurationTarget[s.target])).join(', ')}`;
     }
   }
 

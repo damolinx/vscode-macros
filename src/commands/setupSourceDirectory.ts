@@ -86,7 +86,7 @@ export async function setupSourceDirectory(
   ).some((result) => result);
 
   if (!updatingFiles) {
-    context.log.debug('  All files are up-to-date');
+    context.log.info('All development files are up-to-date');
     if (!suppressNotifications) {
       vscode.window.showInformationMessage('All files are up-to-date.');
     }
@@ -94,11 +94,12 @@ export async function setupSourceDirectory(
   }
 
   const result = await vscode.workspace.applyEdit(edit);
-  context.log.debug('  Update complete', result);
   if (!suppressNotifications) {
     if (result) {
+      context.log.info('Updated development files to the latest version —', uri.fsPath);
       vscode.window.showInformationMessage('Updated files to the latest version.');
     } else {
+      context.log.error('Failed to update development files —', uri.fsPath);
       vscode.window.showErrorMessage(`Could not update ${uri.fsPath}`);
     }
   }
