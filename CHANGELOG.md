@@ -1,9 +1,12 @@
 # Changelog
 
 ## 0.5.5
-- Add **(empty)** template.
-- **Macro Explorer** view:
-  - Replace **Configure Source Directories** button with **Add Library Folder…** button for easier use.
+- Improve macro and library creation:
+  - Add **(empty)** template for quick macro setup.
+  - Replace **Configure Source Directories** button with **Add Library Folder…**:
+    - Automatically tokenizes paths when possible.
+    - Choose User or Workspace settings based on the library location.
+    - Set up development files in newly added folders.
 
 ## 0.5.4
 - Improve handling of **Source Directories**:
