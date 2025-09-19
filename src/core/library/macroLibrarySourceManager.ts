@@ -102,7 +102,7 @@ export class MacroLibrarySourceManager implements vscode.Disposable {
     const allInspected = configuration.inspect<string[]>(this.configKey);
     const preferredInspected =
       allInspected?.[
-      configurationTarget === vscode.ConfigurationTarget.Global ? 'globalValue' : 'workspaceValue'
+        configurationTarget === vscode.ConfigurationTarget.Global ? 'globalValue' : 'workspaceValue'
       ];
     const verifiedInspected =
       preferredInspected && preferredInspected instanceof Array ? preferredInspected : [];
@@ -116,7 +116,10 @@ export class MacroLibrarySourceManager implements vscode.Disposable {
     return this.onDidChangeSourcesEmitter.event;
   }
 
-  public async removeLibrary(uri: vscode.Uri, target?: vscode.ConfigurationTarget): Promise<boolean> {
+  public async removeLibrary(
+    uri: vscode.Uri,
+    target?: vscode.ConfigurationTarget,
+  ): Promise<boolean> {
     const match = this.sources.find((s) => s.uri.toString() === uri.toString());
     if (!match) {
       return false;
