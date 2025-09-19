@@ -50,7 +50,7 @@ export function isParent(parent: vscode.Uri, candidate: vscode.Uri): boolean {
     normalizedCandidateParent = posix.dirname(candidate.path);
   }
 
-  return normalizedParent === normalizedCandidateParent;
+  return normalizedParent === normalizedCandidateParent || normalizedCandidateParent.startsWith(normalizedParent + path.sep);
 
   function normalize(path: string) {
     return process.platform === 'win32' ? path.toLowerCase() : path;

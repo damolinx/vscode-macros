@@ -1,15 +1,15 @@
 # Changelog
 
 ## 0.5.6
-- Add **Delete** to macro library nodes to unregsiter them.
-- Strengthen processing of settings.
+- Add **Delete** action to macro library nodes to unregister them.
+- Fix: Path tokenization for deep folders in `${userHome}` now works correctly.
 
 ## 0.5.5
 - Improve macro and library creation:
   - Add **(empty)** template for quick macro setup.
   - Replace **Configure Source Directories** button with **Add Library Folder…**:
     - Automatically tokenizes paths when possible.
-    - Choose User or Workspace settings based on the library location.
+    - Choose User or Workspace settings based on library location.
     - Set up development files in newly added folders.
 
 ## 0.5.4
