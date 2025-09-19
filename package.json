@@ -120,7 +120,7 @@
         "icon": "$(debug-alt)"
       },
       {
-        "command": "macros.delete.macro",
+        "command": "macros.delete.macroOrMacroLibrary",
         "title": "Delete",
         "category": "Macros",
         "enablement": "focusedView == macros.macroExplorer"
@@ -284,7 +284,7 @@
           "when": "false"
         },
         {
-          "command": "macros.delete.macro",
+          "command": "macros.delete.macroOrMacroLibrary",
           "when": "false"
         },
         {
@@ -332,12 +332,12 @@
         {
           "command": "macros.copy.name",
           "when": "view == macros.macroExplorer && viewItem =~ /macro(File|Library)/ && !(viewItem =~ /untitled/)",
-          "group": "4_tools@2"
+          "group": "5_copy@2"
         },
         {
           "command": "macros.copy.path",
           "when": "view == macros.macroExplorer && viewItem =~ /macro(File|Library)/ && !(viewItem =~ /untitled/)",
-          "group": "4_tools@1"
+          "group": "5_copy@1"
         },
         {
           "command": "macros.debug",
@@ -345,8 +345,8 @@
           "group": "1_execution@2"
         },
         {
-          "command": "macros.delete.macro",
-          "when": "view == macros.macroExplorer && viewItem =~ /macroFile/ && !(viewItem =~ /untitled/)",
+          "command": "macros.delete.macroOrMacroLibrary",
+          "when": "view == macros.macroExplorer && viewItem =~ /macro(File|Library)/ && !(viewItem =~ /untitled/)",
           "group": "5_other@2"
         },
         {
@@ -397,7 +397,7 @@
         {
           "command": "macros.sourceDirectories.setup",
           "when": "view == macros.macroExplorer && viewItem =~ /macroLibrary/ && !(viewItem =~ /untitled/)",
-          "group": "5_other@1"
+          "group": "4_tools@1"
         },
         {
           "command": "macros.stop",
@@ -492,7 +492,7 @@
         "when": "focusedView == macros.macroExplorer && !inputFocus"
       },
       {
-        "command": "macros.delete.macro",
+        "command": "macros.delete.macroOrMacroLibrary",
         "key": "Delete",
         "mac": "Cmd+Backspace",
         "when": "focusedView == macros.macroExplorer && !inputFocus"

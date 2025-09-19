@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.5.6
+- Add **Delete** to macro library nodes to unregsiter them.
 - Strengthen processing of settings.
 
 ## 0.5.5

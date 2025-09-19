@@ -49,16 +49,7 @@ export class MacroLibrarySourceManager implements vscode.Disposable {
     const configurationTarget = detectedTarget ?? vscode.ConfigurationTarget.Global;
 
     const configuration = vscode.workspace.getConfiguration();
-    const allInspected = configuration.inspect<string[]>(this.configKey);
-    const preferredInspected =
-      allInspected?.[
-        configurationTarget === vscode.ConfigurationTarget.Global ? 'globalValue' : 'workspaceValue'
-      ];
-    const verifiedInspected =
-      preferredInspected && preferredInspected instanceof Array ? preferredInspected : [];
-    const uniqueExistingValues = new Set<string>(
-      verifiedInspected.map(MacroLibrarySourceManager.normalizePath),
-    );
+    const uniqueExistingValues = this.loadConfigurationValues(configurationTarget, configuration);
 
     let result: { added: boolean; target: vscode.ConfigurationTarget; value: string };
     if (tokenizedSource && uniqueExistingValues.has(tokenizedSource)) {
@@ -104,8 +95,44 @@ export class MacroLibrarySourceManager implements vscode.Disposable {
     }
   }
 
+  private loadConfigurationValues(
+    configurationTarget: vscode.ConfigurationTarget,
+    configuration = vscode.workspace.getConfiguration(),
+  ) {
+    const allInspected = configuration.inspect<string[]>(this.configKey);
+    const preferredInspected =
+      allInspected?.[
+        configurationTarget === vscode.ConfigurationTarget.Global ? 'globalValue' : 'workspaceValue'
+      ];
+    const verifiedInspected =
+      preferredInspected && preferredInspected instanceof Array ? preferredInspected : [];
+    const uniqueExistingValues = new Set<string>(
+      verifiedInspected.map(MacroLibrarySourceManager.normalizePath),
+    );
+    return uniqueExistingValues;
+  }
+
   public get onDidChangeSources(): vscode.Event<void> {
     return this.onDidChangeSourcesEmitter.event;
+  }
+
+  public async removeLibrary(
+    uri: vscode.Uri,
+    target?: vscode.ConfigurationTarget,
+  ): Promise<boolean> {
+    const match = this.sources.find((s) => s.uri.toString() === uri.toString());
+    if (!match) {
+      return false;
+    }
+
+    const configuration = vscode.workspace.getConfiguration();
+    for (const source of match.sources.filter((t) => !target || t.target === target)) {
+      const uniqueExistingValues = this.loadConfigurationValues(source.target, configuration);
+      uniqueExistingValues.delete(source.value);
+      await configuration.update(this.configKey, Array.from(uniqueExistingValues), source.target);
+    }
+
+    return true;
   }
 
   public get sources(): readonly MacroLibrarySource[] {

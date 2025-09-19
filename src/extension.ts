@@ -5,7 +5,7 @@ import { createLibrary } from './commands/createLibrary';
 import { createMacro, updateActiveEditor } from './commands/createMacro';
 import { createRepl } from './commands/createRepl';
 import { debugActiveEditor, debugMacro } from './commands/debugMacro';
-import { deleteMacro } from './commands/deleteMacro';
+import { deleteMacroOrMacroLibrary } from './commands/deleteMacroOrMacroLibrary';
 import { downloadAsset } from './commands/downloadAsset';
 import { openMacro } from './commands/openMacro';
 import { renameMacro } from './commands/renameMacro';
@@ -21,6 +21,7 @@ import { showRunningMacros } from './commands/showRunningMacros';
 import { stopMacro } from './commands/stopMacro';
 import { MacroRunInfo } from './core/execution/macroRunInfo';
 import { macroDocumentSelector } from './core/language';
+import { MacroLibrary } from './core/library/macroLibrary';
 import { SOURCE_DIRS_CONFIG } from './core/library/macroLibraryManager';
 import { MacroLibrarySourceManager } from './core/library/macroLibrarySourceManager';
 import { Macro } from './core/macro';
@@ -71,7 +72,9 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.copy.path', (locator?: Locator) => copyPath(context, locator)),
     cr('macros.debug', debugMacro),
     cr('macros.debug.activeEditor', debugActiveEditor),
-    cr('macros.delete.macro', (locator?: Locator) => deleteMacro(context, locator)),
+    cr('macros.delete.macroOrMacroLibrary', (macroOrLibrary?: Macro | MacroLibrary) =>
+      deleteMacroOrMacroLibrary(context, macroOrLibrary),
+    ),
     cr('macros.downloadAsset', downloadAsset),
     cr('macros.explorer.refresh', () => explorerTreeDataProvider?.refresh()),
     cr('macros.new.macro', (locator: Locator) => createMacro(context, locator)),
