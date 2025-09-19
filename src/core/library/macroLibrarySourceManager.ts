@@ -49,13 +49,15 @@ export class MacroLibrarySourceManager implements vscode.Disposable {
     const configurationTarget = detectedTarget ?? vscode.ConfigurationTarget.Global;
 
     const configuration = vscode.workspace.getConfiguration();
-    const inspected = configuration.inspect<string[]>(this.configKey);
-    const existingValues =
-      inspected?.[
+    const allInspected = configuration.inspect<string[]>(this.configKey);
+    const preferredInspected =
+      allInspected?.[
         configurationTarget === vscode.ConfigurationTarget.Global ? 'globalValue' : 'workspaceValue'
-      ] ?? [];
+      ];
+    const verifiedInspected =
+      preferredInspected && preferredInspected instanceof Array ? preferredInspected : [];
     const uniqueExistingValues = new Set<string>(
-      existingValues.map(MacroLibrarySourceManager.normalizePath),
+      verifiedInspected.map(MacroLibrarySourceManager.normalizePath),
     );
 
     let result: { added: boolean; target: vscode.ConfigurationTarget; value: string };

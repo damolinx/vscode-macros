@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.5.6
+- Strengthen processing of settings.
+
 ## 0.5.5
 - Improve macro and library creation:
   - Add **(empty)** template for quick macro setup.
