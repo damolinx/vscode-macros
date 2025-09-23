@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.5.7
+- Add **CodeLens** template.
+
 ## 0.5.6
 - Add **Delete** action to macro library nodes to unregister them.
 - Fix: Path tokenization for deep folders in `${userHome}` now works correctly.

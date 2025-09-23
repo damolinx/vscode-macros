@@ -16,6 +16,15 @@
       }
     },
     {
+      "category": "UI",
+      "label": "CodeLens",
+      "description": "Add a CodeLens to macro editors",
+      "path": "js/codeLens.js",
+      "alternates": {
+        "typescript": "ts/codeLens.ts"
+      }
+    },
+    {
       "category": "Basics",
       "label": "Dispose",
       "description": "Enable cleanup of disposable objects",
