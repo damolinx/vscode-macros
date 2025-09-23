@@ -12,8 +12,8 @@ import { cleanError } from './utils/errors';
 import { TranspilationError, transpileOrThrow } from './utils/typescript';
 
 const REPL_NEWLINE = '\r\n';
-export const PROMPT_JS = '\x1b[93mjs\x1b[0m\x1b[90m» \x1b[0m';
-export const PROMPT_TS = '\x1b[96mts\x1b[0m\x1b[90m» \x1b[0m';
+export const PROMPT_JS = '\x1b[93mjs\x1b[0m\x1b[90m » \x1b[0m';
+export const PROMPT_TS = '\x1b[96mts\x1b[0m\x1b[90m » \x1b[0m';
 
 type REPLServerWithHistory = REPLServer & { history?: string[] };
 
