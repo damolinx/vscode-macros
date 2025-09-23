@@ -3,6 +3,7 @@ import { MacroRunner } from '../core/execution/macroRunner';
 import { MacroCode } from '../core/macroCode';
 import { cleanError } from '../utils/errors';
 import { TranspilationError } from '../utils/typescript';
+import { uriBasename } from '../utils/uri';
 import { showTextDocument } from '../utils/vscodeEx';
 
 export function showMacroErrorMessage(
@@ -11,7 +12,12 @@ export function showMacroErrorMessage(
   error: Error | string,
 ): Promise<void> {
   let message: string;
-  let errorPos: vscode.Position | undefined;
+  let errorLocation:
+    | {
+        uri: vscode.Uri;
+        range?: vscode.Range;
+      }
+    | undefined;
   let filteredStack: string | undefined;
 
   if (typeof error === 'string') {
@@ -19,13 +25,13 @@ export function showMacroErrorMessage(
   } else {
     if (error instanceof TranspilationError) {
       message = error.message;
-      errorPos = findTranspilationErrorPos(error);
+      errorLocation = findTranspilationErrorPos(error);
     } else {
       const displayError = cleanError(error);
       message = displayError.message;
       if (displayError.stack) {
         filteredStack = displayError.stack;
-        errorPos = findErrorPos(filteredStack);
+        errorLocation = findErrorLocation(filteredStack);
       }
     }
   }
@@ -35,33 +41,51 @@ export function showMacroErrorMessage(
     macroCode,
     `Macro Error — ${message}`,
     filteredStack,
-    errorPos && new vscode.Range(errorPos, errorPos),
+    errorLocation,
   );
 
-  function findTranspilationErrorPos(error: TranspilationError): vscode.Position | undefined {
+  function findTranspilationErrorPos(
+    error: TranspilationError,
+  ): { uri: vscode.Uri; range?: vscode.Range } | undefined {
     const first = error.diagnostics[0];
 
-    let position: vscode.Position | undefined;
+    const location: { uri: vscode.Uri; range?: vscode.Range } = {
+      uri: runner.macro.uri,
+    };
     if (first?.file && first.start !== undefined) {
       const { line, character } = first.file.getLineAndCharacterOfPosition(first.start);
-      position = new vscode.Position(line, character);
+      location.range = new vscode.Range(line, character, line, character);
     }
 
-    return position;
+    return location;
   }
 
-  function findErrorPos(stack: string): vscode.Position | undefined {
-    let firstMatch: RegExpMatchArray | undefined;
-    if (!firstMatch) {
-      firstMatch = stack.match(/.+?:(?<line>\d+)(:(?<offset>\d+))?$/m) ?? undefined;
+  function findErrorLocation(stack: string): { uri: vscode.Uri; range?: vscode.Range } | undefined {
+    let location: { uri: vscode.Uri; range?: vscode.Range } | undefined;
+
+    const firstMatch = stack.match(/(?<prefix>.+?):(?<line>\d+)(:(?<offset>\d+))?$/m);
+    if (firstMatch) {
+      const { prefix, line, offset } = firstMatch.groups!;
+      const position = new vscode.Position(parseInt(line) - 1, offset ? parseInt(offset) - 1 : 0);
+      if (prefix.endsWith(uriBasename(runner.macro.uri))) {
+        location = {
+          uri: runner.macro.uri,
+          range: new vscode.Range(position, position),
+        };
+      } else {
+        try {
+          const parsedUri = vscode.Uri.parse(prefix, true);
+          location = {
+            uri: parsedUri,
+            range: new vscode.Range(position, position),
+          };
+        } catch {
+          // eslint-disable no-empty
+        }
+      }
     }
 
-    let position: vscode.Position | undefined;
-    if (firstMatch) {
-      const { line, offset } = firstMatch.groups!;
-      position = new vscode.Position(parseInt(line) - 1, offset ? parseInt(offset) - 1 : 0);
-    }
-    return position;
+    return location;
   }
 }
 
@@ -70,14 +94,22 @@ async function showErrorMessage(
   macroCode: MacroCode,
   message: string,
   stack?: string,
-  errorLocation?: vscode.Range,
+  errorLocation?: {
+    uri: vscode.Uri;
+    range?: vscode.Range;
+  },
   modal = false,
 ): Promise<void> {
   const actions: { title: string; execute: () => Thenable<any> | void }[] = [
-    {
-      title: errorLocation ? 'Go to Error Location' : 'Open Macro',
-      execute: () => showTextDocument(runner.macro.uri, { selection: errorLocation }),
-    },
+    errorLocation
+      ? {
+          title: 'Go to Error Location',
+          execute: () => showTextDocument(errorLocation.uri, { selection: errorLocation?.range }),
+        }
+      : {
+          title: 'Open Macro',
+          execute: () => showTextDocument(runner.macro.uri),
+        },
   ];
 
   if (!macroCode.options.singleton || runner.runInstanceCount === 0) {
