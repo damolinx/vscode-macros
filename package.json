@@ -2,7 +2,7 @@
   "name": "damolinx-macros",
   "displayName": "Macros for VS Code",
   "description": "Automate tasks, prototype features, and extend workspace tooling with reusable JS/TS macros and macro libraries.",
-  "version": "0.5.6",
+  "version": "0.5.7",
   "publisher": "damolinx",
   "icon": "resources/images/icon.png",
   "repository": {
