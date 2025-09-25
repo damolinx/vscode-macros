@@ -19,8 +19,9 @@ export function transpile(
 ): [string, undefined] | [undefined, ts.Diagnostic[]] {
   const output = ts.transpileModule(code, {
     compilerOptions: {
-      target: ts.ScriptTarget.ES2024,
+      inlineSourceMap: true,
       module: ts.ModuleKind.None,
+      target: ts.ScriptTarget.ES2024,
     },
     fileName: fileNameOrUri && uriBasename(fileNameOrUri),
     reportDiagnostics: true,
@@ -45,6 +46,18 @@ export function transpileOrThrow(code: string, fileNameOrUri?: string | vscode.U
   }
 
   return transpiledCode;
+}
+
+export function extractInlineSourceMap(code: string) {
+  const regex = /\/\/# sourceMappingURL=data:application\/json;base64,([^\n]+)/;
+  const match = code.match(regex);
+  if (!match) {
+    return undefined;
+  }
+
+  const base64 = match[1];
+  const json = Buffer.from(base64, 'base64').toString('utf8');
+  return JSON.parse(json);
 }
 
 export function formatDiagnostics(diagnostics: ts.Diagnostic[], uri?: vscode.Uri): string {
