@@ -2,6 +2,7 @@
 
 ## 0.5.8
 - Support sourcemaps in transpiled TypeScript code for better error reporting.
+- Further clean-up error stack traces.
 
 ## 0.5.7
 - Add **CodeLens** template.

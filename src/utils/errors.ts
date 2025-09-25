@@ -4,7 +4,8 @@ export function cleanError<T extends Error>(error: T): T {
   if (clone.stack) {
     clone.stack = clone.stack
       .replace(/^[\s\S]*?(?=^\w*Error:)/m, '')
-      .replace(/^(.*?(vscode|damolinx)-macros.*\n[\s\S]*)$/m, '');
+      .replace(/^(.*?(?:Script\.runInContext|evalmachine\.).*\n[\s\S]*)$/m, '')
+      .replace(/^(.*?(?:vscode|damolinx)-macros.*\n[\s\S]*)$/m, '');
   }
   if ('requireStack' in clone) {
     clone.message = clone.message.replace(/\nRequire stack:.*$/s, '');
