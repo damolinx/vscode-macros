@@ -419,6 +419,11 @@
         {
           "command": "macros.new.macroLibrary",
           "when": "view == macros.macroExplorer",
+          "group": "navigation@5"
+        },
+        {
+          "command": "macros.new.macro.repl",
+          "when": "view == macros.macroExplorer",
           "group": "navigation@1"
         }
       ]

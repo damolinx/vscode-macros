@@ -3,6 +3,7 @@
 ## 0.5.8
 - Support sourcemaps in transpiled TypeScript code for better error reporting.
 - Further clean-up error stack traces.
+- Add **Create REPL** back in the **Macro Explorer** titlebar.
 
 ## 0.5.7
 - Add **CodeLens** template.
