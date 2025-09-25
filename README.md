@@ -1,6 +1,6 @@
 # Macros for VS Code
 
-A **macro** is a lightweight script—written in either JavaScript or TypeScript—that lets you automate tasks or build custom tools in VS Code using standard [extensibility APIs](https://code.visualstudio.com/api/references/vscode-api), without the complexity of maintaining a full extension. Macros are ideal for workspace-specific automation, streamlining your workflow with custom utilities, or rapidly prototyping extension-like behavior.
+A **macro** is a script written in either JavaScript or TypeScript that lets you automate tasks or build custom tools in VS Code using standard [extensibility APIs](https://code.visualstudio.com/api/references/vscode-api), without the complexity of maintaining a full extension. Macros are ideal for workspace-specific automation, streamlining your workflow with custom utilities, or rapidly prototyping extension-like behavior.
 
 Macros can be easily managed through the [**Macro Explorer**](#macro-explorer-view), allowing you to work with on-disk libraries or in-memory documents. TypeScript is supported out of the box—transpilation is handled automatically. Macros can contribute UI views, including Webview and TreeView views, enabling more complex experiences.
 
