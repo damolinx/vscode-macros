@@ -144,6 +144,11 @@
         "icon": "$(new-folder)"
       },
       {
+        "command": "macros.new.startupMacro",
+        "title": "Set as Startup Macro",
+        "category": "Macros"
+      },
+      {
         "command": "macros.new.macro.activeEditor",
         "title": "Fill File with Template",
         "category": "Macros",
@@ -292,6 +297,10 @@
           "when": "false"
         },
         {
+          "command": "macros.new.startupMacro",
+          "when": "false"
+        },
+        {
           "command": "macros.rename.macro",
           "when": "false"
         },
@@ -358,6 +367,11 @@
           "command": "macros.new.macro",
           "when": "view == macros.macroExplorer && viewItem =~ /macroLibrary/",
           "group": "3_navigation@1"
+        },
+        {
+          "command": "macros.new.startupMacro",
+          "when": "view == macros.macroExplorer && viewItem =~ /macroFile/ && !(viewItem =~ /untitled/)",
+          "group": "4_tools@1"
         },
         {
           "command": "macros.rename.macro",

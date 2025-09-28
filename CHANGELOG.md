@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.9
+- **Macro Explorer** view:
+  - Add **Set as Startup Macro** action on macro nodes.
+- Fix: Startup macros block completing extension activation causing errors on on the treeview (that apparently does not fully activate).
+
 ## 0.5.8
 - Support sourcemaps in transpiled TypeScript code for better error reporting.
 - Further clean-up error stack traces.

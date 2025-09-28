@@ -5,7 +5,7 @@ export interface ConfigurationSource {
   value: string;
 }
 
-export interface MacroLibrarySource {
+export interface Source {
   readonly sources: [ConfigurationSource, ...ConfigurationSource[]];
   readonly expandedValue: string;
   readonly uri: vscode.Uri;

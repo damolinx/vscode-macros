@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
 import { registerMacroChatParticipant } from './ai/macroChatParticipant';
+import { addLibrary } from './commands/addLibrary';
+import { addStartupMacro } from './commands/addStartupMacro';
 import { copyPath } from './commands/copyPath';
-import { createLibrary } from './commands/createLibrary';
 import { createMacro, updateActiveEditor } from './commands/createMacro';
 import { createRepl } from './commands/createRepl';
 import { debugActiveEditor, debugMacro } from './commands/debugMacro';
@@ -22,8 +23,8 @@ import { stopMacro } from './commands/stopMacro';
 import { MacroRunInfo } from './core/execution/macroRunInfo';
 import { macroDocumentSelector } from './core/language';
 import { MacroLibrary } from './core/library/macroLibrary';
-import { SOURCE_DIRS_CONFIG } from './core/library/macroLibraryManager';
-import { MacroLibrarySourceManager } from './core/library/macroLibrarySourceManager';
+import { SOURCE_DIRS_CONFIG } from './core/library/macroLibrarySourceManager';
+import { StartupMacroLibrarySourceManager } from './core/library/startupMacroLibrarySourceManager';
 import { Macro } from './core/macro';
 import {
   explorerTreeDataProvider,
@@ -80,7 +81,8 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.new.macro', (locator: Locator) => createMacro(context, locator)),
     cr('macros.new.macro.activeEditor', () => updateActiveEditor(context)),
     cr('macros.new.macro.repl', () => createRepl(context)),
-    cr('macros.new.macroLibrary', () => createLibrary(context)),
+    cr('macros.new.macroLibrary', () => addLibrary(context)),
+    cr('macros.new.startupMacro', (locator: Locator) => addStartupMacro(context, locator)),
     cr('macros.open', () => openMacro(context)),
     cr('macros.rename.macro', (locator?: Locator) => renameMacro(context, locator)),
     cr('macros.resetContext', (pathOrUri: PathLike) => resetSharedContext(context, pathOrUri)),
@@ -108,7 +110,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
 }
 
 async function runStartupMacros(context: ExtensionContext): Promise<void> {
-  const uris = MacroLibrarySourceManager.getSources('macros.startupMacros').map((s) => s.uri);
+  const uris = StartupMacroLibrarySourceManager.instance.sources.map((s) => s.uri);
   if (uris.length === 0) {
     context.log.info('No startup macros to execute — none registered');
     return;
@@ -163,8 +165,9 @@ async function runStartupMacros(context: ExtensionContext): Promise<void> {
         .map((uri) => vscode.workspace.asRelativePath(uri)),
     );
   } else {
-    context.log.info('Executing all', existingUris.length, ' of registered macros.');
+    context.log.info('Executing all', existingUris.length, 'of registered macros.');
   }
 
-  await Promise.all(existingUris.map((uri) => runMacro(context, uri, true)));
+  // DO NO await, macros might be long running
+  Promise.all(existingUris.map((uri) => runMacro(context, uri, true)));
 }

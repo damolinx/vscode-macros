@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { ExtensionContext } from '../extensionContext';
 import { setupSourceDirectory } from './setupSourceDirectory';
 
-export async function createLibrary(context: ExtensionContext) {
+export async function addLibrary(context: ExtensionContext) {
   const selection = await vscode.window.showOpenDialog({
     canSelectFolders: true,
     canSelectFiles: false,
@@ -20,7 +20,10 @@ export async function createLibrary(context: ExtensionContext) {
 
   if (addResult.status === 'fulfilled') {
     const { added, target: scope } = addResult.value;
-    context.log.info(added ? 'Added library result —' : 'Library already registered —', scope);
+    context.log.info(
+      added ? 'Added library result' : 'Library already registered',
+      `(${vscode.ConfigurationTarget[scope]})`,
+    );
   } else {
     context.log.error('Failed to add library —', addResult.reason);
     vscode.window.showErrorMessage(`Failed to add folder: ${addResult.reason}`);

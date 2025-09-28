@@ -2,12 +2,12 @@ import * as vscode from 'vscode';
 import { isParent, uriBasename, UriLocator } from '../../utils/uri';
 import { isMacro, macroGlobPattern } from '../language';
 import { getMacroLibraryId, MacroLibraryId } from './macroLibraryId';
-import { MacroLibrarySource } from './macroLibrarySource';
+import { Source } from './source';
 
 export type MacroLibraryKind = 'configured' | 'virtual';
 
 export class MacroLibrary implements vscode.Disposable {
-  public readonly configSource?: MacroLibrarySource;
+  public readonly configSource?: Source;
   protected readonly disposables: vscode.Disposable[];
   public readonly id: MacroLibraryId;
   public readonly kind: MacroLibraryKind;
@@ -18,9 +18,9 @@ export class MacroLibrary implements vscode.Disposable {
   public readonly uri: vscode.Uri;
   private watcher?: vscode.FileSystemWatcher;
 
-  constructor(uri: vscode.Uri, kind: 'configured', configSource: MacroLibrarySource);
+  constructor(uri: vscode.Uri, kind: 'configured', configSource: Source);
   constructor(uri: vscode.Uri, kind: 'virtual');
-  constructor(uri: vscode.Uri, kind: MacroLibraryKind, configSource?: MacroLibrarySource) {
+  constructor(uri: vscode.Uri, kind: MacroLibraryKind, configSource?: Source) {
     this.configSource = configSource;
     this.id = getMacroLibraryId(uri);
     this.kind = kind;
