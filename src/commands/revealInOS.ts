@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { explorerTreeView } from '../explorer/macroExplorerTreeView';
 import { fromLocator, Locator, toUri } from '../utils/uri';
 
-export async function revealFileInOS(locator?: Locator): Promise<void> {
+export async function revealInOS(locator?: Locator): Promise<void> {
   let targetLocator = locator;
   if (!targetLocator) {
     const treeSelection = explorerTreeView?.selection[0];
