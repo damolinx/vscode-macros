@@ -1,8 +1,13 @@
 import * as vscode from 'vscode';
+import { extname } from 'path';
+import * as sms from 'source-map-support';
 import { ExtensionContext } from '../../extensionContext';
+import { Lazy } from '../../utils/lazy';
+import { extractInlineSourceMap } from '../../utils/typescript';
 import { isMacroLangId, isMacro } from '../language';
 import { Macro } from '../macro';
 import { getMacroId, MacroId } from '../macroId';
+import { MacroRunId } from './macroRunId';
 import { MacroRunInfo, MacroRunResult } from './macroRunInfo';
 import { MacroRunner } from './macroRunner';
 
@@ -12,6 +17,7 @@ export class MacroRunnerManager implements vscode.Disposable {
   private readonly runEventEmitter: vscode.EventEmitter<MacroRunInfo>;
   private readonly runners: Map<MacroId, MacroRunner>;
   private readonly stopEventEmitter: vscode.EventEmitter<MacroRunResult>;
+  private readonly smsSupport: Lazy<void>;
 
   constructor(context: ExtensionContext) {
     this.context = context;
@@ -26,6 +32,22 @@ export class MacroRunnerManager implements vscode.Disposable {
     );
     this.runEventEmitter = new vscode.EventEmitter();
     this.stopEventEmitter = new vscode.EventEmitter();
+
+    this.smsSupport = new Lazy(() =>
+      sms.install({
+        retrieveSourceMap: (source) => {
+          const runInfo = this.getRun(source as MacroRunId);
+          const sourceMap = runInfo
+            ? ({
+                url: source,
+                map: extractInlineSourceMap(runInfo.runnableCode),
+              } as sms.UrlAndMap)
+            : null;
+
+          return sourceMap;
+        },
+      }),
+    );
   }
 
   dispose() {
@@ -55,6 +77,10 @@ export class MacroRunnerManager implements vscode.Disposable {
 
   public getRunner(uriOrMacro: vscode.Uri | Macro): MacroRunner {
     const macro = uriOrMacro instanceof Macro ? uriOrMacro : new Macro(uriOrMacro);
+    if (extname(macro.uri.path) == '.ts') {
+      this.smsSupport.initialize();
+    }
+
     let runner = this.runners.get(macro.id);
     if (!runner) {
       runner = new MacroRunner(this.context, macro);
@@ -64,6 +90,18 @@ export class MacroRunnerManager implements vscode.Disposable {
     }
 
     return runner;
+  }
+
+  public getRun(runId: MacroRunId): MacroRunInfo | undefined {
+    let run: MacroRunInfo | undefined;
+    for (const runner of this.runners.values()) {
+      run = runner.getRun(runId);
+      if (run) {
+        break;
+      }
+    }
+
+    return run;
   }
 
   public onRun(listener: (runInfo: MacroRunInfo) => void): vscode.Disposable {

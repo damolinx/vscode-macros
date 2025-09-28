@@ -52,6 +52,10 @@ export class MacroRunner implements vscode.Disposable {
     return vm.createContext(context, { name });
   }
 
+  public getRun(id: MacroRunId): MacroRunInfo | undefined {
+    return this.runs.get(id);
+  }
+
   public onStartRun(listener: (runInfo: MacroRunInfo) => void): vscode.Disposable {
     return this.startEventEmitter.event(listener);
   }
@@ -77,11 +81,11 @@ export class MacroRunner implements vscode.Disposable {
       throw new Error(`Singleton macro ${this.macro.name} is already running`);
     }
 
-    const code = macroCode.getRunnableCode();
     const runInfo: MacroRunInfo = {
       cts: new vscode.CancellationTokenSource(),
       id: getMacroRunId(this.macro.name, ++this.index, startup),
       macro: this.macro,
+      runnableCode: macroCode.getRunnableCode(),
       snapshot: {
         code: macroCode.rawCode,
         options: macroCode.options,
@@ -103,7 +107,7 @@ export class MacroRunner implements vscode.Disposable {
       uri: this.macro.uri,
     });
     const scriptOptions: vm.RunningScriptOptions = {
-      filename: this.macro.uri.toString(true),
+      filename: macroCode.languageId === 'typescript' ? runInfo.id : this.macro.uri.toString(true),
     };
 
     this.startEventEmitter.fire(runInfo);
@@ -113,7 +117,9 @@ export class MacroRunner implements vscode.Disposable {
       let runPromise: Promise<any>;
       if (macroCode.options.persistent) {
         const initialKeys = Object.keys(context).filter((k) => !k.startsWith('__'));
-        runPromise = Promise.resolve(vm.runInContext(code, context, scriptOptions)).finally(() => {
+        runPromise = Promise.resolve(
+          vm.runInContext(runInfo.runnableCode, context, scriptOptions),
+        ).finally(() => {
           const currentKeys = Object.keys(context).filter((k) => !k.startsWith('__'));
           const removedKeys = [...initialKeys].filter((key) => !currentKeys.includes(key));
           if (this.sharedMacroContext) {
@@ -126,7 +132,7 @@ export class MacroRunner implements vscode.Disposable {
           }
         });
       } else {
-        runPromise = vm.runInNewContext(code, context, scriptOptions);
+        runPromise = vm.runInNewContext(runInfo.runnableCode, context, scriptOptions);
       }
 
       result = await (macroCode.options.retained ? retainedExecute(runPromise) : runPromise);

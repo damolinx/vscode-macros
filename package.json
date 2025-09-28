@@ -2,7 +2,7 @@
   "name": "damolinx-macros",
   "displayName": "Macros for VS Code",
   "description": "Automate tasks, prototype features, and extend workspace tooling with reusable JS/TS macros and macro libraries.",
-  "version": "0.5.6",
+  "version": "0.5.8",
   "publisher": "damolinx",
   "icon": "resources/images/icon.png",
   "repository": {
@@ -419,6 +419,11 @@
         {
           "command": "macros.new.macroLibrary",
           "when": "view == macros.macroExplorer",
+          "group": "navigation@5"
+        },
+        {
+          "command": "macros.new.macro.repl",
+          "when": "view == macros.macroExplorer",
           "group": "navigation@1"
         }
       ]
@@ -542,6 +547,7 @@
     "vscode:prepublish": "npm run package"
   },
   "dependencies": {
+    "source-map-support": "^0.5.21",
     "typescript": "^5.x"
   },
   "devDependencies": {
@@ -549,6 +555,7 @@
     "@stylistic/eslint-plugin": "^5.2.0",
     "@types/mocha": "^10.0.0",
     "@types/node": "^20.18.0",
+    "@types/source-map-support": "^0.5.10",
     "@types/vscode": "~1.99",
     "@typescript-eslint/eslint-plugin": "^8.25.0",
     "@typescript-eslint/parser": "^8.25.0",
