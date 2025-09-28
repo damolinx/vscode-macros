@@ -60,14 +60,19 @@ A macro sandbox cannot be forcefully terminated. Instead, a cancellation request
 
 If a macro does not respond to the cancellation request, it will continue running. In such cases, you can use the **Developer: Restart Extension Host** command to restart all extensions, or simply restart VS Code to stop the macro. While this is not ideal, it provides a fallback to recover from unresponsive or runaway macros. Note that this approach does not implicitly terminate external processes started by the macro.
 
-### Running a Macro on startup
-
-You can run macros on startup using the `macros.startupMacros` setting. This setting accepts paths to specific macro files (not directories), which are executed when a workspace is opened or when VS Code starts without one. Paths pointing to non-existent or empty files are automatically ignored (see the *Macros* log for details), but logic errors will trigger an error dialog.
-
-Startup macros let you define behavior similar to an extension’s `activate` method. When appropriate, add cleanup logic using the `__disposables` variable.
+### Running a Macro on Startup
 
 > **Workspace Trust**
-> Startup macro execution is disabled in untrusted workspaces.
+> Startup macros are disabled in untrusted workspaces.
+
+You can run macros automatically at startup by listing them in the `macros.startupMacros` setting. This setting accepts individual macro files (not directories), which are executed when a workspace is opened or when VS Code launches without one. You can quickly configure this by using the **Set as Startup Macro** action in the Macro Explorer.
+
+- Paths may include tokens like `${workspaceFolder}` or `${userHome}` for dynamic resolution.
+- The `macros.startupMacros` setting is additive across Global, Workspace, and Workspace Folder scopes.
+- Paths pointing to missing or empty files are silently ignored — see the Macros log for details.
+- Files with logic errors will trigger an error dialog.
+
+Startup macros let you define behavior similar to an extension’s activate method. When needed, include cleanup logic using the `__disposables` global variable to ensure proper teardown.
 
 ### Keybinding a Macro
 
