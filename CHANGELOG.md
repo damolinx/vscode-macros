@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.10
+- Improve tracking of `untitled` documents when changing language:
+  - **Temporary** library (de)lists document based on its current language.
+  - **Run Active File as a Macro** command and UI button appear or disappear appropriately.
+
 ## 0.5.9
 - **Macro Explorer** view:
   - Add **Set as Startup Macro** action on macro nodes.

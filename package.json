@@ -116,7 +116,7 @@
         "command": "macros.debug.activeEditor",
         "title": "Debug Active Editor as a Macro",
         "category": "Macros",
-        "enablement": "!inDebugMode && !macros:inDebugMode && resourceScheme == file && macros:supportedEditorLangId",
+        "enablement": "!inDebugMode && !macros:inDebugMode && resourceScheme == file && macros:supportedFeatureExt",
         "icon": "$(debug-alt)"
       },
       {

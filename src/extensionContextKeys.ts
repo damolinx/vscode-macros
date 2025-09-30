@@ -46,7 +46,10 @@ function registerSupportedEditorLangId(): vscode.Disposable[] {
   };
 
   supportHandler(vscode.window.activeTextEditor);
-  return [vscode.window.onDidChangeActiveTextEditor(supportHandler)];
+  return [
+    vscode.workspace.onDidOpenTextDocument(supportHandler),
+    vscode.window.onDidChangeActiveTextEditor(supportHandler),
+  ];
 }
 
 function setContext(contextKey: string, ...args: any[]) {

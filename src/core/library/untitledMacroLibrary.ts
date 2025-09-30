@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { isCreatingMacro } from '../../commands/createMacro';
 import { ExtensionContext } from '../../extensionContext';
 import { isUntitled, areUriEqual, UriLocator } from '../../utils/uri';
+import { isMacroLangId } from '../language';
 import { getMacroId, MacroId } from '../macroId';
 import { MacroLibrary } from './macroLibrary';
 
@@ -41,8 +42,8 @@ export class UntitledMacroLibrary extends MacroLibrary {
           this.onDidDeleteMacroEmitter.fire(macro.uri);
         }
       }),
-      vscode.workspace.onDidOpenTextDocument(({ uri }) => {
-        if (this.owns(uri) && isCreatingMacro()) {
+      vscode.workspace.onDidOpenTextDocument(({ languageId, uri }) => {
+        if (this.owns(uri) && (isCreatingMacro() || isMacroLangId(languageId))) {
           const macroId = getMacroId(uri);
           if (!this.untitledMacros.has(macroId)) {
             this.untitledMacros.set(macroId, uri);
