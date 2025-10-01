@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { MACROS_EXT_DEBUG_VAR } from './commands/debugMacro';
 import { isFeatureEnabledMacro, isMacroLangId } from './core/language';
 import { ExtensionContext } from './extensionContext';
+import { areUriEqual } from './utils/uri';
 
 export function registerSetContextHandlers(context: ExtensionContext): vscode.Disposable[] {
   return [
@@ -36,19 +37,31 @@ function registerSupportedEditorLangId(): vscode.Disposable[] {
   const supportedExtKey = 'macros:supportedFeatureExt';
   const supportedLangKey = 'macros:supportedEditorLangId';
 
-  const supportHandler = (editorOrDoc?: vscode.TextEditor | vscode.TextDocument) => {
-    const doc = editorOrDoc && 'document' in editorOrDoc ? editorOrDoc.document : editorOrDoc;
-    const supportedLangId = !!doc && isMacroLangId(doc.languageId);
+  const supportHandler = (doc: vscode.TextDocument) => {
+    const supportedLangId = isMacroLangId(doc.languageId);
     const supportedFeatureExt = supportedLangId && isFeatureEnabledMacro(doc.uri);
 
     setContext(supportedExtKey, supportedFeatureExt);
     setContext(supportedLangKey, supportedLangId);
   };
 
-  supportHandler(vscode.window.activeTextEditor);
+  const editor = vscode.window.activeTextEditor;
+  if (editor) {
+    supportHandler(editor.document);
+  }
+
   return [
-    vscode.workspace.onDidOpenTextDocument(supportHandler),
-    vscode.window.onDidChangeActiveTextEditor(supportHandler),
+    vscode.workspace.onDidOpenTextDocument((doc) => {
+      const editor = vscode.window.activeTextEditor;
+      if (editor && areUriEqual(doc.uri, editor.document.uri)) {
+        supportHandler(editor.document);
+      }
+    }),
+    vscode.window.onDidChangeActiveTextEditor((editor) => {
+      if (editor) {
+        supportHandler(editor.document);
+      }
+    }),
   ];
 }
 

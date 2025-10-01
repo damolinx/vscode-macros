@@ -4,6 +4,7 @@
 - **Macro Explorer** view:
   - Add **Unset as Startup Macro** action on macro nodes.
 - Prompt for confirmation before running macros that contain errors.
+- Fix: **Run Active File as a Macro** tracking of active text document missed edge case.
 
 ## 0.5.10
 - Improve tracking of `untitled` documents when changing language:
