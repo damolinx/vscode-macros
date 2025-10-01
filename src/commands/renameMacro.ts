@@ -4,6 +4,7 @@ import { Macro } from '../core/macro';
 import { explorerTreeView } from '../explorer/macroExplorerTreeView';
 import { ExtensionContext } from '../extensionContext';
 import { fromLocator, isUntitled, Locator, parent, toUri, uriBasename } from '../utils/uri';
+import { basename, extname } from 'path';
 
 export async function renameMacro(context: ExtensionContext, locator?: Locator): Promise<void> {
   let targetLocator = locator;
@@ -27,7 +28,7 @@ async function renameFromLocator(_context: ExtensionContext, locator: Locator): 
     prompt: `Provide a new name for '${name}'`,
     placeHolder: 'File name',
     value: name,
-    valueSelection: [0, name.lastIndexOf('.')],
+    valueSelection: [0, basename(basename(name, extname(name)), '.macro').length],
     validateInput: async (value) => {
       const normalizedValue = value.trim();
       if (normalizedValue.length === 0) {
