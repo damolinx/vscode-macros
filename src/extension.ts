@@ -9,6 +9,7 @@ import { debugActiveEditor, debugMacro } from './commands/debugMacro';
 import { deleteMacroOrMacroLibrary } from './commands/deleteMacroOrMacroLibrary';
 import { downloadAsset } from './commands/downloadAsset';
 import { openMacro } from './commands/openMacro';
+import { removeStartupMacro } from './commands/removeStartupMacro';
 import { renameMacro } from './commands/renameMacro';
 import { resetSharedContext } from './commands/resetContext';
 import { revealInOS } from './commands/revealInOS';
@@ -76,6 +77,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.delete.macroOrMacroLibrary', (macroOrLibrary?: Macro | MacroLibrary) =>
       deleteMacroOrMacroLibrary(context, macroOrLibrary),
     ),
+    cr('macros.delete.startupMacro', (locator: Locator) => removeStartupMacro(context, locator)),
     cr('macros.downloadAsset', downloadAsset),
     cr('macros.explorer.refresh', () => explorerTreeDataProvider?.refresh()),
     cr('macros.new.macro', (locator: Locator) => createMacro(context, locator)),

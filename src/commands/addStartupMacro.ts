@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { StartupMacroLibrarySourceManager } from '../core/library/startupMacroLibrarySourceManager';
+import { explorerTreeDataProvider } from '../explorer/macroExplorerTreeView';
 import { ExtensionContext } from '../extensionContext';
 import { fromLocator, Locator, toUri } from '../utils/uri';
 
@@ -10,10 +11,13 @@ export async function addStartupMacro(context: ExtensionContext, locator: Locato
     target: scope,
     value,
   } = await StartupMacroLibrarySourceManager.instance.addLibrary(uri);
-  context.log.info(
-    added ? 'Added startup macro' : 'Startup already registered',
-    `(${vscode.ConfigurationTarget[scope]})`,
-    '—',
-    value,
-  );
+
+  let logMessage: string;
+  if (added) {
+    logMessage = 'Added startup macro';
+    explorerTreeDataProvider?.refresh();
+  } else {
+    logMessage = 'Startup already registered';
+  }
+  context.log.info(logMessage, `(${vscode.ConfigurationTarget[scope]})`, '—', value);
 }

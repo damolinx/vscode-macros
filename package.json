@@ -126,6 +126,11 @@
         "enablement": "focusedView == macros.macroExplorer"
       },
       {
+        "command": "macros.delete.startupMacro",
+        "title": "Unset as Startup Macro",
+        "category": "Macros"
+      },
+      {
         "command": "macros.explorer.refresh",
         "title": "Refresh Macro Explorer",
         "category": "Macros",
@@ -293,6 +298,10 @@
           "when": "false"
         },
         {
+          "command": "macros.delete.startupMacro",
+          "when": "false"
+        },
+        {
           "command": "macros.explorer.refresh",
           "when": "false"
         },
@@ -359,6 +368,11 @@
           "group": "5_other@2"
         },
         {
+          "command": "macros.delete.startupMacro",
+          "when": "view == macros.macroExplorer && viewItem =~ /macroFile/ && viewItem =~ /startup/ && !(viewItem =~ /untitled/)",
+          "group": "4_tools@2"
+        },
+        {
           "command": "macros.new.macro",
           "when": "view == macros.macroExplorer && viewItem =~ /macroLibrary/",
           "group": "inline"
@@ -370,7 +384,7 @@
         },
         {
           "command": "macros.new.startupMacro",
-          "when": "view == macros.macroExplorer && viewItem =~ /macroFile/ && !(viewItem =~ /untitled/)",
+          "when": "view == macros.macroExplorer && viewItem =~ /macroFile/ && !(viewItem =~ /startup/) && !(viewItem =~ /untitled/)",
           "group": "4_tools@1"
         },
         {

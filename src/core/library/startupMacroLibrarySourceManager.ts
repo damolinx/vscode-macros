@@ -1,3 +1,4 @@
+import * as vscode from 'vscode';
 import { SourceManager } from './sourceManager';
 
 export class StartupMacroLibrarySourceManager extends SourceManager {
@@ -10,5 +11,12 @@ export class StartupMacroLibrarySourceManager extends SourceManager {
 
   private constructor() {
     super('macros.startupMacros');
+    this.disposables.push(
+      vscode.workspace.onDidChangeConfiguration((e) => {
+        if (e.affectsConfiguration(this.configKey)) {
+          this._sources.reset();
+        }
+      }),
+    );
   }
 }

@@ -1,10 +1,10 @@
 import * as vscode from 'vscode';
+import { basename, extname } from 'path';
 import { isMacro } from '../core/language';
 import { Macro } from '../core/macro';
 import { explorerTreeView } from '../explorer/macroExplorerTreeView';
 import { ExtensionContext } from '../extensionContext';
 import { fromLocator, isUntitled, Locator, parent, toUri, uriBasename } from '../utils/uri';
-import { basename, extname } from 'path';
 
 export async function renameMacro(context: ExtensionContext, locator?: Locator): Promise<void> {
   let targetLocator = locator;

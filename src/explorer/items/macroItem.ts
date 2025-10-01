@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { MacroRunner } from '../../core/execution/macroRunner';
+import { StartupMacroLibrarySourceManager } from '../../core/library/startupMacroLibrarySourceManager';
 import { Macro } from '../../core/macro';
 import { createIcon } from '../../ui/icons';
 import { isUntitled } from '../../utils/uri';
@@ -23,6 +24,10 @@ export function createMacroItem({ uri }: Macro, { runInstanceCount: runCount }: 
     command: 'vscode.open',
     title: 'Open Macro',
   };
+
+  if (StartupMacroLibrarySourceManager.instance.hasLibrary(uri)) {
+    item.contextValue += ',startup';
+  }
 
   if (runCount) {
     item.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;

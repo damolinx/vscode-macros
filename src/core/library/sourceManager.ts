@@ -78,6 +78,10 @@ export abstract class SourceManager implements vscode.Disposable {
     }
   }
 
+  public hasLibrary(uri: vscode.Uri) {
+    return this.sources.find((s) => s.uri.toString() === uri.toString());
+  }
+
   private loadConfigurationValues(
     configurationTarget: vscode.ConfigurationTarget,
     configuration = vscode.workspace.getConfiguration(),

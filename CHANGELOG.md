@@ -1,6 +1,8 @@
 # Changelog
 
 ## 0.5.11
+- **Macro Explorer** view:
+  - Add **Unset as Startup Macro** action on macro nodes.
 - Prompt for confirmation before running macros that contain errors.
 
 ## 0.5.10
