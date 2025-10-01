@@ -3,7 +3,7 @@ export function cleanError<T extends Error>(error: T): T {
 
   if (clone.stack) {
     clone.stack = clone.stack
-      .replace(/^[\s\S]*?(?=^\w*Error:)/m, '')
+      // .replace(/^[\s\S]*?(?=^\w*Error:)/m, '')
       .replace(/^(.*?(?:Script\.runInContext|evalmachine\.).*\n[\s\S]*)$/m, '')
       .replace(/^(.*?(?:vscode|damolinx)-macros.*\n[\s\S]*)$/m, '');
   }
