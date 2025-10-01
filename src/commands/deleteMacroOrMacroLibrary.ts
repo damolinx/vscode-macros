@@ -50,7 +50,7 @@ async function deleteMacro(context: ExtensionContext, { uri }: Macro): Promise<v
     if (!result || result.isCloseAffordance) {
       return;
     } else if (result === stopOption) {
-      await stopMacro(context, uri, { noPrompt: true });
+      await stopMacro(context, uri);
     }
   }
 

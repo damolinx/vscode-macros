@@ -101,8 +101,8 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
       c.executeCommand('workbench.action.openSettings', SOURCE_DIRS_CONFIG),
     ),
     cr('macros.sourceDirectories.setup', (uri: vscode.Uri) => setupSourceDirectory(context, uri)),
-    cr('macros.stop', (uriOrMacroOrRunInfo: vscode.Uri | Macro | MacroRunInfo, ...args: any[]) =>
-      stopMacro(context, uriOrMacroOrRunInfo, ...args),
+    cr('macros.stop', (uriOrMacroOrRunInfo: vscode.Uri | Macro | MacroRunInfo) =>
+      stopMacro(context, uriOrMacroOrRunInfo),
     ),
   );
 
