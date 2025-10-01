@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.5.11
+- Prompt for confirmation before running macros that contain errors.
+
 ## 0.5.10
 - Improve tracking of `untitled` documents when changing language:
   - **Temporary** library (de)lists document based on its current language.

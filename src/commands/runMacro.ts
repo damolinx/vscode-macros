@@ -16,6 +16,21 @@ export async function runMacro(
     return; // Nothing to run.
   }
 
+  const yesOption: vscode.MessageItem = { title: 'Run Anyway' };
+  if (
+    vscode.languages
+      .getDiagnostics(uri)
+      .some((d) => d.severity === vscode.DiagnosticSeverity.Error) &&
+    (await vscode.window.showWarningMessage(
+      'This macro contains errors. Do you still want to run it?',
+      { modal: true },
+      yesOption,
+      { title: 'Cancel', isCloseAffordance: true },
+    )) !== yesOption
+  ) {
+    return; // User canceled
+  }
+
   const runner = runnerManager.getRunner(uri);
   const macroCode = await runner.macro.getCode();
 
