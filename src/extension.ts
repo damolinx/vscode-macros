@@ -33,7 +33,7 @@ import {
   registerMacroExplorerTreeview,
 } from './explorer/macroExplorerTreeView';
 import { ExtensionContext } from './extensionContext';
-import { registerSetContextHandlers } from './extensionContextKeys';
+import { registerContextValueHandlers } from './extensionContextValues';
 import { MacroStatusBarItem } from './macroStatusBarItem';
 import { registerDTSCodeActionProvider } from './providers/dtsCodeActionProvider';
 import { registerExecuteCommandCompletionProvider } from './providers/executeCommandCompletionProvider';
@@ -56,7 +56,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     registerMacroChatParticipant(context),
     ...registerMacroExplorerTreeview(context),
     registerMacroSnapshotContentProvider(context),
-    ...registerSetContextHandlers(context),
+    ...registerContextValueHandlers(context),
     ...registerSourceDirectoryVerifier(context),
 
     registerDTSCodeActionProvider(documentSelector),
