@@ -87,9 +87,9 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.revealInExplorer', (locator?: Locator) => revealInOS(locator)),
     cr('macros.revealInFinder', (locator?: Locator) => revealInOS(locator)),
     cr('macros.revealInFiles', (locator?: Locator) => revealInOS(locator)),
-    cr('macros.run', (locator?: Locator) => runMacro(context, locator)),
+    cr('macros.run', (locator?: Locator, ...args: any[]) => runMacro(context, locator, ...args)),
     cr('macros.run.activeEditor', () => runActiveEditor(context)),
-    cr('macros.run.mru', () => runMacro(context, context.mruMacro)),
+    cr('macros.run.mru', (...args: any[]) => runMacro(context, context.mruMacro, ...args)),
     cr('macros.run.show', () => showRunningMacros(context)),
     cr('macros.runView', (runInfo: MacroRunInfo) => showRunCode(runInfo)),
     cr('macros.showMacroExplorer', () =>
@@ -167,5 +167,5 @@ async function runStartupMacros(context: ExtensionContext): Promise<void> {
   }
 
   // DO NO await, macros might be long running
-  Promise.all(existingUris.map((uri) => runMacro(context, uri, true)));
+  Promise.all(existingUris.map((uri) => runMacro(context, uri, { startup: true })));
 }

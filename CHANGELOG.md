@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.12
+- Improve error UX:
+  - **Retry** no longer asks for confirmation when error diagnstics are present.
+  - Full errors traces logged to **Macros** output channel.
+  - Simplified **Details** dialog.
+
 ## 0.5.11
 - **Macro Explorer** view:
   - Add **Unset as Startup Macro** action on macro nodes.

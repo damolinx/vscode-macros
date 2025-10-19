@@ -1,17 +1,22 @@
 export function cleanError<T extends Error>(error: T): T {
-  const clone = cloneError<T>(error);
+  let clone: T | undefined;
 
-  if (clone.stack) {
-    clone.stack = clone.stack
+  if (error.stack) {
+    clone ??= cloneError<T>(error);
+    clone.stack = error.stack
       // .replace(/^[\s\S]*?(?=^\w*Error:)/m, '')
       .replace(/^(.*?(?:Script\.runInContext|evalmachine\.).*\n[\s\S]*)$/m, '')
-      .replace(/^(.*?(?:vscode|damolinx)-macros.*\n[\s\S]*)$/m, '');
+      .replace(/^(.*?(?:vscode|damolinx)-macros.*\n[\s\S]*)$/m, '')
+      .replace(/^(.*?vscode-file:\/\/.*\n[\s\S]*)$/m, '');
   }
-  if ('requireStack' in clone) {
+
+  if ('requireStack' in error) {
+    clone ??= cloneError<T>(error);
     clone.message = clone.message.replace(/\nRequire stack:.*$/s, '');
-    clone.requireStack = [];
+    (clone as T & { requireStack: string[] }).requireStack = [];
   }
-  return clone;
+
+  return clone ?? error;
 }
 
 export function cloneError<T extends Error>(error: T): T {

@@ -115,7 +115,10 @@ async function showErrorMessage(
   if (!macroCode.options.singleton || runner.runInstanceCount === 0) {
     actions.push({
       title: 'Retry',
-      execute: () => vscode.commands.executeCommand('macros.run', runner.macro.uri),
+      execute: () =>
+        vscode.commands.executeCommand('macros.run', runner.macro.uri, {
+          ignoreDiagnosticErrors: true,
+        }),
     });
   }
 
@@ -134,7 +137,8 @@ async function showErrorMessage(
     } else {
       actions.push({
         title: 'Details',
-        execute: () => showErrorMessage(runner, macroCode, message, stack, errorLocation, true),
+        execute: () =>
+          showErrorMessage(runner, macroCode, 'Macro Error', stack, errorLocation, true),
       });
     }
   }
