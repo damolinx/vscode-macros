@@ -60,19 +60,26 @@ A macro sandbox cannot be forcefully terminated. Instead, a cancellation request
 
 If a macro does not respond to the cancellation request, it will continue running. In such cases, you can use the **Developer: Restart Extension Host** command to restart all extensions, or simply restart VS Code to stop the macro. While this is not ideal, it provides a fallback to recover from unresponsive or runaway macros. Note that this approach does not implicitly terminate external processes started by the macro.
 
-### Running a Macro on Startup
+### Running a Macro on VS Code Startup
 
 > **Workspace Trust**
 > Startup macros are disabled in untrusted workspaces.
 
-You can run macros automatically at startup by listing them in the `macros.startupMacros` setting. This setting accepts individual macro files (not directories), which are executed when a workspace is opened or when VS Code launches without one. You can quickly configure this by using the **Set as Startup Macro** action in the Macro Explorer.
+Adding startup macros lets you customize your environment from the moment VS Code starts. Since extensions are restarted when opening a new workspace, these customizations can also be scoped per workspace.
+
+Setting up a startup macro is easy:
+
+* In the **Macro Explorer**, use the **Set as Startup Macro** action from your macro's context menu. You can unset it later using **Unset as Startup Macro**.  
+
+* Alternatively, update the `macros.startupMacros` setting directly in the **Settings** editor.
+
+Once you've set up a startup macro, here are a few things to keep in mind:
 
 - Paths may include tokens like `${workspaceFolder}` or `${userHome}` for dynamic resolution.
 - The `macros.startupMacros` setting is additive across Global, Workspace, and Workspace Folder scopes.
-- Paths pointing to missing or empty files are silently ignored — see the Macros log for details.
-- Files with logic errors will trigger an error dialog.
+- Paths pointing to missing or empty files are silently ignored — see the **Macros** log for details.
 
-Startup macros let you define behavior similar to an extension’s activate method. When needed, include cleanup logic using the `__disposables` global variable to ensure proper teardown.
+Startup macros let you define behavior similar to an extension’s `activate` method. For teardown support, use the `__disposables` global variable to ensure proper disposal when the workspace changes or the extension reloads.
 
 ### Keybinding a Macro
 
@@ -106,9 +113,7 @@ See [Debugging a Macro](#debugging-a-macro) for additional information.
 
 #### Development
 
-* **Macros: Crate REPL**: create a REPL terminal to evaluate JavaScript or TypeScript code whose context matches the one used by running macros.
-  * Use `.ts` and `.js` commands to change language mode.
-  * Use `.help` for list of available commands.
+* **Macros: Create REPL**: create a REPL terminal to evaluate JavaScript or TypeScript code whose context matches the one used by running macros.
 
 * **Macros: Setup Source Directory for Development**: adds or updates optional files used to improve IntelliSense on macro files. This action is run automatically in the background when saving a `.macro.js` or `.macro.ts` file, provided that `macros.sourceDirectories.verify` is enabled.
 
@@ -139,6 +144,17 @@ The **Macro Explorer** provides a central management view for macros. You can us
 <p align=center>
    <img width="627" height="263" alt=""Macro Explorer View" src="https://github.com/user-attachments/assets/51c22abd-50ae-4c0e-92fa-edfa474ff736" />
 </p>
+
+## Macro REPL
+The REPL is a powerful interactive component that lets you:
+- Evaluate JavaScript or TypeScript code in the same context used when running macros
+- Inspect the current state of VS Code, including active editors, workspace folders, and extension APIs
+- Quickly execute custom actions, test macro logic, or simply run JS/TS code.
+
+You can start a new REPL using the **Macros: Create REPL** from the Command Palette or using the corresponding icon on the **Macros Explorer** view. You can have as many REPLs as you need, each one is fully isolated. 
+
+- Use `.ts` or `.js` to switch between TypeScript and JavaScript modes
+- Use `.help` to view all available REPL commands and utilities
 
 ## Development
 
