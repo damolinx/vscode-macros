@@ -2,23 +2,23 @@ import * as vscode from 'vscode';
 import { MacroRunInfo } from '../core/execution/macroRunInfo';
 import { ExtensionContext } from '../extensionContext';
 
-export function registerMacroSnapshotContentProvider({
-  runnerManager,
-}: ExtensionContext): vscode.Disposable {
-  return vscode.workspace.registerTextDocumentContentProvider('macro-snapshot', {
-    provideTextDocumentContent(snapshotUri: vscode.Uri) {
-      const uri = vscode.Uri.parse(snapshotUri.path, true);
-      const runner = runnerManager.getRunner(uri);
-      if (runner) {
-        for (const instance of runner.runInstances) {
-          if (instance.id === snapshotUri.fragment) {
-            return instance.snapshot.code;
+export function registerMacroSnapshotContentProvider(context: ExtensionContext): void {
+  context.extensionContext.subscriptions.push(
+    vscode.workspace.registerTextDocumentContentProvider('macro-snapshot', {
+      provideTextDocumentContent(snapshotUri: vscode.Uri) {
+        const uri = vscode.Uri.parse(snapshotUri.path, true);
+        const runner = context.runnerManager.getRunner(uri);
+        if (runner) {
+          for (const instance of runner.runInstances) {
+            if (instance.id === snapshotUri.fragment) {
+              return instance.snapshot.code;
+            }
           }
         }
-      }
-      return;
-    },
-  });
+        return;
+      },
+    }),
+  );
 }
 
 export function createSnapshotUri(runInfo: MacroRunInfo) {

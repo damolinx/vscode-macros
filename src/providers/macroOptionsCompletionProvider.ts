@@ -1,17 +1,19 @@
 import * as vscode from 'vscode';
+import { MACRO_SELECTOR } from '../core/language';
 import { MacroOptionType } from '../core/macroOptions';
+import { ExtensionContext } from '../extensionContext';
 
 export const MACRO_TRIGGER_CHARACTERS: readonly string[] = ['@'];
 export const MACRO_OPTIONS_TRIGGER_CHARACTERS: readonly string[] = [':', ','];
 
-export function registerMacroOptionsCompletionProvider(
-  selector: vscode.DocumentSelector,
-): vscode.Disposable {
-  return vscode.languages.registerCompletionItemProvider(
-    selector,
-    new MacroOptionsCompletionProvider(),
-    ...MACRO_TRIGGER_CHARACTERS,
-    ...MACRO_OPTIONS_TRIGGER_CHARACTERS,
+export function registerMacroOptionsCompletionProvider(context: ExtensionContext): void {
+  context.extensionContext.subscriptions.push(
+    vscode.languages.registerCompletionItemProvider(
+      MACRO_SELECTOR,
+      new MacroOptionsCompletionProvider(),
+      ...MACRO_TRIGGER_CHARACTERS,
+      ...MACRO_OPTIONS_TRIGGER_CHARACTERS,
+    ),
   );
 }
 

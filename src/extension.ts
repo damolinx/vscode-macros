@@ -22,7 +22,6 @@ import { showRunCode } from './commands/showRunCode';
 import { showRunningMacros } from './commands/showRunningMacros';
 import { stopMacro } from './commands/stopMacro';
 import { MacroRunInfo } from './core/execution/macroRunInfo';
-import { macroDocumentSelector } from './core/language';
 import { MacroLibrary } from './core/library/macroLibrary';
 import { SOURCE_DIRS_CONFIG } from './core/library/macroLibrarySourceManager';
 import { StartupMacroLibrarySourceManager } from './core/library/startupMacroLibrarySourceManager';
@@ -48,22 +47,19 @@ import { Locator, PathLike, areUriEqual } from './utils/uri';
  */
 export async function activate(extensionContext: vscode.ExtensionContext) {
   const context = new ExtensionContext(extensionContext);
-  extensionContext.subscriptions.push(context, new MacroStatusBarItem(context));
   context.log.info('Activating extension', extensionContext.extension.packageJSON.version);
 
-  const documentSelector = macroDocumentSelector();
-  extensionContext.subscriptions.push(
-    registerMacroChatParticipant(context),
-    ...registerExplorerTreeview(context),
-    registerMacroSnapshotContentProvider(context),
-    ...registerContextValueHandlers(context),
-    ...registerSourceDirectoryVerifier(context),
+  extensionContext.subscriptions.push(context, new MacroStatusBarItem(context));
 
-    registerDTSCodeActionProvider(documentSelector),
-    registerExecuteCommandCompletionProvider(documentSelector),
-    registerMacroCodeLensProvider(documentSelector),
-    registerMacroOptionsCompletionProvider(documentSelector),
-  );
+  registerMacroChatParticipant(context);
+  registerExplorerTreeview(context);
+  registerMacroSnapshotContentProvider(context);
+  registerContextValueHandlers(context);
+  registerSourceDirectoryVerifier(context);
+  registerDTSCodeActionProvider(context);
+  registerExecuteCommandCompletionProvider(context);
+  registerMacroCodeLensProvider(context);
+  registerMacroOptionsCompletionProvider(context);
 
   const {
     commands: c,

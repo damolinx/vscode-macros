@@ -11,7 +11,7 @@ export const MACRO_EXPLORER_VIEW_ID = 'macros.macroExplorer';
 export let explorerTreeDataProvider: ExplorerTreeDataProvider | undefined;
 export let explorerTreeView: vscode.TreeView<MacroLibrary | Macro | MacroRunInfo> | undefined;
 
-export function registerExplorerTreeview(context: ExtensionContext): vscode.Disposable[] {
+export function registerExplorerTreeview(context: ExtensionContext): void {
   explorerTreeDataProvider = new ExplorerTreeDataProvider(context);
   explorerTreeView = vscode.window.createTreeView(MACRO_EXPLORER_VIEW_ID, {
     dragAndDropController: new ExplorerTreeDragAndDropController(context),
@@ -19,7 +19,7 @@ export function registerExplorerTreeview(context: ExtensionContext): vscode.Disp
     treeDataProvider: explorerTreeDataProvider,
   });
 
-  return [
+  context.extensionContext.subscriptions.push(
     explorerTreeDataProvider,
     explorerTreeView,
     explorerTreeDataProvider.onDidChangeTreeData(async (elementOrElements) => {
@@ -33,5 +33,5 @@ export function registerExplorerTreeview(context: ExtensionContext): vscode.Disp
         await explorerTreeView?.reveal(element);
       }
     }),
-  ];
+  );
 }

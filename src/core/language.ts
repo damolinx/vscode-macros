@@ -27,6 +27,13 @@ export const MACRO_PREFERRED_EXTENSION = '.macro.js';
 
 export const MACRO_PREFERRED_LANGUAGE = 'javascript';
 
+export const MACRO_SELECTOR: vscode.DocumentSelector = [
+  { scheme: 'untitled', language: MACRO_PREFERRED_LANGUAGE },
+  ...MACRO_LANGUAGES.map((lang) => ({
+    pattern: `**/*.macro.{${lang.extensions.join(',')}}`,
+  })),
+];
+
 export function isFeatureEnabledMacro(pathOrUri: PathLike): boolean {
   const result = tryResolveMacroLanguage(pathOrUri);
   return !!result && result.filename.endsWith(`.macro${result.matchingExt}`);
@@ -39,15 +46,6 @@ export function isMacro(pathOrUri: PathLike): boolean {
 
 export function isMacroLangId(langId: string): langId is Language['id'] {
   return MACRO_LANGUAGES.some((lang) => lang.id === langId);
-}
-
-export function macroDocumentSelector(): vscode.DocumentSelector {
-  return [
-    { scheme: 'untitled', language: MACRO_PREFERRED_LANGUAGE },
-    ...MACRO_LANGUAGES.map((lang) => ({
-      pattern: `**/*.macro.{${lang.extensions.join(',')}}`,
-    })),
-  ];
 }
 
 export function macroGlobPattern(pathOrUri: PathLike): vscode.RelativePattern {

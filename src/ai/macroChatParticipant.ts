@@ -5,7 +5,7 @@ import { MACRO_PROMPT } from './macroChatPrompt';
 export const MACROS_CHAT_PARTICIPANT_ID = 'macros.chatParticipant';
 export const MACRO_TAG = 'macro';
 
-export function registerMacroChatParticipant(context: ExtensionContext): vscode.Disposable {
+export function registerMacroChatParticipant(context: ExtensionContext): void {
   const macroParticipant = new MacroChatParticipant(context);
   const participant = vscode.chat.createChatParticipant(
     MACROS_CHAT_PARTICIPANT_ID,
@@ -13,7 +13,7 @@ export function registerMacroChatParticipant(context: ExtensionContext): vscode.
       macroParticipant.handleRequest(request, context, response, token),
   );
   participant.iconPath = new vscode.ThemeIcon('run-all');
-  return participant;
+  context.extensionContext.subscriptions.push(participant);
 }
 
 export interface ToolRequest {

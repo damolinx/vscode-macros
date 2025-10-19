@@ -4,15 +4,13 @@ import { isFeatureEnabledMacro, isMacroLangId } from './core/language';
 import { ExtensionContext } from './extensionContext';
 import { areUriEqual } from './utils/uri';
 
-export function registerContextValueHandlers(context: ExtensionContext): vscode.Disposable[] {
-  const disposables: vscode.Disposable[] = [];
-  registerInDebugMode(context, disposables);
-  registerMruSet(context, disposables);
-  registerSupported(context, disposables);
-  return disposables;
+export function registerContextValueHandlers(context: ExtensionContext): void {
+  registerInDebugMode(context);
+  registerMruSet(context);
+  registerSupported(context);
 }
 
-function registerInDebugMode({ log }: ExtensionContext, _disposables: vscode.Disposable[]): void {
+function registerInDebugMode({ log }: ExtensionContext): void {
   const contextKey = 'macros:inDebugMode';
   const inDebugMode = process.env[MACROS_EXT_DEBUG_VAR]?.trim();
 
@@ -22,10 +20,10 @@ function registerInDebugMode({ log }: ExtensionContext, _disposables: vscode.Dis
   }
 }
 
-function registerMruSet(context: ExtensionContext, disposables: vscode.Disposable[]): void {
+function registerMruSet(context: ExtensionContext): void {
   const contextKey = 'macros:mruSet';
 
-  disposables.push(
+  context.extensionContext.subscriptions.push(
     context.runnerManager.onRun(({ macro: { uri } }) => {
       context.mruMacro = uri;
       setContext(contextKey, true);
@@ -33,7 +31,7 @@ function registerMruSet(context: ExtensionContext, disposables: vscode.Disposabl
   );
 }
 
-function registerSupported(_context: ExtensionContext, disposables: vscode.Disposable[]): void {
+function registerSupported(context: ExtensionContext): void {
   const supportedExtKey = 'macros:supportedFeatureExt';
   const supportedLangKey = 'macros:supportedEditorLangId';
 
@@ -42,7 +40,7 @@ function registerSupported(_context: ExtensionContext, disposables: vscode.Dispo
     setSupportedContext(editor.document);
   }
 
-  disposables.push(
+  context.extensionContext.subscriptions.push(
     vscode.workspace.onDidOpenTextDocument((doc) => {
       const editor = vscode.window.activeTextEditor;
       if (editor && areUriEqual(doc.uri, editor.document.uri)) {

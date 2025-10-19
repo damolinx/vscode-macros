@@ -1,15 +1,17 @@
 import * as vscode from 'vscode';
+import { MACRO_SELECTOR } from '../core/language';
+import { ExtensionContext } from '../extensionContext';
 import { Lazy } from '../utils/lazy';
 
 export const EXECUTE_COMMAND_CHARACTERS: readonly string[] = ['(', '"', "'", '`'];
 
-export function registerExecuteCommandCompletionProvider(
-  selector: vscode.DocumentSelector,
-): vscode.Disposable {
-  return vscode.languages.registerCompletionItemProvider(
-    selector,
-    new ExecuteCommandCompletionProvider(),
-    ...EXECUTE_COMMAND_CHARACTERS,
+export function registerExecuteCommandCompletionProvider(context: ExtensionContext): void {
+  context.extensionContext.subscriptions.push(
+    vscode.languages.registerCompletionItemProvider(
+      MACRO_SELECTOR,
+      new ExecuteCommandCompletionProvider(),
+      ...EXECUTE_COMMAND_CHARACTERS,
+    ),
   );
 }
 

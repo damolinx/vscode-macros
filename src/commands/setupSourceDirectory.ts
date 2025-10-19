@@ -10,7 +10,7 @@ export const AUTO_VERIFY_SETTING = 'macros.sourceDirectoriesVerification';
 export const GLOBALS_RESOURCE = 'api/global.d.ts';
 export const JSCONFIG_RESOURCE = 'api/jsconfig.json';
 
-export function registerSourceDirectoryVerifier(context: ExtensionContext): vscode.Disposable[] {
+export function registerSourceDirectoryVerifier(context: ExtensionContext): void {
   const verifiedPaths = new Set<string>();
   const onDidChangeActiveTextEditorDisposable = new LazyDisposable(() =>
     vscode.window.onDidChangeActiveTextEditor(async (editor) => {
@@ -35,7 +35,7 @@ export function registerSourceDirectoryVerifier(context: ExtensionContext): vsco
     }),
   );
 
-  const disposables: vscode.Disposable[] = [
+  context.extensionContext.subscriptions.push(
     onDidChangeActiveTextEditorDisposable,
     vscode.workspace.onDidChangeConfiguration((e) => {
       if (e.affectsConfiguration(AUTO_VERIFY_SETTING)) {
@@ -47,13 +47,11 @@ export function registerSourceDirectoryVerifier(context: ExtensionContext): vsco
         }
       }
     }),
-  ];
+  );
 
   if (isSettingEnabled()) {
     onDidChangeActiveTextEditorDisposable.initialize();
   }
-
-  return disposables;
 
   function isSettingEnabled() {
     return vscode.workspace.getConfiguration().get(AUTO_VERIFY_SETTING, true);
