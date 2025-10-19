@@ -3,18 +3,18 @@ import { MacroRunInfo } from '../core/execution/macroRunInfo';
 import { MacroLibrary } from '../core/library/macroLibrary';
 import { Macro } from '../core/macro';
 import { ExtensionContext } from '../extensionContext';
-import { MacroExplorerTreeDataProvider } from './macroExplorerTreeDataProvider';
-import { MacroExplorerTreeDragAndDropController } from './macroExplorerTreeDragAndDropController';
+import { ExplorerTreeDataProvider } from './explorerTreeDataProvider';
+import { ExplorerTreeDragAndDropController } from './explorerTreeDragAndDropController';
 
 export const MACRO_EXPLORER_VIEW_ID = 'macros.macroExplorer';
 
-export let explorerTreeDataProvider: MacroExplorerTreeDataProvider | undefined;
+export let explorerTreeDataProvider: ExplorerTreeDataProvider | undefined;
 export let explorerTreeView: vscode.TreeView<MacroLibrary | Macro | MacroRunInfo> | undefined;
 
-export function registerMacroExplorerTreeview(context: ExtensionContext): vscode.Disposable[] {
-  explorerTreeDataProvider = new MacroExplorerTreeDataProvider(context);
+export function registerExplorerTreeview(context: ExtensionContext): vscode.Disposable[] {
+  explorerTreeDataProvider = new ExplorerTreeDataProvider(context);
   explorerTreeView = vscode.window.createTreeView(MACRO_EXPLORER_VIEW_ID, {
-    dragAndDropController: new MacroExplorerTreeDragAndDropController(context),
+    dragAndDropController: new ExplorerTreeDragAndDropController(context),
     showCollapseAll: true,
     treeDataProvider: explorerTreeDataProvider,
   });

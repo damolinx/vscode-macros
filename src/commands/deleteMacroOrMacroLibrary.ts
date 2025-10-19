@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { MacroLibrary } from '../core/library/macroLibrary';
 import { Macro } from '../core/macro';
-import { explorerTreeView } from '../explorer/macroExplorerTreeView';
+import { explorerTreeView } from '../explorer/explorerTreeView';
 import { ExtensionContext } from '../extensionContext';
 import { areUriEqual, isUntitled } from '../utils/uri';
 import { stopMacro } from './stopMacro';

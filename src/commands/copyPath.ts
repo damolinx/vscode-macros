@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { explorerTreeView } from '../explorer/macroExplorerTreeView';
+import { explorerTreeView } from '../explorer/explorerTreeView';
 import { ExtensionContext } from '../extensionContext';
 import { fromLocator, Locator, uriBasename } from '../utils/uri';
 

@@ -30,8 +30,8 @@ import { Macro } from './core/macro';
 import {
   explorerTreeDataProvider,
   MACRO_EXPLORER_VIEW_ID,
-  registerMacroExplorerTreeview,
-} from './explorer/macroExplorerTreeView';
+  registerExplorerTreeview,
+} from './explorer/explorerTreeView';
 import { ExtensionContext } from './extensionContext';
 import { registerContextValueHandlers } from './extensionContextValues';
 import { MacroStatusBarItem } from './macroStatusBarItem';
@@ -54,7 +54,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
   const documentSelector = macroDocumentSelector();
   extensionContext.subscriptions.push(
     registerMacroChatParticipant(context),
-    ...registerMacroExplorerTreeview(context),
+    ...registerExplorerTreeview(context),
     registerMacroSnapshotContentProvider(context),
     ...registerContextValueHandlers(context),
     ...registerSourceDirectoryVerifier(context),

@@ -19,7 +19,7 @@ interface MonitoredLibraryData {
   files: Set<MacroId>;
 }
 
-export class MacroExplorerTreeDataProvider
+export class ExplorerTreeDataProvider
   implements vscode.TreeDataProvider<TreeElement>, vscode.Disposable
 {
   private readonly context: ExtensionContext;

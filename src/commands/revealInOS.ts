@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { explorerTreeView } from '../explorer/macroExplorerTreeView';
+import { explorerTreeView } from '../explorer/explorerTreeView';
 import { fromLocator, Locator, toUri } from '../utils/uri';
 
 export async function revealInOS(locator?: Locator): Promise<void> {

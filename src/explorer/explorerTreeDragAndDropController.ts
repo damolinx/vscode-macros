@@ -4,13 +4,13 @@ import { MacroLibrary } from '../core/library/macroLibrary';
 import { Macro } from '../core/macro';
 import { ExtensionContext } from '../extensionContext';
 import { isUntitled, uriBasename } from '../utils/uri';
-import { TreeElement } from './macroExplorerTreeDataProvider';
+import { TreeElement } from './explorerTreeDataProvider';
 
 export const FILELIST_MIMETYPE = 'text/uri-list';
 export const FILELIST_SEP = '\r\n';
 export const TREE_MIMETYPE = 'application/vnd.code.tree.macros.macroexplorer';
 
-export class MacroExplorerTreeDragAndDropController
+export class ExplorerTreeDragAndDropController
   implements vscode.TreeDragAndDropController<TreeElement>
 {
   private readonly context: ExtensionContext;

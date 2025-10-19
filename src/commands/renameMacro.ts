@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { basename, extname } from 'path';
 import { isMacro } from '../core/language';
 import { Macro } from '../core/macro';
-import { explorerTreeView } from '../explorer/macroExplorerTreeView';
+import { explorerTreeView } from '../explorer/explorerTreeView';
 import { ExtensionContext } from '../extensionContext';
 import { fromLocator, isUntitled, Locator, parent, toUri, uriBasename } from '../utils/uri';
 

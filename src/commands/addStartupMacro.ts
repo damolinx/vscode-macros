@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { StartupMacroLibrarySourceManager } from '../core/library/startupMacroLibrarySourceManager';
-import { explorerTreeDataProvider } from '../explorer/macroExplorerTreeView';
+import { explorerTreeDataProvider } from '../explorer/explorerTreeView';
 import { ExtensionContext } from '../extensionContext';
 import { fromLocator, Locator, toUri } from '../utils/uri';
 
