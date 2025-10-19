@@ -36,27 +36,25 @@ function registerSupported(context: ExtensionContext): void {
   const supportedLangKey = 'macros:supportedEditorLangId';
 
   const editor = vscode.window.activeTextEditor;
-  if (editor) {
-    setSupportedContext(editor.document);
-  }
+  setSupportedFromEditor(editor);
 
   context.extensionContext.subscriptions.push(
+    // This is needed to support changing Language on current editor
     vscode.workspace.onDidOpenTextDocument((doc) => {
       const editor = vscode.window.activeTextEditor;
       if (editor && areUriEqual(doc.uri, editor.document.uri)) {
-        setSupportedContext(editor.document);
+        setSupportedFromEditor(editor);
       }
     }),
-    vscode.window.onDidChangeActiveTextEditor((editor) => {
-      if (editor) {
-        setSupportedContext(editor.document);
-      }
-    }),
+    vscode.window.onDidChangeActiveTextEditor((editor) => setSupportedFromEditor(editor)),
   );
 
-  function setSupportedContext(doc: vscode.TextDocument) {
-    const supportedLangId = isMacroLangId(doc.languageId);
-    const supportedFeatureExt = supportedLangId && isFeatureEnabledMacro(doc.uri);
+  function setSupportedFromEditor(editor?: vscode.TextEditor) {
+    const supportedLangId = !!editor && isMacroLangId(editor.document.languageId);
+    const supportedFeatureExt =
+      supportedLangId &&
+      (isFeatureEnabledMacro(editor.document.uri) ||
+        !!context.libraryManager.libraryFor(editor.document.uri));
 
     setContext(supportedExtKey, supportedFeatureExt);
     setContext(supportedLangKey, supportedLangId);

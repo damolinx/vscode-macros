@@ -15,11 +15,10 @@ export function registerSourceDirectoryVerifier(context: ExtensionContext): void
   const onDidChangeActiveTextEditorDisposable = new LazyDisposable(() =>
     vscode.window.onDidChangeActiveTextEditor(async (editor) => {
       const uri = editor?.document.uri;
-      if (
-        !uri ||
-        uri.scheme !== 'file' ||
+      if (uri?.scheme !== 'file' ||
         verifiedPaths.has(uri.toString()) ||
-        !isFeatureEnabledMacro(uri)
+        !isFeatureEnabledMacro(uri) ||
+        !context.libraryManager.libraryFor(uri)
       ) {
         return;
       }

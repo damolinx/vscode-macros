@@ -1,10 +1,11 @@
 # Changelog
 
 ## 0.5.12
-- Remove file extensions to simplify **Macros Explorer** view.
+- **Run** and **Debug** buttons show for all `.macro.` files, or any file under a known source directory.
+- File extensions not displayed in **Macros Explorer** view to simplify it.
 - Improve error UX:
-  - **Retry** no longer asks for confirmation when error diagnstics are present.
-  - Full errors traces logged to **Macros** output channel.
+  - **Retry** no longer asks for confirmation when error diagnostics are present.
+  - Full error traces logged to the **Macros** output channel.
   - Simplified **Details** dialog.
 
 ## 0.5.11

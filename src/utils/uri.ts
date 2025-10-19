@@ -36,27 +36,33 @@ export function areUriEqual(locatorA: UriLocator, locatorB: UriLocator): boolean
 /**
  * Check if {@link parent} is a parent of {@link candidate}.
  */
-export function isParent(parent: vscode.Uri, candidate: vscode.Uri): boolean {
+export function isParent(
+  parent: vscode.Uri,
+  candidate: vscode.Uri,
+  options?: { mustBeImmediate?: true },
+): boolean {
   if (parent.scheme !== candidate.scheme || parent.authority !== candidate.authority) {
     return false;
   }
 
-  let normalizedParent, normalizedCandidateParent: string;
+  let normalizedParent, normalizedCandidateParent, sep: string;
   if (parent.scheme === 'file') {
     normalizedParent = normalize(parent.fsPath);
     normalizedCandidateParent = normalize(path.dirname(candidate.fsPath));
+    sep = path.sep;
   } else {
     normalizedParent = parent.path;
     normalizedCandidateParent = posix.dirname(candidate.path);
+    sep = posix.sep;
   }
 
   return (
     normalizedParent === normalizedCandidateParent ||
-    normalizedCandidateParent.startsWith(normalizedParent + path.sep)
+    (!options?.mustBeImmediate && normalizedCandidateParent.startsWith(normalizedParent + sep))
   );
 
-  function normalize(path: string) {
-    return process.platform === 'win32' ? path.toLowerCase() : path;
+  function normalize(p: string) {
+    return process.platform === 'win32' ? p.toLowerCase() : p;
   }
 }
 

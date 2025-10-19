@@ -82,6 +82,6 @@ export class MacroLibrary implements vscode.Disposable {
 
   public owns(locator: UriLocator): boolean {
     const uri = locator instanceof vscode.Uri ? locator : locator.uri;
-    return isParent(this.uri, uri);
+    return isParent(this.uri, uri, { mustBeImmediate: true });
   }
 }

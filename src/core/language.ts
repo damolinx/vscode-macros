@@ -35,7 +35,7 @@ export const MACRO_PREFERRED_SELECTOR: vscode.DocumentSelector = [
 
 export function isFeatureEnabledMacro(pathOrUri: PathLike): boolean {
   const result = tryResolveMacroLanguage(pathOrUri);
-  return !!result && result.filename.endsWith(`.macro${result.ext}`);
+  return !!result?.ext.startsWith('.macro.');
 }
 
 export function isMacro(pathOrUri: PathLike): boolean {
