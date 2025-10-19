@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.5.12
+- Remove file extensions to simplify **Macros Explorer** view.
 - Improve error UX:
   - **Retry** no longer asks for confirmation when error diagnstics are present.
   - Full errors traces logged to **Macros** output channel.

@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { MACRO_SELECTOR } from '../core/language';
+import { MACRO_PREFERRED_SELECTOR } from '../core/language';
 import { ExtensionContext } from '../extensionContext';
 import { Lazy } from '../utils/lazy';
 
@@ -8,7 +8,7 @@ export const EXECUTE_COMMAND_CHARACTERS: readonly string[] = ['(', '"', "'", '`'
 export function registerExecuteCommandCompletionProvider(context: ExtensionContext): void {
   context.extensionContext.subscriptions.push(
     vscode.languages.registerCompletionItemProvider(
-      MACRO_SELECTOR,
+      MACRO_PREFERRED_SELECTOR,
       new ExecuteCommandCompletionProvider(),
       ...EXECUTE_COMMAND_CHARACTERS,
     ),

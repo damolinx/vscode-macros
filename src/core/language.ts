@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import { extname } from 'path';
 import { PathLike, uriBasename } from '../utils/uri';
 
 export interface Language {
@@ -13,12 +12,12 @@ export const MACRO_LANGUAGES: readonly Language[] = [
   {
     id: 'javascript',
     name: 'JavaScript',
-    extensions: ['js', 'cjs'],
+    extensions: ['macro.js', 'js', 'macro.cjs', 'cjs'],
   },
   {
     id: 'typescript',
     name: 'TypeScript',
-    extensions: ['ts'],
+    extensions: ['macro.ts', 'ts'],
     exclusions: ['d.ts'],
   },
 ];
@@ -27,16 +26,16 @@ export const MACRO_PREFERRED_EXTENSION = '.macro.js';
 
 export const MACRO_PREFERRED_LANGUAGE = 'javascript';
 
-export const MACRO_SELECTOR: vscode.DocumentSelector = [
+export const MACRO_PREFERRED_SELECTOR: vscode.DocumentSelector = [
   { scheme: 'untitled', language: MACRO_PREFERRED_LANGUAGE },
   ...MACRO_LANGUAGES.map((lang) => ({
-    pattern: `**/*.macro.{${lang.extensions.join(',')}}`,
+    pattern: `**/*.{${lang.extensions.filter((ext) => ext.startsWith('macro.')).join(',')}}`,
   })),
 ];
 
 export function isFeatureEnabledMacro(pathOrUri: PathLike): boolean {
   const result = tryResolveMacroLanguage(pathOrUri);
-  return !!result && result.filename.endsWith(`.macro${result.matchingExt}`);
+  return !!result && result.filename.endsWith(`.macro${result.ext}`);
 }
 
 export function isMacro(pathOrUri: PathLike): boolean {
@@ -55,7 +54,7 @@ export function macroGlobPattern(pathOrUri: PathLike): vscode.RelativePattern {
 
 export function tryResolveMacroExt(pathOrUri: PathLike): string | undefined {
   const result = tryResolveMacroLanguage(pathOrUri);
-  return result?.matchingExt;
+  return result?.ext;
 }
 
 export function tryResolveMacroLangId(pathOrUri: PathLike): string | undefined {
@@ -65,21 +64,15 @@ export function tryResolveMacroLangId(pathOrUri: PathLike): string | undefined {
 
 function tryResolveMacroLanguage(
   pathOrUri: PathLike,
-): { language: Language; matchingExt: string; filename: string } | undefined {
+): { language: Language; ext: string; filename: string } | undefined {
   const filename = uriBasename(pathOrUri).toLowerCase();
-  const extension = extname(filename);
-
-  if (!extension) {
-    return undefined;
-  }
-
   for (const language of MACRO_LANGUAGES) {
-    for (const ext of language.extensions.map((ext) => `.${ext}`)) {
-      if (extension === ext && !isExcluded(filename, language.exclusions)) {
+    for (const ext of language.extensions.flatMap((ext) => [`.macro.${ext}`, `.${ext}`])) {
+      if (filename.endsWith(ext) && !isExcluded(filename, language.exclusions)) {
         return {
           filename,
           language,
-          matchingExt: ext,
+          ext,
         };
       }
     }

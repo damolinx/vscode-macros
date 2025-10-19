@@ -89,8 +89,14 @@ export function resolveAsUri(pathOrUri: string): vscode.Uri {
 /**
  * Return the last portion of a path. Similar to the Unix basename command.
  */
-export function uriBasename(pathOrUri: PathLike, removeExt?: true): string {
+export function uriBasename(pathOrUri: PathLike, removeExt?: true | string): string {
   return pathOrUri instanceof vscode.Uri
-    ? posix.basename(pathOrUri.path, removeExt && posix.extname(pathOrUri.path))
-    : path.basename(pathOrUri, removeExt && path.extname(pathOrUri));
+    ? posix.basename(
+        pathOrUri.path,
+        removeExt && (typeof removeExt === 'string' ? removeExt : path.extname(pathOrUri.path)),
+      )
+    : path.basename(
+        pathOrUri,
+        removeExt && (typeof removeExt === 'string' ? removeExt : path.extname(pathOrUri)),
+      );
 }

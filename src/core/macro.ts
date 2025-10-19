@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { uriBasename } from '../utils/uri';
+import { tryResolveMacroExt } from './language';
 import { MacroCode } from './macroCode';
 import { getMacroId, MacroId } from './macroId';
 
@@ -13,7 +14,7 @@ export class Macro {
     const isUri = uriOrDocument instanceof vscode.Uri;
     this.uri = isUri ? uriOrDocument : uriOrDocument.uri;
     this.id = id ?? getMacroId(this.uri);
-    this.name = uriBasename(this.uri, true);
+    this.name = uriBasename(this.uri, tryResolveMacroExt(this.uri) ?? true);
 
     if (!isUri) {
       this.code = new MacroCode(uriOrDocument, this.id);

@@ -11,8 +11,9 @@ export const MacroJsIcon = createIcon('symbol-function', 'macros.macrojs');
 export const TsIcon = createIcon('symbol-function', 'macros.ts');
 export const MacroTsIcon = createIcon('symbol-function', 'macros.macrots');
 
-export function createMacroItem({ uri }: Macro, { runInstanceCount: runCount }: MacroRunner) {
+export function createMacroItem({ name, uri }: Macro, { runInstanceCount: runCount }: MacroRunner) {
   const item = new vscode.TreeItem(uri);
+  item.label = name;
 
   item.contextValue = 'macroFile';
   if (isUntitled(uri)) {
