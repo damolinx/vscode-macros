@@ -7,7 +7,7 @@ Macros can be easily managed through the [**Macro Explorer**](#macro-explorer-vi
 Under the hood, macros are run inside [Node.js VM sandboxes](https://nodejs.org/api/vm.html#class-vmscript) within the extension's context. This setup provides isolated execution—within the constraints of the sandbox—while still granting full access to VS Code’s API and core Node.js modules.
 
 <p align=center>
-<img width="600" alt="image" src="https://github.com/user-attachments/assets/1f091e73-d669-42d5-91c9-f667cdaeb94f" alt="VS Code with Macro Explorer view and a macro editor open" />
+  <img width="400" alt="VS Code with Macro Explorer view and a macro editor open" src="https://github.com/user-attachments/assets/34637385-782a-4578-863e-35d8e3caa2c7" />
 </p>
 
 ## Getting Started
@@ -47,7 +47,7 @@ Under the hood, macros are run inside [Node.js VM sandboxes](https://nodejs.org/
 3. From the [Command Palette](https://code.visualstudio.com/api/references/contribution-points#contributes.commands), use the **Macros: Run Active Editor as Macro** command to execute your macro. Alternatively, on *untitled*, `javascript` or `typescript` editors, or those with `*.macro.js` or `*.macro.ts` names, use the equivalent run and debug buttons available on the editor title bar.
 
    <p align=center>
-     <img width="400" alt="Macro editor showing Run Macro button" src="https://github.com/user-attachments/assets/53f36963-d754-4b83-912d-689d5e200f17" />
+      <img width="400" alt=""Macro editor showing the Debug Macro button" src="https://github.com/user-attachments/assets/78acb656-8c1c-4939-823f-72fbd84c13ea" />
    </p>
 
 ### Stopping a Macro
@@ -142,7 +142,7 @@ The **Macro Explorer** provides a central management view for macros. You can us
   - This view shows options used when a given instance was created.
 
 <p align=center>
-   <img width="627" height="263" alt=""Macro Explorer View" src="https://github.com/user-attachments/assets/51c22abd-50ae-4c0e-92fa-edfa474ff736" />
+   <img width="400" alt="Macro Explorer View with diff" src="https://github.com/user-attachments/assets/bc684a9a-6641-455a-aba9-e2df2680e076" />
 </p>
 
 ## Macro REPL
@@ -155,6 +155,10 @@ You can start a new REPL using the **Macros: Create REPL** from the Command Pale
 
 - Use `.ts` or `.js` to switch between TypeScript and JavaScript modes
 - Use `.help` to view all available REPL commands and utilities
+
+<p align=center>
+  <img width="400" alt="REPL showing a modal dialog" src="https://github.com/user-attachments/assets/bb03bc5d-a946-4c7d-b714-499ca9d9f378" />
+</p>
 
 ## Development
 
@@ -194,7 +198,7 @@ Remember to set this back to `false` when macro completes.
 
 **Macro-backed tree view ("Tree View" template)**
 <p align=center>
-<img width="292" alt="image" src="https://github.com/user-attachments/assets/ffdbcb2d-4e68-4960-a6a7-f3a76490317f" />
+   <img width="400" alt="TreeView example" src="https://github.com/user-attachments/assets/b69089a7-3de1-442f-be7b-eff7bbb547a1" />
 </p>
 
 #### Special Tokens
