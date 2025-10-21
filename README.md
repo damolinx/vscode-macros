@@ -7,7 +7,7 @@ Macros can be easily managed through the [**Macro Explorer**](#macro-explorer-vi
 Under the hood, macros are run inside [Node.js VM sandboxes](https://nodejs.org/api/vm.html#class-vmscript) within the extension's context. This setup provides isolated execution—within the constraints of the sandbox—while still granting full access to VS Code’s API and core Node.js modules.
 
 <p align=center>
-  <img width="400" alt="VS Code with Macro Explorer view and a macro editor open" src="https://github.com/user-attachments/assets/34637385-782a-4578-863e-35d8e3caa2c7" />
+  <img width="600" alt="VS Code with Macro Explorer view and a macro editor open" src="https://github.com/user-attachments/assets/34637385-782a-4578-863e-35d8e3caa2c7" />
 </p>
 
 ## Table of Contents
