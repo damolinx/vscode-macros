@@ -10,6 +10,27 @@ Under the hood, macros are run inside [Node.js VM sandboxes](https://nodejs.org/
   <img width="400" alt="VS Code with Macro Explorer view and a macro editor open" src="https://github.com/user-attachments/assets/34637385-782a-4578-863e-35d8e3caa2c7" />
 </p>
 
+## Table of Contents
+- [Getting Started](#getting-started)
+  - [Stopping a Macro](#stopping-a-macro)
+  - [Running a Macro on Startup](#running-a-macro-on-startup)
+  - [Keybinding a Macro](#keybinding-a-macro)
+- [Commands](#commands)
+ - [Debugging](#debugging)
+ - [Development](#development)
+ - [Manage Macros](#manage-macros)
+ - [Run Macros](#run-macros)
+- [Macro Explorer View](#macro-explorer-view)
+- [Macro REPL](#macro-repl)
+- [Development](#development-1)
+  - [Available Code References](#available-code-references)
+  - [`macros` API](#macros-api)
+    - [Special Variables](#special-variables)
+  - [Predefined Views and View Container](#predefined-views-and-view-container)
+  - [Macro Options](#macro-options)
+  - [Download Definition Files](#download-definition-files)
+  - [Debugging a Macro](#debugging-a-macro)
+
 ## Getting Started
 
 1. Create a new macro:
@@ -50,6 +71,8 @@ Under the hood, macros are run inside [Node.js VM sandboxes](https://nodejs.org/
       <img width="400" alt=""Macro editor showing the Debug Macro button" src="https://github.com/user-attachments/assets/78acb656-8c1c-4939-823f-72fbd84c13ea" />
    </p>
 
+[↑ Back to top](#table-of-contents)
+
 ### Stopping a Macro
 
 1. Use the [**Macro Explorer**](#macro-explorer-view) to request specific or all instances for a given macro to stop.
@@ -60,7 +83,9 @@ A macro sandbox cannot be forcefully terminated. Instead, a cancellation request
 
 If a macro does not respond to the cancellation request, it will continue running. In such cases, you can use the **Developer: Restart Extension Host** command to restart all extensions, or simply restart VS Code to stop the macro. While this is not ideal, it provides a fallback to recover from unresponsive or runaway macros. Note that this approach does not implicitly terminate external processes started by the macro.
 
-### Running a Macro on VS Code Startup
+[↑ Back to top](#table-of-contents)
+
+### Running a Macro on Startup
 
 > **Workspace Trust**
 > Startup macros are disabled in untrusted workspaces.
@@ -80,6 +105,8 @@ Once you've set up a startup macro, here are a few things to keep in mind:
 - Paths pointing to missing or empty files are silently ignored — see the **Macros** log for details.
 
 Startup macros let you define behavior similar to an extension’s `activate` method. For teardown support, use the `__disposables` global variable to ensure proper disposal when the workspace changes or the extension reloads.
+
+[↑ Back to top](#table-of-contents)
 
 ### Keybinding a Macro
 
@@ -102,32 +129,41 @@ You can bind the `macros.run` command to a keyboard shortcut, passing as argumen
       }
     ]
     ```
+[↑ Back to top](#table-of-contents)
 
-### Commands
+## Commands
 
-#### Debugging
+### Debugging
 
 See [Debugging a Macro](#debugging-a-macro) for additional information.
 * **Macros: Debug Active File as Macro**: debug current editor as a macro (document will be saved before running).
 * **Macro: Debug Macro**: select a macro file to debug. Provides access to configured `macros.sourceDirectories`.
 
-#### Development
+[↑ Back to top](#table-of-contents)
+
+### Development
 
 * **Macros: Create REPL**: create a REPL terminal to evaluate JavaScript or TypeScript code whose context matches the one used by running macros.
 
 * **Macros: Setup Source Directory for Development**: adds or updates optional files used to improve IntelliSense on macro files. This action is run automatically in the background when saving a `.macro.js` or `.macro.ts` file, provided that `macros.sourceDirectories.verify` is enabled.
 
-#### Manage Macros
+[↑ Back to top](#table-of-contents)
+
+### Manage Macros
 
 * **Macros: Fill File with Template**: initialize an existing file with example macro content.
 * **Macros: New Macro**: creates a new file with example macro content.
 * **Macros: Show Running Macros**: view and manage running macros.
 
-#### Run Macros
+[↑ Back to top](#table-of-contents)
+
+### Run Macros
 
 * **Macros: Run Active File as Macro**: run current editor as a macro (document will be saved before running).
 * **Macros: Rerun Last Macro**: execute the most recently run macro.
 * **Macros: Run Macro**: select a macro to run. Provides access to macros in configured `macros.sourceDirectories` directories.
+
+[↑ Back to top](#table-of-contents)
 
 ## Macro Explorer View
 
@@ -145,6 +181,8 @@ The **Macro Explorer** provides a central management view for macros. You can us
    <img width="400" alt="Macro Explorer View with diff" src="https://github.com/user-attachments/assets/bc684a9a-6641-455a-aba9-e2df2680e076" />
 </p>
 
+[↑ Back to top](#table-of-contents)
+
 ## Macro REPL
 The REPL is a powerful interactive component that lets you:
 - Evaluate JavaScript or TypeScript code in the same context used when running macros
@@ -160,6 +198,8 @@ You can start a new REPL using the **Macros: Create REPL** from the Command Pale
   <img width="400" alt="REPL showing a modal dialog" src="https://github.com/user-attachments/assets/bb03bc5d-a946-4c7d-b714-499ca9d9f378" />
 </p>
 
+[↑ Back to top](#table-of-contents)
+
 ## Development
 
 ### Available Code References
@@ -169,6 +209,8 @@ The following references are available from the global context of your macro:
 * `macros`: symbol that provides access to this extension's API (see [Macros API](#macros-api)).
 * `require`: method that allows load [Node.js libraries](https://nodejs.org/api/all.html). Version is same as your installed VS Code's (see `About` option).
 * Other: `atob`, `btoa`, `clearInterval`, `clearTimeout`, `crypto`, `fetch`, `global`, `require`, `setInterval`, `setTimeout`.
+
+[↑ Back to top](#table-of-contents)
 
 ### `macros` API
 
@@ -182,6 +224,16 @@ The following references are available from the global context of your macro:
   vscode.window.showInformationMessage(`Hello from ${macros.macro.uri.fsPath}!`);
   macros.log.info('Greeted the world');
   ```
+
+  #### Special Variables
+
+  These tokens do not form part of contexts shared when `@macro:persistent` is used as they are different from session to session.
+  * `__cancellationToken`: a [CancellationToken](https://code.visualstudio.com/api/references/vscode-api#CancellationToken) used by th extension to notify about a stop request. See [Stopping a Macro](#stopping-a-macro).
+  * `__disposables`: an array for adding [Disposable](https://code.visualstudio.com/api/references/vscode-api#Disposable) instances, which will be automatically disposed of when the macro completes.
+  * `__runId`: Id of the current macro execution session.
+  * `__startup`: Whether current macro execution session was triggered during startup.
+
+[↑ Back to top](#table-of-contents)
 
 ### Predefined Views and View Container
 
@@ -201,13 +253,7 @@ Remember to set this back to `false` when macro completes.
    <img width="400" alt="TreeView example" src="https://github.com/user-attachments/assets/b69089a7-3de1-442f-be7b-eff7bbb547a1" />
 </p>
 
-#### Special Tokens
-
-These tokens do not form part of contexts shared when `@macro:persistent` is used as they are different from session to session.
-* `__cancellationToken`: a [CancellationToken](https://code.visualstudio.com/api/references/vscode-api#CancellationToken) used by th extension to notify about a stop request. See [Stopping a Macro](#stopping-a-macro).
-* `__disposables`: an array for adding [Disposable](https://code.visualstudio.com/api/references/vscode-api#Disposable) instances, which will be automatically disposed of when the macro completes.
-* `__runId`: Id of the current macro execution session.
-* `__startup`: Whether current macro execution session was triggered during startup.
+[↑ Back to top](#table-of-contents)
 
 ### Macro Options
 
@@ -222,6 +268,8 @@ An option is added to macro file as a comment in the form `//@macro:«option»[,
 vscode.window.showInformationMessage("Hello, world!");
 ```
 
+[↑ Back to top](#table-of-contents)
+
 ### Download Definition Files
 
 Any URL in a macro file pointing to a `.d.ts` file will automatically receive a code action, **Download .d.ts**, enabling you to download the file directly to the macro's parent folder. This simplifies adding type definitions to support IntelliSense in your macros.
@@ -230,6 +278,10 @@ For GitHub URLs containing `/blob/`, the extension offers special handling by co
 
 For all other URLs, a standard HTTP GET request is sent to download the file.
 
+[↑ Back to top](#table-of-contents)
+
 ### Debugging a Macro
 
 Debugging a macro leverages VS Code's extension debugging [story](https://code.visualstudio.com/api/get-started/your-first-extension#debugging-the-extension) since the macros are run in the context of this extension. This makes the experience a bit awkward as a new VS Code instance is launched, and you need to open the right context (e.g. workspace) in that new instance to debug your macro (vs, for example, launching another VS Code instance and attaching to the current one).
+
+[↑ Back to top](#table-of-contents)
