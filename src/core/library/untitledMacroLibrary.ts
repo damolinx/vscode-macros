@@ -12,9 +12,6 @@ export class UntitledMacroLibrary extends MacroLibrary {
   private static _instance: UntitledMacroLibrary;
 
   public static instance(context: ExtensionContext): UntitledMacroLibrary {
-    if (!context?.runnerManager) {
-      throw new Error('Missing RunnerManager in context');
-    }
     this._instance ??= new UntitledMacroLibrary(context);
     return this._instance;
   }
