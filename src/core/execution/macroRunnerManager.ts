@@ -104,12 +104,12 @@ export class MacroRunnerManager implements vscode.Disposable {
     return run;
   }
 
-  public onRun(listener: (runInfo: MacroRunInfo) => void): vscode.Disposable {
-    return this.runEventEmitter.event(listener);
+  public get onRun(): vscode.Event<MacroRunInfo> {
+    return this.runEventEmitter.event;
   }
 
-  public onStop(listener: (runInfo: MacroRunResult) => void): vscode.Disposable {
-    return this.stopEventEmitter.event(listener);
+  public get onStop(): vscode.Event<MacroRunResult> {
+    return this.stopEventEmitter.event;
   }
 
   public get runningMacros(): MacroRunInfo[] {

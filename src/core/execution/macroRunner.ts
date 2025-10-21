@@ -56,12 +56,12 @@ export class MacroRunner implements vscode.Disposable {
     return this.runs.get(id);
   }
 
-  public onStartRun(listener: (runInfo: MacroRunInfo) => void): vscode.Disposable {
-    return this.startEventEmitter.event(listener);
+  public get onStartRun(): vscode.Event<MacroRunInfo> {
+    return this.startEventEmitter.event;
   }
 
-  public onStopRun(listener: (runStopInfo: MacroRunResult) => void): vscode.Disposable {
-    return this.stopEventEmitter.event(listener);
+  public get onStopRun(): vscode.Event<MacroRunResult> {
+    return this.stopEventEmitter.event;
   }
 
   public resetSharedContext() {
