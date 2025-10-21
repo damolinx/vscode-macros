@@ -1,9 +1,8 @@
 import * as vscode from 'vscode';
 import * as os from 'os';
-import { posix, relative } from 'path';
-import { join } from 'path/win32';
+import { join, posix, relative } from 'path';
 import { Lazy } from '../../utils/lazy';
-import { isParent, resolveAsUri } from '../../utils/uri';
+import { areUriEqual, isParent, resolveAsUri } from '../../utils/uri';
 import { ConfigurationSource, Source } from './source';
 
 export const USER_HOME_TOKEN = '${userHome}';
@@ -15,7 +14,7 @@ export abstract class SourceManager implements vscode.Disposable {
   protected readonly disposables: vscode.Disposable[];
 
   constructor(configKey: string) {
-    this._sources = new Lazy(() => this.getSources());
+    this._sources = new Lazy(() => this.loadSources());
     this.configKey = configKey;
     this.disposables = [];
   }
@@ -78,8 +77,12 @@ export abstract class SourceManager implements vscode.Disposable {
     }
   }
 
-  public hasLibrary(uri: vscode.Uri) {
-    return this.sources.find((s) => s.uri.toString() === uri.toString());
+  public getLibrary(uri: vscode.Uri): Source | undefined {
+    return this.sources.find((s) => areUriEqual(s.uri, uri));
+  }
+
+  public hasLibrary(uri: vscode.Uri): boolean {
+    return Boolean(this.getLibrary(uri));
   }
 
   private loadConfigurationValues(
@@ -89,40 +92,15 @@ export abstract class SourceManager implements vscode.Disposable {
     const allInspected = configuration.inspect<string[]>(this.configKey);
     const preferredInspected =
       allInspected?.[
-        configurationTarget === vscode.ConfigurationTarget.Global ? 'globalValue' : 'workspaceValue'
+      configurationTarget === vscode.ConfigurationTarget.Global ? 'globalValue' : 'workspaceValue'
       ];
-    const verifiedInspected =
-      preferredInspected && preferredInspected instanceof Array ? preferredInspected : [];
     const uniqueExistingValues = new Set<string>(
-      verifiedInspected.map(SourceManager.normalizePath),
+      preferredInspected?.map(SourceManager.normalizePath),
     );
     return uniqueExistingValues;
   }
 
-  public async removeLibrary(
-    uri: vscode.Uri,
-    target?: vscode.ConfigurationTarget,
-  ): Promise<boolean> {
-    const match = this.sources.find((s) => s.uri.toString() === uri.toString());
-    if (!match) {
-      return false;
-    }
-
-    const configuration = vscode.workspace.getConfiguration();
-    for (const source of match.sources.filter((t) => !target || t.target === target)) {
-      const uniqueExistingValues = this.loadConfigurationValues(source.target, configuration);
-      uniqueExistingValues.delete(source.value);
-      await configuration.update(this.configKey, Array.from(uniqueExistingValues), source.target);
-    }
-
-    return true;
-  }
-
-  public get sources(): readonly Source[] {
-    return this._sources.get();
-  }
-
-  private getSources(): Source[] {
+  private loadSources(): Source[] {
     const inspected = vscode.workspace.getConfiguration().inspect<string[]>(this.configKey);
     if (!inspected) {
       return [];
@@ -185,6 +163,29 @@ export abstract class SourceManager implements vscode.Disposable {
       }
       return [...paths].map(SourceManager.normalizePath);
     }
+  }
+
+  public async removeLibrary(
+    uri: vscode.Uri,
+    target?: vscode.ConfigurationTarget,
+  ): Promise<boolean> {
+    const match = this.getLibrary(uri);
+    if (!match) {
+      return false;
+    }
+
+    const configuration = vscode.workspace.getConfiguration();
+    for (const source of match.sources.filter((t) => !target || t.target === target)) {
+      const uniqueExistingValues = this.loadConfigurationValues(source.target, configuration);
+      uniqueExistingValues.delete(source.value);
+      await configuration.update(this.configKey, Array.from(uniqueExistingValues), source.target);
+    }
+
+    return true;
+  }
+
+  public get sources(): readonly Source[] {
+    return this._sources.get();
   }
 
   protected static normalizePath(path: string): string {
