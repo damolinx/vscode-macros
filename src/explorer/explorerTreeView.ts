@@ -19,7 +19,7 @@ export function registerExplorerTreeview(context: ExtensionContext): void {
     treeDataProvider: explorerTreeDataProvider,
   });
 
-  context.extensionContext.subscriptions.push(
+  context.disposables.push(
     explorerTreeDataProvider,
     explorerTreeView,
     explorerTreeDataProvider.onDidChangeTreeData(async (elementOrElements) => {

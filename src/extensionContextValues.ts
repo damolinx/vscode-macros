@@ -23,7 +23,7 @@ function registerInDebugMode({ log }: ExtensionContext): void {
 function registerMruSet(context: ExtensionContext): void {
   const contextKey = 'macros:mruSet';
 
-  context.extensionContext.subscriptions.push(
+  context.disposables.push(
     context.runnerManager.onRun(({ macro: { uri } }) => {
       context.mruMacro = uri;
       setContext(contextKey, true);
@@ -38,7 +38,7 @@ function registerSupported(context: ExtensionContext): void {
   const editor = vscode.window.activeTextEditor;
   setSupportedFromEditor(editor);
 
-  context.extensionContext.subscriptions.push(
+  context.disposables.push(
     // This is needed to support changing Language on current editor
     vscode.workspace.onDidOpenTextDocument((doc) => {
       const editor = vscode.window.activeTextEditor;

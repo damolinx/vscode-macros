@@ -6,7 +6,7 @@ import { Lazy } from '../utils/lazy';
 export const EXECUTE_COMMAND_CHARACTERS: readonly string[] = ['(', '"', "'", '`'];
 
 export function registerExecuteCommandCompletionProvider(context: ExtensionContext): void {
-  context.extensionContext.subscriptions.push(
+  context.disposables.push(
     vscode.languages.registerCompletionItemProvider(
       MACRO_PREFERRED_SELECTOR,
       new ExecuteCommandCompletionProvider(),

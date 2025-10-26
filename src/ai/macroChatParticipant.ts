@@ -13,7 +13,7 @@ export function registerMacroChatParticipant(context: ExtensionContext): void {
       macroParticipant.handleRequest(request, context, response, token),
   );
   participant.iconPath = new vscode.ThemeIcon('run-all');
-  context.extensionContext.subscriptions.push(participant);
+  context.disposables.push(participant);
 }
 
 export interface ToolRequest {

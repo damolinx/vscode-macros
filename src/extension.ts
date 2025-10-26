@@ -49,7 +49,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
   const context = new ExtensionContext(extensionContext);
   context.log.info('Activating extension', extensionContext.extension.packageJSON.version);
 
-  extensionContext.subscriptions.push(context, new MacroStatusBarItem(context));
+  context.disposables.push(new MacroStatusBarItem(context));
 
   registerMacroChatParticipant(context);
   registerExplorerTreeview(context);
@@ -65,7 +65,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     commands: c,
     commands: { registerCommand: cr },
   } = vscode;
-  extensionContext.subscriptions.push(
+  context.disposables.push(
     cr('macros.copy.name', (locator: Locator) => copyPath(context, locator, true)),
     cr('macros.copy.path', (locator?: Locator) => copyPath(context, locator)),
     cr('macros.debug', debugMacro),

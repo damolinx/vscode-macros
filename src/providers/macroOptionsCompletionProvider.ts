@@ -7,7 +7,7 @@ export const MACRO_TRIGGER_CHARACTERS: readonly string[] = ['@'];
 export const MACRO_OPTIONS_TRIGGER_CHARACTERS: readonly string[] = [':', ','];
 
 export function registerMacroOptionsCompletionProvider(context: ExtensionContext): void {
-  context.extensionContext.subscriptions.push(
+  context.disposables.push(
     vscode.languages.registerCompletionItemProvider(
       MACRO_PREFERRED_SELECTOR,
       new MacroOptionsCompletionProvider(),

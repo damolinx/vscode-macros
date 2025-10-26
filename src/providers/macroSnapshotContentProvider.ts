@@ -3,7 +3,7 @@ import { MacroRunInfo } from '../core/execution/macroRunInfo';
 import { ExtensionContext } from '../extensionContext';
 
 export function registerMacroSnapshotContentProvider(context: ExtensionContext): void {
-  context.extensionContext.subscriptions.push(
+  context.disposables.push(
     vscode.workspace.registerTextDocumentContentProvider('macro-snapshot', {
       provideTextDocumentContent(snapshotUri: vscode.Uri) {
         const uri = vscode.Uri.parse(snapshotUri.path, true);

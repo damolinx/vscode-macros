@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { MacroRunnerManager } from './core/execution/macroRunnerManager';
 import { MacroLibraryManager } from './core/library/macroLibraryManager';
 
-export class ExtensionContext implements vscode.Disposable {
+export class ExtensionContext {
   public readonly extensionContext: vscode.ExtensionContext;
   public readonly isRemote: boolean;
   public readonly libraryManager: MacroLibraryManager;
@@ -16,13 +16,17 @@ export class ExtensionContext implements vscode.Disposable {
     this.libraryManager = new MacroLibraryManager(this);
     this.log = vscode.window.createOutputChannel('Macros', { log: true });
     this.runnerManager = new MacroRunnerManager(this);
+
+    this.disposables.push(this.libraryManager, this.log, this.runnerManager);
   }
 
-  dispose() {
-    this.libraryManager.dispose();
-    this.runnerManager.dispose();
-
-    // Dispose logger last
-    this.log.dispose();
+  /**
+   * An array to which disposables can be added. When this
+   * extension is deactivated the disposables will be disposed.
+   *
+   * *Note* that asynchronous dispose-functions aren't awaited.
+   */
+  public get disposables(): vscode.Disposable[] {
+    return this.extensionContext.subscriptions;
   }
 }

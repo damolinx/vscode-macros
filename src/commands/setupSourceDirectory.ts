@@ -35,7 +35,7 @@ export function registerSourceDirectoryVerifier(context: ExtensionContext): void
     }),
   );
 
-  context.extensionContext.subscriptions.push(
+  context.disposables.push(
     onDidChangeActiveTextEditorDisposable,
     vscode.workspace.onDidChangeConfiguration((e) => {
       if (e.affectsConfiguration(AUTO_VERIFY_SETTING)) {

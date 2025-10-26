@@ -4,7 +4,7 @@ import { MacroCode } from '../core/macroCode';
 import { ExtensionContext } from '../extensionContext';
 
 export function registerMacroCodeLensProvider(context: ExtensionContext): void {
-  context.extensionContext.subscriptions.push(
+  context.disposables.push(
     vscode.languages.registerCodeLensProvider(
       MACRO_PREFERRED_SELECTOR,
       new MacroCodeLensProvider(),

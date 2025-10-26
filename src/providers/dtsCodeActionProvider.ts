@@ -3,7 +3,7 @@ import { MACRO_PREFERRED_SELECTOR } from '../core/language';
 import { ExtensionContext } from '../extensionContext';
 
 export function registerDTSCodeActionProvider(context: ExtensionContext): void {
-  context.extensionContext.subscriptions.push(
+  context.disposables.push(
     vscode.languages.registerCodeActionsProvider(
       MACRO_PREFERRED_SELECTOR,
       new DTSCodeActionProvider(),
