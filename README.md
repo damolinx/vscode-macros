@@ -1,8 +1,6 @@
 # Macros for VS Code
 
-A **macro** is a script written in either JavaScript or TypeScript that lets you automate tasks or build custom tools in VS Code using standard [extensibility APIs](https://code.visualstudio.com/api/references/vscode-api), without the complexity of maintaining a full extension. Macros are ideal for workspace-specific automation, streamlining your workflow with custom utilities, or rapidly prototyping extension-like behavior.
-
-Macros can be easily managed through the [**Macro Explorer**](#macro-explorer-view), allowing you to work with on-disk libraries or in-memory documents. TypeScript is supported out of the box—transpilation is handled automatically. Macros can contribute UI views, including Webview and TreeView views, enabling more complex experiences.
+A **macro** is a JavaScript or TypeScript script that lets you automate tasks or build custom tools in VS Code using standard [extensibility APIs](https://code.visualstudio.com/api/references/vscode-api), without the complexity of maintaining a full extension. Macros are ideal for workspace-specific automation, streamlining your workflow, or rapidly prototyping extension behavior. TypeScript is supported out of the box with transpilation being handled transparently.
 
 Under the hood, macros are run inside [Node.js VM sandboxes](https://nodejs.org/api/vm.html#class-vmscript) within the extension's context. This setup provides isolated execution—within the constraints of the sandbox—while still granting full access to VS Code’s API and core Node.js modules.
 
@@ -33,14 +31,14 @@ Under the hood, macros are run inside [Node.js VM sandboxes](https://nodejs.org/
 
 ## Getting Started
 
-1. Create a new macro:
-   - **Option 1**: Use the **Macros: New Macro** command, or the `+` buttons in the [**Macro Explorer**](#macro-explorer-view).
-   - **Option 2**: Create an *untitled* document, with `javascript` or `typescript` language
+1. Create a new macro file.
+   - **Option 1**: Use the **Macros: New Macro** command, or the corresponding buttons in the [**Macro Explorer**](#macro-explorer-view).
+   - **Option 2**: Create an *untitled* document, with `javascript` or `typescript` language.
    - **Option 3**: Ask the `@macros` Chat agent to create a macro for you.
 
    > ℹ️ Save your macro files using a `.macro.js` or `.macro.ts` extension. These enable UI controls, IntelliSense, and other macro-specific features.
 
-2. Write, or update, your macro code.
+2. Write your macro code.
    - You can use the **Macros: Fill File with Template** command in an existing editor.
    - See [Available References](#available-code-references).
 
@@ -65,7 +63,7 @@ Under the hood, macros are run inside [Node.js VM sandboxes](https://nodejs.org/
     main()
     ```
 
-3. From the [Command Palette](https://code.visualstudio.com/api/references/contribution-points#contributes.commands), use the **Macros: Run Active Editor as Macro** command to execute your macro. Alternatively, on *untitled*, `javascript` or `typescript` editors, or those with `*.macro.js` or `*.macro.ts` names, use the equivalent run and debug buttons available on the editor title bar.
+3. From the [Command Palette](https://code.visualstudio.com/api/references/contribution-points#contributes.commands), use the **Macros: Run Active Editor as Macro** command to execute your macro. Alternatively, on *untitled* `javascript` or `typescript` editors, those with `*.macro.js` or `*.macro.ts` names or macro files under a macro library, use the equivalent **Run Macro** or **Debug Macro** buttons available on the editor title bar.
 
    <p align=center>
       <img width="400" alt=""Macro editor showing the Debug Macro button" src="https://github.com/user-attachments/assets/78acb656-8c1c-4939-823f-72fbd84c13ea" />
@@ -94,7 +92,7 @@ Adding startup macros lets you customize your environment from the moment VS Cod
 
 Setting up a startup macro is easy:
 
-* In the **Macro Explorer**, use the **Set as Startup Macro** action from your macro's context menu. You can unset it later using **Unset as Startup Macro**.  
+* In the **Macro Explorer**, use the **Set as Startup Macro** action from your macro's context menu. You can unset it later using **Unset as Startup Macro**.
 
 * Alternatively, update the `macros.startupMacros` setting directly in the **Settings** editor.
 
@@ -189,7 +187,7 @@ The REPL is a powerful interactive component that lets you:
 - Inspect the current state of VS Code, including active editors, workspace folders, and extension APIs
 - Quickly execute custom actions, test macro logic, or simply run JS/TS code.
 
-You can start a new REPL using the **Macros: Create REPL** from the Command Palette or using the corresponding icon on the **Macros Explorer** view. You can have as many REPLs as you need, each one is fully isolated. 
+You can start a new REPL using the **Macros: Create REPL** from the Command Palette or using the corresponding icon on the **Macros Explorer** view. You can have as many REPLs as you need, each one is fully isolated.
 
 - Use `.ts` or `.js` to switch between TypeScript and JavaScript modes
 - Use `.help` to view all available REPL commands and utilities
