@@ -34,7 +34,7 @@ export interface MacrosApi {
      */
     readonly macro: {
       /**
-       * URI of current macro. It can be undefined if running from an in-memory buffer.
+       * URI of current macro. It can be `undefined` if running from an in-memory buffer.
        */
       readonly uri?: vscode.Uri;
     };

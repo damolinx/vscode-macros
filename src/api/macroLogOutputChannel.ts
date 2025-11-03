@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { ExtensionContext } from '../extensionContext';
 
 /**
- * Log output channel for macros. Wraps the extnesion's main logger to prepend
+ * Log output channel for macros. Wraps the extension's main logger to prepend
  * the macro run ID and help prevent execution of unsafe operations.
  */
 export class MacrosLogOutputChannel implements vscode.LogOutputChannel {
