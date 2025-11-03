@@ -62,7 +62,6 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
   registerMacroOptionsCompletionProvider(context);
 
   const {
-    commands: c,
     commands: { registerCommand: cr },
   } = vscode;
   context.disposables.push(
@@ -96,7 +95,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
       vscode.commands.executeCommand(`${MACRO_EXPLORER_VIEW_ID}.focus`),
     ),
     cr('macros.sourceDirectories.settings', () =>
-      c.executeCommand('workbench.action.openSettings', SOURCE_DIRS_CONFIG),
+      vscode.commands.executeCommand('workbench.action.openSettings', SOURCE_DIRS_CONFIG),
     ),
     cr('macros.sourceDirectories.setup', (uri: vscode.Uri) => setupSourceDirectory(context, uri)),
     cr('macros.stop', (uriOrMacroOrRunInfo: vscode.Uri | Macro | MacroRunInfo) =>
