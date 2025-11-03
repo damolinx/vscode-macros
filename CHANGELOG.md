@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.5.13
+- Maintenance release.
+
 ## 0.5.12
 - **Run** and **Debug** buttons show for all `.macro.` files, or any file under a known source directory.
 - File extensions not displayed in **Macros Explorer** view to simplify it.

@@ -280,6 +280,6 @@ For all other URLs, a standard HTTP GET request is sent to download the file.
 
 ### Debugging a Macro
 
-Debugging a macro leverages VS Code's extension debugging [story](https://code.visualstudio.com/api/get-started/your-first-extension#debugging-the-extension) since the macros are run in the context of this extension. This makes the experience a bit awkward as a new VS Code instance is launched, and you need to open the right context (e.g. workspace) in that new instance to debug your macro (vs, for example, launching another VS Code instance and attaching to the current one).
+Debugging a macro leverages VS Code's extension debugging [story](https://code.visualstudio.com/api/get-started/your-first-extension#debugging-the-extension) since the macros are run in the context of this extension: it launches a new **Extension Host** instance on which the debugger has been attached fom the original instance. You manually execute the macro under the appropriate context on the new instance (e.g. this might require re-opening the workspace you started from) but set breakpoints and step through code from the original instance.
 
 [↑ Back to top](#table-of-contents)
