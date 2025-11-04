@@ -35,6 +35,7 @@ function createTreeProvider() {
   };
 }
 
+/** @returns {import('vscode').TreeView<string>} */
 function createTreeView() {
   const treeView = vscode.window.createTreeView(
     viewId, {
