@@ -13,9 +13,9 @@ export interface MacroContextInitParams {
   token: vscode.CancellationToken;
   uri?: vscode.Uri;
   viewManagers: {
-    tree: ViewManager,
-    web: ViewManager,
-  }
+    tree: ViewManager;
+    web: ViewManager;
+  };
 }
 
 export function initializeContext(
@@ -66,7 +66,7 @@ function createMacroApi(params: MacroContextInitParams): MacrosApi {
         getWebviewId: () => params.viewManagers.web.getId(params.runId),
         releaseTreeViewId: (id: string) => params.viewManagers.tree.releaseId(params.runId, id),
         releaseWebviewId: (id: string) => params.viewManagers.web.releaseId(params.runId, id),
-      }
-    }
+      },
+    },
   };
 }

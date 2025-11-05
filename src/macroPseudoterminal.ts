@@ -6,11 +6,11 @@ import { Context, runInContext } from 'vm';
 import { MacrosLogOutputChannel } from './api/macroLogOutputChannel';
 import { createMacro } from './commands/createMacro';
 import { initializeContext, MacroContextInitParams } from './core/execution/macroRunContext';
+import { getMacroRunId } from './core/execution/macroRunId';
 import { ExtensionContext } from './extensionContext';
 import { showMacroQuickPick } from './ui/dialogs';
 import { cleanError } from './utils/errors';
 import { TranspilationError, transpileOrThrow } from './utils/typescript';
-import { getMacroRunId } from './core/execution/macroRunId';
 
 const REPL_NEWLINE = '\r\n';
 export const PROMPT_JS = '\x1b[93mjs\x1b[0m\x1b[90m » \x1b[0m';
@@ -43,7 +43,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
       viewManagers: {
         tree: this.context.treeViewManager,
         web: this.context.webviewManager,
-      }
+      },
     };
     this.onDidCloseEmitter = new vscode.EventEmitter();
     this.onDidWriteEmitter = new vscode.EventEmitter();

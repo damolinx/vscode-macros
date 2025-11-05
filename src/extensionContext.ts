@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { MacroRunnerManager } from './core/execution/macroRunnerManager';
-import { MacroLibraryManager } from './core/library/macroLibraryManager';
 import { ViewManager } from './core/execution/viewManager';
+import { MacroLibraryManager } from './core/library/macroLibraryManager';
 
 export class ExtensionContext {
   public readonly extensionContext: vscode.ExtensionContext;
@@ -19,8 +19,8 @@ export class ExtensionContext {
     this.libraryManager = new MacroLibraryManager(this);
     this.log = vscode.window.createOutputChannel('Macros', { log: true });
     this.runnerManager = new MacroRunnerManager(this);
-    this.treeViewManager = new ViewManager('macrosView.treeview', 3);
-    this.webviewManager = new ViewManager('macrosView.webview', 3);
+    this.treeViewManager = new ViewManager('macrosView.treeview', 5);
+    this.webviewManager = new ViewManager('macrosView.webview', 5);
 
     this.disposables.push(this.libraryManager, this.log, this.runnerManager);
   }

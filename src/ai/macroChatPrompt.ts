@@ -110,9 +110,15 @@ Follow these rules when creating a macro:
     "package.json" which is accessible to macros.
   • To enable view creation, the extension pre-registers the following view IDs:
     • Tree views:
-      \`macrosView.treeview1\`, \`macrosView.treeview2\`, \`macrosView.treeview3\`
+      \`macrosView.treeview1\` ... \`macrosView.treeview5\`
     • Webviews:
-      \`macrosView.webview1\`, \`macrosView.webview2\`, \`macrosView.webview3\`
+      \`macrosView.webview1\` ... \`macrosView.webview5\`
+    • It is preferred to dynamically get an id using \`macros.window.getTreeViewId()\` 
+     or \`macros.window.getWebviewId()\`. These methos will return next available Id,
+     or undefined if none is present. Handle undefined with a message notification.
+    • There is a way to explicitly release Id using \`macros.window.releaseTreeViewId(id)\`
+      or \`macros.window.releaseWebviewId(id)\`, but IDs are automatically released when 
+      the macro completes.
   • Views are hidden by default. To make a view visible, the macro must set the
     corresponding context key to \`true\` using the \`setContext\` command — e.g.:
     \`vscode.commands.executeCommand('setContext', 'macrosView.treeview1.show', true')\`.

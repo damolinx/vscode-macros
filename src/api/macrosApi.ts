@@ -25,7 +25,6 @@ export interface MacrosApi {
    * Macros namespace
    */
   readonly macros: {
-
     /**
      * **Macros** log output channel.
      */
@@ -64,6 +63,6 @@ export interface MacrosApi {
        * Releases a previously assigned WebView ID.
        */
       releaseWebviewId(id: string): boolean;
-    }
+    };
   };
 }

@@ -108,7 +108,7 @@ export class MacroRunner implements vscode.Disposable {
       viewManagers: {
         tree: this.context.treeViewManager,
         web: this.context.webviewManager,
-      }
+      },
     });
     const scriptOptions: vm.RunningScriptOptions = {
       filename: macroCode.languageId === 'typescript' ? runInfo.id : this.macro.uri.toString(true),
@@ -177,8 +177,8 @@ export class MacroRunner implements vscode.Disposable {
       }
       return errors.length > 0
         ? new Error(
-          `Error(s) occurred while disposing resources:\n${errors.map((e) => (typeof e === 'string' ? e : e.message)).join('\n')}`,
-        )
+            `Error(s) occurred while disposing resources:\n${errors.map((e) => (typeof e === 'string' ? e : e.message)).join('\n')}`,
+          )
         : undefined;
     }
   }

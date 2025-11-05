@@ -486,6 +486,20 @@
           "when": "macrosView.treeview3.show"
         },
         {
+          "id": "macrosView.treeview4",
+          "name": "Treeview 4",
+          "type": "tree",
+          "icon": "$(list-tree)",
+          "when": "macrosView.treeview4.show"
+        },
+        {
+          "id": "macrosView.treeview5",
+          "name": "Treeview 5",
+          "type": "tree",
+          "icon": "$(list-tree)",
+          "when": "macrosView.treeview5.show"
+        },
+        {
           "id": "macrosView.webview1",
           "name": "Webview 1",
           "type": "webview",
@@ -505,6 +519,20 @@
           "type": "webview",
           "icon": "$(window)",
           "when": "macrosView.webview3.show"
+        },
+        {
+          "id": "macrosView.webview4",
+          "name": "Webview 4",
+          "type": "webview",
+          "icon": "$(window)",
+          "when": "macrosView.webview4.show"
+        },
+        {
+          "id": "macrosView.webview5",
+          "name": "Webview 5",
+          "type": "webview",
+          "icon": "$(window)",
+          "when": "macrosView.webview5.show"
         }
       ]
     },

@@ -251,8 +251,8 @@ Views such as sidebars and panels cannot be created dynamically—they must be d
 
 The following views are statically registered and available for use:
 
-- `macrosView.treeview1` through `macrosView.treeview3` — for `treeview`-based UIs
-- `macrosView.webview1` through `macrosView.webview3` — for `webview`-based UIs
+- `macrosView.treeview1` through `macrosView.treeview5` — for `treeview`-based UIs
+- `macrosView.webview1` through `macrosView.webview5` — for `webview`-based UIs
 
 Avoid hardcoding view IDs unless absolutely necessary—there’s no enforcement mechanism, so conflicts between macros may occur. Additionally, the predefined ID pool may expand in the future, meaning macros with hardcoded values could end up competing for a limited subset. 
 
@@ -282,16 +282,20 @@ Alternatively, all claimed IDs are automatically released when the macro complet
 
 Views are disabled by default. After claiming an ID, you must enable the corresponding view using a context key (notice the id is suffixed with `.show`):
 
-  **Example: Enabling `macrosView.webview1` view**
+  **Example: Showing a view**
   ```
-  vscode.commands.executeCommand('setContext', 'macrosView.webview1.show', true);
+  const viewId = macros.window.getTreeViewId();
+  ...
+  vscode.commands.executeCommand('setContext', `${viewId}.show`, true);
   ```
 
-Be sure to reset the context when the macro finishes, there is no automatic tracking and any leftover context value will be effective until VS Code is restarted.
+Be sure to reset the context when the macro finishes, there is no automatic tracking and any leftover context values will be effective until VS Code is restarted.
   
-  **Example: Enabling `macrosView.webview1` view**
+  **Example: Hiding a view**
   ```
-  vscode.commands.executeCommand('setContext', 'macrosView.webview1.show', false);
+  const viewId = macros.window.getWebviewId();
+  ...
+  vscode.commands.executeCommand('setContext', `${viewId}.show`, false);
   ```
 
 [↑ Back to top](#table-of-contents)

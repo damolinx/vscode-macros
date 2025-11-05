@@ -44,7 +44,6 @@ function createWebviewViewProvider(viewId, resolve) {
         switch (message.command) {
           case 'close':
             vscode.commands.executeCommand('setContext', `${viewId}.show`, false);
-            resolve();
             break;
         }
       });

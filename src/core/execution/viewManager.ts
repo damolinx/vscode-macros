@@ -35,9 +35,9 @@ export class ViewManager {
   }
 
   /**
- * Releases the ID if it was assigned to the requestor.
- * @returns `true` if released, `false` otherwise.
- */
+   * Releases the ID if it was assigned to the requestor.
+   * @returns `true` if released, `false` otherwise.
+   */
   public releaseId(requestor: MacroRunId, id: string): boolean {
     if (this.idAssignments.get(id) === requestor) {
       this.idAssignments.set(id, undefined);
