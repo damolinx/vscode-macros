@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.5.14
+- Introduce new APIs to manage view IDs: `macros.window.getTreeViewId`, `macros.window.getWebviewId`, `macros.window.releaseTreeViewId`, `macros.window.releaseWebviewId`
+
 ## 0.5.13
 - Maintenance release.
 

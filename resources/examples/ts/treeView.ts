@@ -7,14 +7,8 @@ import * as vscode from "vscode";
 
 // References:
 //   - Tree View API: https://code.visualstudio.com/api/extension-guides/tree-view
-//
-// Available view IDs:
-//   - macrosView.treeview1
-//   - macrosView.treeview2
-//   - macrosView.treeview3
-const viewId = "macrosView.treeview1";
 
-function createTreeProvider() {
+function createTreeProvider(): vscode.TreeDataProvider<string> {
   return {
     getTreeItem: (element: string) => {
       switch (element) {
@@ -37,7 +31,7 @@ function createTreeProvider() {
   };
 }
 
-function createTreeView() {
+function createTreeView(viewId: string): vscode.TreeView<string> {
   const treeView = vscode.window.createTreeView(
     viewId, {
     treeDataProvider: createTreeProvider()
@@ -46,10 +40,24 @@ function createTreeView() {
   return treeView;
 }
 
-__disposables.push(
-  createTreeView(), {
-  dispose: () => vscode.commands.executeCommand('setContext', `${viewId}.show`, false)
-});
+async function main(): Promise<void> {
+  const viewId = macros.window.getTreeViewId();
+  if (!viewId) {
+    await vscode.window.showInformationMessage(
+      `Macro ${__runId} could not claim a TreeView ID`,
+    );
+    return;
+  }
 
-vscode.commands.executeCommand('setContext', `${viewId}.show`, true);
-vscode.commands.executeCommand(`${viewId}.focus`);
+  __disposables.push(
+    createTreeView(viewId), {
+    dispose: () => {
+      macros.window.releaseTreeViewId(viewId);
+      vscode.commands.executeCommand('setContext', `${viewId}.show`, false);
+    }
+  });
+  vscode.commands.executeCommand('setContext', `${viewId}.show`, true);
+  vscode.commands.executeCommand(`${viewId}.focus`);
+}
+
+main()

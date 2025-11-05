@@ -215,13 +215,18 @@ The following references are available from the global context of your macro:
 * `log`: Provides access to the **Macros** log output channel, allowing macros to write log entries as needed.
 
 * `macro`: Current macro.
-  * `uri`: URI of macro. It is `undefined` if running from an in-memory buffer.
+  - `uri`: URI of the currently executin macro. It can be `undefined` if running from an in-memory buffer.
 
-  **Example: Macros API**
-  ```javascript
-  vscode.window.showInformationMessage(`Hello from ${macros.macro.uri.fsPath}!`);
-  macros.log.info('Greeted the world');
-  ```
+* `window`: Provides access to UI-related APIs. 
+  Provides access to UI-related APIs for managing predefined macro views.
+
+  - `getTreeViewId(requestor: MacroRunId): string | undefined`: Claims an available `treeview` ID for the given macro run. Returns `undefined` if none are available.
+
+  - `getWebviewId(requestor: MacroRunId): string | undefined`: Claims an available `webview` ID for the given macro run. Returns `undefined` if none are available.
+
+  - `releaseTreeViewId(requestor: MacroRunId, id: string): boolean`: Releases a previously claimed `treeview` ID. Returns `true` if successful.
+
+  - `releaseWebviewId(requestor: MacroRunId, id: string): boolean`: Releases a previously claimed `webview` ID. Returns `true` if successful.
 
   #### Special Variables
 
@@ -235,21 +240,59 @@ The following references are available from the global context of your macro:
 
 ### Predefined Views and View Container
 
-Views such as sidebars and panels cannot be created dynamically—they must first be declared in the extension's `package.json` manifest. This limitation means macros would not be able to define their own views at runtime. To overcome this limitation, the extension predefines a **Macros** view container (with the id: `macrosViews`) with generic `webview` and `treeview` views (with ids `macrosView.webview[1..3]` and `macrosView.treeview[1..3]`). Macros can then claim and use these predefined views to display custom content or UI as needed.
+Views such as sidebars and panels cannot be created dynamically—they must be declared in the extension's `package.json` manifest. To work around this limitation, the extension predefines a **Macros** view container (`macrosViews`) that includes a fixed set of generic `treeview` and `webview` views.
 
-Views are disabled by default via a context value, so to enable them you must enable that context value (see example below).
+**Macro-backed tree view ("Tree View" template)**
+<p align=center>
+   <img width="400" alt="TreeView example" src="https://github.com/user-attachments/assets/b69089a7-3de1-442f-be7b-eff7bbb547a1" />
+</p>
+
+#### Available View IDs
+
+The following views are statically registered and available for use:
+
+- `macrosView.treeview1` through `macrosView.treeview3` — for `treeview`-based UIs
+- `macrosView.webview1` through `macrosView.webview3` — for `webview`-based UIs
+
+Avoid hardcoding view IDs unless absolutely necessary—there’s no enforcement mechanism, so conflicts between macros may occur. Additionally, the predefined ID pool may expand in the future, meaning macros with hardcoded values could end up competing for a limited subset. 
+
+#### Dynamic View ID Claiming
+
+While macros can hardcode and use these IDs directly, this approach becomes fragile as macro libraries grow—multiple macros may attempt to use the same view, causing conflicts.
+
+To avoid this, macros can dynamically claim an available view ID using the following APIs:
+
+  ```ts
+  macros.window.getTreeViewId(requestor: MacroRunId): string | undefined
+  macros.window.getWebviewId(requestor: MacroRunId): string | undefined
+  ```
+
+If no view ID is available, these methods return `undefined` so make sure to account for such case. 
+
+Once a macro is finished using a view, it can release the ID explicitly using the following APIs:
+
+  ```ts
+  macros.window.releaseTreeViewId(requestor: MacroRunId, id: string): boolean
+  macros.window.releaseWebviewId(requestor: MacroRunId, id: string): boolean
+  ```
+
+Alternatively, all claimed IDs are automatically released when the macro completes. This includes REPL sessions, as each sessions is equivalent to a macro.
+
+#### Enabling Views
+
+Views are disabled by default. After claiming an ID, you must enable the corresponding view using a context key (notice the id is suffixed with `.show`):
 
   **Example: Enabling `macrosView.webview1` view**
   ```
   vscode.commands.executeCommand('setContext', 'macrosView.webview1.show', true);
   ```
 
-Remember to set this back to `false` when macro completes.
-
-**Macro-backed tree view ("Tree View" template)**
-<p align=center>
-   <img width="400" alt="TreeView example" src="https://github.com/user-attachments/assets/b69089a7-3de1-442f-be7b-eff7bbb547a1" />
-</p>
+Be sure to reset the context when the macro finishes, there is no automatic tracking and any leftover context value will be effective until VS Code is restarted.
+  
+  **Example: Enabling `macrosView.webview1` view**
+  ```
+  vscode.commands.executeCommand('setContext', 'macrosView.webview1.show', false);
+  ```
 
 [↑ Back to top](#table-of-contents)
 

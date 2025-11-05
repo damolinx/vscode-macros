@@ -10,6 +10,7 @@ import { ExtensionContext } from './extensionContext';
 import { showMacroQuickPick } from './ui/dialogs';
 import { cleanError } from './utils/errors';
 import { TranspilationError, transpileOrThrow } from './utils/typescript';
+import { getMacroRunId } from './core/execution/macroRunId';
 
 const REPL_NEWLINE = '\r\n';
 export const PROMPT_JS = '\x1b[93mjs\x1b[0m\x1b[90m » \x1b[0m';
@@ -28,23 +29,29 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     output: PassThrough & { columns?: number; rows?: number };
     server: REPLServerWithHistory;
   } & vscode.Disposable;
-  private useTS: boolean;
+  private useTs: boolean;
 
-  constructor(context: ExtensionContext, name: string) {
+  constructor(context: ExtensionContext, name: string, index: number) {
     this.context = context;
     this.cts = new vscode.CancellationTokenSource();
-    this.useTS = false;
+    this.useTs = false;
     this.macroInitParams = {
       disposables: [],
       log: new MacrosLogOutputChannel(name, context),
-      runId: name,
+      runId: getMacroRunId(name, index),
       token: this.cts.token,
+      viewManagers: {
+        tree: this.context.treeViewManager,
+        web: this.context.webviewManager,
+      }
     };
     this.onDidCloseEmitter = new vscode.EventEmitter();
     this.onDidWriteEmitter = new vscode.EventEmitter();
   }
 
   public close(): void {
+    this.context.treeViewManager.releaseOwnedIds(this.macroInitParams.runId);
+    this.context.webviewManager.releaseOwnedIds(this.macroInitParams.runId);
     vscode.Disposable.from(...this.macroInitParams.disposables).dispose();
     this.cts.dispose();
     this.onDidCloseEmitter.dispose();
@@ -58,7 +65,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     callback: (error: Error | null, result: any) => void,
   ) {
     try {
-      const targetCode = this.useTS ? transpileOrThrow(code, this.macroInitParams.runId) : code;
+      const targetCode = this.useTs ? transpileOrThrow(code, this.macroInitParams.runId) : code;
       const result = await runInContext(targetCode, context);
       callback(null, result);
     } catch (e: any) {
@@ -219,12 +226,12 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     switch (mode) {
       case 'ts':
         name = '\x1b[96mTypeScript\x1b[0m\x1b[90m';
-        this.useTS = true;
+        this.useTs = true;
         prompt = PROMPT_TS;
         break;
       default:
         name = '\x1b[93mJavaScript\x1b[0m\x1b[90m';
-        this.useTS = false;
+        this.useTs = false;
         prompt = PROMPT_JS;
         break;
     }

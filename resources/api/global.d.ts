@@ -47,6 +47,31 @@ declare global {
        */
       readonly uri: _vscode.Uri | undefined;
     }
+
+    /**
+     * Namespace providing window / UI functionality.
+     */
+    readonly window: {
+      /**
+       * Assigns an available TreeView ID to the caller.
+       */
+      getTreeViewId(): string | undefined;
+
+      /**
+       * Assigns an available WebView ID to the caller.
+       */
+      getWebviewId(): string | undefined;
+
+      /**
+       * Releases a previously assigned TreeView ID.
+       */
+      releaseTreeViewId(id: string): boolean;
+
+      /**
+       * Releases a previously assigned WebView ID.
+       */
+      releaseWebviewId(id: string): boolean;
+    }
   };
 }
 

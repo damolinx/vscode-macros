@@ -5,11 +5,6 @@
 // References:
 //   - Webview API: https://code.visualstudio.com/api/extension-guides/webview
 //
-// Available view IDs:
-//   - macrosView.webview1
-//   - macrosView.webview2
-//   - macrosView.webview3
-const viewId = "macrosView.webview1";
 
 function createHtml() {
   return `
@@ -36,8 +31,12 @@ function createHtml() {
 </html>`;
 }
 
-/** @returns {import('vscode').WebviewViewProvider } */
-function createWebviewViewProvider(resolve) {
+/**
+ * @param {string} viewId - The ID of the view to create.
+ * @param {(value: any) => void} resolve - Promise resolver.
+ * @returns {import('vscode').WebviewViewProvider }
+ */
+function createWebviewViewProvider(viewId, resolve) {
   return {
     resolveWebviewView: (webviewView) => {
       webviewView.webview.html = createHtml();
@@ -45,6 +44,7 @@ function createWebviewViewProvider(resolve) {
         switch (message.command) {
           case 'close':
             vscode.commands.executeCommand('setContext', `${viewId}.show`, false);
+            resolve();
             break;
         }
       });
@@ -57,13 +57,21 @@ function createWebviewViewProvider(resolve) {
   };
 }
 
-// Keep macro alive until view is disposed.
+// Keep macro alive until view is disposed (or use `@macro: retained`)
 new Promise((resolve) => {
+  const viewId = macros.window.getWebviewId();
+  if (!viewId) {
+    vscode.window.showInformationMessage(
+      `Macro ${__runId} could not claim a Webview ID`,
+    ).then(resolve);
+    return;
+  }
+
   __cancellationToken.onCancellationRequested(resolve);
   __disposables.push(
     vscode.window.registerWebviewViewProvider(
       viewId,
-      createWebviewViewProvider(resolve)), {
+      createWebviewViewProvider(viewId, resolve)), {
     dispose: () => vscode.commands.executeCommand('setContext', `${viewId}.show`, false)
   });
 
