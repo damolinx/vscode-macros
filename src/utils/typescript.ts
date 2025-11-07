@@ -21,6 +21,7 @@ export function transpile(
     compilerOptions: {
       inlineSourceMap: true,
       module: ts.ModuleKind.None,
+      removeComments: true,
       target: ts.ScriptTarget.ES2024,
     },
     fileName: fileNameOrUri && uriBasename(fileNameOrUri),
