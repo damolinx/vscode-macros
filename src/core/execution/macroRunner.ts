@@ -177,8 +177,8 @@ export class MacroRunner implements vscode.Disposable {
       }
       return errors.length > 0
         ? new Error(
-            `Error(s) occurred while disposing resources:\n${errors.map((e) => (typeof e === 'string' ? e : e.message)).join('\n')}`,
-          )
+          `Error(s) occurred while disposing resources:\n${errors.map((e) => (typeof e === 'string' ? e : e.message)).join('\n')}`,
+        )
         : undefined;
     }
   }

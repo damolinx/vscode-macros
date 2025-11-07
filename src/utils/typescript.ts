@@ -32,7 +32,7 @@ export function transpile(
 
   function fix({ outputText }: ts.TranspileOutput) {
     return outputText.replace(
-      /Object\.defineProperty\(exports, "__esModule", { value: true }\);\s*/g,
+      /Object\.defineProperty\(exports, "__esModule", { value: true }\);/g,
       '',
     );
   }
