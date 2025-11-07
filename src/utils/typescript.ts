@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as util from 'util';
 import * as ts from 'typescript';
-import { parent, uriBasename } from './uri';
+import { parent, toUri, uriBasename } from './uri';
 
 export const RecoverableCodes: Readonly<Set<number>> = new Set([
   1005, // `'token' expected` — classic missing semicolon, brace, or parenthesis
@@ -61,14 +61,6 @@ export function extractInlineSourceMap(code: string) {
   return JSON.parse(json);
 }
 
-export function formatDiagnostics(diagnostics: ts.Diagnostic[], uri?: vscode.Uri): string {
-  return ts.formatDiagnostics(diagnostics, {
-    getCurrentDirectory: () => (uri ? parent(uri).toString() : ts.sys.getCurrentDirectory()),
-    getCanonicalFileName: ts.sys.useCaseSensitiveFileNames ? (f) => f : (f) => f.toLowerCase(),
-    getNewLine: () => '\n',
-  });
-}
-
 export class TranspilationError extends Error {
   public readonly diagnostics: ts.Diagnostic[];
   public readonly fileNameOrUri?: string | vscode.Uri;
@@ -82,8 +74,11 @@ export class TranspilationError extends Error {
 
   [util.inspect.custom](_depth: number, options: util.InspectOptionsStylized) {
     const host: ts.FormatDiagnosticsHost = {
-      getCurrentDirectory: () => process.cwd(),
-      getCanonicalFileName: (fileName) => uriBasename(this.fileNameOrUri || fileName),
+      getCurrentDirectory: () =>
+        this.fileNameOrUri
+          ? parent(toUri(this.fileNameOrUri)).toString()
+          : ts.sys.getCurrentDirectory(),
+      getCanonicalFileName: (fileName) => uriBasename(fileName),
       getNewLine: () => ts.sys.newLine,
     };
     return options.colors
