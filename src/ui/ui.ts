@@ -88,7 +88,7 @@ export async function pickMacroFile(
     const quickPick = vscode.window.createQuickPick<UriQuickPickItem>();
     quickPick.items = items;
     quickPick.onDidTriggerItemButton(({ item: { uri } }) => uri && showTextDocument(uri));
-    quickPick.placeholder = 'Select a macro…';
+    quickPick.placeholder = 'Select a macro';
     return quickPick;
   }
 
@@ -120,13 +120,13 @@ export async function pickMacroFile(
   }
 }
 
-export function createGroupedQuickPickItems<TItem, TQuickPick extends vscode.QuickPickItem>(
+export function createGroupedQuickPickItems<TItem, TQuickPickItem extends vscode.QuickPickItem>(
   items: TItem[],
   options: {
     groupBy: (item: TItem) => string;
-    itemBuilder: (item: TItem) => TQuickPick;
+    itemBuilder: (item: TItem) => TQuickPickItem;
   },
-): TQuickPick[] {
+): TQuickPickItem[] {
   const groups = new Map<string, TItem[]>();
   for (const item of items) {
     const groupName = options.groupBy(item);
@@ -138,7 +138,7 @@ export function createGroupedQuickPickItems<TItem, TQuickPick extends vscode.Qui
     group.push(item);
   }
 
-  const quickPickItems: TQuickPick[] = [];
+  const quickPickItems: TQuickPickItem[] = [];
   const sortedGroups = [...groups.keys()].sort(NaturalComparer.compare);
   for (const groupName of sortedGroups) {
     quickPickItems.push({

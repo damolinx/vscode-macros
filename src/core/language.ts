@@ -44,7 +44,11 @@ export function isMacro(pathOrUri: PathLike): boolean {
 }
 
 export function isMacroLangId(langId: string): langId is Language['id'] {
-  return MACRO_LANGUAGES.some((lang) => lang.id === langId);
+  return !!tryResolveMacroLanguageFromId(langId);
+}
+
+export function tryResolveMacroLanguageFromId(langId: string): Language | undefined {
+  return MACRO_LANGUAGES.find((lang) => lang.id === langId);
 }
 
 export function macroGlobPattern(pathOrUri: PathLike): vscode.RelativePattern {

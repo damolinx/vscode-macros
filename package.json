@@ -279,6 +279,19 @@
               "pattern": ".+\\.(js|cjs|ts)$"
             },
             "uniqueItems": true
+          },
+          "macros.templateDefaultLanguage": {
+            "type": "string",
+            "default": "javascript",
+            "enum": [
+              "javascript",
+              "typescript"
+            ],
+            "enumItemLabels": [
+              "JavaScript",
+              "TypeScript"
+            ],
+            "description": "Default language used when creating new macros."
           }
         }
       }

@@ -10,6 +10,7 @@
  - Fix: RunId tooltip typos.
 - **Running Macros** dropdown stops selected macro.
 - Fix: README incorrectly documented that view ID management APIs require a "run Id" argument.
+- **Template Default Language** allows to switch between JavaScript and TypeScript version when creating a new macro.
 
 ## 0.5.14
 - Introduce new APIs to manage view IDs: `macros.window.getTreeViewId`, `macros.window.getWebviewId`, `macros.window.releaseTreeViewId`, `macros.window.releaseWebviewId`

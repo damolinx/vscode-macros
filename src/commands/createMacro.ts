@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { MACRO_PREFERRED_EXTENSION, MACRO_PREFERRED_LANGUAGE } from '../core/language';
+import { MACRO_PREFERRED_LANGUAGE, tryResolveMacroLanguageFromId } from '../core/language';
 import { ExtensionContext } from '../extensionContext';
 import { templates } from '../macroTemplates';
 import { createGroupedQuickPickItems } from '../ui/ui';
@@ -17,9 +17,20 @@ export async function createMacro(
   locator?: Locator,
   options?: vscode.TextDocumentShowOptions & {
     content?: string;
+    language?: string;
   },
 ): Promise<void> {
-  const content = options?.content ?? (await getTemplateContent(context));
+  let content: string | undefined;
+  const language =
+    vscode.workspace
+      .getConfiguration()
+      .get('macros.templateDefaultLanguage', MACRO_PREFERRED_LANGUAGE) ?? MACRO_PREFERRED_LANGUAGE;
+  if (options?.content !== undefined) {
+    content = options.content;
+  } else {
+    content = await getTemplateContent(context, language);
+  }
+
   if (content === undefined) {
     return;
   }
@@ -28,7 +39,7 @@ export async function createMacro(
   if (locator !== undefined) {
     const parentUri = toUri(fromLocator(locator));
     if (!isUntitled(parentUri)) {
-      uri = await createUntitledUri(parentUri);
+      uri = await createUntitledUri(parentUri, language);
     }
   }
 
@@ -42,23 +53,19 @@ export async function createMacro(
         await editor.edit((editBuilder) => editBuilder.insert(new vscode.Position(0, 0), content));
       }
     } else {
-      document = await vscode.workspace.openTextDocument({
-        language: MACRO_PREFERRED_LANGUAGE,
-        content,
-      });
+      document = await vscode.workspace.openTextDocument({ content, language });
       await vscode.window.showTextDocument(document, options);
     }
   } finally {
     creatingMacro = false;
   }
 
-  async function createUntitledUri(parentUri: vscode.Uri, maxAttempts = 1000) {
+  async function createUntitledUri(parentUri: vscode.Uri, language: string, maxAttempts = 1000) {
     let uri: vscode.Uri | undefined;
+    const macroLang = tryResolveMacroLanguageFromId(language);
+    const extension = macroLang ? `.${macroLang.extensions[0]}` : '';
     for (let i = 1; !uri && i <= maxAttempts; i++) {
-      const fsCandidate = vscode.Uri.joinPath(
-        parentUri,
-        `Untitled-${i}${MACRO_PREFERRED_EXTENSION}`,
-      );
+      const fsCandidate = vscode.Uri.joinPath(parentUri, `Untitled-${i}${extension}`);
       if (
         await vscode.workspace.fs.stat(fsCandidate).then(
           () => false,
@@ -117,7 +124,7 @@ async function getTemplateContent(
     }),
     {
       matchOnDescription: true,
-      placeHolder: 'Select a template',
+      placeHolder: `Select a template (${language})`,
     },
   );
   if (!selectedTemplate) {

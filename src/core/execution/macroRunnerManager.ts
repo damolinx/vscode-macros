@@ -41,9 +41,9 @@ export class MacroRunnerManager implements vscode.Disposable {
             runIdMatch && this.getRun(new MacroRunId(`${runIdMatch[2]}.ts`, runIdMatch[1]));
           const sourceMap = runInfo
             ? ({
-              url: runInfo.macro.uri.fsPath,
-              map: extractInlineSourceMap(runInfo.runnableCode),
-            } as sms.UrlAndMap)
+                url: runInfo.macro.uri.fsPath,
+                map: extractInlineSourceMap(runInfo.runnableCode),
+              } as sms.UrlAndMap)
             : null;
 
           return sourceMap;
