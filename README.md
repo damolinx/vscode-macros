@@ -15,6 +15,7 @@ TypeScript transpilation is transparent and performed on-demand, designed to pro
   - [Stopping a Macro](#stopping-a-macro)
   - [Running a Macro on Startup](#running-a-macro-on-startup)
   - [Keybinding a Macro](#keybinding-a-macro)
+- [Macros Agent](#macros-agent)
 - [Commands](#commands)
  - [Debugging](#debugging)
  - [Development](#development)
@@ -129,6 +130,27 @@ You can bind the `macros.run` command to a keyboard shortcut, passing as argumen
       }
     ]
     ```
+[↑ Back to top](#table-of-contents)
+
+## Macros Agent
+
+The extension provides a `@macros` agent that uses your LLMs to write and run macros easily from the chat. It understands the coding rules of a macro, avoiding common mistakes generic LLMs would make such as adding `export` statements or top-level `await` statements. When prompted, the agent can save the generated code to an *untitled* editor and run it automatically.
+
+**Example: Short chat with @macros to create and run a macro**
+```
+> @macros create a hello world macro
+
+    Save as hello-world.macro.ts and run it with the Macros extension.
+    // hello-world.macro.ts
+    export default async function main() {
+    // show greeting
+    ...
+
+> @macros run that macro
+
+    Created untitled:Untitled-4 and ran it as a macro
+```
+
 [↑ Back to top](#table-of-contents)
 
 ## Commands

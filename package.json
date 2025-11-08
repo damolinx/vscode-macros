@@ -602,6 +602,38 @@
           }
         ]
       }
+    ],
+    "languageModelTools": [
+      {
+        "name": "run_macro_content",
+        "tags": [
+          "macro",
+          "run"
+        ],
+        "displayName": "Run macro content",
+        "modelDescription": "Takes generated macro `content` and `language` (javascript or typescript), creates an untitled document and runs it as a macro",
+        "inputSchema": {
+          "type": "object",
+          "required": [
+            "content",
+            "language"
+          ],
+          "properties": {
+            "content": {
+              "type": "string",
+              "description": "Full macro file contents to run."
+            },
+            "language": {
+              "type": "string",
+              "description": "Language of the macro to run.",
+              "enum": [
+                "javascript",
+                "typescript"
+              ]
+            }
+          }
+        }
+      }
     ]
   },
   "scripts": {

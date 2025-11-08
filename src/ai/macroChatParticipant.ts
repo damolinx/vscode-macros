@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { ExtensionContext } from '../extensionContext';
 import { MACRO_PROMPT } from './macroChatPrompt';
+import { RUN_MACRO_CONTENT_TOOL_ID, RunMacroContentTool } from './runMacroContentTool';
 
 export const MACROS_CHAT_PARTICIPANT_ID = 'macros.chatParticipant';
 export const MACRO_TAG = 'macro';
@@ -14,6 +15,8 @@ export function registerMacroChatParticipant(context: ExtensionContext): void {
   );
   participant.iconPath = new vscode.ThemeIcon('run-all');
   context.disposables.push(participant);
+
+  vscode.lm.registerTool(RUN_MACRO_CONTENT_TOOL_ID, new RunMacroContentTool(context));
 }
 
 export interface ToolRequest {

@@ -19,18 +19,15 @@ export async function createMacro(
     content?: string;
     language?: string;
   },
-): Promise<void> {
-  let content: string | undefined;
+): Promise<vscode.TextDocument | undefined> {
   const language =
+    options?.language ??
     vscode.workspace
       .getConfiguration()
-      .get('macros.templateDefaultLanguage', MACRO_PREFERRED_LANGUAGE) ?? MACRO_PREFERRED_LANGUAGE;
-  if (options?.content !== undefined) {
-    content = options.content;
-  } else {
-    content = await getTemplateContent(context, language);
-  }
+      .get('macros.templateDefaultLanguage', MACRO_PREFERRED_LANGUAGE) ??
+    MACRO_PREFERRED_LANGUAGE;
 
+  const content = options?.content ?? (await getTemplateContent(context, language));
   if (content === undefined) {
     return;
   }
@@ -56,6 +53,7 @@ export async function createMacro(
       document = await vscode.workspace.openTextDocument({ content, language });
       await vscode.window.showTextDocument(document, options);
     }
+    return document;
   } finally {
     creatingMacro = false;
   }
