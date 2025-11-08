@@ -2,18 +2,14 @@
 
 ## 0.5.15
 - **@macros** chat agent can run the code it generates when asked to. 
-- Add **Template Default Language** setting to select whether to create JavaScript or TypeScript macros by default.
-
-- TypeScript support:
-  - Improvements to code transpilation, to reduce code-size.
-  - Fix: Stracktraces for transpiled code would not show source-macro location correctly, instead showing a location relative to a VS Code path.
-
-- Run Id updates:
- - Full id includes library name (on top of filename and numeric id) to prevent collisions across libraries.
-   - **Macro Explorer** changes UI to show numeric index part only as rest of ID.
-   - Fix: RunId tooltip typos.
+- Add **Template Default Language** setting to determine whether to create JavaScript or TypeScript macros by default.
+- TypeScript:
+  - Improvements to code transpilation, e.g. reducd code size by removing comments.
+  - Fix: Stracktraces for transpiled code show a non-existent JS file location instead of the TS file (i.e. sourcemap not used).
+- Run ID updates:
+  - Prefix with library name to prevent collisions across libraries.
+  - **Macro Explorer** shows only run index as macro and library info can be inferred from tree (IDs are for user reference only).
 - **Running Macros** dropdown stops selected macro (vs doing nothing). Stop button is still present.
-
 - Fix: README incorrectly documented that view ID management APIs require a "run Id" argument.
 
 ## 0.5.14
