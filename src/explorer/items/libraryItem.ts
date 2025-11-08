@@ -33,7 +33,7 @@ export function createLibraryItem({ uri, configSource }: MacroLibrary) {
     item.contextValue = 'macroLibrary,untitled';
     item.iconPath = new vscode.ThemeIcon('server-process');
     item.tooltip = new vscode.MarkdownString(
-      'This library includes any untitled macro editors until you save them.  \nUse `.macro.js` or `.macro.ts` extension to enable IntelliSense and macro tooling.',
+      'This library includes any untitled macro editors until you save them.  \nUse `.macro.js` or `.macro.ts` extension to enable IntelliSense  \nand macro tooling.',
     );
   }
 }

@@ -12,8 +12,8 @@ export interface MacroRunSnapshot {
 
 export interface MacroRunInfo {
   cts: vscode.CancellationTokenSource;
-  id: MacroRunId;
   macro: Macro;
+  runId: MacroRunId;
   runnableCode: string;
   snapshot: MacroRunSnapshot;
   startup?: true;

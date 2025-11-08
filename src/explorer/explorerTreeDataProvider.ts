@@ -131,7 +131,9 @@ export class ExplorerTreeDataProvider
       entry.files = new Set((children as Macro[]).map((macro) => macro.id));
     } else if (element instanceof Macro) {
       const runner = this.context.runnerManager.getRunner(element);
-      children = [...runner.runInstances].sort((a, b) => NaturalComparer.compare(a.id, b.id));
+      children = [...runner.runInstances].sort((a, b) =>
+        NaturalComparer.compare(a.runId.index, b.runId.index),
+      );
     } else {
       children = [];
     }

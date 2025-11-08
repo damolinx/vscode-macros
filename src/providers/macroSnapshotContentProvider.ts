@@ -10,7 +10,7 @@ export function registerMacroSnapshotContentProvider(context: ExtensionContext):
         const runner = context.runnerManager.getRunner(uri);
         if (runner) {
           for (const instance of runner.runInstances) {
-            if (instance.id === snapshotUri.fragment) {
+            if (instance.runId.id === snapshotUri.fragment) {
               return instance.snapshot.code;
             }
           }
@@ -25,6 +25,6 @@ export function createSnapshotUri(runInfo: MacroRunInfo) {
   return vscode.Uri.from({
     scheme: 'macro-snapshot',
     path: runInfo.macro.uri.toString(),
-    fragment: runInfo.id,
+    fragment: runInfo.runId.id,
   });
 }

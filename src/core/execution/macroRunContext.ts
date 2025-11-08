@@ -54,7 +54,7 @@ function createMacroApi(params: MacroContextInitParams): MacrosApi {
   return {
     __cancellationToken: params.token,
     __disposables: params.disposables,
-    __runId: params.runId,
+    __runId: params.runId.toString(),
     __startup: params.startup,
     macros: {
       macro: {

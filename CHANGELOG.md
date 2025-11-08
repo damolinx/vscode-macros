@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.5.15
+- TypeScript support:
+ - Improvements to code transpilation, to reduce code-size.
+ - Fix: Stracktraces for transpiled code would not show source-macro location correctly, instead showing a location relative to a VS Code path.
+- Run Id updates:
+ - Full id includes library name (on top of filename and numeric id) to prevent collisions across libraries.
+ - **Macro Explorer** changes UI to show numeric index part only as rest of ID.
+ - Fix: RunId tooltip typos.
+- **Running Macros** dropdown stops selected macro.
+- Fix: README incorrectly documented that view ID management APIs require a "run Id" argument.
+
 ## 0.5.14
 - Introduce new APIs to manage view IDs: `macros.window.getTreeViewId`, `macros.window.getWebviewId`, `macros.window.releaseTreeViewId`, `macros.window.releaseWebviewId`
 - Increase number of tree views and webviews to 5 each.

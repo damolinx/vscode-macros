@@ -17,9 +17,7 @@ export class MacroStatusBarItem implements vscode.Disposable {
       this.item,
       this.runnerManager.onRun(() => {
         const { runningMacros } = this.runnerManager;
-        this.item.tooltip =
-          `Running ${runningMacros.length} macro(s): ` +
-          `${runningMacros.map((runInfo) => runInfo.id).join(', ')}`;
+        this.item.tooltip = `Active macro instances: ${runningMacros.length}`;
         this.item.show();
       }),
       this.runnerManager.onStop(() => {

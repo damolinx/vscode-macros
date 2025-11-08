@@ -36,12 +36,14 @@ export class MacroRunnerManager implements vscode.Disposable {
     this.smsSupport = new Lazy(() =>
       sms.install({
         retrieveSourceMap: (source) => {
-          const runInfo = this.getRun(source as MacroRunId);
+          const runIdMatch = source.match(/^\[(\d+)\]\s(.+?)\.js$/);
+          const runInfo =
+            runIdMatch && this.getRun(new MacroRunId(`${runIdMatch[2]}.ts`, runIdMatch[1]));
           const sourceMap = runInfo
             ? ({
-                url: source,
-                map: extractInlineSourceMap(runInfo.runnableCode),
-              } as sms.UrlAndMap)
+              url: runInfo.macro.uri.fsPath,
+              map: extractInlineSourceMap(runInfo.runnableCode),
+            } as sms.UrlAndMap)
             : null;
 
           return sourceMap;
@@ -95,7 +97,7 @@ export class MacroRunnerManager implements vscode.Disposable {
   public getRun(runId: MacroRunId): MacroRunInfo | undefined {
     let run: MacroRunInfo | undefined;
     for (const runner of this.runners.values()) {
-      run = runner.getRun(runId);
+      run = runner.getRun(runId.id);
       if (run) {
         break;
       }

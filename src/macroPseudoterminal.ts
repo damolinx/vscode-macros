@@ -6,7 +6,7 @@ import { Context, runInContext } from 'vm';
 import { MacrosLogOutputChannel } from './api/macroLogOutputChannel';
 import { createMacro } from './commands/createMacro';
 import { initializeContext, MacroContextInitParams } from './core/execution/macroRunContext';
-import { getMacroRunId } from './core/execution/macroRunId';
+import { MacroRunId } from './core/execution/macroRunId';
 import { ExtensionContext } from './extensionContext';
 import { showMacroQuickPick } from './ui/dialogs';
 import { cleanError } from './utils/errors';
@@ -35,10 +35,12 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     this.context = context;
     this.cts = new vscode.CancellationTokenSource();
     this.useTs = false;
+
+    const runId = new MacroRunId(name, index);
     this.macroInitParams = {
       disposables: [],
-      log: new MacrosLogOutputChannel(name, context),
-      runId: getMacroRunId(name, index),
+      log: new MacrosLogOutputChannel(runId.id, context),
+      runId,
       token: this.cts.token,
       viewManagers: {
         tree: this.context.treeViewManager,
@@ -65,7 +67,9 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     callback: (error: Error | null, result: any) => void,
   ) {
     try {
-      const targetCode = this.useTs ? transpileOrThrow(code, this.macroInitParams.runId) : code;
+      const targetCode = this.useTs
+        ? transpileOrThrow(code, this.macroInitParams.runId.toString())
+        : code;
       const result = await runInContext(targetCode, context);
       callback(null, result);
     } catch (e: any) {

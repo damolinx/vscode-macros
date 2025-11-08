@@ -41,16 +41,18 @@ function pickRunningMacro(runInfos: MacroRunInfo[]): Promise<MacroRunInfo | unde
       vscode.QuickPickItem & { runInfo?: MacroRunInfo }
     >();
     quickPick.items = createGroupedQuickPickItems(runInfos, {
-      groupBy: (runInfo) => runInfo.macro.name,
-      itemBuilder: (runInfo) => ({
-        buttons,
-        detail: runInfo.macro.uri.fsPath,
-        label: runInfo.id,
-        runInfo,
-      }),
+      groupBy: (runInfo) => runInfo.runId.name,
+      itemBuilder: (runInfo) =>
+        ({
+          buttons,
+          description: `version: ${runInfo.snapshot.version}`,
+          detail: `started: ${new Date(runInfo.snapshot.startedOn).toLocaleString()}`,
+          label: `@${runInfo.runId.index}`,
+          runInfo,
+        }) as vscode.QuickPickItem,
     });
     quickPick.matchOnDetail = true;
-    quickPick.placeholder = 'Running macros';
+    quickPick.placeholder = 'Select a macro to stop';
     quickPick.onDidTriggerItemButton(async (e) => {
       if (e.button === openButton) {
         await showTextDocument(e.item.runInfo!.macro.uri);
@@ -58,6 +60,9 @@ function pickRunningMacro(runInfos: MacroRunInfo[]): Promise<MacroRunInfo | unde
         e.item.runInfo!.cts.cancel();
         quickPick.hide();
       }
+    });
+    quickPick.onDidAccept(() => {
+      quickPick.selectedItems.forEach((i) => i.runInfo?.cts.cancel());
     });
     return quickPick;
   }

@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { MacroRunIdString } from '../core/execution/macroRunId';
 import { ExtensionContext } from '../extensionContext';
 
 /**
@@ -9,7 +10,7 @@ export class MacrosLogOutputChannel implements vscode.LogOutputChannel {
   private readonly id: string;
   private readonly log: vscode.LogOutputChannel;
 
-  constructor(runId: string, { log }: ExtensionContext) {
+  constructor(runId: MacroRunIdString, { log }: ExtensionContext) {
     this.id = `[${runId}]`;
     this.log = log;
   }

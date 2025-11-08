@@ -3,17 +3,18 @@ import * as vm from 'vm';
 import { MacroContext } from '../../api/macroContext';
 import { MacrosLogOutputChannel } from '../../api/macroLogOutputChannel';
 import { ExtensionContext } from '../../extensionContext';
+import { parent, uriBasename } from '../../utils/uri';
 import { Macro } from '../macro';
 import { MacroCode } from '../macroCode';
 import { initializeContext, initializeMacrosApi, MacroContextInitParams } from './macroRunContext';
-import { getMacroRunId, MacroRunId } from './macroRunId';
+import { MacroRunId, MacroRunIdString } from './macroRunId';
 import { MacroRunInfo, MacroRunResult } from './macroRunInfo';
 
 export class MacroRunner implements vscode.Disposable {
   private readonly context: ExtensionContext;
   private index: number;
   public readonly macro: Macro;
-  private readonly runs: Map<MacroRunId, MacroRunInfo>;
+  private readonly runs: Map<MacroRunIdString, MacroRunInfo>;
   private sharedMacroContext?: MacroContext;
   private startEventEmitter: vscode.EventEmitter<MacroRunInfo>;
   private stopEventEmitter: vscode.EventEmitter<MacroRunResult>;
@@ -52,8 +53,8 @@ export class MacroRunner implements vscode.Disposable {
     return vm.createContext(context, { name });
   }
 
-  public getRun(id: MacroRunId): MacroRunInfo | undefined {
-    return this.runs.get(id);
+  public getRun(runId: MacroRunIdString): MacroRunInfo | undefined {
+    return this.runs.get(runId);
   }
 
   public get onStartRun(): vscode.Event<MacroRunInfo> {
@@ -81,9 +82,14 @@ export class MacroRunner implements vscode.Disposable {
       throw new Error(`Singleton macro ${this.macro.name} is already running`);
     }
 
+    const runId = new MacroRunId(
+      this.macro.uri.path.split('/').slice(-2).join('/'),
+      ++this.index,
+      startup,
+    );
     const runInfo: MacroRunInfo = {
       cts: new vscode.CancellationTokenSource(),
-      id: getMacroRunId(this.macro.name, ++this.index, startup),
+      runId,
       macro: this.macro,
       runnableCode: macroCode.getRunnableCode(),
       snapshot: {
@@ -94,14 +100,14 @@ export class MacroRunner implements vscode.Disposable {
       },
       startup,
     };
-    this.runs.set(runInfo.id, runInfo);
+    this.runs.set(runId.id, runInfo);
 
     const macroDisposables = [] as vscode.Disposable[];
     const context = this.getContext({
       disposables: macroDisposables,
-      log: new MacrosLogOutputChannel(runInfo.id, this.context),
+      log: new MacrosLogOutputChannel(runInfo.runId.id, this.context),
       persistent: !!macroCode.options.persistent,
-      runId: runInfo.id,
+      runId: runInfo.runId,
       startup,
       token: runInfo.cts.token,
       uri: this.macro.uri,
@@ -110,8 +116,9 @@ export class MacroRunner implements vscode.Disposable {
         web: this.context.webviewManager,
       },
     });
+
     const scriptOptions: vm.RunningScriptOptions = {
-      filename: macroCode.languageId === 'typescript' ? runInfo.id : this.macro.uri.toString(true),
+      filename: getScriptName(this.macro.uri, macroCode.languageId === 'typescript'),
     };
 
     this.startEventEmitter.fire(runInfo);
@@ -144,9 +151,9 @@ export class MacroRunner implements vscode.Disposable {
       scriptFailed = true;
       throw e;
     } finally {
-      this.context.treeViewManager.releaseOwnedIds(runInfo.id);
-      this.context.webviewManager.releaseOwnedIds(runInfo.id);
-      this.runs.delete(runInfo.id);
+      this.context.treeViewManager.releaseOwnedIds(runInfo.runId);
+      this.context.webviewManager.releaseOwnedIds(runInfo.runId);
+      this.runs.delete(runInfo.runId.id);
       const disposeError = safeDispose(macroDisposables);
       this.stopEventEmitter.fire({
         error: disposeError,
@@ -157,6 +164,14 @@ export class MacroRunner implements vscode.Disposable {
         /* eslint-disable no-unsafe-finally */
         throw disposeError;
       }
+    }
+
+    function getScriptName(uri: vscode.Uri, isTs: boolean): string {
+      const parentName = uriBasename(parent(uri));
+      const name = isTs
+        ? `[${runInfo.runId.index}] ${parentName}/${uriBasename(uri, true)}.js`
+        : `${parentName}/${uriBasename(uri)}`;
+      return name;
     }
 
     function retainedExecute(runPromise: Promise<any>): Promise<any> {

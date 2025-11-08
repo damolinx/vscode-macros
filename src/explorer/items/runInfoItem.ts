@@ -7,7 +7,7 @@ export const RunInfoIcon = createIcon('circle-outline', 'macros.general');
 export const StartupRunInfoIcon = createIcon('record-small', 'macros.general');
 
 export function createRunInfoItem(runInfo: MacroRunInfo) {
-  const item = new vscode.TreeItem(runInfo.id);
+  const item = new vscode.TreeItem(`@${runInfo.runId.index}`);
   item.contextValue = 'macroRun';
   item.tooltip = getTooltip(runInfo);
 
@@ -24,9 +24,9 @@ export function createRunInfoItem(runInfo: MacroRunInfo) {
       (k) => snapshot.options[k],
     );
     return (
-      (options.length ? `Options: $${options.join(' · ')}` : '') +
-      `Version: ${snapshot.version}\n` +
-      `${startedTooltip(snapshot.startedOn)}`
+      (options.length ? `Options: ${options.join(' · ')}\n` : '') +
+      `${startedTooltip(snapshot.startedOn)}\n` +
+      `Version: ${snapshot.version}`
     );
   }
 
@@ -46,12 +46,16 @@ export function createRunInfoItem(runInfo: MacroRunInfo) {
       fractionalSecondDigits: 2,
     });
 
-    return isSameDay
-      ? `Started at ${time}`
-      : `Started on ${date.toLocaleDateString([], {
-          year: '2-digit',
-          month: 'numeric',
-          day: 'numeric',
-        })}, ${time}`;
+    if (isSameDay) {
+      return `Started at ${time}`;
+    }
+
+    const day = date.toLocaleDateString([], {
+      year: '2-digit',
+      month: '2-digit',
+      day: '2-digit',
+    });
+
+    return `Started on ${day} at ${time}`;
   }
 }

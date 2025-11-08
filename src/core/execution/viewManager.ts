@@ -1,7 +1,7 @@
-import { MacroRunId } from './macroRunId';
+import { MacroRunId, MacroRunIdString } from './macroRunId';
 
 export class ViewManager {
-  private readonly idAssignments = new Map<string, MacroRunId | undefined>();
+  private readonly idAssignments = new Map<string, MacroRunIdString | undefined>();
 
   constructor(prefix: string, count: number) {
     for (let i = 0; i < count; i++) {
@@ -10,37 +10,37 @@ export class ViewManager {
   }
 
   /**
-   * Assigns the first available ID to the requestor.
+   * Assigns the first available ID to the requester.
    * @returns Assigned ID, or `undefined` if none are available.
    */
-  public getId(requestor: MacroRunId): string | undefined {
-    for (const [id, owner] of this.idAssignments) {
-      if (owner === undefined) {
-        this.idAssignments.set(id, requestor);
-        return id;
+  public getId(requester: MacroRunId): string | undefined {
+    for (const [viewId, ownerId] of this.idAssignments) {
+      if (!ownerId) {
+        this.idAssignments.set(viewId, requester.id);
+        return viewId;
       }
     }
     return undefined;
   }
 
   /**
-   * Releases all IDs owned by the requestor.
+   * Releases all IDs owned by the requester.
    */
-  public releaseOwnedIds(requestor: MacroRunId): void {
-    for (const [id, owner] of this.idAssignments) {
-      if (owner === requestor) {
-        this.idAssignments.set(id, undefined);
+  public releaseOwnedIds(requester: MacroRunId): void {
+    for (const [viewId, ownerId] of this.idAssignments) {
+      if (ownerId === requester.id) {
+        this.idAssignments.set(viewId, undefined);
       }
     }
   }
 
   /**
-   * Releases the ID if it was assigned to the requestor.
+   * Releases the ID if it was assigned to the requester.
    * @returns `true` if released, `false` otherwise.
    */
-  public releaseId(requestor: MacroRunId, id: string): boolean {
-    if (this.idAssignments.get(id) === requestor) {
-      this.idAssignments.set(id, undefined);
+  public releaseId(requester: MacroRunId, viewId: string): boolean {
+    if (this.idAssignments.get(viewId) === requester.id) {
+      this.idAssignments.set(viewId, undefined);
       return true;
     }
     return false;

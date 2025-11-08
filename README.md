@@ -222,13 +222,13 @@ The following references are available from the global context of your macro:
 * `window`: Provides access to UI-related APIs. 
   Provides access to UI-related APIs for managing predefined macro views.
 
-  - `getTreeViewId(requestor: MacroRunId): string | undefined`: Claims an available `treeview` ID for the given macro run. Returns `undefined` if none are available.
+  - `getTreeViewId(id: string): string | undefined`: Claims an available `treeview` ID for the given macro run. Returns `undefined` if none are available.
 
-  - `getWebviewId(requestor: MacroRunId): string | undefined`: Claims an available `webview` ID for the given macro run. Returns `undefined` if none are available.
+  - `getWebviewId(id: string): string | undefined`: Claims an available `webview` ID for the given macro run. Returns `undefined` if none are available.
 
-  - `releaseTreeViewId(requestor: MacroRunId, id: string): boolean`: Releases a previously claimed `treeview` ID. Returns `true` if successful.
+  - `releaseTreeViewId(id: string): boolean`: Releases a previously claimed `treeview` ID. Returns `true` if successful.
 
-  - `releaseWebviewId(requestor: MacroRunId, id: string): boolean`: Releases a previously claimed `webview` ID. Returns `true` if successful.
+  - `releaseWebviewId(id: string): boolean`: Releases a previously claimed `webview` ID. Returns `true` if successful.
 
   #### Special Variables
 
@@ -265,8 +265,8 @@ While macros can hardcode and use these IDs directly, this approach becomes frag
 To avoid this, macros can dynamically claim an available view ID using the following APIs:
 
   ```ts
-  macros.window.getTreeViewId(requestor: MacroRunId): string | undefined
-  macros.window.getWebviewId(requestor: MacroRunId): string | undefined
+  macros.window.getTreeViewId(): string | undefined
+  macros.window.getWebviewId(): string | undefined
   ```
 
 If no view ID is available, these methods return `undefined` so make sure to account for such case. 
@@ -274,8 +274,8 @@ If no view ID is available, these methods return `undefined` so make sure to acc
 Once a macro is finished using a view, it can release the ID explicitly using the following APIs:
 
   ```ts
-  macros.window.releaseTreeViewId(requestor: MacroRunId, id: string): boolean
-  macros.window.releaseWebviewId(requestor: MacroRunId, id: string): boolean
+  macros.window.releaseTreeViewId(id: string): boolean
+  macros.window.releaseWebviewId(id: string): boolean
   ```
 
 Alternatively, all claimed IDs are automatically released when the macro completes. This includes REPL sessions, as each sessions is equivalent to a macro.
