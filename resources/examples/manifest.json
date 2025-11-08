@@ -3,13 +3,13 @@
     {
       "category": "",
       "label": "(empty)",
-      "description": "Untitled empty macro",
+      "description": "An untitled empty macro",
       "path": ""
     },
     {
       "category": "Basics",
       "label": "Cancellation",
-      "description": "Enable macro cancellation",
+      "description": "Support stopping execution via cancellation token",
       "path": "js/cancellation.js",
       "alternates": {
         "typescript": "ts/cancellation.ts"
@@ -18,7 +18,7 @@
     {
       "category": "UI",
       "label": "CodeLens",
-      "description": "Add a CodeLens to macro editors",
+      "description": "Add a CodeLens to editors of a given language",
       "path": "js/codeLens.js",
       "alternates": {
         "typescript": "ts/codeLens.ts"
@@ -27,7 +27,7 @@
     {
       "category": "Basics",
       "label": "Dispose",
-      "description": "Enable cleanup of disposable objects",
+      "description": "Ensure disposable objects are cleaned up on exit",
       "path": "js/dispose.js",
       "alternates": {
         "typescript": "ts/dispose.ts"
@@ -45,7 +45,7 @@
     {
       "category": "Basics",
       "label": "Hello World",
-      "description": "Run a simple `Hello World` macro",
+      "description": "Demonstrates a `Hello World` macro",
       "path": "js/helloWorld.js",
       "alternates": {
         "typescript": "ts/helloWorld.ts"
@@ -63,7 +63,7 @@
     {
       "category": "Options",
       "label": "Persistent Context",
-      "description": "Enable a persistent global context across macro invocations",
+      "description": "Leverage a persistent context across macro instances",
       "path": "js/persistent.js",
       "alternates": {
         "typescript": "ts/persistent.ts"
@@ -81,7 +81,7 @@
     {
       "category": "Options",
       "label": "Retained Mode",
-      "description": "Enable long-lived listeners and providers",
+      "description": "Create long-lived listeners and providers",
       "path": "js/retained.js",
       "alternates": {
         "typescript": "ts/retained.ts"
