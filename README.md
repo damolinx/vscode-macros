@@ -434,11 +434,11 @@ vscode.window.showInformationMessage("Hello, world!");
 
 ## Download Definition Files
 
-Any URL in a macro file pointing to a `.d.ts` file will automatically receive a code action, **Download .d.ts**, enabling you to download the file directly to the macro's parent folder. This simplifies adding type definitions to support IntelliSense in your macros.
+Any URL-like string in a macro file pointing to a `.d.ts` file will automatically receive a code action, **Download .d.ts**, enabling you to download the file directly to the macro's parent folder. This simplifies adding type definitions to support [IntelliSense](#intellisense) in your macros.
 
-For GitHub URLs containing `/blob/`, the extension offers special handling by converting them to their raw equivalent. For example: `https://github.com/Microsoft/vscode/blob/main/extensions/git/src/api/git.d.ts` is automatically handled as `https://github.com/Microsoft/vscode/raw/refs/heads/main/extensions/git/src/api/git.d.ts`.
+GitHub URLs containing matching `*/blob/*` are automatically converted to their `raw` equivalent. For example: `https://github.com/Microsoft/vscode/blob/main/extensions/git/src/api/git.d.ts` is automatically handled as `https://github.com/Microsoft/vscode/raw/refs/heads/main/extensions/git/src/api/git.d.ts`.
 
-For all other URLs, a standard HTTP GET request is sent to download the file.
+All URLs use a standard HTTP GET to download the file, which is not customizable at this time.
 
 [↑ Back to top](#table-of-contents)
 
@@ -448,10 +448,12 @@ For all other URLs, a standard HTTP GET request is sent to download the file.
 Using a debugger leverages the default [debugging workflow for extensions](https://code.visualstudio.com/api/get-started/your-first-extension#debugging-the-extension). In this workflow, you start with a VS Code instance that is used to launch a second **Extension Development Host** instance. The debugger attaches to that host, and you run your debug scenario there, while the debugger itself remains in the original VS Code instance. The **Debug Macro** command automates the setup flow.
 
 There are a couple of details to keep in mind:
+
 - You cannot open the same workspace at the same time in two different VS Code instances. This may require you to reopen the workspace for your scenario in the **Extension Development Host** instance.
+
 - The macro you start the **Debug Macro** command on is not run automatically in the new instance unless it is defined as a startup macro, because the execution / repro context is unknown.
 
-Currently, there is no clear path to streamline this. Ideally, in the future the flow would be inverted: the second instance would debug macros running in the first one, allowing you to debug your macro without disturbing your current setup.
+Currently, there is no clear path to streamline this debugging flow. Ideally, the second instance would debug macros running in the first one, allowing you to debug macros without disturbing the current setup.
 
 [↑ Back to top](#table-of-contents)
 
