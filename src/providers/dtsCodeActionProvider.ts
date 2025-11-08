@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
-import { MACRO_PREFERRED_SELECTOR } from '../core/language';
+import { MacroPreferredSelector } from '../core/language';
 import { ExtensionContext } from '../extensionContext';
 
 export function registerDTSCodeActionProvider(context: ExtensionContext): void {
   context.disposables.push(
     vscode.languages.registerCodeActionsProvider(
-      MACRO_PREFERRED_SELECTOR,
+      MacroPreferredSelector,
       new DTSCodeActionProvider(),
     ),
   );

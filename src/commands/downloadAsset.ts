@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { get } from 'https';
-import { macroFilter } from '../utils/ui';
+import { MacroFilter } from '../utils/ui';
 import { isUntitled, PathLike, parent, toUri, uriBasename } from '../utils/uri';
 import { saveTextEditor } from '../utils/vscodeEx';
 
@@ -75,7 +75,7 @@ async function getDownloadLocation(macroPathOrUri: PathLike): Promise<vscode.Uri
 
     if (result?.title === 'Yes') {
       const editor = await saveTextEditor(vscode.window.activeTextEditor!, {
-        filters: macroFilter(),
+        filters: MacroFilter,
       });
       macroUri = editor?.document.uri;
     } else {

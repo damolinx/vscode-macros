@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { MACROS_EXT_DEBUG_VAR } from './commands/debugMacro';
-import { isFeatureEnabledMacro, isMacroLangId } from './core/language';
+import { isFeatureEnabled, isMacroLangId } from './core/language';
 import { ExtensionContext } from './extensionContext';
 import { areUriEqual } from './utils/uri';
 
@@ -53,7 +53,7 @@ function registerSupported(context: ExtensionContext): void {
     const supportedLangId = !!editor && isMacroLangId(editor.document.languageId);
     const supportedFeatureExt =
       supportedLangId &&
-      (isFeatureEnabledMacro(editor.document.uri) ||
+      (isFeatureEnabled(editor.document.uri) ||
         !!context.libraryManager.libraryFor(editor.document.uri));
 
     setContext(supportedExtKey, supportedFeatureExt);

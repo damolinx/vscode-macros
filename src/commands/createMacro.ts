@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { MACRO_PREFERRED_LANGUAGE, tryResolveMacroLanguageFromId } from '../core/language';
+import { isMacroLangId, MACRO_LANGUAGES, MACRO_PREFERRED_LANGUAGE } from '../core/language';
 import { ExtensionContext } from '../extensionContext';
 import { templates } from '../macroTemplates';
 import { createGroupedQuickPickItems } from '../ui/ui';
@@ -62,8 +62,9 @@ export async function createMacro(
 
   async function createUntitledUri(parentUri: vscode.Uri, language: string, maxAttempts = 1000) {
     let uri: vscode.Uri | undefined;
-    const macroLang = tryResolveMacroLanguageFromId(language);
-    const extension = macroLang ? `.${macroLang.extensions[0]}` : '';
+
+    const extension = isMacroLangId(language) ? MACRO_LANGUAGES[language].defaultExtension : '';
+
     for (let i = 1; !uri && i <= maxAttempts; i++) {
       const fsCandidate = vscode.Uri.joinPath(parentUri, `Untitled-${i}${extension}`);
       if (
