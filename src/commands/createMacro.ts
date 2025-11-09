@@ -83,11 +83,14 @@ export async function createMacro(
   }
 }
 
-export async function updateActiveEditor(
+export async function updateEditor(
   context: ExtensionContext,
+  documentLocator?: Locator,
   defaultContent?: string,
 ): Promise<void> {
-  const editor = await activeMacroEditor(false);
+  const editor = documentLocator
+    ? await vscode.window.showTextDocument(toUri(fromLocator(documentLocator)))
+    : await activeMacroEditor(false);
   if (!editor) {
     return;
   }

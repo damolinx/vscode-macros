@@ -19,7 +19,8 @@ export function registerExecuteCommandCompletionProvider(context: ExtensionConte
  * Provide autocompletion for `executeCommand`.
  */
 export class ExecuteCommandCompletionProvider
-  implements vscode.Disposable, vscode.CompletionItemProvider {
+  implements vscode.Disposable, vscode.CompletionItemProvider
+{
   private readonly commandIds: Lazy<Thenable<string[]>>;
   private readonly disposables: vscode.Disposable[];
 
@@ -40,14 +41,14 @@ export class ExecuteCommandCompletionProvider
   ): Promise<vscode.CompletionItem[] | undefined> {
     const line = document.lineAt(position).text.substring(0, position.character);
     const match = line.match(
-      /(?:^\s*\.?|\.)executeCommand\s*\(\s*(?:(?<quote>["'`])[a-zA-Z0-9._-]*|\1?)$/,
+      /(?:^\s*\.?|\.)executeCommand\s*\(\s*(?:(?<quote1>["'`])[a-zA-Z0-9._-]*|(?<quote2>["'`])?)$/,
     );
     if (!match) {
       return;
     }
 
     const commandIds = await this.commandIds.get();
-    const quote = match.groups?.quote;
+    const quote = match.groups?.quote1 || match.groups?.quote2;
     const range = document.getWordRangeAtPosition(position, /[a-zA-Z0-9._-]+/);
 
     return commandIds.map((id) => {

@@ -66,13 +66,12 @@ Any JavaScript or TypeScript document can be treated as a macro, even if it hasn
 
 ## Writing Macro Code
 
-The **Macros: Fill File with Template** command can jumpstart your development by adding sample to code to start your development process. But to generate custom code, you can ask the [`@macros` chat agent](#macros-agent) to generate macro content for your scenario.
-
-You can of course write your own code, so refer to the [Development](#development) section for details on available APIs. The basic rules to consider when writing your code macro are:
+The **Macros: Fill File with Template** command, or the **Apply Template** CodeLens on empty files, can jumpstart your development by adding sample to code to a given editor. To generate custom code, however, you can ask the [`@macros` chat agent](#macros-agent) for help.
+You can write your own code macros—see [Development](#development) for available APIs. When doing so, keep these basic rules in mind:
 - Macros are standalone JavaScript or TypeScript files run in a Node.js sandbox with VS Code APIs.
-- Use CommonJS syntax (JavaSCript) and avoid `export`, top-level `await` or `return`—the result of last statement be a `Promise` when running async work.
+- Use CommonJS syntax (JavaScript) and avoid `export`, top-level `await` or `return`—the result of last statement be a `Promise` when running async work.
 - Macros have access to globals like `vscode` and `macros`, and they can import Node.js libraries, but there is no built-in path to include arbitrary libraries.
-- Macros cannot be forcefully stopped, they either complete on their own or use the provided `__cancellationToken` to respond to stop *requests*.
+- Macros cannot be forcefully stopped. They must either complete on their own or handle the cancellation request sent via the provided `__cancellationToken`.
 
 **Example: "Hello, World!" macro**
 ```javascript

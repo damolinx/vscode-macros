@@ -3,7 +3,7 @@ import { registerMacroChatParticipant } from './ai/macroChatParticipant';
 import { addLibrary } from './commands/addLibrary';
 import { addStartupMacro } from './commands/addStartupMacro';
 import { copyPath } from './commands/copyPath';
-import { createMacro, updateActiveEditor } from './commands/createMacro';
+import { createMacro, updateEditor } from './commands/createMacro';
 import { createRepl } from './commands/createRepl';
 import { debugActiveEditor, debugMacro } from './commands/debugMacro';
 import { deleteMacroOrMacroLibrary } from './commands/deleteMacroOrMacroLibrary';
@@ -36,6 +36,7 @@ import { registerContextValueHandlers } from './extensionContextValues';
 import { MacroStatusBarItem } from './macroStatusBarItem';
 import { registerDTSCodeActionProvider } from './providers/dtsCodeActionProvider';
 import { registerExecuteCommandCompletionProvider } from './providers/executeCommandCompletionProvider';
+import { registerFillCodeLensProvider } from './providers/fillCodeLensProvider';
 import { registerMacroCodeLensProvider } from './providers/macroCodeLensProvider';
 import { registerMacroOptionsCompletionProvider } from './providers/macroOptionsCompletionProvider';
 import { registerMacroSnapshotContentProvider } from './providers/macroSnapshotContentProvider';
@@ -58,6 +59,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
   registerSourceDirectoryVerifier(context);
   registerDTSCodeActionProvider(context);
   registerExecuteCommandCompletionProvider(context);
+  registerFillCodeLensProvider(context);
   registerMacroCodeLensProvider(context);
   registerMacroOptionsCompletionProvider(context);
 
@@ -75,8 +77,8 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.delete.startupMacro', (locator: Locator) => removeStartupMacro(context, locator)),
     cr('macros.downloadAsset', downloadAsset),
     cr('macros.explorer.refresh', () => explorerTreeDataProvider?.refresh()),
-    cr('macros.new.macro', (locator: Locator) => createMacro(context, locator)),
-    cr('macros.new.macro.activeEditor', () => updateActiveEditor(context)),
+    cr('macros.new.macro', (locator?: Locator) => createMacro(context, locator)),
+    cr('macros.new.macro.activeEditor', (locator?: Locator) => updateEditor(context, locator)),
     cr('macros.new.macro.repl', () => createRepl(context)),
     cr('macros.new.macroLibrary', () => addLibrary(context)),
     cr('macros.new.startupMacro', (locator: Locator) => addStartupMacro(context, locator)),
