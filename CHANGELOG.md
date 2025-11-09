@@ -7,11 +7,11 @@
   - Macro Library nodes support **Paste** action.
   - Drag-and-drop new supported scenarios:
     - Dropping a macro onto another macro is supported as a drop on its parent library.
-    - Dragging an `untitled` macro out of the **Temporary** library is supported as a save operation.\
+    - Dragging an `untitled` macro out of the **Temporary** library is supported as a save operation.
 - Macro REPL:
   - Improve handling of recoverable errors in REPL. 
-  - Reenable preview (unexpectedly disabled by Node.js when `eval` was added).
-- Add **Apply Template** CodeLens on empty `*.macro.*` and relevant untitled empty editors.
+  - Reenable result preview (unexpectedly disabled by Node.js when `eval` for TypeScript was added).
+- Add **Apply Template** CodeLens on `*.macro.*` and relevant untitled empty editors.
 
 ## 0.5.15
 - **@macros** chat agent can run the code it generates when asked to. 
