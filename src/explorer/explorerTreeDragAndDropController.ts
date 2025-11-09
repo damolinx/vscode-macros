@@ -5,7 +5,6 @@ import {
   MACRO_PREFERRED_LANGUAGE,
   MacroLanguageId,
 } from '../core/language';
-import { MacroLibrary } from '../core/library/macroLibrary';
 import { Macro } from '../core/macro';
 import { ExtensionContext } from '../extensionContext';
 import { existsFile } from '../utils/fsEx';
@@ -18,7 +17,8 @@ export const FILELIST_SEP = '\r\n';
 export const TREE_MIMETYPE = 'application/vnd.code.tree.macros.macroexplorer';
 
 export class ExplorerTreeDragAndDropController
-  implements vscode.TreeDragAndDropController<TreeElement> {
+  implements vscode.TreeDragAndDropController<TreeElement>
+{
   private readonly context: ExtensionContext;
   public readonly dropMimeTypes: readonly string[];
   public readonly dragMimeTypes: readonly string[];
