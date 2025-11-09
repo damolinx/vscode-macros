@@ -1,8 +1,10 @@
 # Changelog
 
 ## 0.5.16
-- Rewrite of README
-- Improve handling of recoverable errors in REPL. 
+- Rewrite of README.
+- Macro REPL:
+  - Improve handling of recoverable errors in REPL. 
+  - Reenable preview (unexpectedly disabled by NodeJS when `eval` was added).
 
 ## 0.5.15
 - **@macros** chat agent can run the code it generates when asked to. 

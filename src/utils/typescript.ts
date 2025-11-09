@@ -77,7 +77,7 @@ export class TranspilationError extends Error {
       : ts.formatDiagnostics(this.diagnostics, host);
   }
 
-  public isReplRecoverable(): boolean {
+  public isRecoverable(): boolean {
     if (this.recoverable === undefined) {
       const diag = this.diagnostics[0];
       switch (diag?.code) {

@@ -82,7 +82,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
       if (e.name === 'SyntaxError') {
         // TODO: edge case "e.push({}{})"
         recoverable = /Unexpected end of input|missing.+after argument list/.test(e.message);
-      } else if (e.name === 'TranspilationError' && (e as TranspilationError).isReplRecoverable()) {
+      } else if (e.name === 'TranspilationError' && (e as TranspilationError).isRecoverable()) {
         recoverable = true;
       }
       return recoverable;
@@ -125,6 +125,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
       eval: (code, ctx, _, cb) => this.evaluate(code, ctx, cb),
       input,
       output,
+      preview: true,
       prompt: PROMPT_JS,
       terminal: true,
       writer: (obj: any) => this.inspectObj(obj),
