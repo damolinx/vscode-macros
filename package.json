@@ -94,6 +94,12 @@
     ],
     "commands": [
       {
+        "command": "macros.copy.file",
+        "title": "Copy",
+        "category": "Macros",
+        "enablement": "focusedView == macros.macroExplorer"
+      },
+      {
         "command": "macros.copy.name",
         "title": "Copy Name",
         "category": "Macros",
@@ -169,6 +175,12 @@
         "command": "macros.open",
         "title": "Open Macro…",
         "category": "Macros"
+      },
+      {
+        "command": "macros.paste.file",
+        "title": "Paste",
+        "category": "Macros",
+        "enablement": "macros:canPaste && focusedView == macros.macroExplorer"
       },
       {
         "command": "macros.rename.macro",
@@ -299,6 +311,10 @@
     "menus": {
       "commandPalette": [
         {
+          "command": "macros.copy.file",
+          "when": "false"
+        },
+        {
           "command": "macros.copy.name",
           "when": "false"
         },
@@ -320,6 +336,10 @@
         },
         {
           "command": "macros.new.startupMacro",
+          "when": "false"
+        },
+        {
+          "command": "macros.paste.file",
           "when": "false"
         },
         {
@@ -361,14 +381,19 @@
       ],
       "view/item/context": [
         {
+          "command": "macros.copy.file",
+          "when": "view == macros.macroExplorer && viewItem =~ /macroFile/ && !(viewItem =~ /untitled/)",
+          "group": "5_copy@1"
+        },
+        {
           "command": "macros.copy.name",
           "when": "view == macros.macroExplorer && viewItem =~ /macro(File|Library)/ && !(viewItem =~ /untitled/)",
-          "group": "5_copy@2"
+          "group": "5_copy@3"
         },
         {
           "command": "macros.copy.path",
           "when": "view == macros.macroExplorer && viewItem =~ /macro(File|Library)/ && !(viewItem =~ /untitled/)",
-          "group": "5_copy@1"
+          "group": "5_copy@2"
         },
         {
           "command": "macros.debug",
@@ -399,6 +424,11 @@
           "command": "macros.new.startupMacro",
           "when": "view == macros.macroExplorer && viewItem =~ /macroFile/ && !(viewItem =~ /startup/) && !(viewItem =~ /untitled/)",
           "group": "4_tools@1"
+        },
+        {
+          "command": "macros.paste.file",
+          "when": "view == macros.macroExplorer && viewItem =~ /macroLibrary/ && !(viewItem =~ /untitled/) && macros:canPaste",
+          "group": "5_copy@5"
         },
         {
           "command": "macros.rename.macro",
@@ -560,6 +590,12 @@
     },
     "keybindings": [
       {
+        "command": "macros.copy.file",
+        "win": "Ctrl+C",
+        "mac": "Cmd+C",
+        "when": "focusedView == macros.macroExplorer && !inputFocus"
+      },
+      {
         "command": "macros.copy.path",
         "win": "Shift+Alt+C",
         "mac": "Cmd+Opt+C",
@@ -570,6 +606,12 @@
         "key": "Delete",
         "mac": "Cmd+Backspace",
         "when": "focusedView == macros.macroExplorer && !inputFocus"
+      },
+      {
+        "command": "macros.paste.file",
+        "win": "Ctrl+V",
+        "mac": "Cmd+V",
+        "when": "focusedView == macros.macroExplorer && !inputFocus && macros:canPaste"
       },
       {
         "command": "macros.rename.macro",

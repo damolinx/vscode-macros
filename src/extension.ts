@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { registerMacroChatParticipant } from './ai/macroChatParticipant';
 import { addLibrary } from './commands/addLibrary';
 import { addStartupMacro } from './commands/addStartupMacro';
+import { copyFile, pasteFile } from './commands/copyPasteFile';
 import { copyPath } from './commands/copyPath';
 import { createMacro, updateEditor } from './commands/createMacro';
 import { createRepl } from './commands/createRepl';
@@ -67,6 +68,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     commands: { registerCommand: cr },
   } = vscode;
   context.disposables.push(
+    cr('macros.copy.file', (locator: Locator) => copyFile(context, locator)),
     cr('macros.copy.name', (locator: Locator) => copyPath(context, locator, true)),
     cr('macros.copy.path', (locator?: Locator) => copyPath(context, locator)),
     cr('macros.debug', debugMacro),
@@ -83,6 +85,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.new.macroLibrary', () => addLibrary(context)),
     cr('macros.new.startupMacro', (locator: Locator) => addStartupMacro(context, locator)),
     cr('macros.open', () => openMacro(context)),
+    cr('macros.paste.file', (locator: Locator) => pasteFile(context, locator)),
     cr('macros.rename.macro', (locator?: Locator) => renameMacro(context, locator)),
     cr('macros.resetContext', (pathOrUri: PathLike) => resetSharedContext(context, pathOrUri)),
     cr('macros.revealInExplorer', (locator?: Locator) => revealInOS(locator)),

@@ -1,6 +1,9 @@
 # Changelog
 
 ## 0.5.16
+- **Macro Explorer** view:
+  - Macro nodes support **Copy** action.
+  - Macro Library nodes support **Paste** action.
 - Rewrite of README.
 - Macro REPL:
   - Improve handling of recoverable errors in REPL. 

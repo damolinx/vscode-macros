@@ -61,6 +61,6 @@ function registerSupported(context: ExtensionContext): void {
   }
 }
 
-function setContext<T>(contextKey: string, arg: T) {
+export function setContext<T>(contextKey: string, arg: T) {
   vscode.commands.executeCommand('setContext', contextKey, arg);
 }
