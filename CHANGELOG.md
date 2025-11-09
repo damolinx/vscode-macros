@@ -1,14 +1,16 @@
 # Changelog
 
 ## 0.5.16
+- Rewrite of README.
 - **Macro Explorer** view:
   - Macro nodes support **Copy** action.
   - Macro Library nodes support **Paste** action.
-  - Drag-and-drop a macro out of the **Temporary** library is supported as a save operation.
-- Rewrite of README.
+  - Drag-and-drop new supported scenarios:
+    - Dropping a macro onto another macro is supported as a drop on its parent library.
+    - Dragging an `untitled` macro out of the **Temporary** library is supported as a save operation.\
 - Macro REPL:
   - Improve handling of recoverable errors in REPL. 
-  - Reenable preview (unexpectedly disabled by NodeJS when `eval` was added).
+  - Reenable preview (unexpectedly disabled by Node.js when `eval` was added).
 - Add **Apply Template** CodeLens on empty `*.macro.*` and relevant untitled empty editors.
 
 ## 0.5.15

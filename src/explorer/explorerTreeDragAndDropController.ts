@@ -18,8 +18,7 @@ export const FILELIST_SEP = '\r\n';
 export const TREE_MIMETYPE = 'application/vnd.code.tree.macros.macroexplorer';
 
 export class ExplorerTreeDragAndDropController
-  implements vscode.TreeDragAndDropController<TreeElement>
-{
+  implements vscode.TreeDragAndDropController<TreeElement> {
   private readonly context: ExtensionContext;
   public readonly dropMimeTypes: readonly string[];
   public readonly dragMimeTypes: readonly string[];
@@ -50,8 +49,15 @@ export class ExplorerTreeDragAndDropController
     dataTransfer: vscode.DataTransfer,
     _token: vscode.CancellationToken,
   ): Promise<void> {
-    if (!(target instanceof MacroLibrary) || isUntitled(target)) {
+    if (!target || !('uri' in target) || isUntitled(target)) {
       return;
+    }
+
+    if (target instanceof Macro) {
+      target = this.context.libraryManager.libraryFor(target.uri);
+      if (!target) {
+        return;
+      }
     }
 
     const sources = await getSourceUris();
@@ -60,20 +66,6 @@ export class ExplorerTreeDragAndDropController
     }
 
     const moveOps = await getMoveOps(sources, target.uri);
-
-    // const moveOps = sources
-    //   .map((source) => {
-    //     let sourceName = uriBasename(source);
-    //     if (isUntitled(source)) {
-    //       sourceName += MACRO_LANGUAGES['javascript'].defaultExtension; // TODO:
-    //     }
-    //     return {
-    //       source,
-    //       target: vscode.Uri.joinPath(target.uri, sourceName),
-    //     };
-    //   })
-    //   .filter(({ source, target }) => source.toString() !== target.toString());
-
     if (
       !moveOps.length ||
       !(await this.promptForConsent(moveOps, target.name)) ||
