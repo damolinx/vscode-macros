@@ -2,7 +2,7 @@
   "name": "damolinx-macros",
   "displayName": "Macros for VS Code",
   "description": "Automate tasks, prototype extension features, and create custom tooling using JavaScript/TypeScript scripts.",
-  "version": "0.5.15",
+  "version": "0.5.16",
   "publisher": "damolinx",
   "icon": "resources/images/icon.png",
   "repository": {
