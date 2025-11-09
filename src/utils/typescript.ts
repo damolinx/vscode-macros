@@ -3,16 +3,6 @@ import * as util from 'util';
 import * as ts from 'typescript';
 import { parent, toUri, uriBasename } from './uri';
 
-export const RecoverableCodes: Readonly<Set<number>> = new Set([
-  1005, // `'token' expected` — classic missing semicolon, brace, or parenthesis
-  1003, // `Identifier expected` — often mid-declaration or incomplete statement
-  1009, // `'(' expected` — likely incomplete function or call expression
-  1010, // `')' expected` — unclosed argument list or grouping
-  1109, // `Expression expected` — mid-expression, often recoverable
-  1128, // `Declaration or statement expected` — inside unclosed block or directive
-  1160, // `Unterminated string literal` — user is still typing a string
-]);
-
 export function transpile(
   code: string,
   fileNameOrUri?: string | vscode.Uri,
@@ -64,6 +54,7 @@ export function extractInlineSourceMap(code: string) {
 export class TranspilationError extends Error {
   public readonly diagnostics: ts.Diagnostic[];
   public readonly fileNameOrUri?: string | vscode.Uri;
+  private recoverable?: boolean;
 
   constructor(message: string, diagnostics: ts.Diagnostic[], fileNameOrUri?: string | vscode.Uri) {
     super(message);
@@ -86,7 +77,22 @@ export class TranspilationError extends Error {
       : ts.formatDiagnostics(this.diagnostics, host);
   }
 
-  public isRecoverable(): boolean {
-    return this.diagnostics.some((d) => RecoverableCodes.has(d.code));
+  public isReplRecoverable(): boolean {
+    if (this.recoverable === undefined) {
+      const diag = this.diagnostics[0];
+      switch (diag?.code) {
+        case 1005:
+          this.recoverable = !/'[:|;|,]' expected/.test(diag.messageText.toString());
+          break;
+        case 1109: // 1 +
+          this.recoverable = true;
+          break;
+        default:
+          this.recoverable = false;
+          break;
+      }
+    }
+
+    return this.recoverable;
   }
 }

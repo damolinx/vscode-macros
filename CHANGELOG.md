@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.16
+- Rewrite of README
+- Improve handling of recoverable errors in REPL. 
+
 ## 0.5.15
 - **@macros** chat agent can run the code it generates when asked to. 
 - Add **Template Default Language** setting to determine whether to create JavaScript or TypeScript macros by default.

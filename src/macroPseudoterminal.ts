@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { Recoverable, REPLServer, start as startREPL } from 'repl';
 import { PassThrough } from 'stream';
-import { inspect } from 'util';
+import { inspect, types } from 'util';
 import { Context, runInContext } from 'vm';
 import { MacrosLogOutputChannel } from './api/macroLogOutputChannel';
 import { createMacro } from './commands/createMacro';
@@ -78,11 +78,14 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     }
 
     function isRecoverable(e: Error) {
-      return (
-        (e.name === 'SyntaxError' &&
-          /^(Unexpected end of input|Unexpected token|missing|expected)/.test(e.message)) ||
-        (e instanceof TranspilationError && e.isRecoverable())
-      );
+      let recoverable = false;
+      if (e.name === 'SyntaxError') {
+        // TODO: edge case "e.push({}{})"
+        recoverable = /Unexpected end of input|missing.+after argument list/.test(e.message);
+      } else if (e.name === 'TranspilationError' && (e as TranspilationError).isReplRecoverable()) {
+        recoverable = true;
+      }
+      return recoverable;
     }
   }
 
@@ -91,16 +94,10 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
   }
 
   private inspectObj(obj: any): string {
-    const targetObj = isError(obj) ? cleanError(obj) : obj;
-    return inspect(targetObj, {
-      colors: this.repl?.server.useColors,
-      compact: false,
-      depth: 2,
-    });
-
-    function isError(obj: any): obj is Error {
-      return obj instanceof Error || Object.prototype.toString.call(obj).endsWith('Error]');
-    }
+    const result = types.isNativeError(obj)
+      ? inspect(cleanError(obj, true), { colors: this.repl?.server.useColors })
+      : inspect(obj, { colors: this.repl?.server.useColors, compact: false, depth: 2 });
+    return result;
   }
 
   public get onDidClose(): vscode.Event<void> {

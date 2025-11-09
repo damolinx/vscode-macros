@@ -1,12 +1,10 @@
-export function cleanError<T extends Error>(error: T): T {
+export function cleanError<T extends Error>(error: T, repl?: true): T {
   let clone: T | undefined;
 
   if (error.stack) {
-    clone ??= cloneError<T>(error);
-    clone.stack = error.stack
-      // .replace(/^[\s\S]*?(?=^\w*Error:)/m, '')
-      .replace(/^(.*?(?:Script\.runInContext|evalmachine\.).*\n[\s\S]*)$/m, '')
-      .replace(/^(.*?(?:vscode|damolinx)-macros.*\n[\s\S]*)$/m, '')
+    clone ??= cloneError(error);
+    clone.stack = (repl ? error.stack.replace(/^.*(?:evalmachine\.).*\n*$/gm, '') : error.stack)
+      .replace(/^(.*?(?:Script\.runInContext\.|(?:vscode|damolinx)-macros).*\n[\s\S]*)$/m, '')
       .replace(/^(.*?vscode-file:\/\/.*\n[\s\S]*)$/m, '');
   }
 
