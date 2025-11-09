@@ -5,9 +5,8 @@ import { MacroLibrary } from '../core/library/macroLibrary';
 import { Macro } from '../core/macro';
 import { explorerTreeView } from '../explorer/explorerTreeView';
 import { ExtensionContext } from '../extensionContext';
-import { fromLocator, Locator, parent, toUri, uriBasename } from '../utils/uri';
 import { setContext } from '../extensionContextValues';
-
+import { fromLocator, Locator, parent, toUri, uriBasename } from '../utils/uri';
 
 let savedUri: vscode.Uri | undefined;
 
@@ -25,7 +24,12 @@ export async function copyFile({ log }: ExtensionContext, locator?: Locator): Pr
 
   if (locator) {
     source = toUri(fromLocator(locator));
-    if (!(await vscode.workspace.fs.stat(source).then((s) => s.type === vscode.FileType.File, () => false))) {
+    if (
+      !(await vscode.workspace.fs.stat(source).then(
+        (s) => s.type === vscode.FileType.File,
+        () => false,
+      ))
+    ) {
       log.warn('Copy: Source is not a file', source.toString(true));
       setSource(undefined);
       return;
@@ -52,7 +56,12 @@ export async function pasteFile({ log }: ExtensionContext, locator: Locator): Pr
     return;
   }
 
-  if (!(await vscode.workspace.fs.stat(source).then(() => true, () => false))) {
+  if (
+    !(await vscode.workspace.fs.stat(source).then(
+      () => true,
+      () => false,
+    ))
+  ) {
     log.warn('Paste: Source file does not exist', source.toString(true));
     setSource(undefined);
     return;
@@ -72,7 +81,10 @@ export async function pasteFile({ log }: ExtensionContext, locator: Locator): Pr
     return;
   }
 
-  const type = await vscode.workspace.fs.stat(targetDir).then((s) => s.type, () => undefined);
+  const type = await vscode.workspace.fs.stat(targetDir).then(
+    (s) => s.type,
+    () => undefined,
+  );
   switch (type) {
     case undefined:
       log.error('Paste: Target does not exist', targetDir.toString(true));
