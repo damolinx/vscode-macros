@@ -4,6 +4,7 @@ import { isMacro } from '../core/language';
 import { Macro } from '../core/macro';
 import { explorerTreeView } from '../explorer/explorerTreeView';
 import { ExtensionContext } from '../extensionContext';
+import { existsFile } from '../utils/fsEx';
 import { fromLocator, isUntitled, Locator, parent, toUri, uriBasename } from '../utils/uri';
 
 export async function renameMacro(context: ExtensionContext, locator?: Locator): Promise<void> {
@@ -39,20 +40,14 @@ async function renameFromLocator(_context: ExtensionContext, locator: Locator): 
         return 'Invalid file name';
       } else if (!isMacro(normalizedValue)) {
         return 'Invalid macro file name';
-      } else if (await exists(vscode.Uri.joinPath(parentUri, normalizedValue))) {
+      } else if (await existsFile(vscode.Uri.joinPath(parentUri, normalizedValue))) {
         return 'A file or folder with the same name already exists';
       }
       return;
     },
   });
+
   if (newName) {
     await vscode.workspace.fs.rename(uri, vscode.Uri.joinPath(parentUri, newName));
-  }
-
-  function exists(uri: vscode.Uri) {
-    return vscode.workspace.fs.stat(uri).then(
-      () => true,
-      () => false,
-    );
   }
 }

@@ -41,6 +41,7 @@ import { registerFillCodeLensProvider } from './providers/fillCodeLensProvider';
 import { registerMacroCodeLensProvider } from './providers/macroCodeLensProvider';
 import { registerMacroOptionsCompletionProvider } from './providers/macroOptionsCompletionProvider';
 import { registerMacroSnapshotContentProvider } from './providers/macroSnapshotContentProvider';
+import { existsFile } from './utils/fsEx';
 import { Locator, PathLike, areUriEqual } from './utils/uri';
 
 /**
@@ -119,14 +120,7 @@ async function runStartupMacros(context: ExtensionContext): Promise<void> {
   }
 
   const existingUris = (
-    await Promise.all(
-      uris.map((uri) =>
-        vscode.workspace.fs.stat(uri).then(
-          (stat) => (stat.type === vscode.FileType.File ? uri : undefined),
-          () => undefined,
-        ),
-      ),
-    )
+    await Promise.all(uris.map((uri) => existsFile(uri).then((exists) => exists && uri)))
   ).filter((uri) => !!uri);
 
   if (existingUris.length === 0) {

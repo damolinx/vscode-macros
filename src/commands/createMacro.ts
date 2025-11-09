@@ -4,6 +4,7 @@ import { ExtensionContext } from '../extensionContext';
 import { templates } from '../macroTemplates';
 import { createGroupedQuickPickItems } from '../ui/ui';
 import { activeMacroEditor } from '../utils/activeMacroEditor';
+import { existsFile } from '../utils/fsEx';
 import { fromLocator, isUntitled, Locator, toUri, areUriEqual } from '../utils/uri';
 
 let creatingMacro = false;
@@ -65,12 +66,7 @@ export async function createMacro(
 
     for (let i = 1; !uri && i <= maxAttempts; i++) {
       const fsCandidate = vscode.Uri.joinPath(parentUri, `Untitled-${i}${extension}`);
-      if (
-        await vscode.workspace.fs.stat(fsCandidate).then(
-          () => false,
-          () => true,
-        )
-      ) {
+      if (!(await existsFile(fsCandidate))) {
         const untitledCandidate = fsCandidate.with({ scheme: 'untitled' });
         if (
           !vscode.workspace.textDocuments.some(({ uri }) => areUriEqual(uri, untitledCandidate))

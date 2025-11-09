@@ -3,6 +3,7 @@ import { isMacro } from '../core/language';
 import { MacroLibrary } from '../core/library/macroLibrary';
 import { Macro } from '../core/macro';
 import { ExtensionContext } from '../extensionContext';
+import { existsFile } from '../utils/fsEx';
 import { isUntitled, uriBasename } from '../utils/uri';
 import { TreeElement } from './explorerTreeDataProvider';
 
@@ -115,11 +116,8 @@ export class ExplorerTreeDragAndDropController
   ): Promise<boolean> {
     const collisions: string[] = [];
     for (const { target } of moveOps) {
-      try {
-        await vscode.workspace.fs.stat(target);
+      if (await existsFile(target)) {
         collisions.push(uriBasename(target));
-      } catch (error: any) {
-        this.context.log.trace('Stat failed', target, error.message || error);
       }
     }
     if (collisions.length === 0) {
