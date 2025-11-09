@@ -4,6 +4,7 @@
 - **Macro Explorer** view:
   - Macro nodes support **Copy** action.
   - Macro Library nodes support **Paste** action.
+  - Drag-and-drop a macro out of the **Temporary** library is supported as a save operation.
 - Rewrite of README.
 - Macro REPL:
   - Improve handling of recoverable errors in REPL. 

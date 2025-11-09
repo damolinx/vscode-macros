@@ -1,10 +1,16 @@
 import * as vscode from 'vscode';
-import { isMacro } from '../core/language';
+import {
+  isMacro,
+  MACRO_LANGUAGES,
+  MACRO_PREFERRED_LANGUAGE,
+  MacroLanguageId,
+} from '../core/language';
 import { MacroLibrary } from '../core/library/macroLibrary';
 import { Macro } from '../core/macro';
 import { ExtensionContext } from '../extensionContext';
 import { existsFile } from '../utils/fsEx';
 import { isUntitled, uriBasename } from '../utils/uri';
+import { saveTextEditor } from '../utils/vscodeEx';
 import { TreeElement } from './explorerTreeDataProvider';
 
 export const FILELIST_MIMETYPE = 'text/uri-list';
@@ -29,9 +35,7 @@ export class ExplorerTreeDragAndDropController
     dataTransfer: vscode.DataTransfer,
     _token: vscode.CancellationToken,
   ): void {
-    const macros = source.filter(
-      (item): item is Macro => item instanceof Macro && !isUntitled(item),
-    );
+    const macros = source.filter((item): item is Macro => item instanceof Macro);
     if (macros.length) {
       dataTransfer.set(
         FILELIST_MIMETYPE,
@@ -55,14 +59,20 @@ export class ExplorerTreeDragAndDropController
       return;
     }
 
-    const moveOps = sources
-      .map((source) => {
-        return {
-          source,
-          target: vscode.Uri.joinPath(target.uri, uriBasename(source)),
-        };
-      })
-      .filter(({ source, target }) => source.toString() !== target.toString());
+    const moveOps = await getMoveOps(sources, target.uri);
+
+    // const moveOps = sources
+    //   .map((source) => {
+    //     let sourceName = uriBasename(source);
+    //     if (isUntitled(source)) {
+    //       sourceName += MACRO_LANGUAGES['javascript'].defaultExtension; // TODO:
+    //     }
+    //     return {
+    //       source,
+    //       target: vscode.Uri.joinPath(target.uri, sourceName),
+    //     };
+    //   })
+    //   .filter(({ source, target }) => source.toString() !== target.toString());
 
     if (
       !moveOps.length ||
@@ -72,12 +82,47 @@ export class ExplorerTreeDragAndDropController
       return;
     }
 
+    const failed: { message: string; source: vscode.Uri }[] = [];
     for (const { source, target } of moveOps) {
       try {
-        await vscode.workspace.fs.rename(source, target, { overwrite: true });
+        if (isUntitled(source)) {
+          const editor = await vscode.window.showTextDocument(source);
+          await saveTextEditor(editor, target);
+        } else {
+          await vscode.workspace.fs.rename(source, target, { overwrite: true });
+        }
       } catch (error: any) {
         this.context.log.error('Failed to move file', source, error.message || error);
+        failed.push({ message: error.message, source: source });
       }
+    }
+
+    if (failed.length) {
+      vscode.window.showErrorMessage(
+        `Failed to move ${failed.length} file(s). Check 'Macros' logs for details.`,
+      );
+    }
+
+    async function getMoveOps(sources: vscode.Uri[], target: vscode.Uri) {
+      const moveOps = await Promise.all(
+        sources.map(async (source) => {
+          let sourceName = uriBasename(source);
+
+          if (isUntitled(source) && sourceName === uriBasename(source, true)) {
+            const document = await vscode.workspace.openTextDocument(source);
+            sourceName += (
+              MACRO_LANGUAGES[document.languageId as MacroLanguageId] ??
+              MACRO_LANGUAGES[MACRO_PREFERRED_LANGUAGE]
+            ).defaultExtension;
+          }
+
+          const targetUri = vscode.Uri.joinPath(target, sourceName);
+
+          return source.toString() !== targetUri.toString() ? { source, target: targetUri } : null;
+        }),
+      );
+
+      return moveOps.filter(Boolean) as { source: vscode.Uri; target: vscode.Uri }[];
     }
 
     async function getSourceUris() {
@@ -91,6 +136,7 @@ export class ExplorerTreeDragAndDropController
           .filter(isMacro)
           .map((str) => vscode.Uri.parse(str, true));
       }
+
       return uris;
     }
   }
@@ -99,6 +145,10 @@ export class ExplorerTreeDragAndDropController
     moveOps: { source: vscode.Uri; target: vscode.Uri }[],
     targetName: string,
   ): Promise<boolean> {
+    if (moveOps.some(({ source }) => isUntitled(source))) {
+      return true;
+    }
+
     const movePrompt =
       moveOps.length === 1
         ? `Are you sure you want to move '${uriBasename(moveOps[0].source)}' into '${targetName}'?`
@@ -127,7 +177,7 @@ export class ExplorerTreeDragAndDropController
     let collisionPrompt: string;
     let detail = 'This action is irreversible!';
     if (collisions.length === 1) {
-      collisionPrompt = `A file or folder with the name '${uriBasename(moveOps[0].source)}' already exists in '${targetName}'. Do you want to replace it?`;
+      collisionPrompt = `A file or folder with the name '${uriBasename(moveOps[0].target)}' already exists in '${targetName}'. Do you want to replace it?`;
     } else {
       collisionPrompt = `The following ${collisions.length} names exist in '${targetName}'. Do you want to replace them?`;
       detail = collisions.join('\n') + '\n\n' + detail;
