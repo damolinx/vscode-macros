@@ -1,10 +1,10 @@
 # Macros for VS Code
 
-A **macro** is a JavaScript or TypeScript script executed within the context of a VS Code extension, with full access to the [VS Code extensibility APIs](https://code.visualstudio.com/api/references/vscode-api). Macros let you automate tasks, customize your development workflow, and prototype extension behavior—without the overhead of building and maintaining a full extension thanks to their lightweight, standalone-file design.
+A **macro** is a standalone JavaScript or TypeScript script executed within the context of a VS Code extension, with full access to the [VS Code extensibility APIs](https://code.visualstudio.com/api/references/vscode-api). Macros let you automate tasks, customize your development workflow, and prototype extension behavior—without the overhead of building and maintaining a full extension thanks to their lightweight, standalone-file design.
 
-Under the hood, macros run inside [Node.js VM sandboxes](https://nodejs.org/api/vm.html#class-vmscript). Each macro executes in its own isolated data context but shares the same process. Because of this model macros cannot be forcefully terminated; instead, cancellation tokens provide a cooperative mechanism for graceful shutdown.
+Under the hood, macros run inside [Node.js VM sandboxes](https://nodejs.org/api/vm.html#class-vmscript). Each macro executes in its own isolated data context but all share the same process. Because of this model macros cannot be forcefully terminated; instead, cancellation tokens provide a cooperative mechanism for graceful shutdown.
 
-TypeScript support is built in with transpilation happening transparently on demand, providing a seamless, low-friction experience.
+TypeScript support is transparent, with transpilation happening on demand, providing a seamless experience.
 
 <p align=center>
   <img width="600" alt="VS Code with Macro Explorer view and a macro editor open" src="https://github.com/user-attachments/assets/34637385-782a-4578-863e-35d8e3caa2c7" />
@@ -45,34 +45,33 @@ TypeScript support is built in with transpilation happening transparently on dem
 
 # Getting Started
 
-Any JavaScript or TypeScript document can be treated as a macro, even if it hasn't been saved to disk—i.e. *untitled* documents. Once saved, certain tools—in particular UI ones such as CodeLens actions or custom IntelliSense—are enabled only if the file is either saved in a registered [macro library](#macro-libraries) or if its name matches the `*.macro.*` pattern (special exclusions include `.d.ts` files). This restriction prevents confusion when working in workspaces containing JavaScript or TypeScript files
+Any JavaScript or TypeScript document can be treated as a macro, even if not saved to disk—i.e. *untitled* documents. Once saved, certain tools—in particular UI ones such as CodeLens actions or custom IntelliSense—are enabled only if the file is either in a registered [macro library](#macro-libraries) or if its name matches the `*.macro.*` pattern. This restriction prevents confusion when working in workspaces containing JavaScript or TypeScript files.
 
 ## Creating a Macro
 
 * **Option 1**: Use the **Macros: New Macro** command to create a new macro document.
-  * You'll be prompted to choose from a list of templates to populate your macro including non-content.
-  * By default, the template creates `JavaScript` code but you can change this behavior via the **Macros: Template Default Language** setting.
+  * You will be prompted to choose from a list of templates to populate your macro.
+  * By default, this command uses the JavaScript templates but you can change this behavior via the **Macros: Template Default Language** setting.
 
 * **Option 2**: Use the **New Macro** action in the **Temporary** node in the [**Macro Explorer**](#macro-explorer-view) view.
-  * The action is a shortcut for the **Macros: New Macro** command experience described above.
 
 * **Option 3**: Create a new *untitled* document using your preferred method—for example, via the **Create: New File...** or **Create: New Untitled Text File** commands, or by double-clicking an empty area in the editor bar.
-  * Change the document language to `JavaScript` or `TypeScript`.
-  * Use the **Macros: Fill File with Template** command to add macro content from a template. The command respects your selected document language.
+  * Change the editor language to JavaScript or TypeScript.
+  * Use the **Macros: Fill File with Template** command, or the **Apply Template** CodeLens to add content from a template. The command respects the language the editor is set to.
 
-* **Option 4**: Ask the [`@macros`chat participant](#macros-chat-participant) in the  to create a macro for you. 
+* **Option 4**: Ask the [`@macros`chat participant](#macros-chat-participant) to create a macro for you. 
 
 [↑ Back to top](#table-of-contents)
 
 ## Writing Macro Code
 
-The **Macros: Fill File with Template** command, or the **Apply Template** CodeLens on empty files, can jumpstart your development by adding sample to code to a given editor. To generate custom code, however, you can ask the [`@macros`chat participant](#macros-chat-participant) for help.
-You can write your own code macros—see [Development](#development) for available APIs. When doing so, keep these basic rules in mind:
-* Macros are standalone JavaScript or TypeScript files run in a Node.js sandbox with VS Code APIs.
-* Use CommonJS syntax (JavaScript) and avoid `export`, top-level `await` or `return`
-* The last statement should return a `Promise` when running async work, but result is otherwise ignored.
-* Macros have access to globals like `vscode` and `macros`, and they can import Node.js libraries, but there is no built-in path to include arbitrary libraries.
-* Macros cannot be forcefully stopped. They must either complete on their own or handle the cancellation request sent via the provided `__cancellationToken`.
+The **Macros: Fill File with Template** command, or the **Apply Template** CodeLens on empty documents, can jumpstart your development by adding sample code to the currenr editor. To generate custom code, however, you can ask the [`@macros`chat participant](#macros-chat-participant) for help.
+You can write your own code, of course—see [Development](#development) for available APIs. When doing so, keep these basic rules in mind:
+* Macros are standalone JavaScript or TypeScript files executed in a Node.js sandbox.
+* Use CommonJS syntax (JavaScript) and avoid `export`, top-level `await` or `return` statements.
+* The last statement in your script should result in a `Promise` when running async work, but result is otherwise ignored.
+* Macros have access to globals like `vscode` and `macros`, and they can import Node.js libraries, but there is no defined way to include arbitrary libraries.
+* Macros cannot be forcefully stopped. They must either complete on their own or respect cancellation request received via the `__cancellationToken` token.
 
 **Example**: Async "Hello, World!" macro
 ```javascript
@@ -104,9 +103,9 @@ main()
       <img width="400" alt=""Macro editor showing the Debug Macro button" src="https://github.com/user-attachments/assets/78acb656-8c1c-4939-823f-72fbd84c13ea" />
    </p>
 
-* **Option 3**: Use the **Run Macro** button on the macro node in the [**Macro Explorer**](#macro-explorer-view) view.
+* **Option 3**: Use the **Run Macro** button on macro nodes in the [**Macro Explorer**](#macro-explorer-view) view.
 
-* **Option 4**: If you asked the [`@macros`chat participant](#macros-chat-participant) to create a macro for you, ask it to run it for you.
+* **Option 4**: If you asked the [`@macros`chat participant](#macros-chat-participant) to generate macro code, ask it to run it for you.
 
 [↑ Back to top](#table-of-contents)
 
@@ -117,9 +116,9 @@ main()
 * **Option 1**: Use **Request to Stop** button on the macro node (all running instances) or the given run instance from the [**Macro Explorer**](#macro-explorer-view) view to stop a macro.
 
 * **Option 2**: Use the **Macros: Show Running Macros** command to select a specific instance to stop.
-  * This is also available from the status bar item show when there are active macros instances.  
+  * This is also available from the status bar item shown when there are active macros instances.  
 
-If a macro does not respond to a cancellation request, it will continue running. In such cases, you can use the **Developer: Restart Extension Host** command to restart all extensions, or restart VS Code to stop the macro. While this is not ideal, it provides a way to recover from unresponsive or runaway macros. Note that this approach does not implicitly terminate external processes started by the macro.
+If a macro does not respond to a cancellation request, it will continue running. In such cases, you can use the **Developer: Restart Extension Host** command to restart all extensions, or restart VS Code to stop the macro. While this is not ideal, it provides a way to recover from unresponsive or runaway macros. This approach does not implicitly terminate external processes started by the macro, however.
 
 [↑ Back to top](#table-of-contents)
 
@@ -129,19 +128,23 @@ If a macro does not respond to a cancellation request, it will continue running.
 
 Startup macros allow you to customize your environment as soon as the environment launches. Because extensions restart when switching workspaces, these macros can be scoped to apply per workspace, enabling tailored setups across projects.
 
-Startup macros allow you to create extension-like behavior, as they are initialized with VS Code. For teardown support, use the `__disposables` global variable to ensure proper disposal when the workspace changes or the extension reloads.
+Startup macros allow you to create extension-like behavior, as they are initialized with VS Code. For clean-up, use the `__disposables` global which the macros execution engine disposes when the macro completes or when the extension is deactivated, for example when closing the current workspace.
 
-Startup macros are defined via the `macros.startupMacros` setting in your workspace or user settings. You can edit this setting manually, or from the [**Macro Explorer**](#macro-explorer-view) view, right-click on macro node and select **Set as Startup Macro** or **Unset as Startup Macro** from the context menu. The commands handle cases were user and workspace settings are defined. 
+Startup macros are defined via the `macros.startupMacros` setting in your workspace or user settings:
 
-The `macros.startupMacros` setting is additive across Global, Workspace, and Workspace Folder scopes, all defined macros will be run. The system deduplicates macros before execution so only one execution instance of any given startup macro file is ever run. 
+* **Option 1**: edit the setting manually from the **Settings Editor** or the appropriate `settings.json`.
 
-Startup macro paths may be defined using tokens like `${workspaceFolder}` or `${userHome}` for dynamic resolution. This allows you to define user settings that automatically start a macro using equivalent patterns across different workspaces. Any paths that do not resolve to existing files are silently ignored.
+* **Option 2**: directly from the [**Macro Explorer**](#macro-explorer-view) view by selecting **Set as Startup Macro** or **Unset as Startup Macro** from a macro node context menu.
+
+The `macros.startupMacros` setting is additive across Global, Workspace, and Workspace Folder scopes, this is to say macros registered in all scopes will be run. The system deduplicates macros before execution so only one instance of any given startup macro file is run. 
+
+Startup macro paths may be defined using tokens like `${workspaceFolder}` or `${userHome}` for dynamic path resolution. This, for example, allows to define startup macros in user settings and have that match across different workspaces. Any paths that do not resolve to existing files are ignored. Check the *Macros* output channel for details logs, if needed.
 
 [↑ Back to top](#table-of-contents)
 
 ## Keybinding a Macro
 
-To bind a macro to a keyboard shortcut, all you need to do is keybind the `macros.run` command, passing as argument the path to the macro to run. This must be configured directly in your `keybindings.json` file, the **Keyboard Shortcuts** UI does not allow to define arguments. Check the VS Code [documentation](https://code.visualstudio.com/docs/editor/keybindings#_advanced-customization) for details.
+To bind a macro to a keyboard shortcut, all you need to do is keybind the `macros.run` command, passing a single argument that is the path to the macro to run. This must be configured directly in your `keybindings.json` file as the **Keyboard Shortcuts** UI does not allow to define arguments. Check the VS Code [documentation](https://code.visualstudio.com/docs/editor/keybindings#_advanced-customization) for details.
 
 1. Use the **Preferences: Open Keyboard Shortcuts (JSON)** command to open the `keybindings.json` file.
 
@@ -180,14 +183,14 @@ When a macro file is saved to disk, and it does not belong to a registered libra
 
 * **Option 3**: Edit the `macros.sourceDirectories` setting. You can use the **Macros: Source Directories** entry in the [**Settings** editor](https://code.visualstudio.com/docs/configure/settings).
 
-The `macros.sourceDirectories` setting supports using tokens like `${workspaceFolder}` or `${userHome}` for dynamic resolution, e.g. `${workspaceFolder}/.macros` if you use that pattern to save macros in your workspaces. A missing folder won't lead to any error.
+The `macros.sourceDirectories` setting supports using tokens like `${workspaceFolder}` or `${userHome}` for dynamic resolution, e.g. `${workspaceFolder}/.macros` if you use that pattern to save macros in your workspaces. A missing folder won't lead to error, just to an empty library node. The latter behavior allows to easily create later the folder in the file-system by just adding a macro.
 
 [↑ Back to top](#table-of-contents)
 
 ### Removing a Library 
 
 * **Option 1**: Use the **Delete** action from the context menu of the given library from [**Macro Explorer**](#macro-explorer-view) view.
- * This only deletes the corresponding entry from the `macros.sourceDirectories` setting, it does not delete the folder. 
+ * This only deletes the relevant entry from the `macros.sourceDirectories` setting, it does not delete the folder. 
 
 * **Option 2**: Edit the `macros.sourceDirectories` setting. You can use the **Macros: Source Directories** entry in the [**Settings** editor](https://code.visualstudio.com/docs/configure/settings).
 
@@ -244,9 +247,9 @@ Some useful commands:
 
 ## `@macros` Chat Participant
 
-The `@macros` [chat particpant](https://code.visualstudio.com/api/extension-guides/ai/chat) supports your macro development by being a domain expert on macro code writing, avoiding common mistakes generic LLMs would make when authoring macros such as adding `export` statements or top-level `await` statements (or just picking the wrong language) but still being able to combine this knowledge with that of developing standard extension code.
+The `@macros` [chat particpant](https://code.visualstudio.com/api/extension-guides/ai/chat) supports macro development by being a domain expert on macro-code writing, avoiding the common mistakes generic LLMs would make when authoring macros such as adding `export` statements or top-level `await` statements (or just picking the wrong language).
 
-The participant can save the sample code to an editor and run in on request, streamlining exploratory workflows,
+The participant can save the generated code to an editor and run in upon request, streamlining exploratory workflows.
 
 **Example**: Short chat with `@macros` to create and run a macro.
 ```
