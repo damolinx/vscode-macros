@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.5.17
+- Improved line and character offset detection in stack traces for **Go to Error Location**.
+
 ## 0.5.16
 - Rewrite of README.
 - **Macro Explorer** view:
@@ -9,12 +12,12 @@
     - Dropping a macro onto another macro is supported as a drop on its parent library.
     - Dragging an `untitled` macro out of the **Temporary** library is supported as a save operation.
 - Macro REPL:
-  - Improve handling of recoverable errors in REPL. 
+  - Improve handling of recoverable errors in REPL.
   - Reenable result preview (unexpectedly disabled by Node.js when `eval` for TypeScript was added).
 - Add **Apply Template** CodeLens on `*.macro.*` and relevant untitled empty editors.
 
 ## 0.5.15
-- **@macros** chat agent can run the code it generates when asked to. 
+- **@macros** chat agent can run the code it generates when asked to.
 - Add **Template Default Language** setting to determine whether to create JavaScript or TypeScript macros by default.
 - TypeScript:
   - Improvements to code transpilation, e.g. reducd code size by removing comments.

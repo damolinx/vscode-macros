@@ -14,9 +14,9 @@ export function showMacroErrorMessage(
   let message: string;
   let errorLocation:
     | {
-        uri: vscode.Uri;
-        range?: vscode.Range;
-      }
+      uri: vscode.Uri;
+      range?: vscode.Range;
+    }
     | undefined;
   let filteredStack: string | undefined;
 
@@ -63,7 +63,7 @@ export function showMacroErrorMessage(
   function findErrorLocation(stack: string): { uri: vscode.Uri; range?: vscode.Range } | undefined {
     let location: { uri: vscode.Uri; range?: vscode.Range } | undefined;
 
-    const firstMatch = stack.match(/(?<prefix>.+?):(?<line>\d+)(:(?<offset>\d+))?$/m);
+    const firstMatch = stack.match(/at(?<prefix>.+?):(?<line>\d+)(:(?<offset>\d+))?(?:\)|$)/m);
     if (firstMatch) {
       const { prefix, line, offset } = firstMatch.groups!;
       const position = new vscode.Position(parseInt(line) - 1, offset ? parseInt(offset) - 1 : 0);
@@ -103,13 +103,13 @@ async function showErrorMessage(
   const actions: { title: string; execute: () => Thenable<any> | void }[] = [
     errorLocation
       ? {
-          title: 'Go to Error Location',
-          execute: () => showTextDocument(errorLocation.uri, { selection: errorLocation?.range }),
-        }
+        title: 'Go to Error Location',
+        execute: () => showTextDocument(errorLocation.uri, { selection: errorLocation?.range }),
+      }
       : {
-          title: 'Open Macro',
-          execute: () => showTextDocument(runner.macro.uri),
-        },
+        title: 'Open Macro',
+        execute: () => showTextDocument(runner.macro.uri),
+      },
   ];
 
   if (!macroCode.options.singleton || runner.runInstanceCount === 0) {
