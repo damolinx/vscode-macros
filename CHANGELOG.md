@@ -1,7 +1,7 @@
 # Changelog
 
 ## 0.5.17
-- Improved line and character offset detection in stack traces for **Go to Error Location**.
+- Improve line and character offset detection in stack traces for **Go to Error Location**.
 
 ## 0.5.16
 - Rewrite of README.
