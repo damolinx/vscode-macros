@@ -5,7 +5,7 @@ import { activeMacroEditor } from '../utils/activeMacroEditor';
 import { fromLocator, Locator, toUri } from '../utils/uri';
 
 export async function runMacro(
-  { libraryManager, log, mruMacro, runnerManager }: ExtensionContext,
+  { libraryManager, mruMacro, runnerManager }: ExtensionContext,
   locator?: Locator,
   options?: { ignoreDiagnosticErrors?: true; startup?: true },
 ) {
@@ -36,10 +36,8 @@ export async function runMacro(
   const macroCode = await runner.macro.getCode();
 
   try {
-    log.info('Executing macro', vscode.workspace.asRelativePath(uri));
     await runner.run(macroCode, options?.startup);
   } catch (error: any) {
-    log.error('Macro failed\n', error.stack ?? error.message ?? error);
     await showMacroErrorDialog(runner, macroCode, error as Error | string);
   }
 }

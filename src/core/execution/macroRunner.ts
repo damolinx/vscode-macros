@@ -87,6 +87,7 @@ export class MacroRunner implements vscode.Disposable {
       ++this.index,
       startup,
     );
+
     const runInfo: MacroRunInfo = {
       cts: new vscode.CancellationTokenSource(),
       runId,
@@ -124,6 +125,11 @@ export class MacroRunner implements vscode.Disposable {
     this.startEventEmitter.fire(runInfo);
     let scriptFailed = false;
     let result: any;
+
+    this.context.log.info(
+      `Macro started @${runId.index}`,
+      vscode.workspace.asRelativePath(this.macro.uri),
+    );
     try {
       let runPromise: Promise<any>;
       if (macroCode.options.persistent) {
@@ -147,9 +153,20 @@ export class MacroRunner implements vscode.Disposable {
       }
 
       result = await (macroCode.options.retained ? retainedExecute(runPromise) : runPromise);
-    } catch (e) {
+
+      this.context.log.info(
+        `Macro completed @${runId.index}`,
+        vscode.workspace.asRelativePath(this.macro.uri),
+      );
+    } catch (error: any) {
+      this.context.log.error(
+        `Macro failed @${runId.index}`,
+        vscode.workspace.asRelativePath(this.macro.uri),
+        '\n',
+        error.stack ?? error.message ?? error,
+      );
       scriptFailed = true;
-      throw e;
+      throw error;
     } finally {
       this.context.treeViewManager.releaseOwnedIds(runInfo.runId);
       this.context.webviewManager.releaseOwnedIds(runInfo.runId);
