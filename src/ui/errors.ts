@@ -63,7 +63,7 @@ export function showMacroErrorMessage(
   function findErrorLocation(stack: string): { uri: vscode.Uri; range?: vscode.Range } | undefined {
     let location: { uri: vscode.Uri; range?: vscode.Range } | undefined;
 
-    const firstMatch = stack.match(/(?<prefix>.+?):(?<line>\d+)(:(?<offset>\d+))?$/m);
+    const firstMatch = stack.match(/at(?<prefix>.+?):(?<line>\d+)(:(?<offset>\d+))?(?:\)|$)/m);
     if (firstMatch) {
       const { prefix, line, offset } = firstMatch.groups!;
       const position = new vscode.Position(parseInt(line) - 1, offset ? parseInt(offset) - 1 : 0);

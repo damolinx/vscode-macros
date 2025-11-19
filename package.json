@@ -2,7 +2,7 @@
   "name": "damolinx-macros",
   "displayName": "Macros for VS Code",
   "description": "Automate tasks, prototype extension features, and create custom tooling using JavaScript/TypeScript scripts.",
-  "version": "0.5.16",
+  "version": "0.5.17",
   "publisher": "damolinx",
   "icon": "resources/images/icon.png",
   "repository": {
@@ -593,13 +593,13 @@
     "keybindings": [
       {
         "command": "macros.copy.file",
-        "win": "Ctrl+C",
+        "key": "Ctrl+C",
         "mac": "Cmd+C",
         "when": "focusedView == macros.macroExplorer && !inputFocus"
       },
       {
         "command": "macros.copy.path",
-        "win": "Shift+Alt+C",
+        "key": "Shift+Alt+C",
         "mac": "Cmd+Opt+C",
         "when": "focusedView == macros.macroExplorer && !inputFocus"
       },
@@ -611,7 +611,7 @@
       },
       {
         "command": "macros.paste.file",
-        "win": "Ctrl+V",
+        "key": "Ctrl+V",
         "mac": "Cmd+V",
         "when": "focusedView == macros.macroExplorer && !inputFocus && macros:canPaste"
       },
@@ -623,12 +623,12 @@
       },
       {
         "command": "macros.revealInExplorer",
-        "win": "Shift+Alt+R",
+        "key": "Shift+Alt+R",
         "when": "focusedView == macros.macroExplorer && !inputFocus"
       },
       {
         "command": "macros.revealInFinder",
-        "mac": "Cmd+Opt+R",
+        "key": "Cmd+Opt+R",
         "when": "focusedView == macros.macroExplorer && !inputFocus"
       }
     ],
@@ -710,11 +710,15 @@
     "eslint": "^9.30.0",
     "eslint-plugin-import": "2.32.0",
     "eslint-plugin-prettier": "^5.5.4",
-    "glob": "^11.0.0",
+    "glob": "^11.1.0",
     "mocha": "^11.0.0",
     "prettier": "^3.6.2",
     "source-map-support": "^0.5.21",
     "typescript": "^5.9.0",
     "typescript-eslint": "^8.35.0"
+  },
+  "overrides": {
+    "glob": "^11.1.0",
+    "js-yaml": "^4.1.1"
   }
 }
