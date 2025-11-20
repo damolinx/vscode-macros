@@ -24,7 +24,7 @@ TypeScript support is transparent, with transpilation happening on demand, provi
 * [User Interface](#user-interface)
   * [Macro Explorer View](#macro-explorer-view)
   * [Macro REPL](#macro-repl)
-  * [`@macros` Chat Participant](#macros-chat-participant)
+  * [AI Chat Participant](#ai-chat-participant)
   * [Commands](#commands)
     * [Debugging](#debugging)
     * [Development](#development)
@@ -59,13 +59,13 @@ Any JavaScript or TypeScript document can be treated as a macro, even if not sav
   * Change the editor language to JavaScript or TypeScript.
   * Use the **Macros: Fill File with Template** command, or the **Apply Template** CodeLens to add content from a template. The command respects the language the editor is set to.
 
-* **Option 4**: Ask the [`@macros`chat participant](#macros-chat-participant) to create a macro for you. 
+* **Option 4**: Ask [`@macros`](#ai-chat-participant) to create a macro for you from the [Chat UI](https://code.visualstudio.com/docs/copilot/chat/copilot-chat). 
 
 [↑ Back to top](#table-of-contents)
 
 ## Writing Macro Code
 
-The **Macros: Fill File with Template** command, or the **Apply Template** CodeLens on empty documents, can jumpstart your development by adding sample code to the currenr editor. To generate custom code, however, you can ask the [`@macros`chat participant](#macros-chat-participant) for help.
+The **Macros: Fill File with Template** command, or the **Apply Template** CodeLens on empty documents, can jumpstart your development by adding sample code to the currenr editor. To generate custom code, however, you can ask [`@macros`](#ai-chat-participant) for help.
 You can write your own code, of course—see [Development](#development) for available APIs. When doing so, keep these basic rules in mind:
 * Macros are standalone JavaScript or TypeScript files executed in a Node.js sandbox.
 * Use CommonJS syntax (JavaScript) and avoid `export`, top-level `await` or `return` statements.
@@ -105,7 +105,7 @@ main()
 
 * **Option 3**: Use the **Run Macro** button on macro nodes in the [**Macro Explorer**](#macro-explorer-view) view.
 
-* **Option 4**: If you asked the [`@macros`chat participant](#macros-chat-participant) to generate macro code, ask it to run it for you.
+* **Option 4**: If you asked [`@macros`](#ai-chat-participant) to generate macro code, you can also ask it to run it for you.
 
 [↑ Back to top](#table-of-contents)
 
@@ -245,11 +245,11 @@ Some useful commands:
 
 [↑ Back to top](#table-of-contents)
 
-## `@macros` Chat Participant
+## AI Chat Participant
 
-The `@macros` [chat particpant](https://code.visualstudio.com/api/extension-guides/ai/chat) supports macro development by being a domain expert on macro-code writing, avoiding the common mistakes generic LLMs would make when authoring macros such as adding `export` statements or top-level `await` statements (or just picking the wrong language).
+From the [Chat UI](https://code.visualstudio.com/docs/copilot/chat/copilot-chat), ask the `@macros` [chat participant](https://code.visualstudio.com/api/extension-guides/ai/chat) for support on macro development. It is a domain expert on macro-code writing, by being fully aware of macro-writing rules and avoiding the mistakes generic LLMs would make when authoring macros such as adding `export` or top-level `await` statements, or sometimes just picking the wrong language.
 
-The participant can save the generated code to an editor and run it upon request, streamlining exploratory workflows.
+The participant can save the generated code to an editor and run it upon request.
 
 **Example**: Short chat with `@macros` to create and run a macro.
 ```
