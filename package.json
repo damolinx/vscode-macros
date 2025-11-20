@@ -649,13 +649,14 @@
     ],
     "languageModelTools": [
       {
-        "name": "run_macro_content",
+        "name": "create_macro",
         "tags": [
           "macro",
+          "create",
           "run"
         ],
-        "displayName": "Run macro content",
-        "modelDescription": "Takes generated macro `content` and `language` (javascript or typescript), creates an untitled document and runs it as a macro",
+        "displayName": "Create a macro",
+        "modelDescription": "Creates an untitled macro editor using the `content` and `language` (javascript or typescript) arguments. Set `run` to true only if macro must be run after creation.",
         "inputSchema": {
           "type": "object",
           "required": [
@@ -665,15 +666,20 @@
           "properties": {
             "content": {
               "type": "string",
-              "description": "Full macro file contents to run."
+              "description": "Macro file contents. If empty, a template selection dropdown will be shown."
             },
             "language": {
               "type": "string",
-              "description": "Language of the macro to run.",
+              "description": "Language of the macro content. Must be 'javascript' or 'typescript'.",
               "enum": [
                 "javascript",
                 "typescript"
               ]
+            },
+            "run": {
+              "type": "boolean",
+              "default": false,
+              "description": "Execute macro after creating it. Defaults to `false`."
             }
           }
         }

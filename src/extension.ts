@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { registerCreateMacroContentTool } from './ai/createMacroContentTool';
 import { registerMacroChatParticipant } from './ai/macroChatParticipant';
 import { addLibrary } from './commands/addLibrary';
 import { addStartupMacro } from './commands/addStartupMacro';
@@ -54,7 +55,9 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
 
   context.disposables.push(new MacroStatusBarItem(context));
 
+  registerCreateMacroContentTool(context);
   registerMacroChatParticipant(context);
+
   registerExplorerTreeview(context);
   registerMacroSnapshotContentProvider(context);
   registerContextValueHandlers(context);

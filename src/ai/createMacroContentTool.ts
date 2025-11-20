@@ -4,18 +4,20 @@ import { runMacro } from '../commands/runMacro';
 import { MacroLanguageId } from '../core/language';
 import { ExtensionContext } from '../extensionContext';
 
-export const RUN_MACRO_CONTENT_TOOL_ID = 'run_macro_content';
+export const CREATE_MACRO_TOOL_ID = 'create_macro';
 
-export function registeRunMacroContentTool(context: ExtensionContext): void {
-  vscode.lm.registerTool(RUN_MACRO_CONTENT_TOOL_ID, new RunMacroContentTool(context));
+export function registerCreateMacroContentTool(context: ExtensionContext): void {
+  vscode.lm.registerTool(CREATE_MACRO_TOOL_ID, new CreateMacroContentTool(context));
 }
 
-export interface RunMacroContentToolArgs {
+export interface CreateMacroContentToolArgs {
   content: string;
   language: MacroLanguageId;
+  run?: boolean;
 }
 
-export class RunMacroContentTool implements vscode.LanguageModelTool<RunMacroContentToolArgs> {
+export class CreateMacroContentTool
+  implements vscode.LanguageModelTool<CreateMacroContentToolArgs> {
   private readonly context: ExtensionContext;
 
   constructor(context: ExtensionContext) {
@@ -23,15 +25,19 @@ export class RunMacroContentTool implements vscode.LanguageModelTool<RunMacroCon
   }
 
   public async invoke(
-    options: vscode.LanguageModelToolInvocationOptions<RunMacroContentToolArgs>,
+    options: vscode.LanguageModelToolInvocationOptions<CreateMacroContentToolArgs>,
     _token: vscode.CancellationToken,
   ): Promise<vscode.LanguageModelToolResult> {
     const document = await createMacro(this.context, undefined, options.input);
 
-    let resultText = '';
+    let resultText: string;
     if (document) {
-      runMacro(this.context, document); // DO NOT await
-      resultText = `Created ${document.uri.toString(true)} and ran it as a macro`;
+      if (options.input.run) {
+        runMacro(this.context, document); // DO NOT await
+        resultText = `Created and executed '${document.uri.toString(true)}' macro`;
+      } else {
+        resultText = `Created '${document.uri.toString(true)}' macro`;
+      }
     } else {
       resultText = 'Failed to create macro';
     }

@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.5.18
+- **@macros** chat agent supports creating macros without automatically executing them.
+
 ## 0.5.17
 - Improve line and character offset detection in stack traces for **Go to Error Location**.
 
