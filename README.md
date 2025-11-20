@@ -203,7 +203,7 @@ The `macros.sourceDirectories` setting supports using tokens like `${workspaceFo
 The **Macro Explorer** [view](https://code.visualstudio.com/docs/getstarted/userinterface#_views) provides a central management hub for all macros and [macro libraries](#macro-libraries) actions. 
 
 * **Macro Library Folders**: configure macro folders, browse their contents, and quickly add, delete, or move macro files around using drag-and-drop.
-  * **"Temporary"**: this is a virtual library node that shows all *untitled* macro documents allowing to easily manage in-memory macros.
+  * **Temporary**: this is a virtual library node that shows all *untitled* macro documents allowing to easily manage in-memory macros (i.e. `untitled` documents).
 
 * **Macros**: edit, run, or debug macros with one click.
 
@@ -249,7 +249,7 @@ Some useful commands:
 
 The `@macros` [chat particpant](https://code.visualstudio.com/api/extension-guides/ai/chat) supports macro development by being a domain expert on macro-code writing, avoiding the common mistakes generic LLMs would make when authoring macros such as adding `export` statements or top-level `await` statements (or just picking the wrong language).
 
-The participant can save the generated code to an editor and run in upon request, streamlining exploratory workflows.
+The participant can save the generated code to an editor and run it upon request, streamlining exploratory workflows.
 
 **Example**: Short chat with `@macros` to create and run a macro.
 ```
@@ -304,11 +304,11 @@ See [Debugging a Macro](#debugging-a-macro) for additional information.
 
 ### IntelliSense
 
-JavaScript and TypeScript macro files get [IntelliSense](https://code.visualstudio.com/docs/editing/intellisense) support, as long as files have been saved to a [macro library](#macro-libraries). The features can be made more accurate when the library is fully setup for development which means `global.d.ts` and `jsconfig.json` have been added to it. The extension verifies these files them when an editor for a file a library is opened for the first time in a given session, and updates them when new versions are available. 
+JavaScript and TypeScript macro files get [IntelliSense](https://code.visualstudio.com/docs/editing/intellisense) support, as long as files have been saved to a [macro library](#macro-libraries). The features can be made more accurate when the library is fully setup for development which means `global.d.ts` and `jsconfig.json` have been added to it. The extension verifies these files them when an editor for a file a library is opened for the first time in a given session and updates them when new versions are available. 
 
-> ⚠️Automatic updating of `global.d.ts` and `jsconfig.json` means it is not recommended to customizing in any way.
+> ⚠️Automatic updating of `global.d.ts` and `jsconfig.json` means it is not recommended to customize them.
 
-> ⚠️ Untitled documents will not show proper IntelliSense until saved to disk as `global.d.ts` is needed to describe the global context. 
+> ⚠️ Untitled documents will not show proper IntelliSense until saved to disk as a `global.d.ts` is needed to describe the `global` context. 
 
 Some custom features that the extension provides is autocomplete on `vscode.commands.executeCommand` showing all currently registered command IDs in your box, or on `@macros` [options](#macro-options).
 
@@ -321,7 +321,7 @@ Some custom features that the extension provides is autocomplete on `vscode.comm
 The following references are available from the global context of your macro:
 * `vscode`: symbol that provides access to the [VS Code APIs](https://code.visualstudio.com/api/references/vscode-api).
 * `macros`: symbol that provides access to this extension's API (see [Macros API](#macros-api)).
-* `require`: method that allows load [Node.js libraries](https://nodejs.org/api/all.html). Version is same as your installed VS Code's (see `About` option).
+* `require`: method that allows load [Node.js libraries](https://nodejs.org/api/all.html). Version is same as your installed IDE (see `About` option).
 * Other: `atob`, `btoa`, `clearInterval`, `clearTimeout`, `crypto`, `fetch`, `global`, `require`, `setInterval`, `setTimeout`.
 
 [↑ Back to top](#table-of-contents)
@@ -413,7 +413,7 @@ Views are disabled by default. After claiming an ID, you must enable the corresp
   vscode.commands.executeCommand('setContext', `${viewId}.show`, true);
   ```
 
-Be sure to reset the context when the macro finishes, there is no automatic tracking and any leftover context values will be effective until VS Code is restarted.
+Be sure to reset the context when the macro finishes, there is no automatic tracking and any leftover context values will be effective until the IDE is restarted.
   
   **Example**: Hiding a view
   ```
@@ -458,11 +458,11 @@ Using a debugger leverages the default [debugging workflow for extensions](https
 
 There are a couple of details to keep in mind:
 
-* You cannot open the same workspace at the same time in two different VS Code instances. This may require you to reopen the workspace for your scenario in the **Extension Development Host** instance.
+* You cannot open the same workspace at the same time in two different IDE instances. You might need to close and reopen the workspace for your scenario in the **Extension Development Host** instance.
 
-* The macro you start the **Debug Macro** command on is not run automatically in the new instance unless it is defined as a startup macro, because the execution / repro context is unknown.
+* The macro you start the **Debug Macro** command on is not run automatically in the new instance, unless it is a startup macro, because the execution / repro context is unknown.
 
-Currently, there is no clear path to streamline this debugging flow. Ideally, the second instance would debug macros running in the first one, allowing you to debug macros without disturbing the current setup.
+Currently, there is no clear path to streamline this flow. Ideally, the second instance would debug macros running in the first one, allowing you to debug macros without disturbing the current setup.
 
 [↑ Back to top](#table-of-contents)
 
