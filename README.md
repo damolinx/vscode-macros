@@ -24,7 +24,7 @@ TypeScript support is transparent, with transpilation happening on demand, provi
 * [User Interface](#user-interface)
   * [Macro Explorer View](#macro-explorer-view)
   * [Macro REPL](#macro-repl)
-  * [Chat Participant](#ai-assistant)
+  * [AI Assistant](#ai-assistant)
   * [Commands](#commands)
     * [Debugging](#debugging)
     * [Development](#development)
@@ -251,8 +251,11 @@ The `@macros` [chat particpant](https://code.visualstudio.com/api/extension-guid
 
 The assistant does more than generate code — by saving and executing it in a single prompt, it enables you to accomplish tasks.
 
-  **Example**: Ask `@macros` to dump all diagnostics for further analysis.
+**Example**: Ask `@macros` to dump all diagnostics for further analysis.
 
+<p align=center>
+<img width="700" height="327" alt="@macros created a macro to dump diagnostics and ran it" src="https://github.com/user-attachments/assets/3a5f202d-c37c-4b9b-b32e-d2d7183041e1" />
+</p>
 
 [↑ Back to top](#table-of-contents)
 
