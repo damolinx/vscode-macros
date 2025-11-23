@@ -656,7 +656,7 @@
           "run"
         ],
         "displayName": "Create a macro",
-        "modelDescription": "Creates an untitled macro editor using the `content` and `language` (javascript or typescript) arguments. Set `run` to true only if macro must be run after creation.",
+        "modelDescription": "Creates an untitled macro using the `content` and `language` arguments. By default, the macro is only created and not executed. Set `run` to true when the user intent is immediate execution (e.g., 'run this macro', 'execute now', 'do this now', 'test it'). If the user only asks to generate or write code, or if execution is deferred (e.g., 'run later', 'make it work automatically'), leave `run` as false.",
         "inputSchema": {
           "type": "object",
           "required": [
@@ -666,7 +666,7 @@
           "properties": {
             "content": {
               "type": "string",
-              "description": "Macro file contents. If empty, a template selection dropdown will be shown."
+              "description": "The source code of the macro to be created. If left empty, a template selection dropdown will be shown but list of available templates is limited."
             },
             "language": {
               "type": "string",

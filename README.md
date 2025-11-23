@@ -249,7 +249,7 @@ Some useful commands:
 
 The `@macros` [chat particpant](https://code.visualstudio.com/api/extension-guides/ai/chat) is an AI assistant specialized in macro development. It is a domain expert on macro code specifics, which allows it to avoid common mistakes that generic AI models might introduce — such as adding `export` or using top‑level `await` statements, or generating code in the wrong language.
 
-The assistant does more than generate code — by saving and executing it in a single prompt, it enables you to accomplish tasks.
+The assistant goes beyond code generation: it can save and execute macros in a single prompt, enabling tasks to be completed end‑to‑end. Performance depends on the language model in use. Larger models such as *Claude Sonnet 4.5* and *GPT‑5* have been verified to deliver good results, while lighter models like *GPT‑5 mini* or *Claude Haiku* have fallen short or been unable to fulfill certain requests.
 
 **Example**: Ask `@macros` to dump all diagnostics for further analysis.
 
