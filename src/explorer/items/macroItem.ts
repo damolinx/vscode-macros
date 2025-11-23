@@ -5,7 +5,7 @@ import { MACRO_LANGUAGES } from '../../core/language';
 import { StartupMacroLibrarySourceManager } from '../../core/library/startupMacroLibrarySourceManager';
 import { Macro } from '../../core/macro';
 import { createIcon } from '../../ui/icons';
-import { isUntitled } from '../../utils/uri';
+import { isUntitled, parent, uriBasename } from '../../utils/uri';
 
 export const JsIcon = createIcon('symbol-function', 'macros.js');
 export const MacroJsIcon = createIcon('symbol-function', 'macros.macrojs');
@@ -20,6 +20,10 @@ export function createMacroItem({ name, uri }: Macro, { runInstanceCount: runCou
   item.contextValue = 'macroFile';
   if (isUntitled(uri)) {
     item.contextValue += ',untitled';
+    const p = parent(uri);
+    item.tooltip = new vscode.MarkdownString(
+      `${uriBasename(uri)}${p.path !== '.' ? `  \nThis macro will be saved to the *${uriBasename(p)}* library` : ''}`,
+    );
   }
 
   item.command = {
