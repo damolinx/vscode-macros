@@ -17,7 +17,8 @@ export interface CreateMacroContentToolArgs {
 }
 
 export class CreateMacroContentTool
-  implements vscode.LanguageModelTool<CreateMacroContentToolArgs> {
+  implements vscode.LanguageModelTool<CreateMacroContentToolArgs>
+{
   private readonly context: ExtensionContext;
 
   constructor(context: ExtensionContext) {
