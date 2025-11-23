@@ -132,7 +132,7 @@ Startup macros allow you to create extension-like behavior, as they are initiali
 
 Startup macros are defined via the `macros.startupMacros` setting in your workspace or user settings:
 
-* **Option 1**: edit the setting manually from the **Settings Editor** or the appropriate `settings.json`.
+* **Option 1**: edit the setting manually from the **Settings Editor** or the appropriate `settings.json`. You can use the **Macros: Configure Startup Settings** command to get there quickly.
 
 * **Option 2**: directly from the [**Macro Explorer**](#macro-explorer-view) view by selecting **Set as Startup Macro** or **Unset as Startup Macro** from a macro node context menu.
 
