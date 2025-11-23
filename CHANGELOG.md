@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.5.19
+- Add **Macros: Configure Startup Settings** command.
+
 ## 0.5.18
 - **@macros** chat agent supports creating macros without automatically executing them.
 
