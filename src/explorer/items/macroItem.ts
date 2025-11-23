@@ -1,5 +1,7 @@
 import * as vscode from 'vscode';
+import { extname } from 'path';
 import { MacroRunner } from '../../core/execution/macroRunner';
+import { MACRO_LANGUAGES } from '../../core/language';
 import { StartupMacroLibrarySourceManager } from '../../core/library/startupMacroLibrarySourceManager';
 import { Macro } from '../../core/macro';
 import { createIcon } from '../../ui/icons';
@@ -46,9 +48,10 @@ export function createMacroItem({ name, uri }: Macro, { runInstanceCount: runCou
 }
 
 function getIcon({ path }: vscode.Uri): vscode.ThemeIcon | undefined {
-  if (path.endsWith('.js')) {
+  const extension = extname(path);
+  if (MACRO_LANGUAGES.javascript.extensions.includes(extension)) {
     return isMacro('.js') ? MacroJsIcon : JsIcon;
-  } else if (path.endsWith('.ts')) {
+  } else if (MACRO_LANGUAGES.typescript.extensions.includes('.ts')) {
     return isMacro('.ts') ? MacroTsIcon : TsIcon;
   }
   return;
