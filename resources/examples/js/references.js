@@ -7,6 +7,8 @@ async function main() {
   }
 
   const { document: { uri }, selection: { active: position } } = editor;
+
+  /** @type {import('vscode').Location[] | undefined} */
   const references = await vscode.commands.executeCommand(
     'vscode.executeReferenceProvider', uri, position);
 
