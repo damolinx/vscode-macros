@@ -244,7 +244,7 @@
         "command": "macros.sourceDirectories.settings",
         "title": "Configure Source Directories",
         "category": "Macros",
-        "icon": "$(settings)"
+        "icon": "$(settings-gear)"
       },
       {
         "command": "macros.sourceDirectories.setup",
@@ -255,7 +255,7 @@
         "command": "macros.startup.settings",
         "title": "Configure Startup Settings",
         "category": "Macros",
-        "icon": "$(settings)"
+        "icon": "$(settings-gear)"
       },
       {
         "command": "macros.stop",
