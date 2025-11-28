@@ -24,7 +24,7 @@ export function createRunInfoItem(runInfo: MacroRunInfo) {
       (k) => snapshot.options[k],
     );
     return (
-      (options.length ? `Options: ${options.join(' · ')}\n` : '') +
+      (options.length ? `Options: ${options.join(', ')}\n` : '') +
       `${startedTooltip(snapshot.startedOn)}\n` +
       `Version: ${snapshot.version}`
     );

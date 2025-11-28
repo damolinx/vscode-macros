@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.19
+- Add **Macros: Configure Startup Settings** command.
+- **Macro Explorer** view:
+  - Update tooltips.
+  - Update **Temporary** library icon.
+- Update AI portions of the README.
+
 ## 0.5.18
 - **@macros** chat agent supports creating macros without automatically executing them.
 
