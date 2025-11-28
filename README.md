@@ -239,9 +239,11 @@ Some useful commands:
 * `.load`, `.save`: Load a macro file or save your command history to macro editor
 * `.help`: View all available REPL commands
 
+**Example**: REPL instance demonstrating object inspection and result preview  
 <p align=center>
-  <img width="400" alt="REPL showing a modal dialog" src="https://github.com/user-attachments/assets/bb03bc5d-a946-4c7d-b714-499ca9d9f378" />
+  <img width="700" alt="Macro REPL demo"  src="https://github.com/user-attachments/assets/29502571-a18a-41f2-a2b7-7e50f9c7496d" />
 </p>
+
 
 [↑ Back to top](#table-of-contents)
 
