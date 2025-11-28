@@ -7,7 +7,7 @@ Under the hood, macros run inside [Node.js VM sandboxes](https://nodejs.org/api/
 TypeScript support is transparent, with transpilation happening on demand, providing a seamless experience.
 
 <p align=center>
-  <img width="600" alt="VS Code with Macro Explorer view and a macro editor open" src="https://github.com/user-attachments/assets/34637385-782a-4578-863e-35d8e3caa2c7" />
+  <img width="800" alt="VS Code with Macro Explorer view and a macro editor open" src="https://github.com/user-attachments/assets/34637385-782a-4578-863e-35d8e3caa2c7" />
 </p>
 
 ## Table of Contents
@@ -100,7 +100,7 @@ main()
 * **Option 2**: On supported editors, i.e. those matching `*.macro.*` or saved in a [macro library](#macro-libraries), use the equivalent **Run Macro** or **Debug Macro** buttons available in the editor title bar.
 
    <p align=center>
-      <img width="400" alt=""Macro editor showing the Debug Macro button" src="https://github.com/user-attachments/assets/78acb656-8c1c-4939-823f-72fbd84c13ea" />
+      <img width="600" alt=""Macro editor showing the Debug Macro button" src="https://github.com/user-attachments/assets/78acb656-8c1c-4939-823f-72fbd84c13ea" />
    </p>
 
 * **Option 3**: Use the **Run Macro** button on macro nodes in the [**Macro Explorer**](#macro-explorer-view) view.
@@ -211,7 +211,7 @@ The **Macro Explorer** [view](https://code.visualstudio.com/docs/getstarted/user
 
 The **Macros: Show Macro Explorer** command can be used to bring it into view.
 <p align=center>
-   <img width="400" alt="Macro Explorer View with diff" src="https://github.com/user-attachments/assets/bc684a9a-6641-455a-aba9-e2df2680e076" />
+   <img width="600" alt="Macro Explorer View with diff" src="https://github.com/user-attachments/assets/bc684a9a-6641-455a-aba9-e2df2680e076" />
 </p>
 
 [↑ Back to top](#table-of-contents)
@@ -355,7 +355,7 @@ Views such as sidebars and panels cannot be created dynamically—they must be d
 
 **Macro-backed tree view ("Tree View" template)**
 <p align=center>
-   <img width="400" alt="TreeView example" src="https://github.com/user-attachments/assets/b69089a7-3de1-442f-be7b-eff7bbb547a1" />
+   <img width="600" alt="TreeView example" src="https://github.com/user-attachments/assets/b69089a7-3de1-442f-be7b-eff7bbb547a1" />
 </p>
 
 [↑ Back to top](#table-of-contents)
