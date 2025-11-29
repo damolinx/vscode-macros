@@ -165,7 +165,7 @@
         "command": "macros.new.macro.activeEditor",
         "title": "Fill File with Template",
         "category": "Macros",
-        "when": "macros:supportedEditorLangId"
+        "enablement": "macros:supportedEditorLangId"
       },
       {
         "command": "macros.new.macro.repl",
