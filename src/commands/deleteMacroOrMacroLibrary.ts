@@ -81,10 +81,11 @@ export async function deleteMacroLibrary(
   ];
 
   const result = await vscode.window.showInformationMessage(
-    'Do you want to remove this macro library?',
+    'Do you want to remove this library?',
     {
       modal: true,
-      detail: 'Removing a library will keep its folder and files on disk.',
+      detail:
+        "Removing a library removes its corresponding setting entry; the library's folder and files remain on disk.",
     },
     ...items,
   );
