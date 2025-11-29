@@ -43,7 +43,7 @@ import { registerMacroCodeLensProvider } from './providers/macroCodeLensProvider
 import { registerMacroOptionsCompletionProvider } from './providers/macroOptionsCompletionProvider';
 import { registerMacroSnapshotContentProvider } from './providers/macroSnapshotContentProvider';
 import { existsFile } from './utils/fsEx';
-import { Locator, PathLike, areUriEqual } from './utils/uri';
+import { Locator, PathLike, UriLocator, areUriEqual } from './utils/uri';
 
 /**
  * Extension startup.
@@ -72,7 +72,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     commands: { registerCommand: cr },
   } = vscode;
   context.disposables.push(
-    cr('macros.copy.file', (locator: Locator) => copyFile(context, locator)),
+    cr('macros.copy.file', (locator: UriLocator) => copyFile(context, locator)),
     cr('macros.copy.name', (locator: Locator) => copyPath(context, locator, true)),
     cr('macros.copy.path', (locator?: Locator) => copyPath(context, locator)),
     cr('macros.debug', debugMacro),
@@ -89,7 +89,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.new.macroLibrary', () => addLibrary(context)),
     cr('macros.new.startupMacro', (locator: Locator) => addStartupMacro(context, locator)),
     cr('macros.open', () => openMacro(context)),
-    cr('macros.paste.file', (locator: Locator) => pasteFile(context, locator)),
+    cr('macros.paste.file', (locator: UriLocator) => pasteFile(context, locator)),
     cr('macros.rename.macro', (locator?: Locator) => renameMacro(context, locator)),
     cr('macros.resetContext', (pathOrUri: PathLike) => resetSharedContext(context, pathOrUri)),
     cr('macros.revealInExplorer', (locator?: Locator) => revealInOS(locator)),

@@ -4,7 +4,7 @@
 - Add **Macros: Configure Startup Settings** command.
 - **Macro Explorer** view:
   - Change **Temporary** library icon.
-  - Improve tooltip content.
+  - Improve naming logic for copy/paste conflicts.
 - Update **Persistent Context** example template.
 - Update README.
 
@@ -12,7 +12,7 @@
 - **@macros** chat agent supports creating macros without automatically executing them.
 
 ## 0.5.17
-- Improve line and character offset detection in stack traces for **Go to Error Location**.
+- Improve location detection in stack traces for **Go to Error Location**.
 
 ## 0.5.16
 - Rewrite of README.
