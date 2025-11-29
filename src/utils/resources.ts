@@ -5,9 +5,9 @@ import * as vscode from 'vscode';
  */
 export async function readFile(
   context: vscode.ExtensionContext,
-  relativePath: string,
+  ...pathSegments: string[]
 ): Promise<string> {
-  const path = vscode.Uri.joinPath(context.extensionUri, 'resources', relativePath);
+  const path = vscode.Uri.joinPath(context.extensionUri, 'resources', ...pathSegments);
   const buffer = await vscode.workspace.fs.readFile(path);
   const content = Buffer.from(buffer).toString('utf8');
   return content;

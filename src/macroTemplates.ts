@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import { join } from 'path';
 import { ExtensionContext } from './extensionContext';
 import { Lazy } from './utils/lazy';
 import { readFile } from './utils/resources';
@@ -41,29 +40,22 @@ export async function templates(
   language?: string,
 ): Promise<LoadableMacroTemplate[]> {
   const { templates } = await Manifest.get(context);
-  return templates.map((t) => ({ ...t, load: () => readTemplate(context, t, language) }));
-}
+  return templates.map((template) => ({
+    ...template,
+    load: () => readTemplate(context, template, language),
+  }));
 
-async function readTemplate(
-  context: vscode.ExtensionContext,
-  template: MacroTemplate,
-  language?: string,
-): Promise<string> {
-  let templatePath = template.path;
-  if (!templatePath) {
-    return '';
-  }
-  if (language && template.alternates) {
-    const languagePath = template.alternates[language];
-    if (languagePath) {
-      templatePath = languagePath;
+  async function readTemplate(
+    context: vscode.ExtensionContext,
+    template: MacroTemplate,
+    language?: string,
+  ): Promise<string> {
+    const templatePath = (language && template.alternates?.[language]) ?? template.path;
+
+    let content = await readFile(context, MACRO_TEMPLATES_DIR_RESOURCE, templatePath);
+    if (templatePath.endsWith('.ts')) {
+      content = content.replace('// @ts-nocheck', '');
     }
+    return content;
   }
-
-  const path = join(MACRO_TEMPLATES_DIR_RESOURCE, templatePath);
-  let content = await readFile(context, path);
-  if (templatePath.endsWith('.ts')) {
-    content = content.replace('// @ts-nocheck', '');
-  }
-  return content;
 }
