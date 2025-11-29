@@ -1,17 +1,13 @@
 import * as vscode from 'vscode';
-import { extname } from 'path';
 import { MacroRunner } from '../../core/execution/macroRunner';
-import { MACRO_LANGUAGES } from '../../core/language';
+import { tryResolveMacroLanguage } from '../../core/language';
 import { StartupMacroLibrarySourceManager } from '../../core/library/startupMacroLibrarySourceManager';
 import { Macro } from '../../core/macro';
 import { createIcon } from '../../ui/icons';
 import { isUntitled, parent, uriBasename } from '../../utils/uri';
 
 export const JsIcon = createIcon('symbol-function', 'macros.js');
-export const MacroJsIcon = createIcon('symbol-function', 'macros.macrojs');
-
 export const TsIcon = createIcon('symbol-function', 'macros.ts');
-export const MacroTsIcon = createIcon('symbol-function', 'macros.macrots');
 
 export function createMacroItem({ name, uri }: Macro, { runInstanceCount: runCount }: MacroRunner) {
   const item = new vscode.TreeItem(uri);
@@ -52,15 +48,13 @@ export function createMacroItem({ name, uri }: Macro, { runInstanceCount: runCou
 }
 
 function getIcon({ path }: vscode.Uri): vscode.ThemeIcon | undefined {
-  const extension = extname(path);
-  if (MACRO_LANGUAGES.javascript.extensions.includes(extension)) {
-    return isMacro('.js') ? MacroJsIcon : JsIcon;
-  } else if (MACRO_LANGUAGES.typescript.extensions.includes('.ts')) {
-    return isMacro('.ts') ? MacroTsIcon : TsIcon;
-  }
-  return;
-
-  function isMacro(ext: string) {
-    return path.endsWith('.macro', path.length - ext.length);
+  const { language } = tryResolveMacroLanguage(path) ?? {};
+  switch (language?.id) {
+    case 'javascript':
+      return JsIcon;
+    case 'typescript':
+      return TsIcon;
+    default:
+      return undefined;
   }
 }

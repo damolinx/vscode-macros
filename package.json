@@ -67,30 +67,12 @@
         }
       },
       {
-        "id": "macros.macrojs",
-        "description": "Color for JavaScript macro icons",
-        "defaults": {
-          "dark": "#d4b830",
-          "light": "#d4b830",
-          "highContrast": "#fff200"
-        }
-      },
-      {
         "id": "macros.ts",
         "description": "Color for TypeScript icons",
         "defaults": {
           "dark": "#6fb0d4",
           "light": "#6fb0d4",
           "highContrast": "#00bfff"
-        }
-      },
-      {
-        "id": "macros.macrots",
-        "description": "Color for TypeScript macro icons",
-        "defaults": {
-          "dark": "#6fb0d4",
-          "light": "#6fb0d4",
-          "highContrast": "#5fd0ff"
         }
       }
     ],

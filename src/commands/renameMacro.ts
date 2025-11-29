@@ -36,7 +36,7 @@ async function renameFromLocator(_context: ExtensionContext, locator: Locator): 
         return 'Name cannot be empty';
       } else if (normalizedValue === name) {
         return 'Name cannot be the current name';
-      } else if (!/^[a-zA-Z0-9_.@()-]+$/.test(normalizedValue)) {
+      } else if (!/^[ a-zA-Z0-9_.@()-]+$/.test(normalizedValue)) {
         return 'Invalid file name';
       } else if (!isMacro(normalizedValue)) {
         return 'Invalid macro file name';

@@ -62,7 +62,7 @@ export function tryResolveMacroExt(pathOrUri: PathLike): string | undefined {
   return tryResolveMacroLanguage(pathOrUri)?.extension;
 }
 
-function tryResolveMacroLanguage(
+export function tryResolveMacroLanguage(
   pathOrUri: PathLike,
 ): { language: MacroLanguage; extension: string; filename: string } | undefined {
   const filename = uriBasename(pathOrUri).toLowerCase();
