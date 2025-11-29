@@ -29,6 +29,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     output: PassThrough & { columns?: number; rows?: number };
     server: REPLServerWithHistory;
   } & vscode.Disposable;
+  private readonly replId: vscode.Uri;
   private useTs: boolean;
 
   constructor(context: ExtensionContext, name: string, index: number) {
@@ -47,6 +48,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
         web: this.context.webviewManager,
       },
     };
+    this.replId = vscode.Uri.from({ scheme: '', path: this.macroInitParams.runId.id });
     this.onDidCloseEmitter = new vscode.EventEmitter();
     this.onDidWriteEmitter = new vscode.EventEmitter();
   }
@@ -67,9 +69,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     callback: (error: Error | null, result: any) => void,
   ) {
     try {
-      const targetCode = this.useTs
-        ? transpileOrThrow(code, this.macroInitParams.runId.toString())
-        : code;
+      const targetCode = this.useTs ? transpileOrThrow(code, this.replId) : code;
       const result = await runInContext(targetCode, context);
       callback(null, result);
     } catch (e: any) {
@@ -239,7 +239,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
         break;
     }
 
-    this.onDidWriteEmitter.fire(`Evaluation mode — ${name}${REPL_NEWLINE}`);
+    this.onDidWriteEmitter.fire(`Evaluation Mode: ${name}${REPL_NEWLINE}`);
     this.repl?.server.setPrompt(prompt);
     this.repl?.server.displayPrompt();
   }

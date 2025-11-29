@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
 import * as util from 'util';
 import * as ts from 'typescript';
-import { parent, toUri, uriBasename } from './uri';
+import { parent, uriBasename } from './uri';
 
 export function transpile(
   code: string,
-  fileNameOrUri?: string | vscode.Uri,
+  uri?: vscode.Uri,
 ): [string, undefined] | [undefined, ts.Diagnostic[]] {
   const output = ts.transpileModule(code, {
     compilerOptions: {
@@ -14,7 +14,7 @@ export function transpile(
       removeComments: true,
       target: ts.ScriptTarget.ES2024,
     },
-    fileName: fileNameOrUri && uriBasename(fileNameOrUri),
+    fileName: uri && uriBasename(uri),
     reportDiagnostics: true,
   });
 
@@ -28,10 +28,10 @@ export function transpile(
   }
 }
 
-export function transpileOrThrow(code: string, fileNameOrUri?: string | vscode.Uri): string {
-  const [transpiledCode, diagnostics] = transpile(code, fileNameOrUri);
+export function transpileOrThrow(code: string, uri?: vscode.Uri): string {
+  const [transpiledCode, diagnostics] = transpile(code, uri);
   if (diagnostics) {
-    const error = new TranspilationError('Code transpilation failed.', diagnostics, fileNameOrUri);
+    const error = new TranspilationError('Code transpilation failed.', diagnostics, uri);
     error.stack = '';
     throw error;
   }
@@ -53,23 +53,22 @@ export function extractInlineSourceMap(code: string) {
 
 export class TranspilationError extends Error {
   public readonly diagnostics: ts.Diagnostic[];
-  public readonly fileNameOrUri?: string | vscode.Uri;
   private recoverable?: boolean;
+  public readonly uri?: vscode.Uri;
 
-  constructor(message: string, diagnostics: ts.Diagnostic[], fileNameOrUri?: string | vscode.Uri) {
+  constructor(message: string, diagnostics: ts.Diagnostic[], uri?: vscode.Uri) {
     super(message);
     this.name = 'TranspilationError';
     this.diagnostics = diagnostics;
-    this.fileNameOrUri = fileNameOrUri;
+    this.uri = uri;
   }
 
   [util.inspect.custom](_depth: number, options: util.InspectOptionsStylized) {
     const host: ts.FormatDiagnosticsHost = {
       getCurrentDirectory: () =>
-        this.fileNameOrUri
-          ? parent(toUri(this.fileNameOrUri)).toString()
-          : ts.sys.getCurrentDirectory(),
-      getCanonicalFileName: (fileName) => uriBasename(fileName),
+        this.uri ? parent(this.uri).toString() : ts.sys.getCurrentDirectory(),
+      getCanonicalFileName: (fileName) =>
+        ts.sys.useCaseSensitiveFileNames ? fileName : fileName.toLowerCase(),
       getNewLine: () => ts.sys.newLine,
     };
     return options.colors
