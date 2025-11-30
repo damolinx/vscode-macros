@@ -47,8 +47,8 @@ export function createMacroItem({ name, uri }: Macro, { runInstanceCount: runCou
   return item;
 }
 
-function getIcon({ path }: vscode.Uri): vscode.ThemeIcon | undefined {
-  const { language } = tryResolveMacroLanguage(path) ?? {};
+function getIcon(uri: vscode.Uri): vscode.ThemeIcon | undefined {
+  const { language } = tryResolveMacroLanguage(uri) ?? {};
   switch (language?.id) {
     case 'javascript':
       return JsIcon;

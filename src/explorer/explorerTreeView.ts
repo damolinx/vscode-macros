@@ -1,15 +1,13 @@
 import * as vscode from 'vscode';
-import { MacroRunInfo } from '../core/execution/macroRunInfo';
-import { MacroLibrary } from '../core/library/macroLibrary';
 import { Macro } from '../core/macro';
 import { ExtensionContext } from '../extensionContext';
-import { ExplorerTreeDataProvider } from './explorerTreeDataProvider';
+import { ExplorerTreeDataProvider, TreeElement } from './explorerTreeDataProvider';
 import { ExplorerTreeDragAndDropController } from './explorerTreeDragAndDropController';
 
 export const MACRO_EXPLORER_VIEW_ID = 'macros.macroExplorer';
 
 export let explorerTreeDataProvider: ExplorerTreeDataProvider | undefined;
-export let explorerTreeView: vscode.TreeView<MacroLibrary | Macro | MacroRunInfo> | undefined;
+export let explorerTreeView: vscode.TreeView<TreeElement> | undefined;
 
 export function registerExplorerTreeview(context: ExtensionContext): void {
   explorerTreeDataProvider = new ExplorerTreeDataProvider(context);
