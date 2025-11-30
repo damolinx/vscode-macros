@@ -8,19 +8,15 @@ import { isUntitled, parent, uriBasename } from '../../utils/uri';
 
 export const JsIcon = createIcon('symbol-function', 'macros.js');
 export const TsIcon = createIcon('symbol-function', 'macros.ts');
+export const UnknownIcon = createIcon('symbol-function', 'macros.general');
 
-export function createMacroItem({ name, uri }: Macro, { runInstanceCount: runCount }: MacroRunner) {
-  const item = new vscode.TreeItem(uri);
-  item.label = name;
-
+export function createMacroItem(
+  { name, uri }: Macro,
+  { runInstanceCount: runCount }: MacroRunner,
+): vscode.TreeItem {
+  const item = new vscode.TreeItem(uri, vscode.TreeItemCollapsibleState.None);
   item.contextValue = 'macroFile';
-  if (isUntitled(uri)) {
-    item.contextValue += ',untitled';
-    const p = parent(uri);
-    item.tooltip = new vscode.MarkdownString(
-      `${uriBasename(uri)}${p.path !== '.' ? `  \nThis macro will be saved to the *${uriBasename(p)}* library` : ''}`,
-    );
-  }
+  item.label = name;
 
   item.command = {
     arguments: [uri],
@@ -28,7 +24,13 @@ export function createMacroItem({ name, uri }: Macro, { runInstanceCount: runCou
     title: 'Open Macro',
   };
 
-  if (StartupMacroLibrarySourceManager.instance.hasLibrary(uri)) {
+  if (isUntitled(uri)) {
+    item.contextValue += ',untitled';
+    const p = parent(uri);
+    item.tooltip = new vscode.MarkdownString(
+      `${uriBasename(uri)}${p.path !== '.' ? `  \nThis macro will be saved to the *${uriBasename(p)}* library` : ''}`,
+    );
+  } else if (StartupMacroLibrarySourceManager.instance.hasLibrary(uri)) {
     item.contextValue += ',startup';
   }
 
@@ -36,7 +38,6 @@ export function createMacroItem({ name, uri }: Macro, { runInstanceCount: runCou
     item.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
     item.contextValue += ',running';
     item.description = `⟨${runCount}⟩`;
-
     const displayPath = uri.scheme === 'file' ? uri.fsPath : uri.toString(true);
     const runInstance = runCount === 1 ? '1 running instance' : `${runCount} running instances`;
     item.tooltip = `${displayPath}\n${runInstance}`;
@@ -55,6 +56,6 @@ function getIcon(uri: vscode.Uri): vscode.ThemeIcon | undefined {
     case 'typescript':
       return TsIcon;
     default:
-      return undefined;
+      return UnknownIcon;
   }
 }
