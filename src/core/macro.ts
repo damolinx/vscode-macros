@@ -10,15 +10,10 @@ export class Macro {
   public readonly name: string;
   public readonly uri: vscode.Uri;
 
-  constructor(uriOrDocument: vscode.Uri | vscode.TextDocument, id?: MacroId) {
-    const isUri = uriOrDocument instanceof vscode.Uri;
-    this.uri = isUri ? uriOrDocument : uriOrDocument.uri;
-    this.id = id ?? getMacroId(this.uri);
-    this.name = uriBasename(this.uri, tryResolveMacroExt(this.uri) ?? true);
-
-    if (!isUri) {
-      this.code = new MacroCode(uriOrDocument, this.id);
-    }
+  constructor(uri: vscode.Uri, id = getMacroId(uri)) {
+    this.id = id;
+    this.name = uriBasename(uri, tryResolveMacroExt(uri) ?? true);
+    this.uri = uri;
   }
 
   /**
