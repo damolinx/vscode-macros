@@ -30,13 +30,15 @@ export const MACRO_LANGUAGES: Readonly<Record<MacroLanguageId, MacroLanguage>> =
 export const MACRO_PREFERRED_LANGUAGE = 'javascript';
 
 export const MacroPreferredSelector: vscode.DocumentSelector = [
-  { scheme: 'untitled', language: MACRO_PREFERRED_LANGUAGE },
-  ...Object.values(MACRO_LANGUAGES).map((lang) => ({
-    pattern: `**/*.{${lang.extensions
-      .filter((ext) => ext.startsWith('.macro.'))
-      .map((ext) => ext.substring(1))
-      .join(',')}}`,
-  })),
+  ...Object.values(MACRO_LANGUAGES).flatMap(({ id, extensions }) => [
+    { scheme: 'untitled', language: id },
+    {
+      pattern: `**/*.{${extensions
+        .filter((ext) => ext.startsWith('.macro.'))
+        .map((ext) => ext.substring(1))
+        .join(',')}}`,
+    },
+  ]),
 ];
 
 export function isFeatureEnabled(pathOrUri: PathLike): boolean {
