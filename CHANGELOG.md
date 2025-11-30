@@ -1,7 +1,7 @@
 # Changelog
 
 ## 0.5.19
-- Add **Macros: Configure Startup Settings** command.
+- Add **Macros: Configure Startup Macros** command.
 - **Macro Explorer** view:
   - Change **Temporary** library icon.
   - Improve naming logic for copy/paste conflicts.

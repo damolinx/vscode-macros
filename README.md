@@ -132,7 +132,7 @@ Startup macros allow you to create extension-like behavior, as they are initiali
 
 Startup macros are defined via the `macros.startupMacros` setting in your workspace or user settings:
 
-* **Option 1**: edit the setting manually from the **Settings Editor** or the appropriate `settings.json`. You can use the **Macros: Configure Startup Settings** command to get there quickly.
+* **Option 1**: edit the setting manually from the **Settings Editor** or the appropriate `settings.json`. You can use the **Macros: Configure Startup Macros** command to get there quickly.
 
 * **Option 2**: directly from the [**Macro Explorer**](#macro-explorer-view) view by selecting **Set as Startup Macro** or **Unset as Startup Macro** from a macro node context menu.
 
@@ -239,7 +239,7 @@ Some useful commands:
 * `.load`, `.save`: Load a macro file or save your command history to macro editor
 * `.help`: View all available REPL commands
 
-**Example**: REPL instance demonstrating object inspection and result preview  
+**Example**: REPL instance demonstrating object inspection and result preview
 <p align=center>
   <img width="700" alt="Macro REPL demo"  src="https://github.com/user-attachments/assets/29502571-a18a-41f2-a2b7-7e50f9c7496d" />
 </p>

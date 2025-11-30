@@ -235,7 +235,7 @@
       },
       {
         "command": "macros.startup.settings",
-        "title": "Configure Startup Settings",
+        "title": "Configure Startup Macros",
         "category": "Macros",
         "icon": "$(settings-gear)"
       },
