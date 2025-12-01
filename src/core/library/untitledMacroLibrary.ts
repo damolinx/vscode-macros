@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { isCreatingMacro } from '../../commands/createMacro';
 import { ExtensionContext } from '../../extensionContext';
-import { isUntitled, areUriEqual, UriLocator } from '../../utils/uri';
+import { isUntitled, UriLocator } from '../../utils/uri';
 import { isMacroLangId } from '../language';
 import { getMacroId, MacroId } from '../macroId';
 import { MacroLibrary } from './macroLibrary';
@@ -23,22 +23,6 @@ export class UntitledMacroLibrary extends MacroLibrary {
     this.untitledMacros = new Map();
 
     this.disposables.push(
-      runnerManager.onRun(({ macro }) => {
-        if (this.owns(macro) && !this.untitledMacros.has(macro.id)) {
-          this.untitledMacros.set(macro.id, macro.uri);
-          this.onDidCreateMacroEmitter.fire(macro.uri);
-        }
-      }),
-      runnerManager.onStop(({ runInfo: { macro } }) => {
-        if (
-          this.owns(macro) &&
-          this.untitledMacros.has(macro.id) &&
-          vscode.workspace.textDocuments.every(({ uri }) => !areUriEqual(uri, macro))
-        ) {
-          this.untitledMacros.delete(macro.id);
-          this.onDidDeleteMacroEmitter.fire(macro.uri);
-        }
-      }),
       vscode.workspace.onDidOpenTextDocument(({ languageId, uri }) => {
         if (this.owns(uri) && (isCreatingMacro() || isMacroLangId(languageId))) {
           const macroId = getMacroId(uri);

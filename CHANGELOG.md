@@ -3,10 +3,11 @@
 ## 0.5.19
 - Add **Macros: Configure Startup Macros** command.
 - **Macro Explorer** view:
-  - Change **Temporary** library icon.
+  - Update **Temporary** library icon.
   - Improve naming logic for copy/paste conflicts.
-- Update **Persistent Context** example template.
+- `untitled:` documents no longer prompt for run confirmation on TS 2034 or TS 2037.
 - Update README.
+- Multiple minor UX improvements and tweaks.
 
 ## 0.5.18
 - **@macros** chat agent supports creating macros without automatically executing them.
