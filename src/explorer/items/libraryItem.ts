@@ -1,12 +1,13 @@
 import * as vscode from 'vscode';
 import * as os from 'os';
 import { dirname, join } from 'path';
-import { MacroLibrary } from '../../core/library/macroLibrary';
+import { Library } from '../../core/library/library';
 import { isUntitled, parent, uriBasename } from '../../utils/uri';
+import { MacroLibrary } from '../../core/library/macroLibrary';
 
-export function createLibraryItem({ uri, configSource }: MacroLibrary) {
-  const item = new vscode.TreeItem(uriBasename(uri), vscode.TreeItemCollapsibleState.Collapsed);
-  if (isUntitled(uri)) {
+export function createLibraryItem(library: Library) {
+  const item = new vscode.TreeItem(uriBasename(library.uri), vscode.TreeItemCollapsibleState.Collapsed);
+  if (isUntitled(library.uri)) {
     updateUntitledLibraryItem(item);
   } else {
     updateStdLibraryItem(item);
@@ -16,16 +17,16 @@ export function createLibraryItem({ uri, configSource }: MacroLibrary) {
 
   function updateStdLibraryItem(item: vscode.TreeItem) {
     item.contextValue = 'macroLibrary';
-    if (uri.scheme === 'file') {
-      const normalizedUri = normalizePath(uri.fsPath);
+    if (library.uri.scheme === 'file') {
+      const normalizedUri = normalizePath(library.uri.fsPath);
       item.description = homeRelativePath(dirname(normalizedUri));
       item.tooltip = normalizedUri;
     } else {
-      item.description = parent(uri).toString(true);
-      item.tooltip = uri.toString(true);
+      item.description = parent(library.uri).toString(true);
+      item.tooltip = library.uri.toString(true);
     }
-    if (configSource) {
-      item.tooltip += `\nThis library is defined in ${configSource.sources.map((s) => (s.target === vscode.ConfigurationTarget.Global ? 'User' : vscode.ConfigurationTarget[s.target])).join(', ')} settings`;
+    if (library instanceof MacroLibrary && library.configSource) {
+      item.tooltip += `\nThis library is defined in ${library.configSource.sources.map((s) => (s.target === vscode.ConfigurationTarget.Global ? 'User' : vscode.ConfigurationTarget[s.target])).join(', ')} settings`;
     }
   }
 

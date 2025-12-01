@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { ExtensionContext } from '../../extensionContext';
 import { LazyDisposable } from '../../utils/lazy';
+import { Library } from './library';
 import { MacroLibrary } from './macroLibrary';
 import { MacroLibrarySourceManager } from './macroLibrarySourceManager';
 import { UntitledMacroLibrary } from './untitledMacroLibrary';
@@ -10,14 +11,12 @@ export class MacroLibraryManager implements vscode.Disposable {
   private readonly onDidChangeLibrariesEmitter: vscode.EventEmitter<void>;
   private readonly persistentLibraries: LazyDisposable<readonly MacroLibrary[]>;
   public readonly sourcesManager: MacroLibrarySourceManager;
-  private readonly virtualLibraries: LazyDisposable<readonly MacroLibrary[]>;
+  private readonly virtualLibraries: LazyDisposable<readonly Library[]>;
 
   constructor(context: ExtensionContext) {
     this.onDidChangeLibrariesEmitter = new vscode.EventEmitter();
     this.persistentLibraries = new LazyDisposable(() =>
-      this.sourcesManager.sources.map(
-        (source) => new MacroLibrary(source.uri, 'configured', source),
-      ),
+      this.sourcesManager.sources.map((source) => new MacroLibrary(source.uri, source)),
     );
     this.sourcesManager = new MacroLibrarySourceManager();
     this.virtualLibraries = new LazyDisposable(() => [UntitledMacroLibrary.instance(context)]);
@@ -45,11 +44,11 @@ export class MacroLibraryManager implements vscode.Disposable {
     return Object.fromEntries(files.filter(([_, files]) => files.length));
   }
 
-  public get libraries(): readonly MacroLibrary[] {
+  public get libraries(): readonly Library[] {
     return [...this.persistentLibraries.get(), ...this.virtualLibraries.get()];
   }
 
-  public libraryFor(uri: vscode.Uri): MacroLibrary | undefined {
+  public libraryFor(uri: vscode.Uri): Library | undefined {
     return this.libraries.find((lib) => lib.owns(uri));
   }
 

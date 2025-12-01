@@ -18,7 +18,8 @@ export async function runMacro(
 
   const yesOption: vscode.MessageItem = { title: 'Run Anyway' };
   if (
-    !options?.ignoreDiagnosticErrors && hasDiagnosticErrors(uri) &&
+    !options?.ignoreDiagnosticErrors &&
+    hasDiagnosticErrors(uri) &&
     (await vscode.window.showWarningMessage(
       'This macro contains errors. Do you still want to run it?',
       { modal: true },
@@ -41,7 +42,11 @@ export async function runMacro(
   function hasDiagnosticErrors(uri: vscode.Uri) {
     const diagnostics = vscode.languages.getDiagnostics(uri);
     return isUntitled(uri)
-      ? diagnostics.some((d) => d.severity === vscode.DiagnosticSeverity.Error && (d.source !== 'ts' || (d.code !== 2304 && d.code !== 2307)))
+      ? diagnostics.some(
+          (d) =>
+            d.severity === vscode.DiagnosticSeverity.Error &&
+            (d.source !== 'ts' || (d.code !== 2304 && d.code !== 2307)),
+        )
       : diagnostics.some((d) => d.severity === vscode.DiagnosticSeverity.Error);
   }
 }

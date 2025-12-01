@@ -1,8 +1,9 @@
 import * as vscode from 'vscode';
 import { MacroRunInfo } from '../core/execution/macroRunInfo';
 import { MacroRunner } from '../core/execution/macroRunner';
-import { MacroLibrary } from '../core/library/macroLibrary';
-import { MacroLibraryId } from '../core/library/macroLibraryId';
+import { Library } from '../core/library/library';
+import { LibraryId } from '../core/library/libraryId';
+import { LibraryItem } from '../core/library/libraryItem';
 import { Macro } from '../core/macro';
 import { MacroId, getMacroId } from '../core/macroId';
 import { ExtensionContext } from '../extensionContext';
@@ -11,7 +12,7 @@ import { createLibraryItem } from './items/libraryItem';
 import { createMacroItem } from './items/macroItem';
 import { createRunInfoItem } from './items/runInfoItem';
 
-export type TreeElement = MacroLibrary | Macro | MacroRunInfo;
+export type TreeElement = Library | Macro | MacroRunInfo;
 export type TreeEvent = TreeElement | TreeElement[] | undefined;
 
 interface MonitoredLibraryData {
@@ -24,7 +25,7 @@ export class ExplorerTreeDataProvider
 {
   private readonly context: ExtensionContext;
   private readonly disposables: vscode.Disposable[];
-  private readonly monitoredLibraries: Map<MacroLibraryId, MonitoredLibraryData>;
+  private readonly monitoredLibraries: Map<LibraryId, MonitoredLibraryData>;
   private readonly onDidChangeTreeDataEmitter: vscode.EventEmitter<TreeEvent>;
 
   constructor(context: ExtensionContext) {
@@ -65,25 +66,29 @@ export class ExplorerTreeDataProvider
     this.monitoredLibraries.clear();
   }
 
-  private ensureLibraryIsMonitored(library: MacroLibrary): MonitoredLibraryData {
+  private ensureLibraryIsMonitored(library: Library): MonitoredLibraryData {
     let entry = this.monitoredLibraries.get(library.id);
     if (!entry) {
-      const createHandler = (uri: vscode.Uri) => {
-        const files = this.monitoredLibraries.get(library.id)?.files;
-        if (files) {
-          const macroId = getMacroId(uri);
-          if (!files.has(macroId)) {
-            files.add(macroId);
-            this.fireOnDidChangeTreeData(new Macro(uri, macroId), library);
+      const createHandler = (items: LibraryItem[]) => {
+        items.forEach(({ uri }) => {
+          const files = this.monitoredLibraries.get(library.id)?.files;
+          if (files) {
+            const macroId = getMacroId(uri);
+            if (!files.has(macroId)) {
+              files.add(macroId);
+              this.fireOnDidChangeTreeData(new Macro(uri, macroId), library);
+            }
           }
-        }
+        });
       };
 
-      const deleteHandler = (uri: vscode.Uri) => {
-        const files = this.monitoredLibraries.get(library.id)?.files;
-        if (files && files.has(getMacroId(uri))) {
-          this.fireOnDidChangeTreeData(library);
-        }
+      const deleteHandler = (items: LibraryItem[]) => {
+        items.forEach(({ uri }) => {
+          const files = this.monitoredLibraries.get(library.id)?.files;
+          if (files && files.has(getMacroId(uri))) {
+            this.fireOnDidChangeTreeData(library);
+          }
+        });
       };
 
       entry = {
@@ -91,9 +96,9 @@ export class ExplorerTreeDataProvider
         disposable: vscode.Disposable.from(
           // VS Code does not report first-time saved files as
           // created but rather as changed, for reasons.
-          library.onDidCreateMacro(createHandler),
-          library.onDidChangeMacro(createHandler),
-          library.onDidDeleteMacro(deleteHandler),
+          library.onDidAddFiles(createHandler),
+          library.onDidChangeFiles(createHandler),
+          library.onDidRemoveFiles(deleteHandler),
         ),
       };
       this.monitoredLibraries.set(library.id, entry);
@@ -101,11 +106,8 @@ export class ExplorerTreeDataProvider
     return entry;
   }
 
-  private fireOnDidChangeTreeData(
-    macroOrLibrary: Macro | MacroLibrary,
-    library?: MacroLibrary,
-  ): void {
-    if (macroOrLibrary instanceof MacroLibrary) {
+  private fireOnDidChangeTreeData(macroOrLibrary: Macro | Library, library?: Library): void {
+    if (macroOrLibrary instanceof Library) {
       this.onDidChangeTreeDataEmitter.fire(macroOrLibrary);
     } else {
       // Refresh parent as Macro changes collapsible state, and
@@ -120,12 +122,12 @@ export class ExplorerTreeDataProvider
 
     if (!element) {
       children = [...this.context.libraryManager.libraries].sort((a, b) =>
-        a.kind === b.kind ? NaturalComparer.compare(a.name, b.name) : a.kind ? 1 : -1,
+        a.sorting === b.sorting ? NaturalComparer.compare(a.name, b.name) : a.sorting - b.sorting,
       );
-    } else if (element instanceof MacroLibrary) {
+    } else if (element instanceof Library) {
       const uris = await element.getFiles();
       children = uris
-        .map((uri) => new Macro(uri))
+        .map(({ uri }) => new Macro(uri))
         .sort((a, b) => NaturalComparer.compare(a.name, b.name));
       const entry = this.ensureLibraryIsMonitored(element);
       entry.files = new Set((children as Macro[]).map((macro) => macro.id));
@@ -154,7 +156,7 @@ export class ExplorerTreeDataProvider
   getTreeItem(element: TreeElement): vscode.TreeItem {
     let treeItem: vscode.TreeItem;
 
-    if (element instanceof MacroLibrary) {
+    if (element instanceof Library) {
       treeItem = createLibraryItem(element);
     } else if (element instanceof Macro) {
       const runner = this.context.runnerManager.getRunner(element);
