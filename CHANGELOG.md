@@ -7,7 +7,6 @@
   - Improve naming logic for copy/paste conflicts.
 - `untitled:` documents no longer prompt for run confirmation on TS 2034 or TS 2037.
 - Update README.
-- Multiple minor UX improvements and tweaks.
 
 ## 0.5.18
 - **@macros** chat agent supports creating macros without automatically executing them.
