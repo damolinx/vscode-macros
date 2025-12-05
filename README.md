@@ -447,15 +447,15 @@ All URLs use a standard HTTP GET to download the file, which is not customizable
 ## Debugging a Macro
 
 ### Debugger
-Using a debugger leverages the default [debugging workflow for extensions](https://code.visualstudio.com/api/get-started/your-first-extension#debugging-the-extension). In this workflow, you start with a VS Code instance that is used to launch a second **Extension Development Host** instance. The debugger attaches to that host, and you run your debug scenario there, while the debugger itself remains in the original VS Code instance. The **Debug Macro** command automates the setup flow.
+This follows the [debugging workflow for extensions](https://code.visualstudio.com/api/get-started/your-first-extension#debugging-the-extension): the VS Code instance to debug from launches a second **Extension Development Host** instance, it is on the latter where you run the macro is run, but it is on the former where the debugging happens. The **Macros: Debug Macro** command sets up this workflow.
 
-There are a couple of details to keep in mind:
+There are a few things to keep in mind:
 
-* You cannot open the same workspace at the same time in two different IDE instances. You might need to close and reopen the workspace for your scenario in the **Extension Development Host** instance.
+* You cannot open a given workspace more than once, even from different IDE instances. This means you might need to close and reopen the workspace for your macro scenario in the **Extension Development Host** instance.
 
-* The macro you start the **Debug Macro** command on is not run automatically in the new instance, unless it is a startup macro, because the execution / repro context is unknown.
+* The macro you start with **Debug Macro** is not run automatically in the new instance, unless it is a startup macro, because the execution / repro context is unknown.
 
-Currently, there is no clear path to streamline this flow. Ideally, the second instance would debug macros running in the first one, allowing you to debug macros without disturbing the current setup.
+Currently, there is no clear path to streamline this process. Ideally, the second instance would debug macros running in the first one, allowing you to debug macros without disturbing the current setup.
 
 [↑ Back to top](#table-of-contents)
 
