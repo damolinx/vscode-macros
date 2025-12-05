@@ -36,17 +36,16 @@ export class Lazy<T, TArgs extends unknown[] = []> {
 }
 
 export class LazyDisposable<
-    T extends vscode.Disposable | vscode.Disposable[] | readonly vscode.Disposable[],
-    TArgs extends unknown[] = [],
-  >
+  T extends vscode.Disposable | vscode.Disposable[] | readonly vscode.Disposable[],
+  TArgs extends unknown[] = [],
+>
   extends Lazy<T, TArgs>
-  implements vscode.Disposable
-{
+  implements vscode.Disposable {
   dispose() {
     this.reset();
   }
 
-  public reset(): void {
+  public override reset(): void {
     if (this.isInitialized()) {
       if (this.value instanceof Array) {
         vscode.Disposable.from(...this.value).dispose();
