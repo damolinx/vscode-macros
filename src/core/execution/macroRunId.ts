@@ -1,17 +1,23 @@
-export type MacroRunIdString = string & { __macroRunIdBrand: void };
+import { Id } from '../id';
 
-export class MacroRunId {
-  public readonly id: MacroRunIdString;
-  public readonly name: string;
-  public readonly index: string;
+export type MacroRunId = Id<'MacroRun'>;
 
-  constructor(name: string, token: number | string, startup?: true) {
-    this.index = typeof token === 'string' ? token : token.toString().padStart(3, '0');
-    this.id = `${name}@${startup ? 'startup' : this.index}` as MacroRunIdString;
-    this.name = name;
-  }
+export function getMacroRunId(name: string, index: number | string, startup?: true): MacroRunId {
+  const token = startup
+    ? index !== 1
+      ? `startup(${index})`
+      : 'startup'
+    : typeof index === 'string'
+      ? index
+      : index.toString().padStart(3, '0');
 
-  public toString(): string {
-    return this.id;
-  }
+  return `${name}@${token}` as MacroRunId;
+}
+
+export function getMacroRunIdName(id: MacroRunId): string {
+  return id.substring(0, id.lastIndexOf('@'));
+}
+
+export function getMacroRunIdToken(id: MacroRunId): string {
+  return id.substring(id.lastIndexOf('@'));
 }

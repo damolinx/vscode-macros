@@ -3,10 +3,10 @@ import { Recoverable, REPLServer, start as startREPL } from 'repl';
 import { PassThrough } from 'stream';
 import { inspect, types } from 'util';
 import { Context, runInContext } from 'vm';
-import { MacrosLogOutputChannel } from './api/macroLogOutputChannel';
+import { MacroLogOutputChannel } from './api/macroLogOutputChannel';
 import { createMacro } from './commands/createMacro';
 import { initializeContext, MacroContextInitParams } from './core/execution/macroRunContext';
-import { MacroRunId } from './core/execution/macroRunId';
+import { getMacroRunId } from './core/execution/macroRunId';
 import { ExtensionContext } from './extensionContext';
 import { showMacroQuickPick } from './ui/dialogs';
 import { cleanError } from './utils/errors';
@@ -29,18 +29,22 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     output: PassThrough & { columns?: number; rows?: number };
     server: REPLServerWithHistory;
   } & vscode.Disposable;
-  private readonly replId: vscode.Uri;
+  private readonly uri: vscode.Uri;
   private useTs: boolean;
 
   constructor(context: ExtensionContext, name: string, index: number) {
+    const runId = getMacroRunId(name, index);
+
     this.context = context;
     this.cts = new vscode.CancellationTokenSource();
+    this.onDidCloseEmitter = new vscode.EventEmitter();
+    this.onDidWriteEmitter = new vscode.EventEmitter();
+    this.uri = vscode.Uri.from({ scheme: '', path: runId });
     this.useTs = false;
 
-    const runId = new MacroRunId(name, index);
     this.macroInitParams = {
       disposables: [],
-      log: new MacrosLogOutputChannel(runId.id, context),
+      log: new MacroLogOutputChannel(runId, context),
       runId,
       token: this.cts.token,
       viewManagers: {
@@ -48,9 +52,6 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
         web: this.context.webviewManager,
       },
     };
-    this.replId = vscode.Uri.from({ scheme: '', path: this.macroInitParams.runId.id });
-    this.onDidCloseEmitter = new vscode.EventEmitter();
-    this.onDidWriteEmitter = new vscode.EventEmitter();
   }
 
   public close(): void {
@@ -69,7 +70,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     callback: (error: Error | null, result: any) => void,
   ) {
     try {
-      const targetCode = this.useTs ? transpileOrThrow(code, this.replId) : code;
+      const targetCode = this.useTs ? transpileOrThrow(code, this.uri) : code;
       const result = await runInContext(targetCode, context);
       callback(null, result);
     } catch (e: any) {

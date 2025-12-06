@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.20
+- **Show Running Macros** commmand:
+  - Support multi-selection.
+  - Fix: dropdown not dismissed on selection.
+
 ## 0.5.19
 - Add **Macros: Configure Startup Macros** command.
 - **Macro Explorer** view:
@@ -36,7 +41,7 @@
 - Run ID updates:
   - Prefix with library name to prevent collisions across libraries.
   - **Macro Explorer** shows only run index as macro and library info can be inferred from tree (IDs are for user reference only).
-- **Running Macros** dropdown stops selected macro (vs doing nothing). Stop button is still present.
+- **Show Running Macros** stops selected macro (vs doing nothing). Stop button is still present.
 - Fix: README incorrectly documented that view ID management APIs require a "run Id" argument.
 
 ## 0.5.14

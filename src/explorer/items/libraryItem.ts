@@ -2,11 +2,14 @@ import * as vscode from 'vscode';
 import * as os from 'os';
 import { dirname, join } from 'path';
 import { Library } from '../../core/library/library';
-import { isUntitled, parent, uriBasename } from '../../utils/uri';
 import { MacroLibrary } from '../../core/library/macroLibrary';
+import { isUntitled, parent, uriBasename } from '../../utils/uri';
 
 export function createLibraryItem(library: Library) {
-  const item = new vscode.TreeItem(uriBasename(library.uri), vscode.TreeItemCollapsibleState.Collapsed);
+  const item = new vscode.TreeItem(
+    uriBasename(library.uri),
+    vscode.TreeItemCollapsibleState.Collapsed,
+  );
   if (isUntitled(library.uri)) {
     updateUntitledLibraryItem(item);
   } else {

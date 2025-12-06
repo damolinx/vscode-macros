@@ -1,7 +1,7 @@
-import { MacroRunId, MacroRunIdString } from './macroRunId';
+import { MacroRunId } from './macroRunId';
 
 export class ViewManager {
-  private readonly idAssignments = new Map<string, MacroRunIdString | undefined>();
+  private readonly idAssignments = new Map<string, MacroRunId | undefined>();
 
   constructor(prefix: string, count: number) {
     for (let i = 0; i < count; i++) {
@@ -16,7 +16,7 @@ export class ViewManager {
   public getId(requester: MacroRunId): string | undefined {
     for (const [viewId, ownerId] of this.idAssignments) {
       if (!ownerId) {
-        this.idAssignments.set(viewId, requester.id);
+        this.idAssignments.set(viewId, requester);
         return viewId;
       }
     }
@@ -28,7 +28,7 @@ export class ViewManager {
    */
   public releaseOwnedIds(requester: MacroRunId): void {
     for (const [viewId, ownerId] of this.idAssignments) {
-      if (ownerId === requester.id) {
+      if (ownerId === requester) {
         this.idAssignments.set(viewId, undefined);
       }
     }
@@ -39,7 +39,7 @@ export class ViewManager {
    * @returns `true` if released, `false` otherwise.
    */
   public releaseId(requester: MacroRunId, viewId: string): boolean {
-    if (this.idAssignments.get(viewId) === requester.id) {
+    if (this.idAssignments.get(viewId) === requester) {
       this.idAssignments.set(viewId, undefined);
       return true;
     }

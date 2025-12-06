@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
+import { getId, Id } from './id';
 
-export type MacroId = string & { __macroIdBrand: void };
+export type MacroId = Id<'Macro'>;
 
 export function getMacroId(uri: vscode.Uri): MacroId {
-  const normalizedUri = uri.with({ fragment: '', query: '' });
-  return normalizedUri.toString(true) as MacroId;
+  return getId<'Macro'>(uri);
 }

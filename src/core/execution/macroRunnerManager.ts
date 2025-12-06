@@ -7,7 +7,7 @@ import { extractInlineSourceMap } from '../../utils/typescript';
 import { isMacroLangId, isMacro } from '../language';
 import { Macro } from '../macro';
 import { getMacroId, MacroId } from '../macroId';
-import { MacroRunId } from './macroRunId';
+import { getMacroRunId, MacroRunId } from './macroRunId';
 import { MacroRunInfo, MacroRunResult } from './macroRunInfo';
 import { MacroRunner } from './macroRunner';
 
@@ -38,12 +38,12 @@ export class MacroRunnerManager implements vscode.Disposable {
         retrieveSourceMap: (source) => {
           const runIdMatch = source.match(/^\[(\d+)\]\s(.+?)\.js$/);
           const runInfo =
-            runIdMatch && this.getRun(new MacroRunId(`${runIdMatch[2]}.ts`, runIdMatch[1]));
+            runIdMatch && this.getRun(getMacroRunId(`${runIdMatch[2]}.ts`, runIdMatch[1]));
           const sourceMap = runInfo
             ? ({
-                url: runInfo.macro.uri.fsPath,
-                map: extractInlineSourceMap(runInfo.runnableCode),
-              } as sms.UrlAndMap)
+              url: runInfo.macro.uri.fsPath,
+              map: extractInlineSourceMap(runInfo.runnableCode),
+            } as sms.UrlAndMap)
             : null;
 
           return sourceMap;
@@ -94,10 +94,10 @@ export class MacroRunnerManager implements vscode.Disposable {
     return runner;
   }
 
-  public getRun(runId: MacroRunId): MacroRunInfo | undefined {
+  public getRun(id: MacroRunId): MacroRunInfo | undefined {
     let run: MacroRunInfo | undefined;
     for (const runner of this.runners.values()) {
-      run = runner.getRun(runId.id);
+      run = runner.getRun(id);
       if (run) {
         break;
       }

@@ -1,20 +1,20 @@
 import * as vscode from 'vscode';
 import * as vm from 'vm';
 import { MacroContext } from '../../api/macroContext';
-import { MacrosLogOutputChannel } from '../../api/macroLogOutputChannel';
+import { MacroLogOutputChannel } from '../../api/macroLogOutputChannel';
 import { ExtensionContext } from '../../extensionContext';
 import { parent, uriBasename } from '../../utils/uri';
 import { Macro } from '../macro';
 import { MacroCode } from '../macroCode';
 import { initializeContext, initializeMacrosApi, MacroContextInitParams } from './macroRunContext';
-import { MacroRunId, MacroRunIdString } from './macroRunId';
+import { getMacroRunId, getMacroRunIdToken, MacroRunId } from './macroRunId';
 import { MacroRunInfo, MacroRunResult } from './macroRunInfo';
 
 export class MacroRunner implements vscode.Disposable {
   private readonly context: ExtensionContext;
   private index: number;
   public readonly macro: Macro;
-  private readonly runs: Map<MacroRunIdString, MacroRunInfo>;
+  private readonly runs: Map<MacroRunId, MacroRunInfo>;
   private sharedMacroContext?: MacroContext;
   private startEventEmitter: vscode.EventEmitter<MacroRunInfo>;
   private stopEventEmitter: vscode.EventEmitter<MacroRunResult>;
@@ -53,8 +53,8 @@ export class MacroRunner implements vscode.Disposable {
     return vm.createContext(context, { name });
   }
 
-  public getRun(runId: MacroRunIdString): MacroRunInfo | undefined {
-    return this.runs.get(runId);
+  public getRun(id: MacroRunId): MacroRunInfo | undefined {
+    return this.runs.get(id);
   }
 
   public get onStartRun(): vscode.Event<MacroRunInfo> {
@@ -82,7 +82,7 @@ export class MacroRunner implements vscode.Disposable {
       throw new Error(`Singleton macro ${this.macro.name} is already running`);
     }
 
-    const runId = new MacroRunId(
+    const runId = getMacroRunId(
       this.macro.uri.path.split('/').slice(-2).join('/'),
       ++this.index,
       startup,
@@ -101,12 +101,12 @@ export class MacroRunner implements vscode.Disposable {
       },
       startup,
     };
-    this.runs.set(runId.id, runInfo);
+    this.runs.set(runId, runInfo);
 
     const macroDisposables = [] as vscode.Disposable[];
     const context = this.getContext({
       disposables: macroDisposables,
-      log: new MacrosLogOutputChannel(runInfo.runId.id, this.context),
+      log: new MacroLogOutputChannel(runInfo.runId, this.context),
       persistent: !!macroCode.options.persistent,
       runId: runInfo.runId,
       startup,
@@ -127,7 +127,7 @@ export class MacroRunner implements vscode.Disposable {
     let result: any;
 
     this.context.log.info(
-      `Macro started @${runId.index}`,
+      `Macro started ${getMacroRunIdToken(runId)}`,
       vscode.workspace.asRelativePath(this.macro.uri),
     );
     try {
@@ -155,12 +155,12 @@ export class MacroRunner implements vscode.Disposable {
       result = await (macroCode.options.retained ? retainedExecute(runPromise) : runPromise);
 
       this.context.log.info(
-        `Macro completed @${runId.index}`,
+        `Macro completed ${getMacroRunIdToken(runId)}`,
         vscode.workspace.asRelativePath(this.macro.uri),
       );
     } catch (error: any) {
       this.context.log.error(
-        `Macro failed @${runId.index}`,
+        `Macro failed ${getMacroRunIdToken(runId)}`,
         vscode.workspace.asRelativePath(this.macro.uri),
         '\n',
         error.stack ?? error.message ?? error,
@@ -170,7 +170,7 @@ export class MacroRunner implements vscode.Disposable {
     } finally {
       this.context.treeViewManager.releaseOwnedIds(runInfo.runId);
       this.context.webviewManager.releaseOwnedIds(runInfo.runId);
-      this.runs.delete(runInfo.runId.id);
+      this.runs.delete(runInfo.runId);
       const disposeError = safeDispose(macroDisposables);
       this.stopEventEmitter.fire({
         error: disposeError,
@@ -186,7 +186,7 @@ export class MacroRunner implements vscode.Disposable {
     function getScriptName(uri: vscode.Uri, isTs: boolean): string {
       const parentName = uriBasename(parent(uri));
       const name = isTs
-        ? `[${runInfo.runId.index}] ${parentName}/${uriBasename(uri, true)}.js`
+        ? `[${getMacroRunIdToken(runInfo.runId)}] ${parentName}/${uriBasename(uri, true)}.js`
         : `${parentName}/${uriBasename(uri)}`;
       return name;
     }
@@ -209,8 +209,8 @@ export class MacroRunner implements vscode.Disposable {
       }
       return errors.length > 0
         ? new Error(
-            `Error(s) occurred while disposing resources:\n${errors.map((e) => (typeof e === 'string' ? e : e.message)).join('\n')}`,
-          )
+          `Error(s) occurred while disposing resources:\n${errors.map((e) => (typeof e === 'string' ? e : e.message)).join('\n')}`,
+        )
         : undefined;
     }
   }

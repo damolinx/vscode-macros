@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { getMacroRunIdName, getMacroRunIdToken } from '../core/execution/macroRunId';
 import { MacroRunInfo } from '../core/execution/macroRunInfo';
 import { ExtensionContext } from '../extensionContext';
 import { createGroupedQuickPickItems } from '../ui/ui';
@@ -19,6 +20,10 @@ export async function showRunningMacros({ runnerManager: { runningMacros } }: Ex
 function pickRunningMacro(runInfos: MacroRunInfo[]): Promise<MacroRunInfo | undefined> {
   return new Promise((resolve) => {
     const quickPick = createMacroQuickPick();
+    quickPick.onDidAccept(() => {
+      quickPick.selectedItems.forEach((i) => i.runInfo?.cts.cancel());
+      resolve(undefined);
+    });
     quickPick.onDidHide(() => {
       quickPick.dispose();
       resolve(undefined);
@@ -40,14 +45,15 @@ function pickRunningMacro(runInfos: MacroRunInfo[]): Promise<MacroRunInfo | unde
     const quickPick = vscode.window.createQuickPick<
       vscode.QuickPickItem & { runInfo?: MacroRunInfo }
     >();
+    quickPick.canSelectMany = true;
     quickPick.items = createGroupedQuickPickItems(runInfos, {
-      groupBy: (runInfo) => runInfo.runId.name,
+      groupBy: (runInfo) => getMacroRunIdName(runInfo.runId),
       itemBuilder: (runInfo) =>
         ({
           buttons,
           description: `version: ${runInfo.snapshot.version}`,
           detail: `started: ${new Date(runInfo.snapshot.startedOn).toLocaleString()}`,
-          label: `@${runInfo.runId.index}`,
+          label: getMacroRunIdToken(runInfo.runId),
           runInfo,
         }) as vscode.QuickPickItem,
     });
@@ -61,9 +67,7 @@ function pickRunningMacro(runInfos: MacroRunInfo[]): Promise<MacroRunInfo | unde
         quickPick.hide();
       }
     });
-    quickPick.onDidAccept(() => {
-      quickPick.selectedItems.forEach((i) => i.runInfo?.cts.cancel());
-    });
+
     return quickPick;
   }
 }

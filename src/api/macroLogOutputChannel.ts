@@ -1,16 +1,16 @@
 import * as vscode from 'vscode';
-import { MacroRunIdString } from '../core/execution/macroRunId';
+import { MacroRunId } from '../core/execution/macroRunId';
 import { ExtensionContext } from '../extensionContext';
 
 /**
- * Log output channel for macros. Wraps the extension's main logger to prepend
- * the macro run ID and help prevent execution of unsafe operations.
+ * Log channel for macros. Wraps the extension's main logger to prepend
+ * the macro run ID and prevent execution of unsafe operations.
  */
-export class MacrosLogOutputChannel implements vscode.LogOutputChannel {
+export class MacroLogOutputChannel implements vscode.LogOutputChannel {
   private readonly id: string;
   private readonly log: vscode.LogOutputChannel;
 
-  constructor(runId: MacroRunIdString, { log }: ExtensionContext) {
+  constructor(runId: MacroRunId, { log }: ExtensionContext) {
     this.id = `[${runId}]`;
     this.log = log;
   }
