@@ -1,11 +1,12 @@
 import { MacroRunId } from './macroRunId';
+import { getViewId, ViewId } from './viewId';
 
 export class ViewManager {
-  private readonly idAssignments = new Map<string, MacroRunId | undefined>();
+  private readonly idAssignments = new Map<ViewId, MacroRunId | undefined>();
 
   constructor(prefix: string, count: number) {
     for (let i = 0; i < count; i++) {
-      this.idAssignments.set(`${prefix}${i + 1}`, undefined);
+      this.idAssignments.set(getViewId(prefix, i + 1), undefined);
     }
   }
 
@@ -38,7 +39,7 @@ export class ViewManager {
    * Releases the ID if it was assigned to the requester.
    * @returns `true` if released, `false` otherwise.
    */
-  public releaseId(requester: MacroRunId, viewId: string): boolean {
+  public releaseId(requester: MacroRunId, viewId: ViewId): boolean {
     if (this.idAssignments.get(viewId) === requester) {
       this.idAssignments.set(viewId, undefined);
       return true;

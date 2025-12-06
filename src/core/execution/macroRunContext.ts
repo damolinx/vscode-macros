@@ -3,6 +3,7 @@ import * as vm from 'vm';
 import { MacroContext } from '../../api/macroContext';
 import { MacrosApi } from '../../api/macrosApi';
 import { MacroRunId } from './macroRunId';
+import { ViewId } from './viewId';
 import { ViewManager } from './viewManager';
 
 export interface MacroContextInitParams {
@@ -64,8 +65,10 @@ function createMacroApi(params: MacroContextInitParams): MacrosApi {
       window: {
         getTreeViewId: () => params.viewManagers.tree.getId(params.runId),
         getWebviewId: () => params.viewManagers.web.getId(params.runId),
-        releaseTreeViewId: (id: string) => params.viewManagers.tree.releaseId(params.runId, id),
-        releaseWebviewId: (id: string) => params.viewManagers.web.releaseId(params.runId, id),
+        releaseTreeViewId: (id: string) =>
+          params.viewManagers.tree.releaseId(params.runId, id as ViewId),
+        releaseWebviewId: (id: string) =>
+          params.viewManagers.web.releaseId(params.runId, id as ViewId),
       },
     },
   };
