@@ -1,9 +1,11 @@
 # Changelog
 
 ## 0.5.20
-- **Show Running Macros** commmand:
+- Improve **Show Running Macros** dropdown:
   - Support multi-selection.
-  - Fix: dropdown not dismissed on selection.
+  - Remove **Request to Stop** button as selected instances already receive the request.
+  - Ability to remove macros as startup macros from dropdown.
+  - Fix: dropdown is not being dismissed when accepting selection.
 
 ## 0.5.19
 - Add **Macros: Configure Startup Macros** command.

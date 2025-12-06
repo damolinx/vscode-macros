@@ -4,29 +4,28 @@ import { MacroRunInfo } from '../core/execution/macroRunInfo';
 import { ExtensionContext } from '../extensionContext';
 import { createGroupedQuickPickItems } from '../ui/ui';
 import { showTextDocument } from '../utils/vscodeEx';
+import { removeStartupMacro } from './removeStartupMacro';
+import { stopMacro } from './stopMacro';
 
-export async function showRunningMacros({ runnerManager: { runningMacros } }: ExtensionContext) {
+export async function showRunningMacros(context: ExtensionContext) {
+  const {
+    runnerManager: { runningMacros },
+  } = context;
   if (runningMacros.length === 0) {
     vscode.window.showInformationMessage('No running macros');
     return;
   }
 
-  const selected = await pickRunningMacro(runningMacros);
-  if (!selected) {
-    return; // Nothing to do
-  }
-}
-
-function pickRunningMacro(runInfos: MacroRunInfo[]): Promise<MacroRunInfo | undefined> {
-  return new Promise((resolve) => {
+  return new Promise<void>((resolve) => {
     const quickPick = createMacroQuickPick();
     quickPick.onDidAccept(() => {
-      quickPick.selectedItems.forEach((i) => i.runInfo?.cts.cancel());
-      resolve(undefined);
+      quickPick.selectedItems.forEach(({ runInfo }) => stopMacro(context, runInfo!));
+      quickPick.hide();
+      resolve();
     });
     quickPick.onDidHide(() => {
       quickPick.dispose();
-      resolve(undefined);
+      resolve();
     });
     quickPick.show();
   });
@@ -34,23 +33,24 @@ function pickRunningMacro(runInfos: MacroRunInfo[]): Promise<MacroRunInfo | unde
   function createMacroQuickPick() {
     const openButton = {
       iconPath: new vscode.ThemeIcon('go-to-file'),
-      tooltip: 'Open File',
+      tooltip: 'Open macro file',
     };
-    const stopButton = {
-      iconPath: new vscode.ThemeIcon('debug-stop'),
-      tooltip: 'Request To Stop',
+    const removeStartupButton = {
+      iconPath: new vscode.ThemeIcon('remove-close'),
+      tooltip: 'Remove as startup macro',
     };
-    const buttons = [stopButton, openButton];
+    const buttons = [openButton];
+    const startupButtons = [removeStartupButton, openButton];
 
     const quickPick = vscode.window.createQuickPick<
       vscode.QuickPickItem & { runInfo?: MacroRunInfo }
     >();
     quickPick.canSelectMany = true;
-    quickPick.items = createGroupedQuickPickItems(runInfos, {
+    quickPick.items = createGroupedQuickPickItems(runningMacros, {
       groupBy: (runInfo) => getMacroRunIdName(runInfo.runId),
       itemBuilder: (runInfo) =>
         ({
-          buttons,
+          buttons: runInfo.startup ? startupButtons : buttons,
           description: `version: ${runInfo.snapshot.version}`,
           detail: `started: ${new Date(runInfo.snapshot.startedOn).toLocaleString()}`,
           label: getMacroRunIdToken(runInfo.runId),
@@ -58,13 +58,15 @@ function pickRunningMacro(runInfos: MacroRunInfo[]): Promise<MacroRunInfo | unde
         }) as vscode.QuickPickItem,
     });
     quickPick.matchOnDetail = true;
-    quickPick.placeholder = 'Select a macro to stop';
+    quickPick.placeholder = 'Select macros to stop';
     quickPick.onDidTriggerItemButton(async (e) => {
-      if (e.button === openButton) {
-        await showTextDocument(e.item.runInfo!.macro.uri);
-      } else if (e.button === stopButton) {
-        e.item.runInfo!.cts.cancel();
-        quickPick.hide();
+      switch (e.button) {
+        case openButton:
+          await showTextDocument(e.item.runInfo!.macro.uri);
+          break;
+        case removeStartupButton:
+          await removeStartupMacro(context, e.item.runInfo!.macro);
+          break;
       }
     });
 

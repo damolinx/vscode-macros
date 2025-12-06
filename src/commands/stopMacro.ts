@@ -4,15 +4,16 @@ import { Macro } from '../core/macro';
 import { ExtensionContext } from '../extensionContext';
 
 export async function stopMacro(
-  context: ExtensionContext,
+  { log, runnerManager }: ExtensionContext,
   uriOrMacroOrRunInfo: vscode.Uri | Macro | MacroRunInfo,
 ) {
   const runInfos: MacroRunInfo[] =
     uriOrMacroOrRunInfo instanceof Macro || uriOrMacroOrRunInfo instanceof vscode.Uri
-      ? [...context.runnerManager.getRunner(uriOrMacroOrRunInfo).runInstances]
+      ? [...runnerManager.getRunner(uriOrMacroOrRunInfo).runInstances]
       : [uriOrMacroOrRunInfo];
 
   for (const runInfo of runInfos) {
+    log.info('Requesting macro instance to stop via cancellation token', runInfo.runId);
     runInfo.cts.cancel();
   }
 }
