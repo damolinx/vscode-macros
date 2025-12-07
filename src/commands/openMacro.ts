@@ -1,14 +1,14 @@
 import { ExtensionContext } from '../extensionContext';
 import { showMacroQuickPick } from '../ui/dialogs';
-import { PathLike, toUri } from '../utils/uri';
+import { UriLocator, resolveUri } from '../utils/uri';
 import { showTextDocument } from '../utils/vscodeEx';
 
-export async function openMacro({ libraryManager }: ExtensionContext, pathOrUri?: PathLike) {
-  const uri = pathOrUri
-    ? toUri(pathOrUri)
+export async function openMacro({ libraryManager }: ExtensionContext, locator?: UriLocator) {
+  const uri = locator
+    ? resolveUri(locator)
     : await showMacroQuickPick(libraryManager, { hideOpenPerItem: true });
   if (!uri) {
-    return; // Nothing to run.
+    return; // Nothing to open.
   }
 
   await showTextDocument(uri);

@@ -1,18 +1,20 @@
 import * as vscode from 'vscode';
 import { get } from 'https';
+import { ExtensionContext } from '../extensionContext';
 import { existsFile } from '../utils/fsEx';
 import { MacroFilter } from '../utils/ui';
-import { isUntitled, PathLike, parent, toUri, uriBasename } from '../utils/uri';
+import { isUntitled, parent, uriBasename, UriLocator, resolveUri } from '../utils/uri';
 import { saveTextEditor } from '../utils/vscodeEx';
 
 const NO_OPTION: vscode.MessageItem = { title: 'No', isCloseAffordance: true };
 const YES_OPTION: vscode.MessageItem = { title: 'Yes' };
 
 export async function downloadAsset(
+  { log }: ExtensionContext,
   assetUri: vscode.Uri,
-  macroPathOrUri: PathLike,
+  locator: UriLocator,
 ): Promise<vscode.Uri | undefined> {
-  const targetDownloadDir = await getDownloadLocation(macroPathOrUri);
+  const targetDownloadDir = await getDownloadLocation(resolveUri(locator));
   if (!targetDownloadDir) {
     return;
   }
@@ -21,7 +23,7 @@ export async function downloadAsset(
   if (
     (await existsFile(targetDownloadUri)) &&
     (await vscode.window.showWarningMessage(
-      'Do you want to override file?',
+      'Do you want to override existing file?',
       {
         modal: true,
         detail: `Path: ${targetDownloadUri.scheme === 'file' ? targetDownloadUri.fsPath : targetDownloadUri.toString(true)}`,
@@ -38,7 +40,10 @@ export async function downloadAsset(
     get(targetAssetUri.toString(), (res) => {
       const data: any[] = [];
       res.on('data', (chunk) => data.push(chunk)).on('end', () => resolve(Buffer.concat(data)));
-    }).on('error', (err) => reject(err));
+    }).on('error', (err) => {
+      log.error(err);
+      reject(err);
+    });
   });
   if (!content) {
     vscode.window.showErrorMessage(`Failed to download asset from ${targetAssetUri}`);
@@ -46,6 +51,8 @@ export async function downloadAsset(
   }
 
   await vscode.workspace.fs.writeFile(targetDownloadUri, content);
+  log.info('Downloaded .d.ts file', targetDownloadUri.toString(true));
+  vscode.window.showInformationMessage(`Downloaded: ${targetDownloadUri.toString(true)}`);
   return targetDownloadUri;
 }
 
@@ -60,8 +67,8 @@ function convertGitHubUrlToDownload(uri: vscode.Uri): vscode.Uri {
   return updatedUri;
 }
 
-async function getDownloadLocation(macroPathOrUri: PathLike): Promise<vscode.Uri | undefined> {
-  let macroUri: vscode.Uri | undefined = toUri(macroPathOrUri);
+async function getDownloadLocation(locator: UriLocator): Promise<vscode.Uri | undefined> {
+  let macroUri: vscode.Uri | undefined = resolveUri(locator);
 
   if (isUntitled(macroUri)) {
     const result = await vscode.window.showInformationMessage(

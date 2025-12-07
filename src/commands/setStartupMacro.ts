@@ -2,10 +2,14 @@ import * as vscode from 'vscode';
 import { StartupMacroLibrarySourceManager } from '../core/library/startupMacroLibrarySourceManager';
 import { explorerTreeDataProvider } from '../explorer/explorerTreeView';
 import { ExtensionContext } from '../extensionContext';
-import { fromLocator, Locator, toUri } from '../utils/uri';
+import { UriLocator, resolveUri } from '../utils/uri';
 
-export async function addStartupMacro(context: ExtensionContext, locator: Locator) {
-  const uri = toUri(fromLocator(locator));
+export async function setStartupMacro(context: ExtensionContext, locator: UriLocator) {
+  const uri = resolveUri(locator);
+  if (!uri) {
+    return; // Nothing to run.
+  }
+
   const {
     added,
     target: scope,

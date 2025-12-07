@@ -2,15 +2,15 @@ import * as vscode from 'vscode';
 import { ExtensionContext } from '../extensionContext';
 import { showMacroErrorDialog, showMacroQuickPick } from '../ui/dialogs';
 import { activeMacroEditor } from '../utils/activeMacroEditor';
-import { fromLocator, isUntitled, Locator, toUri } from '../utils/uri';
+import { isUntitled, UriLocator, resolveUri } from '../utils/uri';
 
 export async function runMacro(
   { libraryManager, mruMacro, runnerManager }: ExtensionContext,
-  locator?: Locator,
+  locator?: UriLocator,
   options?: { ignoreDiagnosticErrors?: true; startup?: true },
 ) {
   const uri = locator
-    ? toUri(fromLocator(locator))
+    ? resolveUri(locator)
     : await showMacroQuickPick(libraryManager, { selectUri: mruMacro });
   if (!uri) {
     return; // Nothing to run.

@@ -1,31 +1,26 @@
 import * as vscode from 'vscode';
 import { basename, extname } from 'path';
 import { isMacro } from '../core/language';
-import { Macro } from '../core/macro';
-import { explorerTreeView } from '../explorer/explorerTreeView';
 import { ExtensionContext } from '../extensionContext';
 import { existsFile } from '../utils/fsEx';
-import { fromLocator, isUntitled, Locator, parent, toUri, uriBasename } from '../utils/uri';
+import { isUntitled, parent, uriBasename, UriLocator } from '../utils/uri';
+import { getUriOrTreeSelection } from './utils';
 
-export async function renameMacro(context: ExtensionContext, locator?: Locator): Promise<void> {
-  let targetLocator = locator;
-  if (!targetLocator) {
-    const treeSelection = explorerTreeView?.selection[0];
-    if (treeSelection instanceof Macro && !isUntitled(treeSelection.uri)) {
-      targetLocator = treeSelection;
-    }
+export async function renameMacro(_context: ExtensionContext, locator?: UriLocator): Promise<void> {
+  const uri = getUriOrTreeSelection(locator, (uri) => !isUntitled(uri));
+  if (!uri) {
+    return;
   }
 
-  if (targetLocator) {
-    await renameFromLocator(context, targetLocator);
+  const parentUri = parent(uri);
+  const newName = await showRenameInputBox(uriBasename(uri), parentUri);
+
+  if (newName) {
+    await vscode.workspace.fs.rename(uri, vscode.Uri.joinPath(parentUri, newName));
   }
 }
-
-async function renameFromLocator(_context: ExtensionContext, locator: Locator): Promise<void> {
-  const uri = toUri(fromLocator(locator));
-  const name = uriBasename(uri);
-  const parentUri = parent(uri);
-  const newName = await vscode.window.showInputBox({
+async function showRenameInputBox(name: string, parentUri: vscode.Uri) {
+  return await vscode.window.showInputBox({
     prompt: `Provide a new name for '${name}'`,
     placeHolder: 'File name',
     value: name,
@@ -46,8 +41,4 @@ async function renameFromLocator(_context: ExtensionContext, locator: Locator): 
       return;
     },
   });
-
-  if (newName) {
-    await vscode.workspace.fs.rename(uri, vscode.Uri.joinPath(parentUri, newName));
-  }
 }

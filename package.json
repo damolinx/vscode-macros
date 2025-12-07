@@ -117,7 +117,7 @@
       },
       {
         "command": "macros.delete.startupMacro",
-        "title": "Unset as Startup Macro",
+        "title": "Remove as Startup Macro",
         "category": "Macros"
       },
       {

@@ -3,26 +3,7 @@ import * as path from 'path';
 import { posix } from 'path/posix';
 
 export type PathLike = string | vscode.Uri;
-export type Locator = PathLike | { path: string } | { uri: vscode.Uri };
 export type UriLocator = vscode.Uri | { uri: vscode.Uri };
-
-export function fromLocator(locator: Locator): PathLike {
-  if (locator instanceof vscode.Uri || typeof locator === 'string') {
-    return locator;
-  } else if ('uri' in locator) {
-    return locator.uri;
-  } else {
-    return locator.path;
-  }
-}
-
-export function toPath(pathOrUri: PathLike): string {
-  return pathOrUri instanceof vscode.Uri ? pathOrUri.fsPath : pathOrUri;
-}
-
-export function toUri(pathOrUri: PathLike): vscode.Uri {
-  return pathOrUri instanceof vscode.Uri ? pathOrUri : vscode.Uri.file(pathOrUri);
-}
 
 /**
  * Checks if two URIs should be considered equal.
@@ -30,7 +11,11 @@ export function toUri(pathOrUri: PathLike): vscode.Uri {
 export function areUriEqual(locatorA: UriLocator, locatorB: UriLocator): boolean {
   const a = locatorA instanceof vscode.Uri ? locatorA : locatorA.uri;
   const b = locatorB instanceof vscode.Uri ? locatorB : locatorB.uri;
-  return a.scheme === b.scheme && a.authority === b.authority && a.path === b.path;
+  return (
+    a.scheme === b.scheme &&
+    a.authority === b.authority &&
+    (a.scheme === 'file' ? normalizePath(a.fsPath) === normalizePath(b.fsPath) : a.path === b.path)
+  );
 }
 
 /**
@@ -47,8 +32,8 @@ export function isParent(
 
   let normalizedParent, normalizedCandidateParent, sep: string;
   if (parent.scheme === 'file') {
-    normalizedParent = normalize(parent.fsPath);
-    normalizedCandidateParent = normalize(path.dirname(candidate.fsPath));
+    normalizedParent = normalizePath(parent.fsPath);
+    normalizedCandidateParent = normalizePath(path.dirname(candidate.fsPath));
     sep = path.sep;
   } else {
     normalizedParent = parent.path;
@@ -60,10 +45,6 @@ export function isParent(
     normalizedParent === normalizedCandidateParent ||
     (!options?.mustBeImmediate && normalizedCandidateParent.startsWith(normalizedParent + sep))
   );
-
-  function normalize(p: string) {
-    return process.platform === 'win32' ? p.toLowerCase() : p;
-  }
 }
 
 /**
@@ -72,6 +53,10 @@ export function isParent(
 export function isUntitled(locator: UriLocator): boolean {
   const { scheme } = locator instanceof vscode.Uri ? locator : locator.uri;
   return scheme === 'untitled';
+}
+
+function normalizePath(path: string) {
+  return process.platform === 'win32' ? path.toLowerCase() : path;
 }
 
 /**
@@ -90,6 +75,13 @@ export function parent(locator: UriLocator): vscode.Uri {
 export function resolveAsUri(pathOrUri: string): vscode.Uri {
   const candidate = vscode.Uri.parse(pathOrUri);
   return candidate.scheme.length > 1 ? candidate : vscode.Uri.file(pathOrUri);
+}
+
+/**
+ * Resolve {@param locator} into a {@link vscode.Uri} instance.
+ */
+export function resolveUri(locator: UriLocator): vscode.Uri {
+  return locator instanceof vscode.Uri ? locator : locator.uri;
 }
 
 /**

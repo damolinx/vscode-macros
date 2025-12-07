@@ -66,6 +66,7 @@ export class MacroRunner implements vscode.Disposable {
   }
 
   public resetSharedContext() {
+    this.context.log.info('Reset persistent context', this.macro.uri.toString(true));
     this.sharedMacroContext = undefined;
   }
 
@@ -128,7 +129,7 @@ export class MacroRunner implements vscode.Disposable {
 
     this.context.log.info(
       `Macro started ${getMacroRunIdToken(runId)}`,
-      vscode.workspace.asRelativePath(this.macro.uri),
+      this.macro.uri.toString(true),
     );
     try {
       let runPromise: Promise<any>;
@@ -156,12 +157,12 @@ export class MacroRunner implements vscode.Disposable {
 
       this.context.log.info(
         `Macro completed ${getMacroRunIdToken(runId)}`,
-        vscode.workspace.asRelativePath(this.macro.uri),
+        this.macro.uri.toString(true),
       );
     } catch (error: any) {
       this.context.log.error(
         `Macro failed ${getMacroRunIdToken(runId)}`,
-        vscode.workspace.asRelativePath(this.macro.uri),
+        this.macro.uri.toString(true),
         '\n',
         error.stack ?? error.message ?? error,
       );

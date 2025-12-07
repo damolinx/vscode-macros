@@ -1,13 +1,13 @@
 import { StartupMacroLibrarySourceManager } from '../core/library/startupMacroLibrarySourceManager';
 import { explorerTreeDataProvider } from '../explorer/explorerTreeView';
 import { ExtensionContext } from '../extensionContext';
-import { fromLocator, Locator, toUri } from '../utils/uri';
+import { UriLocator, resolveUri } from '../utils/uri';
 
 export async function removeStartupMacro(
   context: ExtensionContext,
-  locator: Locator,
+  locator: UriLocator,
 ): Promise<boolean> {
-  const uri = toUri(fromLocator(locator));
+  const uri = resolveUri(locator);
   const removed = await StartupMacroLibrarySourceManager.instance.removeLibrary(uri);
 
   if (removed) {

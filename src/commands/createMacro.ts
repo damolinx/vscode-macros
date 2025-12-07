@@ -5,7 +5,8 @@ import { templates } from '../macroTemplates';
 import { createGroupedQuickPickItems } from '../ui/ui';
 import { activeMacroEditor } from '../utils/activeMacroEditor';
 import { existsFile } from '../utils/fsEx';
-import { fromLocator, isUntitled, Locator, toUri, areUriEqual } from '../utils/uri';
+import { isUntitled, areUriEqual, UriLocator, resolveUri } from '../utils/uri';
+import { showTextDocument } from '../utils/vscodeEx';
 
 let creatingMacro = false;
 
@@ -15,7 +16,7 @@ export function isCreatingMacro(): boolean {
 
 export async function createMacro(
   context: ExtensionContext,
-  locator?: Locator,
+  locator?: UriLocator,
   options?: vscode.TextDocumentShowOptions & {
     content?: string;
     language?: string;
@@ -35,7 +36,7 @@ export async function createMacro(
 
   let uri: vscode.Uri | undefined;
   if (locator !== undefined) {
-    const parentUri = toUri(fromLocator(locator));
+    const parentUri = resolveUri(locator);
     if (!isUntitled(parentUri)) {
       uri = await createUntitledUri(parentUri, language);
     }
@@ -81,11 +82,11 @@ export async function createMacro(
 
 export async function updateEditor(
   context: ExtensionContext,
-  documentLocator?: Locator,
+  locator?: UriLocator,
   defaultContent?: string,
 ): Promise<void> {
-  const editor = documentLocator
-    ? await vscode.window.showTextDocument(toUri(fromLocator(documentLocator)))
+  const editor = locator
+    ? await showTextDocument(resolveUri(locator))
     : await activeMacroEditor(false);
   if (!editor) {
     return;

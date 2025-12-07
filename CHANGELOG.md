@@ -1,18 +1,22 @@
 # Changelog
 
 ## 0.5.20
+- **Macro Explorer** view:
+  - Rename **Unset as Startup Macro** to **Remove as Startup Macro**.
 - Improve **Show Running Macros** dropdown:
   - Support multi-selection.
   - Remove **Request to Stop** button as selected instances already receive the request.
   - Ability to remove macros as startup macros from dropdown.
   - Fix: dropdown is not being dismissed when accepting selection.
+- **Download .d.ts file** action shows a notification on completion.
+- Fix: Uri comparisons could fail on Windows due to inconsistent drive letter casing in VS Code's API.
 
 ## 0.5.19
 - Add **Macros: Configure Startup Macros** command.
 - **Macro Explorer** view:
   - Update **Temporary** library icon.
   - Improve naming logic for copy/paste conflicts.
-- `untitled:` documents no longer prompt for run confirmation on TS 2034 or TS 2037.
+- `untitled:` documents no longer prompt for run confirmation on TS 2034 or TS 2037 erros.
 - Update README.
 
 ## 0.5.18

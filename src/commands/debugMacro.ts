@@ -1,21 +1,27 @@
 import * as vscode from 'vscode';
-import { showMacroOpenDialog } from '../ui/dialogs';
+import { ExtensionContext } from '../extensionContext';
+import { showMacroQuickPick } from '../ui/dialogs';
 import { activeMacroEditor } from '../utils/activeMacroEditor';
-import { fromLocator, Locator, parent, toUri, uriBasename } from '../utils/uri';
+import { UriLocator, parent, uriBasename, resolveUri } from '../utils/uri';
 import { showTextDocument } from '../utils/vscodeEx';
 
 export const MACROS_EXT_DEBUG_VAR = 'MACROS_EXT_DEBUG';
 
-export async function debugMacro(locator?: Locator) {
-  const uri = locator ? toUri(fromLocator(locator)) : await showMacroOpenDialog();
+export async function debugMacro(
+  { libraryManager, mruMacro }: ExtensionContext,
+  locator?: UriLocator,
+) {
+  const uri = locator
+    ? resolveUri(locator)
+    : await showMacroQuickPick(libraryManager, { selectUri: mruMacro });
   if (!uri) {
-    return; // Nothing to run.
+    return; // Nothing to debug.
   }
 
   if (uri.scheme !== 'file') {
     await vscode.window.showErrorMessage('Debugging of non-local macros is not supported.', {
       modal: true,
-      detail: 'Save your macro to a local librar for debugging',
+      detail: 'Save your macro to a local library for debugging',
     });
     return;
   }
@@ -48,9 +54,9 @@ export async function debugMacro(locator?: Locator) {
   vscode.debug.startDebugging(undefined, debugConfig);
 }
 
-export async function debugActiveEditor() {
+export async function debugActiveEditor(context: ExtensionContext) {
   const editor = await activeMacroEditor(true);
   if (editor) {
-    await debugMacro(editor.document.uri);
+    await debugMacro(context, editor.document.uri);
   }
 }

@@ -2,7 +2,6 @@ import * as vscode from 'vscode';
 import { registerCreateMacroContentTool } from './ai/createMacroContentTool';
 import { registerMacroChatParticipant } from './ai/macroChatParticipant';
 import { addLibrary } from './commands/addLibrary';
-import { addStartupMacro } from './commands/addStartupMacro';
 import { copyFile, pasteFile } from './commands/copyPasteFile';
 import { copyPath } from './commands/copyPath';
 import { createMacro, updateEditor } from './commands/createMacro';
@@ -16,6 +15,7 @@ import { renameMacro } from './commands/renameMacro';
 import { resetSharedContext } from './commands/resetContext';
 import { revealInOS } from './commands/revealInOS';
 import { runActiveEditor, runMacro } from './commands/runMacro';
+import { setStartupMacro } from './commands/setStartupMacro';
 import {
   registerSourceDirectoryVerifier,
   setupSourceDirectory,
@@ -43,7 +43,7 @@ import { registerMacroCodeLensProvider } from './providers/macroCodeLensProvider
 import { registerMacroOptionsCompletionProvider } from './providers/macroOptionsCompletionProvider';
 import { registerMacroSnapshotContentProvider } from './providers/macroSnapshotContentProvider';
 import { existsFile } from './utils/fsEx';
-import { Locator, PathLike, UriLocator, areUriEqual } from './utils/uri';
+import { UriLocator, areUriEqual } from './utils/uri';
 
 /**
  * Extension startup.
@@ -73,29 +73,31 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
   } = vscode;
   context.disposables.push(
     cr('macros.copy.file', (locator: UriLocator) => copyFile(context, locator)),
-    cr('macros.copy.name', (locator: Locator) => copyPath(context, locator, true)),
-    cr('macros.copy.path', (locator?: Locator) => copyPath(context, locator)),
-    cr('macros.debug', debugMacro),
-    cr('macros.debug.activeEditor', debugActiveEditor),
+    cr('macros.copy.name', (locator: UriLocator) => copyPath(context, locator, true)),
+    cr('macros.copy.path', (locator?: UriLocator) => copyPath(context, locator)),
+    cr('macros.debug', (locator?: UriLocator) => debugMacro(context, locator)),
+    cr('macros.debug.activeEditor', () => debugActiveEditor(context)),
     cr('macros.delete.macroOrMacroLibrary', (macroOrLibrary?: Macro | MacroLibrary) =>
       deleteMacroOrMacroLibrary(context, macroOrLibrary),
     ),
-    cr('macros.delete.startupMacro', (locator: Locator) => removeStartupMacro(context, locator)),
-    cr('macros.downloadAsset', downloadAsset),
+    cr('macros.delete.startupMacro', (locator: UriLocator) => removeStartupMacro(context, locator)),
+    cr('macros.downloadAsset', (assetUri: vscode.Uri, locator: UriLocator) =>
+      downloadAsset(context, assetUri, locator),
+    ),
     cr('macros.explorer.refresh', () => explorerTreeDataProvider?.refresh()),
-    cr('macros.new.macro', (locator?: Locator) => createMacro(context, locator)),
-    cr('macros.new.macro.activeEditor', (locator?: Locator) => updateEditor(context, locator)),
+    cr('macros.new.macro', (locator?: UriLocator) => createMacro(context, locator)),
+    cr('macros.new.macro.activeEditor', (locator?: UriLocator) => updateEditor(context, locator)),
     cr('macros.new.macro.repl', () => createRepl(context)),
     cr('macros.new.macroLibrary', () => addLibrary(context)),
-    cr('macros.new.startupMacro', (locator: Locator) => addStartupMacro(context, locator)),
+    cr('macros.new.startupMacro', (locator: UriLocator) => setStartupMacro(context, locator)),
     cr('macros.open', () => openMacro(context)),
     cr('macros.paste.file', (locator: UriLocator) => pasteFile(context, locator)),
-    cr('macros.rename.macro', (locator?: Locator) => renameMacro(context, locator)),
-    cr('macros.resetContext', (pathOrUri: PathLike) => resetSharedContext(context, pathOrUri)),
-    cr('macros.revealInExplorer', (locator?: Locator) => revealInOS(locator)),
-    cr('macros.revealInFinder', (locator?: Locator) => revealInOS(locator)),
-    cr('macros.revealInFiles', (locator?: Locator) => revealInOS(locator)),
-    cr('macros.run', (locator?: Locator, ...args: any[]) => runMacro(context, locator, ...args)),
+    cr('macros.rename.macro', (locator?: UriLocator) => renameMacro(context, locator)),
+    cr('macros.resetContext', (locator: UriLocator) => resetSharedContext(context, locator)),
+    cr('macros.revealInExplorer', (locator?: UriLocator) => revealInOS(locator)),
+    cr('macros.revealInFinder', (locator?: UriLocator) => revealInOS(locator)),
+    cr('macros.revealInFiles', (locator?: UriLocator) => revealInOS(locator)),
+    cr('macros.run', (locator?: UriLocator, ...args: any[]) => runMacro(context, locator, ...args)),
     cr('macros.run.activeEditor', () => runActiveEditor(context)),
     cr('macros.run.mru', (...args: any[]) => runMacro(context, context.mruMacro, ...args)),
     cr('macros.run.show', () => showRunningMacros(context)),
