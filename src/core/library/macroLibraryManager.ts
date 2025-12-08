@@ -5,6 +5,7 @@ import { Library } from './library';
 import { LibraryItem } from './libraryItem';
 import { MacroLibrary } from './macroLibrary';
 import { MacroLibrarySourceManager } from './macroLibrarySourceManager';
+import { StartupMacroLibrary } from './startupMacroLibrary';
 import { UntitledMacroLibrary } from './untitledMacroLibrary';
 
 export class MacroLibraryManager implements vscode.Disposable {
@@ -20,7 +21,10 @@ export class MacroLibraryManager implements vscode.Disposable {
       this.sourcesManager.sources.map((source) => new MacroLibrary(source.uri, source)),
     );
     this.sourcesManager = new MacroLibrarySourceManager();
-    this.virtualLibraries = new LazyDisposable(() => [UntitledMacroLibrary.instance(context)]);
+    this.virtualLibraries = new LazyDisposable(() => [
+      StartupMacroLibrary.instance(),
+      UntitledMacroLibrary.instance(context),
+    ]);
 
     this.disposables = [
       this.onDidChangeLibrariesEmitter,

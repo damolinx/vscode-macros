@@ -132,9 +132,11 @@ Startup macros allow you to create extension-like behavior, as they are initiali
 
 Startup macros are defined via the `macros.startupMacros` setting in your workspace or user settings:
 
-* **Option 1**: edit the setting manually from the **Settings Editor** or the appropriate `settings.json`. You can use the **Macros: Configure Startup Macros** command to get there quickly.
+* **Option 1**: Configure the **Macros: Startup Macros** setting in the **Settings Editor** or `macros.startupMacros` in the `settings.json`. Use the **Macros: Configure Startup Macros** command to jump there quickly.
 
-* **Option 2**: directly from the [**Macro Explorer**](#macro-explorer-view) view by selecting **Set as Startup Macro** or **Remove as Startup Macro** from a macro node context menu.
+* **Option 2**: in the [**Macro Explorer**](#macro-explorer-view) view, select **Set as Startup Macro** or **Remove as Startup Macro** from a macro’s context menu.
+
+* **Option 3**: in the [**Macro Explorer**](#macro-explorer-view) view, drag a macro into the **Startup** library.
 
 The `macros.startupMacros` setting is additive across Global, Workspace, and Workspace Folder scopes, this is to say macros registered in all scopes will be run. The system deduplicates macros before execution so only one instance of any given startup macro file is run.
 

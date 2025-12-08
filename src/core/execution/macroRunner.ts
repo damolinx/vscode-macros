@@ -155,13 +155,11 @@ export class MacroRunner implements vscode.Disposable {
 
       result = await (macroCode.options.retained ? retainedExecute(runPromise) : runPromise);
 
-      this.context.log.info(
-        `Macro completed ${getMacroRunIdToken(runId)}`,
-        this.macro.uri.toString(true),
-      );
+      this.context.log.info('Macro completed —', runId);
     } catch (error: any) {
       this.context.log.error(
-        `Macro failed ${getMacroRunIdToken(runId)}`,
+        'Macro failed —',
+        runId,
         this.macro.uri.toString(true),
         '\n',
         error.stack ?? error.message ?? error,
@@ -210,8 +208,8 @@ export class MacroRunner implements vscode.Disposable {
       }
       return errors.length > 0
         ? new Error(
-            `Error(s) occurred while disposing resources:\n${errors.map((e) => (typeof e === 'string' ? e : e.message)).join('\n')}`,
-          )
+          `Error(s) occurred while disposing resources:\n${errors.map((e) => (typeof e === 'string' ? e : e.message)).join('\n')}`,
+        )
         : undefined;
     }
   }

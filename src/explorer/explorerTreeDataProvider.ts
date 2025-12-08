@@ -4,15 +4,18 @@ import { MacroRunner } from '../core/execution/macroRunner';
 import { Library } from '../core/library/library';
 import { LibraryId } from '../core/library/libraryId';
 import { LibraryItem } from '../core/library/libraryItem';
+import { StartupMacroLibrary } from '../core/library/startupMacroLibrary';
 import { Macro } from '../core/macro';
 import { MacroId, getMacroId } from '../core/macroId';
+import { StartupMacro } from '../core/startupMacro';
 import { ExtensionContext } from '../extensionContext';
 import { NaturalComparer } from '../utils/ui';
 import { createLibraryItem } from './items/libraryItem';
 import { createMacroItem } from './items/macroItem';
 import { createRunInfoItem } from './items/runInfoItem';
+import { createStartupItem } from './items/startupItem';
 
-export type TreeElement = Library | Macro | MacroRunInfo;
+export type TreeElement = Library | Macro | MacroRunInfo | StartupMacro;
 export type TreeEvent = TreeElement | TreeElement[] | undefined;
 
 interface MonitoredLibraryData {
@@ -44,9 +47,15 @@ export class ExplorerTreeDataProvider
         this.onDidChangeTreeDataEmitter.fire(undefined);
       }),
       this.context.runnerManager.onRun(({ macro }) => this.fireOnDidChangeTreeData(macro)),
-      this.context.runnerManager.onStop(({ runInfo }) =>
-        this.fireOnDidChangeTreeData(runInfo.macro),
-      ),
+      this.context.runnerManager.onStop(({ runInfo }) => {
+        this.fireOnDidChangeTreeData(runInfo.macro);
+        if (runInfo.startup) {
+          this.fireOnDidChangeTreeData(
+            new StartupMacro(runInfo.macro.uri),
+            StartupMacroLibrary.instance(),
+          );
+        }
+      }),
     ];
   }
 
@@ -85,7 +94,7 @@ export class ExplorerTreeDataProvider
       const deleteHandler = (items: LibraryItem[]) => {
         items.forEach(({ uri }) => {
           const files = this.monitoredLibraries.get(library.id)?.files;
-          if (files && files.has(getMacroId(uri))) {
+          if (files?.has(getMacroId(uri))) {
             this.fireOnDidChangeTreeData(library);
           }
         });
@@ -106,14 +115,14 @@ export class ExplorerTreeDataProvider
     return entry;
   }
 
-  private fireOnDidChangeTreeData(macroOrLibrary: Macro | Library, library?: Library): void {
-    if (macroOrLibrary instanceof Library) {
-      this.onDidChangeTreeDataEmitter.fire(macroOrLibrary);
-    } else {
+  private fireOnDidChangeTreeData(element: TreeElement, library?: Library): void {
+    if (element instanceof Macro || element instanceof StartupMacro) {
       // Refresh parent as Macro changes collapsible state, and
       // that won't be refreshed unless parent changes.
-      const parent = library ?? this.getParent(macroOrLibrary);
-      this.onDidChangeTreeDataEmitter.fire(parent ? [parent, macroOrLibrary] : macroOrLibrary);
+      const parent = library ?? this.getParent(element);
+      this.onDidChangeTreeDataEmitter.fire(parent ? [parent, element] : element);
+    } else {
+      this.onDidChangeTreeDataEmitter.fire(element);
     }
   }
 
@@ -126,9 +135,11 @@ export class ExplorerTreeDataProvider
       );
     } else if (element instanceof Library) {
       const uris = await element.getFiles();
-      children = uris
-        .map(({ uri }) => new Macro(uri))
-        .sort((a, b) => NaturalComparer.compare(a.name, b.name));
+      children = (
+        element instanceof StartupMacroLibrary
+          ? uris.map(({ uri }) => new StartupMacro(uri))
+          : uris.map(({ uri }) => new Macro(uri))
+      ).sort((a, b) => NaturalComparer.compare(a.name, b.name));
       const entry = this.ensureLibraryIsMonitored(element);
       entry.files = new Set((children as Macro[]).map((macro) => macro.id));
     } else if (element instanceof Macro) {
@@ -157,8 +168,16 @@ export class ExplorerTreeDataProvider
     if (element instanceof Library) {
       treeItem = createLibraryItem(element);
     } else if (element instanceof Macro) {
-      const runner = this.context.runnerManager.getRunner(element);
-      treeItem = createMacroItem(element, runner);
+      const runner = this.context.runnerManager.getRunner(element.uri);
+      treeItem = createMacroItem(element, runner.runInstanceCount);
+    } else if (element instanceof StartupMacro) {
+      const runner = this.context.runnerManager.getRunner(
+        element.uri.with({ scheme: element.uri.fragment }),
+      );
+      treeItem = createStartupItem(
+        element,
+        [...runner.runInstances].find((i) => i.startup),
+      );
     } else {
       treeItem = createRunInfoItem(element);
     }

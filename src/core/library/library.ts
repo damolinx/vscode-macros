@@ -3,12 +3,14 @@ import { uriBasename, UriLocator } from '../../utils/uri';
 import { getLibraryId, LibraryId } from './libraryId';
 import { LibraryItem, LibraryItemId } from './libraryItem';
 
-export abstract class Library<TItem extends LibraryItem = LibraryItem>
-  implements vscode.Disposable
+export abstract class Library<
+  TItemId extends LibraryItemId = LibraryItemId,
+  TItem extends LibraryItem<TItemId> = LibraryItem<TItemId>,
+> implements vscode.Disposable
 {
   protected readonly disposables: vscode.Disposable[];
   public readonly id: LibraryId;
-  private readonly items: Map<LibraryItemId, TItem>;
+  protected readonly items: Map<TItemId, TItem>;
   public readonly name: string;
   private readonly onDidAddFilesEmitter: vscode.EventEmitter<TItem[]>;
   private readonly onDidChangeFilesEmitter: vscode.EventEmitter<TItem[]>;
@@ -64,7 +66,7 @@ export abstract class Library<TItem extends LibraryItem = LibraryItem>
 
   public abstract owns(locator: UriLocator): boolean;
 
-  protected removeItems(...itemsOrIds: (TItem | LibraryItemId)[]): void {
+  protected removeItems(...itemsOrIds: (TItem | TItemId)[]): void {
     const removed: TItem[] = [];
     itemsOrIds.forEach((itemOrId) => {
       const item = this.items.get(typeof itemOrId === 'string' ? itemOrId : itemOrId.id);
@@ -77,7 +79,7 @@ export abstract class Library<TItem extends LibraryItem = LibraryItem>
     }
   }
 
-  protected reportChangedItems(...itemsOrIds: (TItem | LibraryItemId)[]): void {
+  protected reportChangedItems(...itemsOrIds: (TItem | TItemId)[]): void {
     const changed: TItem[] = [];
     itemsOrIds.forEach((itemOrId) => {
       const item = this.items.get(typeof itemOrId === 'string' ? itemOrId : itemOrId.id);

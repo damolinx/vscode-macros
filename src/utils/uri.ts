@@ -50,9 +50,15 @@ export function isParent(
 /**
  * Check if {@link locator} describes an `untitled:` document.
  */
+export function isStartup(locator: UriLocator): boolean {
+  return resolveUri(locator).scheme === 'startup';
+}
+
+/**
+ * Check if {@link locator} describes an `untitled:` document.
+ */
 export function isUntitled(locator: UriLocator): boolean {
-  const { scheme } = locator instanceof vscode.Uri ? locator : locator.uri;
-  return scheme === 'untitled';
+  return resolveUri(locator).scheme === 'untitled';
 }
 
 function normalizePath(path: string) {
@@ -63,7 +69,7 @@ function normalizePath(path: string) {
  * Get parent URI.
  */
 export function parent(locator: UriLocator): vscode.Uri {
-  const uri = locator instanceof vscode.Uri ? locator : locator.uri;
+  const uri = resolveUri(locator);
   return uri.with({ path: posix.dirname(uri.path) });
 }
 

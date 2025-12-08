@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { setStartupMacro } from '../commands/setStartupMacro';
 import {
   isMacro,
   MACRO_LANGUAGES,
@@ -8,7 +9,7 @@ import {
 import { Macro } from '../core/macro';
 import { ExtensionContext } from '../extensionContext';
 import { existsFile } from '../utils/fsEx';
-import { isUntitled, uriBasename } from '../utils/uri';
+import { isStartup, isUntitled, uriBasename } from '../utils/uri';
 import { saveTextEditor } from '../utils/vscodeEx';
 import { TreeElement } from './explorerTreeDataProvider';
 
@@ -62,6 +63,11 @@ export class ExplorerTreeDragAndDropController
 
     const sources = await getSourceUris();
     if (!sources) {
+      return;
+    }
+
+    if (isStartup(target.uri)) {
+      sources.forEach((uri) => setStartupMacro(this.context, uri));
       return;
     }
 

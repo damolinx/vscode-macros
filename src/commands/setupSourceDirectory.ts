@@ -4,7 +4,7 @@ import { ExtensionContext } from '../extensionContext';
 import { selectSourceDirectory } from '../ui/selectMacroFile';
 import { LazyDisposable } from '../utils/lazy';
 import { readFile } from '../utils/resources';
-import { parent, UriLocator } from '../utils/uri';
+import { parent, resolveUri, UriLocator } from '../utils/uri';
 
 export const AUTO_VERIFY_SETTING = 'macros.sourceDirectoriesVerification';
 export const GLOBALS_RESOURCE = 'api/global.d.ts';
@@ -63,12 +63,7 @@ export async function setupSourceDirectory(
   locator?: UriLocator,
   suppressNotifications?: true,
 ): Promise<void> {
-  const uri = locator
-    ? locator instanceof vscode.Uri
-      ? locator
-      : locator.uri
-    : await selectSourceDirectory(context.libraryManager);
-
+  const uri = locator ? resolveUri(locator) : await selectSourceDirectory(context.libraryManager);
   if (!uri) {
     return; // Nothing to run.
   }

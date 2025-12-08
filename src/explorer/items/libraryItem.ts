@@ -3,17 +3,24 @@ import * as os from 'os';
 import { dirname, join } from 'path';
 import { Library } from '../../core/library/library';
 import { MacroLibrary } from '../../core/library/macroLibrary';
-import { isUntitled, parent, uriBasename } from '../../utils/uri';
+import { parent, uriBasename } from '../../utils/uri';
 
 export function createLibraryItem(library: Library) {
   const item = new vscode.TreeItem(
     uriBasename(library.uri),
     vscode.TreeItemCollapsibleState.Collapsed,
   );
-  if (isUntitled(library.uri)) {
-    updateUntitledLibraryItem(item);
-  } else {
-    updateStdLibraryItem(item);
+
+  switch (library.uri.scheme) {
+    case 'startup':
+      updateStartupLibraryItem(item);
+      break;
+    case 'untitled':
+      updateUntitledLibraryItem(item);
+      break;
+    default:
+      updateStdLibraryItem(item);
+      break;
   }
 
   return item;
@@ -31,6 +38,12 @@ export function createLibraryItem(library: Library) {
     if (library instanceof MacroLibrary && library.configSource) {
       item.tooltip += `\nThis library is defined in ${library.configSource.sources.map((s) => (s.target === vscode.ConfigurationTarget.Global ? 'User' : vscode.ConfigurationTarget[s.target])).join(', ')} settings`;
     }
+  }
+
+  function updateStartupLibraryItem(item: vscode.TreeItem) {
+    item.contextValue = 'startupLibrary';
+    item.iconPath = new vscode.ThemeIcon('file-symlink-directory');
+    item.tooltip = new vscode.MarkdownString('These macros are executed on startup.');
   }
 
   function updateUntitledLibraryItem(item: vscode.TreeItem) {

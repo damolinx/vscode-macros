@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import { MacroRunner } from '../../core/execution/macroRunner';
 import { tryResolveMacroLanguage } from '../../core/language';
 import { StartupMacroLibrarySourceManager } from '../../core/library/startupMacroLibrarySourceManager';
 import { Macro } from '../../core/macro';
@@ -10,10 +9,7 @@ export const JsIcon = createIcon('symbol-function', 'macros.js');
 export const TsIcon = createIcon('symbol-function', 'macros.ts');
 export const UnknownIcon = createIcon('symbol-function', 'macros.general');
 
-export function createMacroItem(
-  { name, uri }: Macro,
-  { runInstanceCount: runCount }: MacroRunner,
-): vscode.TreeItem {
+export function createMacroItem({ name, uri }: Macro, runCount: number): vscode.TreeItem {
   const item = new vscode.TreeItem(uri, vscode.TreeItemCollapsibleState.None);
   item.contextValue = 'macroFile';
   item.label = name;
@@ -37,7 +33,7 @@ export function createMacroItem(
   if (runCount) {
     item.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
     item.contextValue += ',running';
-    item.description = `⟨${runCount}⟩`;
+    item.description = `(${runCount})`;
     const displayPath = uri.scheme === 'file' ? uri.fsPath : uri.toString(true);
     const runInstance = runCount === 1 ? '1 running instance' : `${runCount} running instances`;
     item.tooltip = `${displayPath}\n${runInstance}`;

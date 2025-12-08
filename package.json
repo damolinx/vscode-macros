@@ -397,7 +397,7 @@
         },
         {
           "command": "macros.delete.startupMacro",
-          "when": "view == macros.macroExplorer && viewItem =~ /startup/",
+          "when": "view == macros.macroExplorer && viewItem =~ /startup/ && !(viewItem =~ /startupLibrary/)",
           "group": "4_tools@2"
         },
         {
@@ -427,17 +427,17 @@
         },
         {
           "command": "macros.revealInExplorer",
-          "when": "!isWeb && isWindows && view == macros.macroExplorer && !(viewItem =~ /macroRun|untitled/)",
+          "when": "!isWeb && isWindows && view == macros.macroExplorer && !(viewItem =~ /macroRun|startupLibrary|startupMacro|untitled/)",
           "group": "3_navigation@2"
         },
         {
           "command": "macros.revealInFinder",
-          "when": "!remoteName && !isWeb && isMac && view == macros.macroExplorer && !(viewItem =~ /macroRun|untitled/)",
+          "when": "!remoteName && !isWeb && isMac && view == macros.macroExplorer && !(viewItem =~ /macroRun|startupLibrary|startupMacro|untitled/)",
           "group": "3_navigation@2"
         },
         {
           "command": "macros.revealInFiles",
-          "when": "!remoteName && !isWeb && isLinux && view == macros.macroExplorer && !(viewItem =~ /macroRun|untitled/)",
+          "when": "!remoteName && !isWeb && isLinux && view == macros.macroExplorer && !(viewItem =~ /macroRun|startupLibrary|startupMacro|untitled/)",
           "group": "3_navigation@2"
         },
         {
@@ -461,13 +461,23 @@
           "group": "4_tools@1"
         },
         {
+          "command": "macros.startup.settings",
+          "when": "view == macros.macroExplorer && viewItem =~ /startupLibrary/",
+          "group": "inline"
+        },
+        {
+          "command": "macros.startup.settings",
+          "when": "view == macros.macroExplorer && viewItem =~ /startupLibrary/",
+          "group": "configuration"
+        },
+        {
           "command": "macros.stop",
-          "when": "view == macros.macroExplorer && (viewItem == macroRun || viewItem =~ /running/)",
+          "when": "view == macros.macroExplorer && viewItem =~ /macroRun|running/",
           "group": "1_execution@3"
         },
         {
           "command": "macros.stop",
-          "when": "view == macros.macroExplorer && (viewItem == macroRun || viewItem =~ /running/)",
+          "when": "view == macros.macroExplorer && viewItem =~ /macroRun|running/",
           "group": "inline"
         }
       ],

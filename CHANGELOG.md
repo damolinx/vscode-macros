@@ -2,6 +2,7 @@
 
 ## 0.5.20
 - **Macro Explorer** view:
+  - Add **Startup** library node to manage startup macros.
   - Rename **Unset as Startup Macro** to **Remove as Startup Macro**.
 - Improve **Show Running Macros** dropdown:
   - Support multi-selection.
