@@ -43,14 +43,14 @@ export function createLibraryItem(library: Library) {
   function updateStartupLibraryItem(item: vscode.TreeItem) {
     item.contextValue = 'startupLibrary';
     item.iconPath = new vscode.ThemeIcon('file-symlink-directory');
-    item.tooltip = new vscode.MarkdownString('These macros are executed on startup.');
+    item.tooltip = new vscode.MarkdownString('This library holds startup macros.  \nDrag macros here to register them as such.');
   }
 
   function updateUntitledLibraryItem(item: vscode.TreeItem) {
     item.contextValue = 'macroLibrary,untitled';
     item.iconPath = new vscode.ThemeIcon('root-folder');
     item.tooltip = new vscode.MarkdownString(
-      'This library includes all `untitled` macro editors.  \n Save them to a library, or use `.macro.js` or `.macro.ts`  \nas file extension to enable IntelliSense and macro tooling.',
+      'This library holds all `untitled` macro editors.  \n Save them using `.macro.js` or `.macro.ts` as file  \nextension to enable IntelliSense and macro tooling.',
     );
   }
 }
