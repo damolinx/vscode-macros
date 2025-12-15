@@ -31,8 +31,8 @@ export class SandboxManager implements vscode.Disposable {
   }
 
   public cancel(target: Macro | MacroId | vscode.Uri): SandboxExecutionDescriptor[] {
-    const canceledDescriptors = this.getExecutor(target as any)?.cancel();
-    return canceledDescriptors ?? [];
+    const canceledDescriptors = this.getExecutor(target as any)?.cancel() ?? [];
+    return canceledDescriptors;
   }
 
   public ensureExecutor(macro: Macro): Promise<SandboxExecutor>;

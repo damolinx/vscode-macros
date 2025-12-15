@@ -1,8 +1,8 @@
 # Changelog
 
-## 0.6.0
+## 0.5.21
 - Refactor macro execution APIs.
-- Update stacktrace parsing for TypeScript. 
+- Update stacktrace parsing for TypeScript.
 
 ## 0.5.20
 - **Macro Explorer** view:

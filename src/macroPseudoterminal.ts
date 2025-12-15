@@ -183,11 +183,14 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
         }, [] as string[]);
 
         if (history?.length) {
-          await createMacro(this.context, undefined, {
+          const document = await createMacro(this.context, undefined, {
             content: `\n// History: ${new Date().toLocaleString()}\n\n` + history.join('\n'),
             language: this.useTs ? 'typescript' : 'javascript',
             preserveFocus: true,
           });
+          if (document) {
+            output.write(`Saved history to ${document?.uri.path} ${REPL_NEWLINE}`);
+          }
         } else {
           output.write(`Nothing to save${REPL_NEWLINE}`);
         }
