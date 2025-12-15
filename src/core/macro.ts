@@ -23,7 +23,7 @@ export class Macro {
    */
   public async getCode(): Promise<MacroCode> {
     const document = await vscode.workspace.openTextDocument(this.uri);
-    if (!this.code?.isCurrentForKnown(document)) {
+    if (this.code?.version !== document.version) {
       this.code = new MacroCode(document, this.id);
     }
     return this.code;

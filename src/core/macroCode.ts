@@ -5,19 +5,19 @@ import { getMacroId, MacroId } from './macroId';
 import { MacroOptions, parseOptions } from './macroOptions';
 
 export class MacroCode {
-  private readonly _options: Lazy<MacroOptions>;
   public readonly languageId: string;
   public readonly macroId: MacroId;
+  private readonly parsedOptions: Lazy<MacroOptions>;
   public readonly rawCode: string;
   private runnableCode?: string;
   private transpilationError?: TranspilationError;
-  private uri: vscode.Uri;
+  private readonly uri: vscode.Uri;
   public readonly version: number;
 
   constructor(document: vscode.TextDocument, macroId = getMacroId(document.uri)) {
-    this._options = new Lazy(() => parseOptions(this.rawCode));
     this.languageId = document.languageId;
     this.macroId = macroId;
+    this.parsedOptions = new Lazy(() => parseOptions(this.rawCode));
     this.rawCode = document.getText();
     this.uri = document.uri;
     this.version = document.version;
@@ -38,11 +38,11 @@ export class MacroCode {
       if (this.languageId === 'typescript') {
         try {
           this.runnableCode = transpileOrThrow(this.rawCode, this.uri);
-        } catch (err) {
-          if (err instanceof TranspilationError) {
-            this.transpilationError = err;
+        } catch (error) {
+          if (error instanceof TranspilationError) {
+            this.transpilationError = error;
           }
-          throw err;
+          throw error;
         }
       } else {
         this.runnableCode = this.rawCode.trimEnd();
@@ -53,24 +53,9 @@ export class MacroCode {
   }
 
   /**
-   * Verifies whether this instance is in sync with the given {@link document}.
-   */
-  public isCurrentFor(document: vscode.TextDocument): boolean {
-    return this.macroId === getMacroId(document.uri) && this.isCurrentForKnown(document);
-  }
-
-  /**
-   * Verifies whether this instance is in sync with the given {@link document},
-   * but assumes {@link document} originates from the same URI.
-   */
-  public isCurrentForKnown(document: vscode.TextDocument): boolean {
-    return this.languageId === document.languageId && this.version === document.version;
-  }
-
-  /**
-   * Gets {@link MacroOptions} defined in the associated document.
+   * Gets {@link MacroOptions options} defined in the macro document.
    */
   public get options(): MacroOptions {
-    return this._options.get();
+    return this.parsedOptions.get();
   }
 }
