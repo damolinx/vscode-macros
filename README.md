@@ -57,7 +57,7 @@ Any JavaScript or TypeScript document can be treated as a macro, even if not sav
 
 * **Option 3**: Create a new *untitled* document using your preferred method—for example, via the **Create: New File...** or **Create: New Untitled Text File** commands, or by double-clicking an empty area in the editor bar.
   * Change the editor language to JavaScript or TypeScript.
-  * Use the **Macros: Fill File with Template** command, or the **Apply Template** CodeLens to add content from a template. The command respects the language the editor is set to.
+  * Use the **Macros: Fill File with Template** command, or the **Fill with Snippet** CodeLens to add content from a template. The command respects the language the editor is set to.
 
 * **Option 4**: Ask the [`@macros` assistant](#ai-assistant) to create a macro for you.
 
@@ -65,7 +65,7 @@ Any JavaScript or TypeScript document can be treated as a macro, even if not sav
 
 ## Writing Macro Code
 
-The **Macros: Fill File with Template** command, or the **Apply Template** CodeLens on empty documents, can jumpstart your development by adding sample code to the currenr editor. To generate custom code, however, you can ask the [`@macros` assistant](#ai-assistant) for help.
+The **Macros: Fill File with Template** command, or the **Fill with Snippet** CodeLens on empty documents, can jumpstart your development by adding sample code to the currenr editor. To generate custom code, however, you can ask the [`@macros` assistant](#ai-assistant) for help.
 You can write your own code, of course—see [Development](#development) for available APIs. When doing so, keep these basic rules in mind:
 * Macros are standalone JavaScript or TypeScript files executed in a Node.js sandbox.
 * Use CommonJS syntax (JavaScript) and avoid `export`, top-level `await` or `return` statements.

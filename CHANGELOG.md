@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.5.21
+- Rename **Apply Template** CodeLens to **Fill with Snippet**. 
 - Refactor macro execution APIs.
 - Update stacktrace parsing for TypeScript.
 
