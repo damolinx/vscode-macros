@@ -1,15 +1,15 @@
 import * as vscode from 'vscode';
-import { MacroRunnerManager } from './core/execution/macroRunnerManager';
-import { ViewManager } from './core/execution/viewManager';
+import { SandboxManager } from './core/execution/sandboxManager';
+import { ViewManager } from './core/execution/views/viewManager';
 import { MacroLibraryManager } from './core/library/macroLibraryManager';
 
 export class ExtensionContext {
   public readonly extensionContext: vscode.ExtensionContext;
+  public readonly sandboxManager: SandboxManager;
   public readonly isRemote: boolean;
   public readonly libraryManager: MacroLibraryManager;
   public readonly log: vscode.LogOutputChannel;
   public mruMacro?: vscode.Uri;
-  public readonly runnerManager: MacroRunnerManager;
   public readonly treeViewManager: ViewManager;
   public readonly webviewManager: ViewManager;
 
@@ -18,11 +18,11 @@ export class ExtensionContext {
     this.isRemote = Boolean(vscode.env.remoteName);
     this.libraryManager = new MacroLibraryManager(this);
     this.log = vscode.window.createOutputChannel('Macros', { log: true });
-    this.runnerManager = new MacroRunnerManager(this);
+    this.sandboxManager = new SandboxManager(this);
     this.treeViewManager = new ViewManager('macrosView.treeview', 5);
     this.webviewManager = new ViewManager('macrosView.webview', 5);
 
-    this.disposables.push(this.libraryManager, this.log, this.runnerManager);
+    this.disposables.push(this.libraryManager, this.log, this.sandboxManager);
   }
 
   /**

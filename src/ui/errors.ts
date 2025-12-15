@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { MacroRunner } from '../core/execution/macroRunner';
+import { SandboxExecutor } from '../core/execution/executors/sandboxExecutor';
 import { MacroCode } from '../core/macroCode';
 import { cleanError } from '../utils/errors';
 import { TranspilationError } from '../utils/typescript';
@@ -7,7 +7,7 @@ import { uriBasename } from '../utils/uri';
 import { showTextDocument } from '../utils/vscodeEx';
 
 export function showMacroErrorMessage(
-  runner: MacroRunner,
+  executor: SandboxExecutor,
   macroCode: MacroCode,
   error: Error | string,
 ): Promise<void> {
@@ -31,13 +31,13 @@ export function showMacroErrorMessage(
       message = displayError.message;
       if (displayError.stack) {
         filteredStack = displayError.stack;
-        errorLocation = findErrorLocation(filteredStack);
+        errorLocation = findErrorLocation(filteredStack, macroCode.languageId);
       }
     }
   }
 
   return showErrorMessage(
-    runner,
+    executor,
     macroCode,
     `Macro Error — ${message}`,
     filteredStack,
@@ -50,7 +50,7 @@ export function showMacroErrorMessage(
     const first = error.diagnostics[0];
 
     const location: { uri: vscode.Uri; range?: vscode.Range } = {
-      uri: runner.macro.uri,
+      uri: executor.macro.uri,
     };
     if (first?.file && first.start !== undefined) {
       const { line, character } = first.file.getLineAndCharacterOfPosition(first.start);
@@ -60,16 +60,24 @@ export function showMacroErrorMessage(
     return location;
   }
 
-  function findErrorLocation(stack: string): { uri: vscode.Uri; range?: vscode.Range } | undefined {
+  function findErrorLocation(
+    stack: string,
+    language: string,
+  ): { uri: vscode.Uri; range?: vscode.Range } | undefined {
     let location: { uri: vscode.Uri; range?: vscode.Range } | undefined;
 
-    const firstMatch = stack.match(/at(?<prefix>.+?):(?<line>\d+)(:(?<offset>\d+))?(?:\)|$)/m);
+    const regex =
+      language === 'typescript'
+        ? /at\s+(?<prefix>.+?):(?<line>\d+)(:(?<offset>\d+))?(?:\)|$)/m
+        : /(?<prefix>.+?):(?<line>\d+)(:(?<offset>\d+))?(?:\)|$)/m;
+
+    const firstMatch = stack.match(regex);
     if (firstMatch) {
       const { prefix, line, offset } = firstMatch.groups!;
       const position = new vscode.Position(parseInt(line) - 1, offset ? parseInt(offset) - 1 : 0);
-      if (prefix.endsWith(uriBasename(runner.macro.uri))) {
+      if (prefix.endsWith(uriBasename(executor.macro.uri))) {
         location = {
-          uri: runner.macro.uri,
+          uri: executor.macro.uri,
           range: new vscode.Range(position, position),
         };
       } else {
@@ -90,7 +98,7 @@ export function showMacroErrorMessage(
 }
 
 async function showErrorMessage(
-  runner: MacroRunner,
+  executor: SandboxExecutor,
   macroCode: MacroCode,
   message: string,
   stack?: string,
@@ -108,15 +116,15 @@ async function showErrorMessage(
         }
       : {
           title: 'Open Macro',
-          execute: () => showTextDocument(runner.macro.uri),
+          execute: () => showTextDocument(executor.macro.uri),
         },
   ];
 
-  if (!macroCode.options.singleton || runner.runInstanceCount === 0) {
+  if (!macroCode.options.singleton || executor.executionCount === 0) {
     actions.push({
       title: 'Retry',
       execute: () =>
-        vscode.commands.executeCommand('macros.run', runner.macro.uri, {
+        vscode.commands.executeCommand('macros.run', executor.macro.uri, {
           ignoreDiagnosticErrors: true,
         }),
     });
@@ -125,7 +133,7 @@ async function showErrorMessage(
   if (macroCode.options.persistent) {
     actions.push({
       title: 'Reset Context',
-      execute: () => runner.resetSharedContext(),
+      execute: () => executor.resetSharedContext(),
     });
   }
 
@@ -138,7 +146,7 @@ async function showErrorMessage(
       actions.push({
         title: 'Details',
         execute: () =>
-          showErrorMessage(runner, macroCode, 'Macro Error', stack, errorLocation, true),
+          showErrorMessage(executor, macroCode, 'Macro Error', stack, errorLocation, true),
       });
     }
   }

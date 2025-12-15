@@ -1,19 +1,19 @@
 import * as vscode from 'vscode';
-import { MacroRunInfo } from '../core/execution/macroRunInfo';
+import { SandboxExecutionDescriptor } from '../core/execution/sandboxExecutionDescriptor';
 import { createSnapshotUri } from '../providers/macroSnapshotContentProvider';
 import { showTextDocument } from '../utils/vscodeEx';
 
-export async function showRunCode(runInfo: MacroRunInfo) {
-  const macroDocument = await vscode.workspace.openTextDocument(runInfo.macro.uri);
-  if (macroDocument.version === runInfo.snapshot.version) {
+export async function showRunCode(descriptor: SandboxExecutionDescriptor) {
+  const macroDocument = await vscode.workspace.openTextDocument(descriptor.macro.uri);
+  if (macroDocument.version === descriptor.snapshot.version) {
     await showTextDocument(macroDocument.uri);
   } else {
-    const snapshotUri = createSnapshotUri(runInfo);
+    const snapshotUri = createSnapshotUri(descriptor);
     await vscode.commands.executeCommand(
       'vscode.diff',
       snapshotUri,
-      runInfo.macro.uri,
-      `${runInfo.macro.name}: v${runInfo.snapshot.version} (running) vs v${macroDocument.version} (current)`,
+      descriptor.macro.uri,
+      `${descriptor.macro.name}: v${descriptor.snapshot.version} (running) vs v${macroDocument.version} (current)`,
     );
   }
 }

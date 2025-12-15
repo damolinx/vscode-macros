@@ -6,7 +6,7 @@ import { Context, runInContext } from 'vm';
 import { MacroLogOutputChannel } from './api/macroLogOutputChannel';
 import { createMacro } from './commands/createMacro';
 import { initializeContext, MacroContextInitParams } from './core/execution/macroRunContext';
-import { getMacroRunId } from './core/execution/macroRunId';
+import { getSandboxExecutionId } from './core/execution/sandboxExecutionId';
 import { ExtensionContext } from './extensionContext';
 import { showMacroQuickPick } from './ui/dialogs';
 import { cleanError } from './utils/errors';
@@ -33,7 +33,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
   private useTs: boolean;
 
   constructor(context: ExtensionContext, name: string, index: number) {
-    const runId = getMacroRunId(name, index);
+    const runId = getSandboxExecutionId(name, index);
 
     this.context = context;
     this.cts = new vscode.CancellationTokenSource();
@@ -45,7 +45,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     this.macroInitParams = {
       disposables: [],
       log: new MacroLogOutputChannel(runId, context),
-      runId,
+      executionId: runId,
       token: this.cts.token,
       viewManagers: {
         tree: this.context.treeViewManager,
@@ -55,8 +55,8 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
   }
 
   public close(): void {
-    this.context.treeViewManager.releaseOwnedIds(this.macroInitParams.runId);
-    this.context.webviewManager.releaseOwnedIds(this.macroInitParams.runId);
+    this.context.treeViewManager.releaseOwnedIds(this.macroInitParams.executionId);
+    this.context.webviewManager.releaseOwnedIds(this.macroInitParams.executionId);
     vscode.Disposable.from(...this.macroInitParams.disposables).dispose();
     this.cts.dispose();
     this.onDidCloseEmitter.dispose();

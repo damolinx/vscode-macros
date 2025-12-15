@@ -2,14 +2,14 @@ import * as vscode from 'vscode';
 import * as vm from 'vm';
 import { MacroContext } from '../../api/macroContext';
 import { MacrosApi } from '../../api/macrosApi';
-import { MacroRunId } from './macroRunId';
-import { ViewId } from './viewId';
-import { ViewManager } from './viewManager';
+import { SandboxExecutionId } from './sandboxExecutionId';
+import { ViewId } from './views/viewId';
+import { ViewManager } from './views/viewManager';
 
 export interface MacroContextInitParams {
   disposables: vscode.Disposable[];
   log: vscode.LogOutputChannel;
-  runId: MacroRunId;
+  executionId: SandboxExecutionId;
   startup?: true;
   token: vscode.CancellationToken;
   uri?: vscode.Uri;
@@ -55,7 +55,7 @@ function createMacroApi(params: MacroContextInitParams): MacrosApi {
   return {
     __cancellationToken: params.token,
     __disposables: params.disposables,
-    __runId: params.runId.toString(),
+    __runId: params.executionId.toString(),
     __startup: params.startup,
     macros: {
       macro: {
@@ -63,12 +63,12 @@ function createMacroApi(params: MacroContextInitParams): MacrosApi {
       },
       log: params.log,
       window: {
-        getTreeViewId: () => params.viewManagers.tree.getId(params.runId),
-        getWebviewId: () => params.viewManagers.web.getId(params.runId),
+        getTreeViewId: () => params.viewManagers.tree.getId(params.executionId),
+        getWebviewId: () => params.viewManagers.web.getId(params.executionId),
         releaseTreeViewId: (id: string) =>
-          params.viewManagers.tree.releaseId(params.runId, id as ViewId),
+          params.viewManagers.tree.releaseId(params.executionId, id as ViewId),
         releaseWebviewId: (id: string) =>
-          params.viewManagers.web.releaseId(params.runId, id as ViewId),
+          params.viewManagers.web.releaseId(params.executionId, id as ViewId),
       },
     },
   };

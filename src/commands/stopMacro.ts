@@ -1,25 +1,27 @@
 import * as vscode from 'vscode';
-import { MacroRunInfo } from '../core/execution/macroRunInfo';
+import { SandboxExecutionDescriptor } from '../core/execution/sandboxExecutionDescriptor';
 import { Macro } from '../core/macro';
 import { StartupMacro } from '../core/startupMacro';
 import { getMacroUriFromStartupMacroUri } from '../core/startupMacroId';
 import { ExtensionContext } from '../extensionContext';
+import { resolveUri } from '../utils/uri';
 
 export async function stopMacro(
-  { log, runnerManager }: ExtensionContext,
-  locator: vscode.Uri | Macro | MacroRunInfo | StartupMacro,
+  { log, sandboxManager }: ExtensionContext,
+  target: Macro | SandboxExecutionDescriptor | StartupMacro | vscode.Uri,
 ) {
-  const uri =
-    locator instanceof vscode.Uri
-      ? locator
-      : 'uri' in locator
-        ? getMacroUriFromStartupMacroUri(locator.uri)
-        : undefined;
+  let canceledDescriptors: SandboxExecutionDescriptor[];
 
-  const runInfos: MacroRunInfo[] = uri
-    ? [...runnerManager.getRunner(uri).runInstances]
-    : [locator as MacroRunInfo];
+  if (target instanceof SandboxExecutionDescriptor) {
+    target.cts.cancel();
+    canceledDescriptors = [target];
+  } else {
+    const uri = getMacroUriFromStartupMacroUri(resolveUri(target));
+    canceledDescriptors = sandboxManager.cancel(uri);
+  }
 
-  log.info('Stopping macros via cancellation token —', ...runInfos.map(({ runId }) => runId));
-  runInfos.forEach(({ cts }) => cts.cancel());
+  log.info(
+    'Requesting macros to stop via cancellation token —',
+    ...canceledDescriptors.map(({ id }) => id),
+  );
 }

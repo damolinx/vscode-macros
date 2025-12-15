@@ -5,7 +5,7 @@ import { activeMacroEditor } from '../utils/activeMacroEditor';
 import { isUntitled, UriLocator, resolveUri } from '../utils/uri';
 
 export async function runMacro(
-  { libraryManager, mruMacro, runnerManager }: ExtensionContext,
+  { libraryManager, mruMacro, sandboxManager }: ExtensionContext,
   locator?: UriLocator,
   options?: { ignoreDiagnosticErrors?: true; startup?: true },
 ) {
@@ -30,13 +30,13 @@ export async function runMacro(
     return; // User canceled
   }
 
-  const runner = runnerManager.getRunner(uri);
-  const macroCode = await runner.macro.getCode();
+  const executor = await sandboxManager.ensureExecutor(uri);
+  const pareparedExecution = await executor.createDescriptor(options);
 
   try {
-    await runner.run(macroCode, options?.startup);
+    await executor.executeDescriptor(pareparedExecution);
   } catch (error: any) {
-    await showMacroErrorDialog(runner, macroCode, error as Error | string);
+    await showMacroErrorDialog(executor, pareparedExecution.snapshot, error as Error | string);
   }
 
   function hasDiagnosticErrors(uri: vscode.Uri) {

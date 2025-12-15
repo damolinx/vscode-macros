@@ -17,9 +17,7 @@ export const FILELIST_MIMETYPE = 'text/uri-list';
 export const FILELIST_SEP = '\r\n';
 export const TREE_MIMETYPE = 'application/vnd.code.tree.macros.macroexplorer';
 
-export class ExplorerTreeDragAndDropController
-  implements vscode.TreeDragAndDropController<TreeElement>
-{
+export class ExplorerTreeDragAndDropController implements vscode.TreeDragAndDropController<TreeElement> {
   private readonly context: ExtensionContext;
   public readonly dropMimeTypes: readonly string[];
   public readonly dragMimeTypes: readonly string[];

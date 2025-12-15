@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
-import { MacroRunInfo } from '../core/execution/macroRunInfo';
-import { MacroRunner } from '../core/execution/macroRunner';
+import { SandboxExecutionDescriptor } from '../core/execution/sandboxExecutionDescriptor';
 import { Library } from '../core/library/library';
 import { LibraryId } from '../core/library/libraryId';
 import { LibraryItem } from '../core/library/libraryItem';
@@ -10,12 +9,12 @@ import { MacroId, getMacroId } from '../core/macroId';
 import { StartupMacro } from '../core/startupMacro';
 import { ExtensionContext } from '../extensionContext';
 import { NaturalComparer } from '../utils/ui';
+import { createExecutionItem } from './items/executionItem';
 import { createLibraryItem } from './items/libraryItem';
 import { createMacroItem } from './items/macroItem';
-import { createRunInfoItem } from './items/runInfoItem';
 import { createStartupItem } from './items/startupItem';
 
-export type TreeElement = Library | Macro | MacroRunInfo | StartupMacro;
+export type TreeElement = Library | Macro | StartupMacro | SandboxExecutionDescriptor;
 export type TreeEvent = TreeElement | TreeElement[] | undefined;
 
 interface MonitoredLibraryData {
@@ -46,14 +45,13 @@ export class ExplorerTreeDataProvider
         this.disposeMonitoredLibraries();
         this.onDidChangeTreeDataEmitter.fire(undefined);
       }),
-      this.context.runnerManager.onRun(({ macro }) => this.fireOnDidChangeTreeData(macro)),
-      this.context.runnerManager.onStop(({ runInfo }) => {
-        this.fireOnDidChangeTreeData(runInfo.macro);
-        if (runInfo.startup) {
-          this.fireOnDidChangeTreeData(
-            new StartupMacro(runInfo.macro.uri),
-            StartupMacroLibrary.instance(),
-          );
+      this.context.sandboxManager.onExecutionStart(({ macro }) =>
+        this.fireOnDidChangeTreeData(macro),
+      ),
+      this.context.sandboxManager.onExecutionEnd(({ macro, startup }) => {
+        this.fireOnDidChangeTreeData(macro);
+        if (startup) {
+          this.fireOnDidChangeTreeData(new StartupMacro(macro.uri), StartupMacroLibrary.instance());
         }
       }),
     ];
@@ -143,8 +141,8 @@ export class ExplorerTreeDataProvider
       const entry = this.ensureLibraryIsMonitored(element);
       entry.files = new Set((children as Macro[]).map((macro) => macro.id));
     } else if (element instanceof Macro) {
-      const runner = this.context.runnerManager.getRunner(element);
-      children = [...runner.runInstances].sort((a, b) => NaturalComparer.compare(a.runId, b.runId));
+      const executor = this.context.sandboxManager.getExecutor(element);
+      children = executor?.executions.sort((a, b) => NaturalComparer.compare(a.id, b.id)) ?? [];
     } else {
       children = [];
     }
@@ -156,7 +154,7 @@ export class ExplorerTreeDataProvider
     let parent: TreeElement | undefined;
     if (element instanceof Macro) {
       parent = this.context.libraryManager.libraryFor(element.uri);
-    } else if (element instanceof MacroRunner) {
+    } else if (element instanceof SandboxExecutionDescriptor) {
       parent = element.macro;
     }
     return parent;
@@ -168,18 +166,18 @@ export class ExplorerTreeDataProvider
     if (element instanceof Library) {
       treeItem = createLibraryItem(element);
     } else if (element instanceof Macro) {
-      const runner = this.context.runnerManager.getRunner(element.uri);
-      treeItem = createMacroItem(element, runner.runInstanceCount);
+      const executor = this.context.sandboxManager.getExecutor(element.uri);
+      treeItem = createMacroItem(element, executor?.executionCount ?? 0);
     } else if (element instanceof StartupMacro) {
-      const runner = this.context.runnerManager.getRunner(
+      const executor = this.context.sandboxManager.getExecutor(
         element.uri.with({ scheme: element.uri.fragment }),
       );
       treeItem = createStartupItem(
         element,
-        [...runner.runInstances].find((i) => i.startup),
+        executor?.executions.find((i) => i.startup),
       );
     } else {
-      treeItem = createRunInfoItem(element);
+      treeItem = createExecutionItem(element);
     }
 
     return treeItem;

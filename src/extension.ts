@@ -23,11 +23,12 @@ import {
 import { showRunCode } from './commands/showRunCode';
 import { showRunningMacros } from './commands/showRunningMacros';
 import { stopMacro } from './commands/stopMacro';
-import { MacroRunInfo } from './core/execution/macroRunInfo';
+import { SandboxExecutionDescriptor } from './core/execution/sandboxExecutionDescriptor';
 import { MacroLibrary } from './core/library/macroLibrary';
 import { SOURCE_DIRS_CONFIG } from './core/library/macroLibrarySourceManager';
 import { StartupMacroLibrarySourceManager } from './core/library/startupMacroLibrarySourceManager';
 import { Macro } from './core/macro';
+import { StartupMacro } from './core/startupMacro';
 import {
   explorerTreeDataProvider,
   MACRO_EXPLORER_VIEW_ID,
@@ -101,7 +102,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.run.activeEditor', () => runActiveEditor(context)),
     cr('macros.run.mru', (...args: any[]) => runMacro(context, context.mruMacro, ...args)),
     cr('macros.run.show', () => showRunningMacros(context)),
-    cr('macros.runView', (runInfo: MacroRunInfo) => showRunCode(runInfo)),
+    cr('macros.runView', (descriptor: SandboxExecutionDescriptor) => showRunCode(descriptor)),
     cr('macros.showMacroExplorer', () =>
       vscode.commands.executeCommand(`${MACRO_EXPLORER_VIEW_ID}.focus`),
     ),
@@ -112,8 +113,8 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.startup.settings', () =>
       vscode.commands.executeCommand('workbench.action.openSettings', 'macros.startup'),
     ),
-    cr('macros.stop', (uriOrMacroOrRunInfo: vscode.Uri | Macro | MacroRunInfo) =>
-      stopMacro(context, uriOrMacroOrRunInfo),
+    cr('macros.stop', (locator: Macro | SandboxExecutionDescriptor | StartupMacro | vscode.Uri) =>
+      stopMacro(context, locator),
     ),
   );
 

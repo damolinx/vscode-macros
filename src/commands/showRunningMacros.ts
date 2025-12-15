@@ -1,6 +1,9 @@
 import * as vscode from 'vscode';
-import { getMacroRunIdName, getMacroRunIdToken } from '../core/execution/macroRunId';
-import { MacroRunInfo } from '../core/execution/macroRunInfo';
+import { SandboxExecutionDescriptor } from '../core/execution/sandboxExecutionDescriptor';
+import {
+  getSandboxExecutionIdName,
+  getSandboxExecutionIdToken,
+} from '../core/execution/sandboxExecutionId';
 import { ExtensionContext } from '../extensionContext';
 import { createGroupedQuickPickItems } from '../ui/ui';
 import { showTextDocument } from '../utils/vscodeEx';
@@ -9,9 +12,9 @@ import { stopMacro } from './stopMacro';
 
 export async function showRunningMacros(context: ExtensionContext) {
   const {
-    runnerManager: { runningMacros },
+    sandboxManager: { executions },
   } = context;
-  if (runningMacros.length === 0) {
+  if (executions.length === 0) {
     vscode.window.showInformationMessage('No running macros');
     return;
   }
@@ -19,7 +22,7 @@ export async function showRunningMacros(context: ExtensionContext) {
   return new Promise<void>((resolve) => {
     const quickPick = createMacroQuickPick();
     quickPick.onDidAccept(() => {
-      quickPick.selectedItems.forEach(({ runInfo }) => stopMacro(context, runInfo!));
+      quickPick.selectedItems.forEach(({ descriptor }) => stopMacro(context, descriptor!));
       quickPick.hide();
       resolve();
     });
@@ -43,18 +46,18 @@ export async function showRunningMacros(context: ExtensionContext) {
     const startupButtons = [removeStartupButton, openButton];
 
     const quickPick = vscode.window.createQuickPick<
-      vscode.QuickPickItem & { runInfo?: MacroRunInfo }
+      vscode.QuickPickItem & { descriptor?: SandboxExecutionDescriptor }
     >();
     quickPick.canSelectMany = true;
-    quickPick.items = createGroupedQuickPickItems(runningMacros, {
-      groupBy: (runInfo) => getMacroRunIdName(runInfo.runId),
-      itemBuilder: (runInfo) =>
+    quickPick.items = createGroupedQuickPickItems(executions, {
+      groupBy: (execution) => getSandboxExecutionIdName(execution.id),
+      itemBuilder: (execution) =>
         ({
-          buttons: runInfo.startup ? startupButtons : buttons,
-          description: `version: ${runInfo.snapshot.version}`,
-          detail: `started: ${new Date(runInfo.snapshot.startedOn).toLocaleString()}`,
-          label: getMacroRunIdToken(runInfo.runId),
-          runInfo,
+          buttons: execution.startup ? startupButtons : buttons,
+          description: `version: ${execution.snapshot.version}`,
+          detail: `started: ${new Date(execution.startedOn).toLocaleString()}`,
+          label: getSandboxExecutionIdToken(execution.id),
+          descriptor: execution,
         }) as vscode.QuickPickItem,
     });
     quickPick.matchOnDetail = true;
@@ -62,10 +65,10 @@ export async function showRunningMacros(context: ExtensionContext) {
     quickPick.onDidTriggerItemButton(async (e) => {
       switch (e.button) {
         case openButton:
-          await showTextDocument(e.item.runInfo!.macro.uri);
+          await showTextDocument(e.item.descriptor!.macro.uri);
           break;
         case removeStartupButton:
-          await removeStartupMacro(context, e.item.runInfo!.macro);
+          await removeStartupMacro(context, e.item.descriptor!.macro);
           break;
       }
     });

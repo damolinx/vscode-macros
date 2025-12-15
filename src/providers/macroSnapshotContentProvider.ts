@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { MacroRunInfo } from '../core/execution/macroRunInfo';
+import { SandboxExecutionDescriptor } from '../core/execution/sandboxExecutionDescriptor';
 import { ExtensionContext } from '../extensionContext';
 
 export function registerMacroSnapshotContentProvider(context: ExtensionContext): void {
@@ -7,11 +7,11 @@ export function registerMacroSnapshotContentProvider(context: ExtensionContext):
     vscode.workspace.registerTextDocumentContentProvider('macro-snapshot', {
       provideTextDocumentContent(snapshotUri: vscode.Uri) {
         const uri = vscode.Uri.parse(snapshotUri.path, true);
-        const runner = context.runnerManager.getRunner(uri);
-        if (runner) {
-          for (const instance of runner.runInstances) {
-            if (instance.runId === snapshotUri.fragment) {
-              return instance.snapshot.code;
+        const executor = context.sandboxManager.getExecutor(uri);
+        if (executor) {
+          for (const instance of executor.executions) {
+            if (instance.id === snapshotUri.fragment) {
+              return instance.snapshot.rawCode;
             }
           }
         }
@@ -21,10 +21,10 @@ export function registerMacroSnapshotContentProvider(context: ExtensionContext):
   );
 }
 
-export function createSnapshotUri(runInfo: MacroRunInfo) {
+export function createSnapshotUri({ id, macro }: SandboxExecutionDescriptor) {
   return vscode.Uri.from({
     scheme: 'macro-snapshot',
-    path: runInfo.macro.uri.toString(),
-    fragment: runInfo.runId,
+    path: macro.uri.toString(),
+    fragment: id,
   });
 }

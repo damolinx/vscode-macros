@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { MacroRunInfo } from '../../core/execution/macroRunInfo';
+import { SandboxExecutionDescriptor } from '../../core/execution/sandboxExecutionDescriptor';
 import { tryResolveMacroLanguage } from '../../core/language';
 import { MacroOptions } from '../../core/macroOptions';
 import { StartupMacro } from '../../core/startupMacro';
@@ -9,15 +9,18 @@ import { formatStartTimestampLabel } from '../../utils/ui';
 export const JsStartupIcon = createIcon('symbol-event', 'macros.js');
 export const TsStartupIcon = createIcon('symbol-event', 'macros.ts');
 
-export function createStartupItem({ name, uri }: StartupMacro, macroRunInfo?: MacroRunInfo) {
+export function createStartupItem(
+  { name, uri }: StartupMacro,
+  descriptor?: SandboxExecutionDescriptor,
+) {
   const item = new vscode.TreeItem(uri);
   item.iconPath = getIcon(uri);
   item.label = name;
 
-  if (macroRunInfo) {
+  if (descriptor) {
     item.contextValue = 'startupMacro,running';
     item.description = '(active)';
-    item.tooltip = getRunInfoTooltip(macroRunInfo);
+    item.tooltip = getTooltip(descriptor);
   } else {
     item.contextValue = 'startupMacro';
     item.description = '(inactive)';
@@ -39,15 +42,16 @@ function getIcon(uri: vscode.Uri): vscode.ThemeIcon | undefined {
   }
 }
 
-export function getRunInfoTooltip({
+function getTooltip({
   snapshot,
-}: MacroRunInfo): string | vscode.MarkdownString | undefined {
+  startedOn,
+}: SandboxExecutionDescriptor): string | vscode.MarkdownString | undefined {
   const options = (Object.keys(snapshot.options) as (keyof MacroOptions)[]).filter(
     (k) => snapshot.options[k],
   );
   return (
     'Startup macro is running\n' +
     (options.length ? `Options: ${options.join(', ')}\n` : '') +
-    `${formatStartTimestampLabel(snapshot.startedOn)}`
+    `${formatStartTimestampLabel(startedOn)}`
   );
 }

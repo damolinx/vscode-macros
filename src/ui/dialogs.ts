@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { MacroRunner } from '../core/execution/macroRunner';
+import { SandboxExecutor } from '../core/execution/executors/sandboxExecutor';
 import { MacroLibraryManager } from '../core/library/macroLibraryManager';
 import { MacroCode } from '../core/macroCode';
 import { MacroFilter } from '../utils/ui';
@@ -8,11 +8,11 @@ import { selectMacroFile } from './selectMacroFile';
 import { OpenMacroOptions } from './ui';
 
 export function showMacroErrorDialog(
-  runner: MacroRunner,
+  executor: SandboxExecutor,
   macroCode: MacroCode,
   error: Error | string,
 ): Promise<void> {
-  return showMacroErrorMessage(runner, macroCode, error);
+  return showMacroErrorMessage(executor, macroCode, error);
 }
 
 export async function showMacroOpenDialog(

@@ -43,7 +43,9 @@ export function createLibraryItem(library: Library) {
   function updateStartupLibraryItem(item: vscode.TreeItem) {
     item.contextValue = 'startupLibrary';
     item.iconPath = new vscode.ThemeIcon('file-symlink-directory');
-    item.tooltip = new vscode.MarkdownString('This library holds startup macros.  \nDrag macros here to register them as such.');
+    item.tooltip = new vscode.MarkdownString(
+      'This library holds startup macros.  \nDrag macros here to register them as such.',
+    );
   }
 
   function updateUntitledLibraryItem(item: vscode.TreeItem) {

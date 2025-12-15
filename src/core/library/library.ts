@@ -6,7 +6,8 @@ import { LibraryItem, LibraryItemId } from './libraryItem';
 export abstract class Library<
   TItemId extends LibraryItemId = LibraryItemId,
   TItem extends LibraryItem<TItemId> = LibraryItem<TItemId>,
-> implements vscode.Disposable
+>
+  implements vscode.Disposable
 {
   protected readonly disposables: vscode.Disposable[];
   public readonly id: LibraryId;
