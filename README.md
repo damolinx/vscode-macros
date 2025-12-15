@@ -1,8 +1,8 @@
-# Macros for VS Code
+# Macros
 
-A **macro** is a standalone JavaScript or TypeScript script executed within the context of a VS Code extension, with full access to the [VS Code extensibility APIs](https://code.visualstudio.com/api/references/vscode-api). Macros let you automate tasks, customize your development workflow, and prototype extension behavior—without the overhead of building and maintaining a full extension thanks to their lightweight, standalone-file design.
+A **macro** is a JavaScript or TypeScript script executed within the context of a extension, given it full access to the [VS Code extensibility APIs](https://code.visualstudio.com/api/references/vscode-api). Macros let you automate tasks, customize your development workflow, and prototype extension behavior—without the overhead of building and maintaining a full extension thanks to their lightweight, standalone-file design.
 
-Under the hood, macros run inside [Node.js VM sandboxes](https://nodejs.org/api/vm.html#class-vmscript). Each macro executes in its own isolated data context but all share the same process. Because of this model macros cannot be forcefully terminated; instead, cancellation tokens provide a cooperative mechanism for graceful shutdown.
+Under the hood, macros run inside [Node.js VM sandboxes](https://nodejs.org/api/vm.html#class-vmscript). Each sandbox provides its own isolated data context, yet all macros still run within a single shared process. Because of this model, macro executions cannot be forcefully terminated; instead, cancellation tokens offer a cooperative way to detect shutdown requests and exit gracefully.
 
 TypeScript support is transparent, with transpilation happening on demand, providing a seamless experience.
 
@@ -118,7 +118,7 @@ main()
 * **Option 2**: Use the **Macros: Show Running Macros** command to select a specific instance to stop.
   * This is also available from the status bar item shown when there are active macros instances.
 
-If a macro does not respond to a cancellation request, it will continue running. In such cases, you can use the **Developer: Restart Extension Host** command to restart all extensions, or restart VS Code to stop the macro. While this is not ideal, it provides a way to recover from unresponsive or runaway macros. This approach does not implicitly terminate external processes started by the macro, however.
+If a macro does not respond to a cancellation request, it will continue running. You can use the **Developer: Restart Extension Host** command to restart all extensions, or fully restart your IDE to stop the macro. While this is not ideal, it provides a way to recover from unresponsive macros. This approach does not implicitly terminate external processes started by the macro, however.
 
 [↑ Back to top](#table-of-contents)
 
@@ -126,9 +126,7 @@ If a macro does not respond to a cancellation request, it will continue running.
 
 > ⚠️ **Workspace Trust**: Startup macros are disabled in [untrusted workspaces](https://code.visualstudio.com/docs/editing/workspaces/workspace-trust).
 
-Startup macros allow you to customize your environment as soon as the environment launches. Because extensions restart when switching workspaces, these macros can be scoped to apply per workspace, enabling tailored setups across projects.
-
-Startup macros allow you to create extension-like behavior, as they are initialized with VS Code. For clean-up, use the `__disposables` global which the macros execution engine disposes when the macro completes or when the extension is deactivated, for example when closing the current workspace.
+Startup macros let you customize your environment immediately when it launches. Considering that extensions restart whenever you switch workspaces, these macros can be scoped per workspace, giving you tailored setups across different projects. In practice, startup macros behave much like lightweight extensions, because they are initialized curing the **Macros** extension initialization.
 
 Startup macros are defined via the `macros.startupMacros` setting in your workspace or user settings:
 
