@@ -31,10 +31,20 @@ export class UntitledMacroLibrary extends Library {
         }
       }),
       vscode.workspace.onDidCloseTextDocument(({ uri }) => {
-        if (this.owns(uri) && sandboxManager.getExecutor(uri)?.executions) {
-          this.removeItems(getMacroId(uri));
+        if (this.owns(uri)) {
+          const executor = sandboxManager.getExecutor(uri);
+          if (!executor?.executionCount) {
+            this.removeItems(getMacroId(uri));
+          } else {
+            const disposable = executor.onExecutionEnd(() => {
+              if (!executor.executionCount) {
+                this.removeItems(getMacroId(uri));
+                disposable.dispose();
+              }
+            });
+          }
         }
-      }),
+      })
     );
   }
 
