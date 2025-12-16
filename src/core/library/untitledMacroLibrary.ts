@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { isCreatingMacro } from '../../commands/createMacro';
 import { ExtensionContext } from '../../extensionContext';
-import { isUntitled, UriLocator } from '../../utils/uri';
+import { isUntitled } from '../../utils/uri';
 import { isMacroLangId } from '../language';
 import { getMacroId } from '../macroId';
 import { Library } from './library';
@@ -44,11 +44,11 @@ export class UntitledMacroLibrary extends Library {
             });
           }
         }
-      })
+      }),
     );
   }
 
-  public override owns(locator: UriLocator): boolean {
-    return isUntitled(locator);
+  public override owns(uri: vscode.Uri): boolean {
+    return isUntitled(uri);
   }
 }

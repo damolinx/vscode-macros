@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { uriBasename, UriLocator } from '../../utils/uri';
+import { uriBasename } from '../../utils/uri';
 import { getLibraryId, LibraryId } from './libraryId';
 import { LibraryItem, LibraryItemId } from './libraryItem';
 
@@ -65,7 +65,7 @@ export abstract class Library<
     return this.onDidRemoveFilesEmitter.event;
   }
 
-  public abstract owns(locator: UriLocator): boolean;
+  public abstract owns(uri: vscode.Uri): boolean;
 
   protected removeItems(...itemsOrIds: (TItem | TItemId)[]): void {
     const removed: TItem[] = [];

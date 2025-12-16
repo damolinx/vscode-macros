@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { isParent, resolveUri, UriLocator } from '../../utils/uri';
+import { isParent } from '../../utils/uri';
 import { isMacro, macroGlobPattern } from '../language';
 import { getMacroId } from '../macroId';
 import { Library } from './library';
@@ -50,7 +50,7 @@ export class MacroLibrary extends Library {
     return files;
   }
 
-  public override owns(locator: UriLocator): boolean {
-    return isParent(this.uri, resolveUri(locator), { mustBeImmediate: true });
+  public override owns(uri: vscode.Uri): boolean {
+    return isParent(this.uri, uri, { mustBeImmediate: true });
   }
 }
