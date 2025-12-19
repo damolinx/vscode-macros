@@ -4,13 +4,10 @@ import { dirname, join } from 'path';
 import { Library } from '../../core/library/library';
 import { MacroLibrary } from '../../core/library/macroLibrary';
 import { formatDisplayUri } from '../../utils/ui';
-import { parent, uriBasename } from '../../utils/uri';
+import { parent } from '../../utils/uri';
 
 export function createLibraryItem(library: Library) {
-  const item = new vscode.TreeItem(
-    uriBasename(library.uri),
-    vscode.TreeItemCollapsibleState.Collapsed,
-  );
+  const item = new vscode.TreeItem(library.uri, vscode.TreeItemCollapsibleState.Collapsed);
 
   switch (library.uri.scheme) {
     case 'startup':
