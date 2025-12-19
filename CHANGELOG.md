@@ -2,6 +2,7 @@
 
 ## 0.5.22
 - Closing an untitled editor that has pending runs keeps the corresponding **Temporary** node to be able to manage it. 
+- Fix: Creating `(empty)` template ends on error.
 
 ## 0.5.21
 - Rename **Apply Template** CodeLens to **Fill with Snippet**. 

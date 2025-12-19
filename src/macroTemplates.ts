@@ -8,11 +8,11 @@ export const MACRO_TEMPLATES_DIR_RESOURCE = 'examples/';
 export const MACRO_TEMPLATES_MANIFEST_RESOURCE = `${MACRO_TEMPLATES_DIR_RESOURCE}/manifest.json`;
 
 export interface MacroTemplate {
+  alternates?: Record<string, string>;
   category?: string;
   description: string;
   label: string;
-  path: string;
-  alternates?: Record<string, string>;
+  path?: string;
 }
 
 export interface Manifest {
@@ -50,11 +50,13 @@ export async function templates(
     template: MacroTemplate,
     language?: string,
   ): Promise<string> {
+    let content = '';
     const templatePath = (language && template.alternates?.[language]) ?? template.path;
-
-    let content = await readFile(context, MACRO_TEMPLATES_DIR_RESOURCE, templatePath);
-    if (templatePath.endsWith('.ts')) {
-      content = content.replace('// @ts-nocheck', '');
+    if (templatePath) {
+      content = await readFile(context, MACRO_TEMPLATES_DIR_RESOURCE, templatePath);
+      if (templatePath.endsWith('.ts')) {
+        content = content.replace('// @ts-nocheck', '');
+      }
     }
     return content;
   }
