@@ -160,14 +160,14 @@ export class ExplorerTreeDataProvider
     return parent;
   }
 
-  getTreeItem(element: TreeElement): vscode.TreeItem {
+  async getTreeItem(element: TreeElement): Promise<vscode.TreeItem> {
     let treeItem: vscode.TreeItem;
 
     if (element instanceof Library) {
       treeItem = createLibraryItem(element);
     } else if (element instanceof Macro) {
       const executor = this.context.sandboxManager.getExecutor(element.uri);
-      treeItem = createMacroItem(element, executor?.executionCount ?? 0);
+      treeItem = await createMacroItem(element, executor?.executionCount ?? 0);
     } else if (element instanceof StartupMacro) {
       const executor = this.context.sandboxManager.getExecutor(
         element.uri.with({ scheme: element.uri.fragment }),

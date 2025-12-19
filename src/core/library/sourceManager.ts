@@ -77,12 +77,12 @@ export abstract class SourceManager implements vscode.Disposable {
     }
   }
 
-  public getLibrary(uri: vscode.Uri): Source | undefined {
+  public getSource(uri: vscode.Uri): Source | undefined {
     return this.sources.find((s) => areUriEqual(s.uri, uri));
   }
 
-  public hasLibrary(uri: vscode.Uri): boolean {
-    return Boolean(this.getLibrary(uri));
+  public inLibrary(uri: vscode.Uri): boolean {
+    return Boolean(this.getSource(uri));
   }
 
   private loadConfigurationValues(
@@ -137,11 +137,11 @@ export abstract class SourceManager implements vscode.Disposable {
       for (const expandedValue of expand(rawValue)) {
         const entry = expandedToSource.get(expandedValue);
         if (entry) {
-          entry.sources.push(...sources);
+          entry.configSources.push(...sources);
         } else {
           expandedToSource.set(expandedValue, {
             expandedValue,
-            sources: sources as [ConfigurationSource, ...ConfigurationSource[]],
+            configSources: sources as [ConfigurationSource, ...ConfigurationSource[]],
             uri: resolveAsUri(expandedValue),
           });
         }
@@ -169,13 +169,13 @@ export abstract class SourceManager implements vscode.Disposable {
     uri: vscode.Uri,
     target?: vscode.ConfigurationTarget,
   ): Promise<boolean> {
-    const match = this.getLibrary(uri);
+    const match = this.getSource(uri);
     if (!match) {
       return false;
     }
 
     const configuration = vscode.workspace.getConfiguration();
-    for (const source of match.sources.filter((t) => !target || t.target === target)) {
+    for (const source of match.configSources.filter((t) => !target || t.target === target)) {
       const uniqueExistingValues = this.loadConfigurationValues(source.target, configuration);
       uniqueExistingValues.delete(source.value);
       await configuration.update(this.configKey, Array.from(uniqueExistingValues), source.target);

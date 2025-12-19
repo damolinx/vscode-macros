@@ -73,7 +73,7 @@ export async function deleteMacroLibrary(
   }
 
   const items: (vscode.MessageItem & { target?: vscode.ConfigurationTarget })[] = [
-    ...library.sources.map((s) => ({
+    ...library.configSources.map((s) => ({
       title: `Remove from ${s.target === vscode.ConfigurationTarget.Global ? 'User' : 'Workspace'} Settings`,
       target: s.target,
     })),

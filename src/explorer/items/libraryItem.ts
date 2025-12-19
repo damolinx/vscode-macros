@@ -3,6 +3,7 @@ import * as os from 'os';
 import { dirname, join } from 'path';
 import { Library } from '../../core/library/library';
 import { MacroLibrary } from '../../core/library/macroLibrary';
+import { formatDisplayUri } from '../../utils/ui';
 import { parent, uriBasename } from '../../utils/uri';
 
 export function createLibraryItem(library: Library) {
@@ -28,7 +29,7 @@ export function createLibraryItem(library: Library) {
   function updateStdLibraryItem(item: vscode.TreeItem) {
     item.contextValue = 'macroLibrary';
     if (library.uri.scheme === 'file') {
-      const normalizedUri = normalizePath(library.uri.fsPath);
+      const normalizedUri = formatDisplayUri(library.uri);
       item.description = homeRelativePath(dirname(normalizedUri));
       item.tooltip = normalizedUri;
     } else {
@@ -36,7 +37,7 @@ export function createLibraryItem(library: Library) {
       item.tooltip = library.uri.toString(true);
     }
     if (library instanceof MacroLibrary && library.configSource) {
-      item.tooltip += `\nThis library is defined in ${library.configSource.sources.map((s) => (s.target === vscode.ConfigurationTarget.Global ? 'User' : vscode.ConfigurationTarget[s.target])).join(', ')} settings`;
+      item.tooltip += `\nThis library is defined in ${library.configSource.configSources.map((s) => (s.target === vscode.ConfigurationTarget.Global ? 'User' : vscode.ConfigurationTarget[s.target])).join(', ')} settings`;
     }
   }
 
@@ -63,11 +64,4 @@ function homeRelativePath(normalizedPath: string): string {
   return normalizedPath.startsWith(homedir)
     ? join(process.platform === 'win32' ? '‹home›' : '~/', normalizedPath.slice(homedir.length + 1))
     : normalizedPath;
-}
-
-function normalizePath(fsPath: string) {
-  if (process.platform === 'win32' && fsPath.length > 1) {
-    return fsPath[0].toUpperCase() + fsPath.slice(1);
-  }
-  return fsPath;
 }

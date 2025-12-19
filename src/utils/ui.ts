@@ -1,3 +1,4 @@
+import * as vscode from 'vscode';
 import { MACRO_LANGUAGES } from '../core/language';
 
 export const NaturalComparer = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
@@ -8,6 +9,17 @@ export const MacroFilter: Record<string, string[]> = Object.fromEntries(
     extensions.map((ext) => ext.substring(1)),
   ]),
 );
+
+export function formatDisplayUri(uri: vscode.Uri) {
+  if (uri.scheme !== 'file') {
+    return uri.toString(true);
+  }
+
+  if (process.platform === 'win32' && uri.fsPath.length > 1) {
+    return uri.fsPath[0].toUpperCase() + uri.fsPath.slice(1);
+  }
+  return uri.fsPath;
+}
 
 export function formatStartTimestampLabel(timestamp: number): string {
   const now = new Date();

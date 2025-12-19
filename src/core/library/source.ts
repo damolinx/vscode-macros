@@ -6,7 +6,7 @@ export interface ConfigurationSource {
 }
 
 export interface Source {
-  readonly sources: [ConfigurationSource, ...ConfigurationSource[]];
+  readonly configSources: [ConfigurationSource, ...ConfigurationSource[]];
   readonly expandedValue: string;
   readonly uri: vscode.Uri;
 }

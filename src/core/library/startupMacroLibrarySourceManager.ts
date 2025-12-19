@@ -27,7 +27,7 @@ export class StartupMacroLibrarySourceManager extends SourceManager {
     );
   }
 
-  public override getLibrary(uri: vscode.Uri): Source | undefined {
+  public override getSource(uri: vscode.Uri): Source | undefined {
     const targetUri = getMacroUriFromStartupMacroUri(uri);
     return this.sources.find((s) => areUriEqual(s.uri, targetUri));
   }
