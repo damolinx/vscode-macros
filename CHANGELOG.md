@@ -5,6 +5,7 @@
   - Closing an untitled editor with pending runs keeps its node under the **Temporary** library for management. 
   - Update tooltips to align with VS Code’s handling of Windows paths.
   - Untitled macros get an icon matching their current target language. 
+  - Block drag‑and‑drop of `untitled:` macros onto the **Startup** node.
 - Fix: Creating `(empty)` template ends on error.
 
 ## 0.5.21

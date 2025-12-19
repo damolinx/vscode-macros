@@ -65,7 +65,7 @@ export class ExplorerTreeDragAndDropController implements vscode.TreeDragAndDrop
     }
 
     if (isStartup(target.uri)) {
-      sources.forEach((uri) => setStartupMacro(this.context, uri));
+      sources.forEach((uri) => !isUntitled(uri) && setStartupMacro(this.context, uri));
       return;
     }
 
