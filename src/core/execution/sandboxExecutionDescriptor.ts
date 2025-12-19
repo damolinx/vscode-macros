@@ -21,7 +21,7 @@ export class SandboxExecutionDescriptor implements vscode.Disposable {
 
   private constructor(macro: Macro, code: MacroCode, index: number, startup?: true) {
     this.cts = new vscode.CancellationTokenSource();
-    this.id = getSandboxExecutionId(macro.uri.path.split('/').slice(-2).join('/'), index);
+    this.id = getSandboxExecutionId(macro.uri.path.split('/').slice(-2).join('/'), index, startup);
     this.macro = macro;
     this.macroDisposables = [];
     this.snapshot = code;
