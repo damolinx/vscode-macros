@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 import { SandboxExecutor } from '../core/execution/executors/sandboxExecutor';
 import { MacroCode } from '../core/macroCode';
+import { TranspilationError } from '../core/typescript/transpilationError';
 import { cleanError } from '../utils/errors';
-import { TranspilationError } from '../utils/typescript';
 import { uriBasename } from '../utils/uri';
 import { showTextDocument } from '../utils/vscodeEx';
 

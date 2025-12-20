@@ -7,10 +7,10 @@ import { MacroLogOutputChannel } from './api/macroLogOutputChannel';
 import { createMacro } from './commands/createMacro';
 import { initializeContext, MacroContextInitParams } from './core/execution/macroRunContext';
 import { getSandboxExecutionId } from './core/execution/sandboxExecutionId';
+import { transpileOrThrow, TranspilationError } from './core/typescript/transpilation';
 import { ExtensionContext } from './extensionContext';
 import { showMacroQuickPick } from './ui/dialogs';
 import { cleanError } from './utils/errors';
-import { TranspilationError, transpileOrThrow } from './utils/typescript';
 
 const REPL_NEWLINE = '\r\n';
 export const PROMPT_JS = '\x1b[93mjs\x1b[0m\x1b[90m » \x1b[0m';

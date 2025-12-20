@@ -7,6 +7,7 @@
   - Add icons to all nodes to prevent layout shifting. 
 - **Macros: Run Macro** dropdown shows proper labels for `untitled` documents and excludes entries from the **Startup** virtual library. 
 - Deleting a macro configured for startup automatically removes its corresponding settings entry.
+- Better TypeScript transpilation error reporting.
 
 ## 0.5.22
 - **Macro Explorer** view:

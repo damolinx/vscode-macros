@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 import { Lazy } from '../utils/lazy';
-import { TranspilationError, transpileOrThrow } from '../utils/typescript';
 import { getMacroId, MacroId } from './macroId';
 import { MacroOptions, parseOptions } from './macroOptions';
+import { TranspilationError, transpileOrThrow } from './typescript/transpilation';
 
 export class MacroCode {
   public readonly languageId: string;
