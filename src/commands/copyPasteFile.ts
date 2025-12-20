@@ -4,7 +4,7 @@ import { Macro } from '../core/macro';
 import { ExtensionContext } from '../extensionContext';
 import { setContext } from '../extensionContextValues';
 import { existsFile, fsType } from '../utils/fsEx';
-import { isUntitled, parent, uriBasename, UriLocator } from '../utils/uri';
+import { isUntitled, parentUri, uriBasename, UriLocator } from '../utils/uri';
 import { getUriOrTreeSelection } from './utils';
 
 let savedUri: vscode.Uri | undefined;
@@ -61,7 +61,7 @@ export async function pasteFile({ log }: ExtensionContext, locator?: UriLocator)
       break;
     default:
       log.debug('Paste: Target is a file, using parent', target.toString(true));
-      target = parent(target);
+      target = parentUri(target);
       break;
   }
 

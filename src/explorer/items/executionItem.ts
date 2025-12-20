@@ -1,38 +1,34 @@
 import * as vscode from 'vscode';
 import { SandboxExecutionDescriptor } from '../../core/execution/sandboxExecutionDescriptor';
 import { getSandboxExecutionIdToken } from '../../core/execution/sandboxExecutionId';
-import { MacroOptions } from '../../core/macroOptions';
-import { createIcon } from '../../ui/icons';
+import { IconColor } from '../../ui/icons';
 import { formatStartTimestampLabel } from '../../utils/ui';
 
-export const RunInfoIcon = createIcon('circle-outline', 'macros.general');
-export const StartupRunInfoIcon = createIcon('record-small', 'macros.general');
+const RunInfoIcon = new vscode.ThemeIcon('circle-outline', IconColor);
+const StartupRunInfoIcon = new vscode.ThemeIcon('record-small', IconColor);
 
 export function createExecutionItem(descriptor: SandboxExecutionDescriptor) {
-  const item = new vscode.TreeItem(getSandboxExecutionIdToken(descriptor.id));
+  const item = new vscode.TreeItem(
+    getSandboxExecutionIdToken(descriptor.id),
+    vscode.TreeItemCollapsibleState.None,
+  );
   item.contextValue = 'macroRun';
+  item.iconPath = descriptor.startup ? StartupRunInfoIcon : RunInfoIcon;
   item.tooltip = getTooltip(descriptor);
 
-  if (descriptor.startup) {
-    item.iconPath = StartupRunInfoIcon;
-  } else {
-    item.iconPath = RunInfoIcon;
-  }
   return item;
 }
 
-function getTooltip({
-  snapshot,
-  startedOn,
-  startup,
-}: SandboxExecutionDescriptor): string | vscode.MarkdownString | undefined {
-  const options = (Object.keys(snapshot.options) as (keyof MacroOptions)[]).filter(
-    (k) => snapshot.options[k],
-  );
-  return (
-    (startup ? 'Macro executed at startup\n' : '') +
-    (options.length ? `Options: ${options.join(', ')}\n` : '') +
-    `${formatStartTimestampLabel(startedOn)}\n` +
-    `Document revision: ${snapshot.version}`
-  );
+function getTooltip({ snapshot, startedOn }: SandboxExecutionDescriptor): vscode.MarkdownString {
+  const enabledOptions = Object.entries(snapshot.options)
+    .filter(([, enabled]) => enabled)
+    .map(([key]) => key);
+
+  const tooltip = new vscode.MarkdownString();
+  if (enabledOptions.length) {
+    tooltip.appendMarkdown(`**Options:** ${enabledOptions.join(', ')}  \n`);
+  }
+  tooltip.appendMarkdown(`**Started:** ${formatStartTimestampLabel(startedOn)}  \n`);
+  tooltip.appendMarkdown(`**Document revision:** ${snapshot.version}`);
+  return tooltip;
 }

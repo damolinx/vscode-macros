@@ -167,7 +167,7 @@ export class ExplorerTreeDataProvider
       treeItem = createLibraryItem(element);
     } else if (element instanceof Macro) {
       const executor = this.context.sandboxManager.getExecutor(element.uri);
-      treeItem = await createMacroItem(element, executor?.executionCount ?? 0);
+      treeItem = await createMacroItem(element, executor);
     } else if (element instanceof StartupMacro) {
       const executor = this.context.sandboxManager.getExecutor(
         element.uri.with({ scheme: element.uri.fragment }),

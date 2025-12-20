@@ -4,7 +4,7 @@ import { ExtensionContext } from '../extensionContext';
 import { selectSourceDirectory } from '../ui/selectMacroFile';
 import { LazyDisposable } from '../utils/lazy';
 import { readFile } from '../utils/resources';
-import { parent, resolveUri, UriLocator } from '../utils/uri';
+import { parentUri, resolveUri, UriLocator } from '../utils/uri';
 
 export const AUTO_VERIFY_SETTING = 'macros.sourceDirectoriesVerification';
 export const GLOBALS_RESOURCE = 'api/global.d.ts';
@@ -25,13 +25,13 @@ export function registerSourceDirectoryVerifier(context: ExtensionContext): void
       }
       verifiedPaths.add(uri.fsPath);
 
-      const parentUri = parent(uri);
-      if (verifiedPaths.has(parentUri.fsPath)) {
+      const parent = parentUri(uri);
+      if (verifiedPaths.has(parent.fsPath)) {
         return;
       }
-      verifiedPaths.add(parentUri.fsPath);
+      verifiedPaths.add(parent.fsPath);
 
-      await setupSourceDirectory(context, parentUri, true);
+      await setupSourceDirectory(context, parent, true);
     }),
   );
 

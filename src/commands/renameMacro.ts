@@ -3,7 +3,7 @@ import { basename, extname } from 'path';
 import { isMacro } from '../core/language';
 import { ExtensionContext } from '../extensionContext';
 import { existsFile } from '../utils/fsEx';
-import { isUntitled, parent, uriBasename, UriLocator } from '../utils/uri';
+import { isUntitled, parentUri, uriBasename, UriLocator } from '../utils/uri';
 import { getUriOrTreeSelection } from './utils';
 
 export async function renameMacro(_context: ExtensionContext, locator?: UriLocator): Promise<void> {
@@ -12,11 +12,11 @@ export async function renameMacro(_context: ExtensionContext, locator?: UriLocat
     return;
   }
 
-  const parentUri = parent(uri);
-  const newName = await showRenameInputBox(uriBasename(uri), parentUri);
+  const parent = parentUri(uri);
+  const newName = await showRenameInputBox(uriBasename(uri), parent);
 
   if (newName) {
-    await vscode.workspace.fs.rename(uri, vscode.Uri.joinPath(parentUri, newName));
+    await vscode.workspace.fs.rename(uri, vscode.Uri.joinPath(parent, newName));
   }
 }
 async function showRenameInputBox(name: string, parentUri: vscode.Uri) {

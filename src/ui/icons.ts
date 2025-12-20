@@ -6,16 +6,16 @@ export const MACROS = 'resources/images/macros.svg';
 export const MACROS_DARK = 'resources/images/macros-dark.svg';
 export const MACROS_LIGHT = 'resources/images/macros-light.svg';
 
-export const MacrosIcon = new Lazy(({ extensionContext }: ExtensionContext) =>
+export const MacrosIconUri = new Lazy(({ extensionContext }: ExtensionContext) =>
   vscode.Uri.file(extensionContext.asAbsolutePath(MACROS)),
 );
-export const MacrosDarkIcon = new Lazy(({ extensionContext }: ExtensionContext) =>
+export const MacrosDarkIconUri = new Lazy(({ extensionContext }: ExtensionContext) =>
   vscode.Uri.file(extensionContext.asAbsolutePath(MACROS_DARK)),
 );
-export const MacrosLightIcon = new Lazy(({ extensionContext }: ExtensionContext) =>
+export const MacrosLightIconUri = new Lazy(({ extensionContext }: ExtensionContext) =>
   vscode.Uri.file(extensionContext.asAbsolutePath(MACROS_LIGHT)),
 );
 
-export function createIcon(iconId: string, colorId: string): vscode.ThemeIcon {
-  return new vscode.ThemeIcon(iconId, new vscode.ThemeColor(colorId));
-}
+export const IconColor = new vscode.ThemeColor('macros.general');
+export const JsIconColor = new vscode.ThemeColor('macros.js');
+export const TsIconColor = new vscode.ThemeColor('macros.ts');

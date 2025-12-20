@@ -1,60 +1,46 @@
 import * as vscode from 'vscode';
 import { SandboxExecutionDescriptor } from '../../core/execution/sandboxExecutionDescriptor';
 import { tryResolveMacroLanguage } from '../../core/language';
-import { MacroOptions } from '../../core/macroOptions';
 import { StartupMacro } from '../../core/startupMacro';
 import { getMacroUriFromStartupMacroUri } from '../../core/startupMacroId';
-import { createIcon } from '../../ui/icons';
+import { IconColor, JsIconColor, TsIconColor } from '../../ui/icons';
 import { formatDisplayUri, formatStartTimestampLabel } from '../../utils/ui';
 
-export const JsStartupIcon = createIcon('symbol-event', 'macros.js');
-export const TsStartupIcon = createIcon('symbol-event', 'macros.ts');
+const Icon = new vscode.ThemeIcon('symbol-event', IconColor);
+const JsIcon = new vscode.ThemeIcon('symbol-event', JsIconColor);
+const TsIcon = new vscode.ThemeIcon('symbol-event', TsIconColor);
 
 export function createStartupItem(
   { name, uri }: StartupMacro,
   descriptor?: SandboxExecutionDescriptor,
 ) {
-  const item = new vscode.TreeItem(uri);
+  const item = new vscode.TreeItem(uri, vscode.TreeItemCollapsibleState.None);
   item.iconPath = getIcon(uri);
   item.label = name;
+  item.tooltip = new vscode.MarkdownString(formatDisplayUri(getMacroUriFromStartupMacroUri(uri)));
 
   if (descriptor) {
-    item.contextValue = 'startupMacro,running';
+    item.contextValue = 'startupMacro running';
     item.description = '(active)';
-    item.tooltip = getRunningTooltip(descriptor);
+    item.tooltip.appendMarkdown(
+      `  \n**Started:** ${formatStartTimestampLabel(descriptor.startedOn)}`,
+    );
   } else {
     item.contextValue = 'startupMacro';
     item.description = '(inactive)';
-    item.tooltip = `${formatDisplayUri(getMacroUriFromStartupMacroUri(uri))}\nStartup macro inactive (not yet run, exited, or failed)`;
+    item.tooltip.appendMarkdown('  \n**Status:** Not running');
   }
 
   return item;
 }
 
-function getIcon(uri: vscode.Uri): vscode.ThemeIcon | undefined {
-  const { language } = tryResolveMacroLanguage(uri) ?? {};
-  switch (language?.id) {
+function getIcon(uri: vscode.Uri): vscode.ThemeIcon {
+  switch (tryResolveMacroLanguage(uri)?.language.languageId) {
     case 'javascript':
-      return JsStartupIcon;
+      return JsIcon;
     case 'typescript':
-      return TsStartupIcon;
+      return TsIcon;
     default:
-      return undefined;
+      return Icon;
   }
-}
-
-function getRunningTooltip({
-  macro: { uri },
-  snapshot,
-  startedOn,
-}: SandboxExecutionDescriptor): string | vscode.MarkdownString | undefined {
-  const options = (Object.keys(snapshot.options) as (keyof MacroOptions)[]).filter(
-    (k) => snapshot.options[k],
-  );
-  return (
-    `${formatDisplayUri(uri)}\n` +
-    'Startup macro is running\n' +
-    (options.length ? `Options: ${options.join(', ')}\n` : '') +
-    `${formatStartTimestampLabel(startedOn)}`
-  );
 }

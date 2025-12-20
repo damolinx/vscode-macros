@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.23
+- **Macro Explorer** view:
+  - General updates to UI.
+
 ## 0.5.22
 - **Macro Explorer** view:
   - Closing an untitled editor with pending runs keeps its node under the **Temporary** library for management. 

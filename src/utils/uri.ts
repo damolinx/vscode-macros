@@ -68,9 +68,9 @@ function normalizePath(path: string) {
 /**
  * Get parent URI.
  */
-export function parent(locator: UriLocator): vscode.Uri {
+export function parentUri(locator: UriLocator): vscode.Uri {
   const uri = resolveUri(locator);
-  return uri.with({ path: posix.dirname(uri.path) });
+  return vscode.Uri.joinPath(uri, '..');
 }
 
 /**

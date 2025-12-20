@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { ExtensionContext } from '../extensionContext';
 import { showMacroQuickPick } from '../ui/dialogs';
 import { activeMacroEditor } from '../utils/activeMacroEditor';
-import { UriLocator, parent, uriBasename, resolveUri } from '../utils/uri';
+import { UriLocator, parentUri, uriBasename, resolveUri } from '../utils/uri';
 import { showTextDocument } from '../utils/vscodeEx';
 
 export const MACROS_EXT_DEBUG_VAR = 'MACROS_EXT_DEBUG';
@@ -48,7 +48,7 @@ export async function debugMacro(
     name: `Debug Macro: ${uriBasename(document.uri)}`,
     type: 'extensionHost',
     request: 'launch',
-    args: [`--extensionDevelopmentPath=${parent(document.uri).fsPath}`],
+    args: [`--extensionDevelopmentPath=${parentUri(document.uri).fsPath}`],
     env: { [MACROS_EXT_DEBUG_VAR]: '1' },
   };
   vscode.debug.startDebugging(undefined, debugConfig);

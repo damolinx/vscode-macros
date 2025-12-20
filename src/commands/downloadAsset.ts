@@ -3,7 +3,7 @@ import { get } from 'https';
 import { ExtensionContext } from '../extensionContext';
 import { existsFile } from '../utils/fsEx';
 import { MacroFilter } from '../utils/ui';
-import { isUntitled, parent, uriBasename, UriLocator, resolveUri } from '../utils/uri';
+import { isUntitled, parentUri, uriBasename, UriLocator, resolveUri } from '../utils/uri';
 import { saveTextEditor } from '../utils/vscodeEx';
 
 const NO_OPTION: vscode.MessageItem = { title: 'No', isCloseAffordance: true };
@@ -88,5 +88,5 @@ async function getDownloadLocation(locator: UriLocator): Promise<vscode.Uri | un
     }
   }
 
-  return macroUri && parent(macroUri);
+  return macroUri && parentUri(macroUri);
 }

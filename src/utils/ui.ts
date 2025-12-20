@@ -1,4 +1,7 @@
 import * as vscode from 'vscode';
+import * as os from 'os';
+import * as path from 'path';
+import { join } from 'path';
 import { MACRO_LANGUAGES } from '../core/language';
 
 export const NaturalComparer = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
@@ -11,14 +14,39 @@ export const MacroFilter: Record<string, string[]> = Object.fromEntries(
 );
 
 export function formatDisplayUri(uri: vscode.Uri) {
-  if (uri.scheme !== 'file') {
+  if (uri.scheme === 'file' || (uri.scheme === 'untitled' && uri.fsPath)) {
+    return normalizeFsPath(uri);
+  } else if (uri.scheme === 'untitled') {
+    return uri.path.replace(/^\//, '') || 'Untitled';
+  } else {
     return uri.toString(true);
   }
+}
 
-  if (process.platform === 'win32' && uri.fsPath.length > 1) {
-    return uri.fsPath[0].toUpperCase() + uri.fsPath.slice(1);
+export function formatHomeRelativePath(uri: vscode.Uri): string | undefined {
+  if (uri.scheme === 'file' || (uri.scheme === 'untitled' && uri.fsPath)) {
+    const homedir = os.homedir();
+    const normalizedPath = normalizeFsPath(uri);
+    if (normalizedPath === homedir || normalizedPath.startsWith(homedir + path.sep)) {
+      return join(
+        process.platform === 'win32' ? '‹home›' : '~/',
+        normalizedPath.slice(homedir.length + 1),
+      );
+    } else {
+      return normalizedPath;
+    }
   }
-  return uri.fsPath;
+
+  return;
+}
+
+export function formatWorkspaceRelativePath(uri: vscode.Uri): string | undefined {
+  const wsRelativepath = vscode.workspace.asRelativePath(uri);
+  if (uri.fsPath !== wsRelativepath) {
+    return join('‹workspace›', wsRelativepath, '..');
+  }
+
+  return;
 }
 
 export function formatStartTimestampLabel(timestamp: number): string {
@@ -34,11 +62,11 @@ export function formatStartTimestampLabel(timestamp: number): string {
     hour: 'numeric',
     minute: '2-digit',
     second: '2-digit',
-    fractionalSecondDigits: 2,
+    fractionalSecondDigits: 3,
   });
 
   if (isSameDay) {
-    return `Started at ${time}`;
+    return time;
   }
 
   const day = date.toLocaleDateString([], {
@@ -47,5 +75,11 @@ export function formatStartTimestampLabel(timestamp: number): string {
     day: '2-digit',
   });
 
-  return `Started on ${day} at ${time}`;
+  return `${day} at ${time}`;
+}
+
+function normalizeFsPath({ fsPath }: vscode.Uri) {
+  return process.platform === 'win32' && fsPath.length > 1
+    ? fsPath[0].toUpperCase() + fsPath.slice(1)
+    : fsPath;
 }

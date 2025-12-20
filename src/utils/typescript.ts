@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as util from 'util';
 import * as ts from 'typescript';
-import { parent, uriBasename } from './uri';
+import { parentUri, uriBasename } from './uri';
 
 export function transpile(
   code: string,
@@ -66,7 +66,7 @@ export class TranspilationError extends Error {
   [util.inspect.custom](_depth: number, options: util.InspectOptionsStylized) {
     const host: ts.FormatDiagnosticsHost = {
       getCurrentDirectory: () =>
-        this.uri ? parent(this.uri).toString() : ts.sys.getCurrentDirectory(),
+        this.uri ? parentUri(this.uri).toString() : ts.sys.getCurrentDirectory(),
       getCanonicalFileName: (fileName) =>
         ts.sys.useCaseSensitiveFileNames ? fileName : fileName.toLowerCase(),
       getNewLine: () => ts.sys.newLine,

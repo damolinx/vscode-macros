@@ -1,6 +1,6 @@
 import { MacroLogOutputChannel } from '../../../api/macroLogOutputChannel';
 import { ExtensionContext } from '../../../extensionContext';
-import { parent, uriBasename } from '../../../utils/uri';
+import { parentUri, uriBasename } from '../../../utils/uri';
 import { MacroContextInitParams } from '../macroRunContext';
 import { SandboxExecutionDescriptor } from '../sandboxExecutionDescriptor';
 import { getSandboxExecutionIdToken } from '../sandboxExecutionId';
@@ -55,7 +55,7 @@ export abstract class SandboxRunner<TContext = unknown> {
 
   public getExecutionSourceName(descriptor: SandboxExecutionDescriptor): string {
     const { uri } = descriptor.macro;
-    const parentName = uriBasename(parent(uri));
+    const parentName = uriBasename(parentUri(uri));
     const filename =
       descriptor.snapshot.languageId === 'typescript'
         ? `[${getSandboxExecutionIdToken(descriptor.id)}] ${parentName}/${uriBasename(uri, true)}.js`

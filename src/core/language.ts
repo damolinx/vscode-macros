@@ -4,7 +4,7 @@ import { PathLike, uriBasename } from '../utils/uri';
 export type MacroLanguageId = 'javascript' | 'typescript';
 
 export interface MacroLanguage {
-  readonly id: MacroLanguageId;
+  readonly languageId: MacroLanguageId;
   readonly name: string;
   readonly defaultExtension: string;
   readonly extensions: readonly string[];
@@ -13,13 +13,13 @@ export interface MacroLanguage {
 
 export const MACRO_LANGUAGES: Readonly<Record<MacroLanguageId, MacroLanguage>> = {
   javascript: {
-    id: 'javascript',
+    languageId: 'javascript',
     name: 'JavaScript',
     defaultExtension: '.macro.js',
     extensions: ['.macro.js', '.js', '.macro.cjs', '.cjs'],
   },
   typescript: {
-    id: 'typescript',
+    languageId: 'typescript',
     name: 'TypeScript',
     defaultExtension: '.macro.ts',
     extensions: ['.macro.ts', '.ts'],
@@ -30,7 +30,7 @@ export const MACRO_LANGUAGES: Readonly<Record<MacroLanguageId, MacroLanguage>> =
 export const MACRO_PREFERRED_LANGUAGE = 'javascript';
 
 export const MacroPreferredSelector: vscode.DocumentSelector = [
-  ...Object.values(MACRO_LANGUAGES).flatMap(({ id, extensions }) => [
+  ...Object.values(MACRO_LANGUAGES).flatMap(({ languageId: id, extensions }) => [
     { scheme: 'untitled', language: id },
     {
       pattern: `**/*.{${extensions
@@ -49,7 +49,7 @@ export function isMacro(pathOrUri: PathLike): boolean {
   return !!tryResolveMacroLanguage(pathOrUri);
 }
 
-export function isMacroLangId(langId: string): langId is MacroLanguage['id'] {
+export function isMacroLangId(langId: string): langId is MacroLanguage['languageId'] {
   return langId in MACRO_LANGUAGES;
 }
 
