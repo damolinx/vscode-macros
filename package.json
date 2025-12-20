@@ -118,7 +118,8 @@
       {
         "command": "macros.delete.startupMacro",
         "title": "Remove as Startup Macro",
-        "category": "Macros"
+        "category": "Macros",
+        "icon": "$(settings-remove)"
       },
       {
         "command": "macros.explorer.refresh",
@@ -186,6 +187,11 @@
         "command": "macros.revealInFiles",
         "title": "Reveal in Files",
         "enablement": "!remoteName && !isWeb && isLinux && focusedView == macros.macroExplorer"
+      },
+      {
+        "command": "macros.revealRelatedMacroInTree",
+        "title": "Reveal Macro in Macro Explorer",
+        "enablement": "focusedView == macros.macroExplorer"
       },
       {
         "command": "macros.run",
@@ -349,6 +355,10 @@
           "when": "false"
         },
         {
+          "command": "macros.revealRelatedMacroInTree",
+          "when": "false"
+        },
+        {
           "command": "macros.runView",
           "when": "false"
         },
@@ -401,6 +411,11 @@
           "group": "4_tools@2"
         },
         {
+          "command": "macros.delete.startupMacro",
+          "when": "view == macros.macroExplorer && viewItem =~ /startupMacro/",
+          "group": "inline"
+        },
+        {
           "command": "macros.new.macro",
           "when": "view == macros.macroExplorer && viewItem =~ /macroLibrary/",
           "group": "inline"
@@ -424,6 +439,11 @@
           "command": "macros.rename.macro",
           "when": "view == macros.macroExplorer && viewItem =~ /macroFile/ && !(viewItem =~ /untitled/)",
           "group": "5_other@1"
+        },
+        {
+          "command": "macros.revealRelatedMacroInTree",
+          "when": "view == macros.macroExplorer && viewItem =~ /startupMacro/",
+          "group": "3_navigation@3"
         },
         {
           "command": "macros.revealInExplorer",

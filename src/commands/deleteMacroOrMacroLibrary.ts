@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
 import { MacroLibrary } from '../core/library/macroLibrary';
+import { StartupMacroLibrarySourceManager } from '../core/library/startupMacroLibrarySourceManager';
 import { Macro } from '../core/macro';
 import { explorerTreeView } from '../explorer/explorerTreeView';
 import { ExtensionContext } from '../extensionContext';
 import { areUriEqual, isUntitled } from '../utils/uri';
 import { stopMacro } from './stopMacro';
-import { StartupMacroLibrarySourceManager } from '../core/library/startupMacroLibrarySourceManager';
 
 export async function deleteMacroOrMacroLibrary(
   context: ExtensionContext,

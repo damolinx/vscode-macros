@@ -15,6 +15,11 @@ export function createStartupItem(
   descriptor?: SandboxExecutionDescriptor,
 ) {
   const item = new vscode.TreeItem(uri, vscode.TreeItemCollapsibleState.None);
+  item.command = {
+    arguments: [getMacroUriFromStartupMacroUri(uri)],
+    command: 'vscode.open',
+    title: 'Open',
+  };
   item.iconPath = getIcon(uri);
   item.label = name;
   item.tooltip = new vscode.MarkdownString(formatDisplayUri(getMacroUriFromStartupMacroUri(uri)));

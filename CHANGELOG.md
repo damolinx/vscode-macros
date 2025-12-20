@@ -1,11 +1,12 @@
 # Changelog
 
 ## 0.5.23
-- General updates to UI.
-  - **Macros: Run Macro** command handles better `untitled` documents and filters out `startup` ones. 
-  - **Macros: Show Running Macros** refers to macro *revision* consistently now.
-  - **Macro Explorer** view gets several consistency tweaks to UI messages.
-- Deleting a startup macro file removes it from configuration.  
+- **Macro Explorer** view:
+  - Startup nodes include a new context menu action, **Reveal Macro in Macro Explorer**, and inline the existing **Remove as Startup Macro** action.
+  – Improve tooltips for greater consistency and more useful information.
+  - Add icons to all nodes to prevent layout shifting. 
+- **Macros: Run Macro** dropdown shows proper labels for `untitled` documents and excludes entries from the **Startup** virtual library. 
+- Deleting a macro configured for startup automatically removes its corresponding settings entry.
 
 ## 0.5.22
 - **Macro Explorer** view:

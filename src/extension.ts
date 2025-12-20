@@ -14,6 +14,7 @@ import { removeStartupMacro } from './commands/removeStartupMacro';
 import { renameMacro } from './commands/renameMacro';
 import { resetSharedContext } from './commands/resetContext';
 import { revealInOS } from './commands/revealInOS';
+import { revealRelatedMacroInTree } from './commands/revealRelatedMacroInTree';
 import { runActiveEditor, runMacro } from './commands/runMacro';
 import { setStartupMacro } from './commands/setStartupMacro';
 import {
@@ -98,6 +99,9 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.revealInExplorer', (locator?: UriLocator) => revealInOS(locator)),
     cr('macros.revealInFinder', (locator?: UriLocator) => revealInOS(locator)),
     cr('macros.revealInFiles', (locator?: UriLocator) => revealInOS(locator)),
+    cr('macros.revealRelatedMacroInTree', (startupMacro: StartupMacro) =>
+      revealRelatedMacroInTree(startupMacro),
+    ),
     cr('macros.run', (locator?: UriLocator, ...args: any[]) => runMacro(context, locator, ...args)),
     cr('macros.run.activeEditor', () => runActiveEditor(context)),
     cr('macros.run.mru', (...args: any[]) => runMacro(context, context.mruMacro, ...args)),
