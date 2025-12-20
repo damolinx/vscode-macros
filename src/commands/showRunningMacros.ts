@@ -6,6 +6,7 @@ import {
 } from '../core/execution/sandboxExecutionId';
 import { ExtensionContext } from '../extensionContext';
 import { createGroupedQuickPickItems } from '../ui/ui';
+import { formatStartTimestampLabel } from '../utils/ui';
 import { showTextDocument } from '../utils/vscodeEx';
 import { removeStartupMacro } from './removeStartupMacro';
 import { stopMacro } from './stopMacro';
@@ -54,8 +55,8 @@ export async function showRunningMacros(context: ExtensionContext) {
       itemBuilder: (execution) =>
         ({
           buttons: execution.startup ? startupButtons : buttons,
-          description: `version: ${execution.snapshot.version}`,
-          detail: `started: ${new Date(execution.startedOn).toLocaleString()}`,
+          description: `revision: ${execution.snapshot.version}`,
+          detail: `started: ${formatStartTimestampLabel(execution.startedOn)}`,
           label: getSandboxExecutionIdToken(execution.id),
           descriptor: execution,
         }) as vscode.QuickPickItem,
