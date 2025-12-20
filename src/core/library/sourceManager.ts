@@ -92,7 +92,7 @@ export abstract class SourceManager implements vscode.Disposable {
     const allInspected = configuration.inspect<string[]>(this.configKey);
     const preferredInspected =
       allInspected?.[
-        configurationTarget === vscode.ConfigurationTarget.Global ? 'globalValue' : 'workspaceValue'
+      configurationTarget === vscode.ConfigurationTarget.Global ? 'globalValue' : 'workspaceValue'
       ];
     const uniqueExistingValues = new Set<string>(
       preferredInspected?.map(SourceManager.normalizePath),
@@ -165,7 +165,7 @@ export abstract class SourceManager implements vscode.Disposable {
     }
   }
 
-  public async removeLibrary(
+  public async removeSourceFor(
     uri: vscode.Uri,
     target?: vscode.ConfigurationTarget,
   ): Promise<boolean> {

@@ -5,6 +5,7 @@ import { explorerTreeView } from '../explorer/explorerTreeView';
 import { ExtensionContext } from '../extensionContext';
 import { areUriEqual, isUntitled } from '../utils/uri';
 import { stopMacro } from './stopMacro';
+import { StartupMacroLibrarySourceManager } from '../core/library/startupMacroLibrarySourceManager';
 
 export async function deleteMacroOrMacroLibrary(
   context: ExtensionContext,
@@ -54,6 +55,10 @@ async function deleteMacro(context: ExtensionContext, { uri }: Macro): Promise<v
     }
   }
 
+  if (await StartupMacroLibrarySourceManager.instance.removeSourceFor(uri)) {
+    context.log.info('Removed startup macro', uri.toString(true));
+  }
+
   try {
     await vscode.workspace.fs.delete(uri, { useTrash: uri.scheme === 'file' && !context.isRemote });
   } catch (err) {
@@ -91,6 +96,6 @@ export async function deleteMacroLibrary(
   );
 
   if (result && !result.isCloseAffordance) {
-    await libraryManager.sourcesManager.removeLibrary(uri, result.target);
+    await libraryManager.sourcesManager.removeSourceFor(uri, result.target);
   }
 }

@@ -8,7 +8,7 @@ export async function removeStartupMacro(
   locator: UriLocator,
 ): Promise<boolean> {
   const uri = resolveUri(locator);
-  const removed = await StartupMacroLibrarySourceManager.instance.removeLibrary(uri);
+  const removed = await StartupMacroLibrarySourceManager.instance.removeSourceFor(uri);
 
   if (removed) {
     context.log.info('Removed startup macro', uri.toString(true));

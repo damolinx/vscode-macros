@@ -4,7 +4,8 @@
 - General updates to UI.
   - **Macros: Run Macro** command handles better `untitled` documents and filters out `startup` ones. 
   - **Macros: Show Running Macros** refers to macro *revision* consistently now.
-  - **Macro Explorer** view gets several consistency tweaks to UI messages. 
+  - **Macro Explorer** view gets several consistency tweaks to UI messages.
+- Deleting a startup macro file removes it from configuration.  
 
 ## 0.5.22
 - **Macro Explorer** view:
@@ -29,7 +30,7 @@
   - Ability to remove macros as startup macros from dropdown.
   - Fix: dropdown is not being dismissed when accepting selection.
 - **Download .d.ts file** action shows a notification on completion.
-- Fix: Uri comparisons could fail on Windows due to inconsistent drive letter casing in VS Code's API.
+- Fix: `file` URI comparisons could fail on Windows due to inconsistent drive letter casing in VS Code's API.
 
 ## 0.5.19
 - Add **Macros: Configure Startup Macros** command.
