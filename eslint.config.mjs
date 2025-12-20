@@ -60,6 +60,7 @@ export default tseslint.config(
         "avoidEscape": true,
         "allowTemplateLiterals": "never"
       }],
+      '@typescript-eslint/class-literal-property-style': 'off',
       '@typescript-eslint/naming-convention': [
         'warn',
         {

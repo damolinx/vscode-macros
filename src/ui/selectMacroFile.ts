@@ -7,7 +7,7 @@ export async function selectMacroFile(
   manager: MacroLibraryManager,
   options?: OpenMacroOptions,
 ): Promise<vscode.Uri | undefined> {
-  const macroFiles = await manager.getFiles();
+  const macroFiles = await manager.getFiles((lib) => lib.runnable);
   const targetUri = await pickMacroFile(macroFiles, options);
   if (!targetUri) {
     return; // No macro selected.

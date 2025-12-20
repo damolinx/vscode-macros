@@ -42,9 +42,12 @@ export class MacroLibraryManager implements vscode.Disposable {
     vscode.Disposable.from(...this.disposables).dispose();
   }
 
-  public async getFiles(): Promise<Record<string, vscode.Uri[]>> {
+  public async getFiles(
+    filter?: (library: Library) => boolean,
+  ): Promise<Record<string, vscode.Uri[]>> {
+    const libraries = filter ? this.libraries.filter(filter) : this.libraries;
     const files = await Promise.all(
-      this.libraries.map(
+      libraries.map(
         async (lib) => [lib.uri.fsPath, await lib.getFiles()] as [string, LibraryItem[]],
       ),
     );

@@ -57,11 +57,11 @@ export class StartupMacroLibrary extends Library<StartupMacroId> {
     return files;
   }
 
-  public static owns(locator: UriLocator): boolean {
+  public owns(locator: UriLocator): boolean {
     return isStartup(locator);
   }
 
-  public owns(locator: UriLocator): boolean {
-    return StartupMacroLibrary.owns(locator);
+  public override get runnable(): boolean {
+    return false;
   }
 }
