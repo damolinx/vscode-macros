@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { relative } from 'path';
 import { NaturalComparer } from '../utils/ui';
-import { areUriEqual } from '../utils/uri';
+import { areUriEqual, isUntitled, uriBasename } from '../utils/uri';
 import { showTextDocument } from '../utils/vscodeEx';
 import { showMacroOpenDialog } from './dialogs';
 
@@ -112,7 +112,11 @@ export async function pickMacroFile(
       return uris
         .map((uri) => ({
           buttons: openFileButton && [openFileButton],
-          label: root ? relative(root, uri.fsPath) : vscode.workspace.asRelativePath(uri),
+          label: isUntitled(uri)
+            ? uriBasename(uri)
+            : root
+              ? relative(root, uri.fsPath)
+              : vscode.workspace.asRelativePath(uri),
           uri,
         }))
         .sort((t1, t2) => NaturalComparer.compare(t1.label, t2.label));

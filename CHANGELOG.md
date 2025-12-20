@@ -1,8 +1,10 @@
 # Changelog
 
 ## 0.5.23
-- **Macro Explorer** view:
-  - General updates to UI.
+- General updates to UI.
+  - **Macros: Run Macro** command handles better `untitled` documents and filters out `startup` ones. 
+  - **Macros: Show Running Macros** refers to macro *revision* consistently now.
+  - **Macro Explorer** view gets several consistency tweaks to UI messages. 
 
 ## 0.5.22
 - **Macro Explorer** view:
