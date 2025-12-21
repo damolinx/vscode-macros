@@ -8,17 +8,17 @@ import {
 } from '../../utils/ui';
 import { parentUri } from '../../utils/uri';
 
-const LibraryIcon = new vscode.ThemeIcon('folder-library');
-const StartupLibraryIcon = new vscode.ThemeIcon('file-symlink-directory');
-const UntitledLibraryIcon = new vscode.ThemeIcon('root-folder');
+const LibraryIcon = new vscode.ThemeIcon('file-directory');
 
+const StartupLibraryIcon = new vscode.ThemeIcon('file-symlink-directory');
 const StartupLibraryTooltip = new vscode.MarkdownString(
   'Lists macros [configured](command:macros.startup.settings) to run on startup.',
 );
 StartupLibraryTooltip.isTrusted = true;
 
+const UntitledLibraryIcon = new vscode.ThemeIcon('root-folder');
 const UntitledLibraryTooltip = new vscode.MarkdownString(
-  'Lists `untitled` macro documents. These exist only in memory until saved.',
+  'Lists `untitled` macro documents. These exist only in memory  \nuntil saved, which limits IntelliSense and other tooling support.',
 );
 
 export function createLibraryItem(library: Library) {
@@ -43,10 +43,21 @@ function updateLibraryItem(item: vscode.TreeItem, library: Library) {
   item.description =
     formatWorkspaceRelativePath(library.uri) ?? formatHomeRelativePath(parentUri(library.uri));
   item.iconPath = LibraryIcon;
-  item.tooltip = formatDisplayUri(library.uri);
+  item.tooltip = new vscode.MarkdownString(formatDisplayUri(library.uri));
 
   if (library instanceof MacroLibrary && library.configSource) {
-    item.tooltip += `\nThis library is defined in ${library.configSource.configSources.map((s) => (s.target === vscode.ConfigurationTarget.Global ? 'User' : vscode.ConfigurationTarget[s.target])).join(', ')} settings.`;
+    const settings = library.configSource.configSources.map((s) => {
+      switch (s.target) {
+        case vscode.ConfigurationTarget.Global:
+          return '[User](command:workbench.action.openSettings?%5B%22macros.sourceDirectories%22%5D)';
+        case vscode.ConfigurationTarget.Workspace:
+          return '[Workspace](command:workbench.action.openWorkspaceSettings?%5B%22macros.sourceDirectories%22%5D)';
+        case vscode.ConfigurationTarget.WorkspaceFolder:
+          return '[Folder](command:workbench.action.openFolderSettings?%5B%22macros.sourceDirectories%22%5D)';
+      }
+    });
+    item.tooltip.appendMarkdown(`  \nThis library is defined in ${settings.join(', ')} settings.`);
+    item.tooltip.isTrusted = true;
   }
 }
 

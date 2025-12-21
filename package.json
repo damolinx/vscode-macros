@@ -274,7 +274,7 @@
           },
           "macros.sourceDirectoriesVerification": {
             "type": "boolean",
-            "markdownDescription": "Automatically verify that the parent folder of the current macro editor is set up for development (e.g. `jsconfig.json`, `global.d.ts`).",
+            "markdownDescription": "Ensure that the parent folder of the current macro editor is set up for development (e.g. `jsconfig.json`, `global.d.ts`).",
             "default": true
           },
           "macros.startupMacros": {
