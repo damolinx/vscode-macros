@@ -3,7 +3,7 @@
 ## 0.5.23
 - **Macro Explorer** view:
   - Startup nodes include a new context menu action, **Reveal Macro in Macro Explorer**, and inline the existing **Remove as Startup Macro** action.
-  – Improve tooltips for greater consistency and more useful information.
+  - Improve tooltips for greater consistency and more useful information.
   - Add icons to all nodes to prevent layout shifting. 
 - **Macros: Run Macro** dropdown shows proper labels for `untitled` documents and excludes entries from the **Startup** virtual library. 
 - Deleting a macro configured for startup automatically removes its corresponding settings entry.
