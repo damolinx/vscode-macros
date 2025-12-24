@@ -55,7 +55,7 @@ export async function showRunningMacros(context: ExtensionContext) {
       itemBuilder: (execution) =>
         ({
           buttons: execution.startup ? startupButtons : buttons,
-          description: `revision: ${execution.snapshot.version}`,
+          description: `version: ${execution.snapshot.version}`,
           detail: `started: ${formatStartTimestampLabel(execution.startedOn)}`,
           label: getSandboxExecutionIdToken(execution.id),
           descriptor: execution,

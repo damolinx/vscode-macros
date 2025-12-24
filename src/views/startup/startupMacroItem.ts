@@ -24,17 +24,14 @@ export function createStartupItem(
   item.description = formatWorkspaceRelativePath(macroUri) ?? formatHomeRelativePath(macroUri);
   item.iconPath = getIcon(tryResolveMacroLanguage(uri)?.language.languageId);
   item.label = name;
-  item.tooltip = new vscode.MarkdownString(formatDisplayUri(getMacroUriFromStartupMacroUri(uri)));
+  item.tooltip = formatDisplayUri(getMacroUriFromStartupMacroUri(uri));
 
   if (descriptor) {
     item.contextValue = 'startupMacro running';
-    item.tooltip.appendMarkdown('  \n**Status:** Running');
-    item.tooltip.appendMarkdown(
-      `  \n**Started:** ${formatStartTimestampLabel(descriptor.startedOn)}`,
-    );
+    item.tooltip += `\nStarted: ${formatStartTimestampLabel(descriptor.startedOn)} • Version: ${descriptor.snapshot.version}`;
   } else {
     item.contextValue = 'startupMacro';
-    item.tooltip.appendMarkdown('  \n**Status:** Not running');
+    item.tooltip += '\nNot running';
   }
 
   return item;

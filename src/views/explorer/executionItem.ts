@@ -19,16 +19,12 @@ export function createExecutionItem(descriptor: SandboxExecutionDescriptor) {
   return item;
 }
 
-function getTooltip({ snapshot, startedOn }: SandboxExecutionDescriptor): vscode.MarkdownString {
+function getTooltip({ snapshot, startedOn }: SandboxExecutionDescriptor): string {
   const enabledOptions = Object.entries(snapshot.options)
     .filter(([, enabled]) => enabled)
     .map(([key]) => key);
 
-  const tooltip = new vscode.MarkdownString();
-  if (enabledOptions.length) {
-    tooltip.appendMarkdown(`**Options:** ${enabledOptions.join(', ')}  \n`);
-  }
-  tooltip.appendMarkdown(`**Started:** ${formatStartTimestampLabel(startedOn)}  \n`);
-  tooltip.appendMarkdown(`**Document revision:** ${snapshot.version}`);
+  let tooltip = enabledOptions.length ? `Options: ${enabledOptions.join(', ')}\n` : '';
+  tooltip += `Started: ${formatStartTimestampLabel(startedOn)} • Version: ${snapshot.version}`;
   return tooltip;
 }

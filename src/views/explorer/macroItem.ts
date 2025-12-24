@@ -16,13 +16,9 @@ export async function createMacroItem(
   item.command = { arguments: [macro.uri], command: 'vscode.open', title: 'Open' };
   item.iconPath = getIcon(tryResolveMacroLanguage(macro.uri)?.language.languageId);
   item.label = macro.name;
-  item.tooltip = new vscode.MarkdownString(formatDisplayUri(macro.uri));
+  item.tooltip = formatDisplayUri(macro.uri);
 
-  await updateMacroType(
-    item as vscode.TreeItem & { tooltip: vscode.MarkdownString },
-    macro,
-    context,
-  );
+  await updateMacroType(item as vscode.TreeItem & { tooltip: string }, macro, context);
 
   const executor = context.sandboxManager.getExecutor(macro.uri);
   if (executor?.count) {
@@ -42,7 +38,7 @@ function updateRunningMacro(
 }
 
 async function updateMacroType(
-  item: vscode.TreeItem & { tooltip: vscode.MarkdownString },
+  item: vscode.TreeItem & { tooltip: string },
   macro: Macro,
   context: ExtensionContext,
 ): Promise<void> {
@@ -59,6 +55,6 @@ async function updateMacroType(
     item.iconPath = getIcon((await macro.getCode()).languageId);
   } else if (context.startupManager.getSource(macro.uri)) {
     item.contextValue += ' startup';
-    item.tooltip.appendMarkdown('  \nStartup macro');
+    item.tooltip += '\nStartup macro';
   }
 }
