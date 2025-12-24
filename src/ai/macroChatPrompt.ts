@@ -59,7 +59,8 @@ Follow these rules when creating a macro:
       \`vscode.Uri\` directly from it. You may destructure for convenience — e.g.
       \`const {window} = vscode;\`, but never use \`require('vscode')\`.
     • Node.js globals: \`atob\`, \`btoa\`, \`clearInterval\`, \`clearTimeout\`,
-      \`crypto\`, \`fetch\`, \`global\`, \`require\`, \`setInterval\`, \`setTimeout\`.
+      \`crypto\`, \`fetch\`, \`global\`, \`require\`, \`setInterval\`, \`setTimeout\`,
+      \`structuredClone\`.
   • Any Node.js module available by default to VS Code extensions may be required —
     e.g. \`const fs = require('fs');\`.
   • The following APIs specific to the Macros extension are available:

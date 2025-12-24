@@ -321,7 +321,7 @@ The following references are available from the global context of your macro:
 * `vscode`: symbol that provides access to the [VS Code APIs](https://code.visualstudio.com/api/references/vscode-api).
 * `macros`: symbol that provides access to this extension's API (see [Macros API](#macros-api)).
 * `require`: method that allows load [Node.js libraries](https://nodejs.org/api/all.html). Version is same as your installed IDE (see `About` option).
-* Other: `atob`, `btoa`, `clearInterval`, `clearTimeout`, `crypto`, `fetch`, `global`, `require`, `setInterval`, `setTimeout`.
+* Other: `atob`, `btoa`, `clearInterval`, `clearTimeout`, `crypto`, `fetch`, `global`, `require`, `setInterval`, `setTimeout`, `structuredClone`.
 
 [↑ Back to top](#table-of-contents)
 

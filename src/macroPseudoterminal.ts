@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { Recoverable, REPLServer, start as startREPL } from 'repl';
 import { PassThrough } from 'stream';
 import { inspect, types } from 'util';
-import { Context, runInContext } from 'vm';
+import * as vm from 'vm';
 import { MacroLogOutputChannel } from './api/macroLogOutputChannel';
 import { createMacro } from './commands/createMacro';
 import { initializeContext, MacroContextInitParams } from './core/execution/macroRunContext';
@@ -66,12 +66,12 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
 
   async evaluate(
     code: string,
-    context: Context,
+    context: vm.Context,
     callback: (error: Error | null, result: any) => void,
   ) {
     try {
       const targetCode = this.useTs ? transpileOrThrow(code, this.uri) : code;
-      const result = await runInContext(targetCode, context);
+      const result = await vm.runInContext(targetCode, context);
       callback(null, result);
     } catch (e: any) {
       const targetError = isRecoverable(e) ? new Recoverable(e) : e;
@@ -248,7 +248,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     this.repl?.server.displayPrompt();
   }
 
-  private setupContext(context: Context) {
+  private setupContext(context: vm.Context) {
     // REPL's context contains additional values that would not normally be
     // available to a macro and could cause confusion, so resetting first.
     Object.keys(context).forEach((k) => delete context[k]);

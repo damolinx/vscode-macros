@@ -36,6 +36,7 @@ export function initializeContext(
       require,
       setInterval,
       setTimeout,
+      structuredClone,
       vscode,
     },
     createMacroApi(params),

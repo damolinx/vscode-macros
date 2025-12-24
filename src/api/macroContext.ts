@@ -16,5 +16,6 @@ export interface MacroContext extends vm.Context, MacrosApi {
   readonly require: typeof require;
   readonly setInterval: typeof setInterval;
   readonly setTimeout: typeof setTimeout;
+  readonly structuredClone: typeof structuredClone;
   readonly vscode: typeof vscode;
 }

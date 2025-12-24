@@ -2,6 +2,7 @@
 
 ## 0.6.0
 - Introduce the new **Startup Macros** view, replacing the former **Startup** node in the **Macro Explorer** view.
+- Update available globals: `structuredClone`
 - Fix: `macros.log` is missing type information.
 
 ## 0.5.23
