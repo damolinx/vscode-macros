@@ -20,8 +20,5 @@ export async function stopMacro(
     canceledDescriptors = sandboxManager.cancel(uri);
   }
 
-  log.info(
-    'Requesting macros to stop via cancellation token —',
-    ...canceledDescriptors.map(({ id }) => id),
-  );
+  log.info('Cancellation requested —', ...canceledDescriptors.map(({ id }) => id));
 }
