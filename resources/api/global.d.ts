@@ -37,7 +37,7 @@ declare global {
     /**
      * **Macros** [log output channel](https://code.visualstudio.com/api/references/vscode-api#LogOutputChannel).
      */
-    readonly log: vscode.LogOutputChannel;
+    readonly log: _vscode.LogOutputChannel;
     /**
      * Current macro.
      */
