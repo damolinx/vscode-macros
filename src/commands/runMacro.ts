@@ -36,7 +36,7 @@ export async function runMacro(
   try {
     await executor.executeDescriptor(pareparedExecution);
   } catch (error: any) {
-    await showMacroErrorDialog(executor, pareparedExecution.snapshot, error as Error | string);
+    await showMacroErrorDialog(executor, pareparedExecution.snapshot, error ?? 'Unknown error');
   }
 
   function hasDiagnosticErrors(uri: vscode.Uri) {

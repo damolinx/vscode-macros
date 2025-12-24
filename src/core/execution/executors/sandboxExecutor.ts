@@ -82,7 +82,7 @@ export class SandboxExecutor implements vscode.Disposable {
         descriptor.id,
         this.macro.uri.toString(true),
         '\n',
-        error.stack ?? error.message ?? error,
+        (error && (error.stack ?? error.message ?? error)) ?? 'Unknown error',
       );
       throw error;
     } finally {

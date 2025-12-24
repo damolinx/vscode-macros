@@ -60,8 +60,9 @@ export class ExplorerTreeDragAndDropController extends TreeDragAndDropController
           await vscode.workspace.fs.rename(source, target, { overwrite: true });
         }
       } catch (error: any) {
-        this.context.log.error('Failed to move file', source, error.message || error);
-        failed.push({ message: error.message, source: source });
+        const message = (error && (error.message ?? error)) ?? 'Unknown error';
+        this.context.log.error('Failed to move file', source, message);
+        failed.push({ message, source: source });
       }
     }
 
