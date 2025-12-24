@@ -2,8 +2,10 @@
 
 ## 0.6.0
 - Introduce the new **Startup Macros** view, replacing the former **Startup** node in the **Macro Explorer** view.
-- Update available globals: `structuredClone`
-- Fix: `macros.log` is missing type information.
+- New APIs for macros:
+   - `structuredClone` available as a global.
+   - `macros.extensionContext` provides access to the extension context.
+- Fix: `macros.log` is missing type information from `global.d.ts`.
 
 ## 0.5.23
 - **Macro Explorer** view:

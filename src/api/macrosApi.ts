@@ -26,6 +26,11 @@ export interface MacrosApi {
    */
   readonly macros: {
     /**
+     * [Extension context](https://code.visualstudio.com/api/references/vscode-api#ExtensionContext).
+     */
+    readonly extensionContext: vscode.ExtensionContext;
+
+    /**
      * **Macros** log output channel.
      */
     readonly log: vscode.LogOutputChannel;

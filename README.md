@@ -327,6 +327,8 @@ The following references are available from the global context of your macro:
 
 ## `macros` API
 
+* `extensionContext`: Provides access to the [extension context](https://code.visualstudio.com/api/references/vscode-api#ExtensionContext) instance.
+
 * `log`: Provides access to the **Macros** log output channel, allowing macros to write log entries as needed.
 
 * `macro`: Current macro.

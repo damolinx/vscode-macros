@@ -35,6 +35,10 @@ declare global {
    */
   const macros: {
     /**
+     * [Extension context](https://code.visualstudio.com/api/references/vscode-api#ExtensionContext).
+     */
+    readonly extensionContext: _vscode.ExtensionContext;
+    /**
      * **Macros** [log output channel](https://code.visualstudio.com/api/references/vscode-api#LogOutputChannel).
      */
     readonly log: _vscode.LogOutputChannel;

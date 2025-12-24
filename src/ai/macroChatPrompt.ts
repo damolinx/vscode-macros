@@ -69,7 +69,8 @@ Follow these rules when creating a macro:
       macro completes.
     • \`__runId\`: ID for the current running instance of the macro.
     • \`macros\`: namespace with access to:
-      • \`log\`: \`LogOutputChannel\` instance used for logging — e.g.
+      • \`extensionContext\`: \`vscode.ExtensionContext\` instance.
+      • \`log\`: \`vscode.LogOutputChannel\` instance used for logging — e.g.
         \`macros.log.info("message")\`.
       • \`macro\`: accessor for macro file information:
         • \`uri\`: URI of current macro source code.

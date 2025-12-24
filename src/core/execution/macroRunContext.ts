@@ -8,6 +8,7 @@ import { ViewManager } from './views/viewManager';
 
 export interface MacroContextInitParams {
   disposables: vscode.Disposable[];
+  extensionContext: vscode.ExtensionContext;
   log: vscode.LogOutputChannel;
   executionId: SandboxExecutionId;
   startup?: true;
@@ -59,6 +60,7 @@ function createMacroApi(params: MacroContextInitParams): MacrosApi {
     __runId: params.executionId.toString(),
     __startup: params.startup,
     macros: {
+      extensionContext: params.extensionContext,
       macro: {
         uri: params.uri,
       },
