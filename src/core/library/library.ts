@@ -49,6 +49,10 @@ export abstract class Library<
     }
   }
 
+  public get count(): number {
+    return this.items.size;
+  }
+
   public async getFiles(): Promise<TItem[]> {
     return [...this.items.values()];
   }

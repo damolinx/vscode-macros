@@ -1,10 +1,9 @@
 import * as vscode from 'vscode';
 import { MacroLibrary } from '../core/library/macroLibrary';
-import { StartupMacroLibrarySourceManager } from '../core/library/startupMacroLibrarySourceManager';
 import { Macro } from '../core/macro';
-import { explorerTreeView } from '../explorer/explorerTreeView';
 import { ExtensionContext } from '../extensionContext';
 import { areUriEqual, isUntitled } from '../utils/uri';
+import { explorerTreeView } from '../views/treeViews';
 import { stopMacro } from './stopMacro';
 
 export async function deleteMacroOrMacroLibrary(
@@ -34,7 +33,7 @@ export async function deleteMacroOrMacroLibrary(
 
 async function deleteMacro(context: ExtensionContext, { uri }: Macro): Promise<void> {
   const executor = context.sandboxManager.getExecutor(uri);
-  if (executor?.executionCount) {
+  if (executor?.count) {
     const stopOption: vscode.MessageItem = { title: 'Stop and Delete' };
     const result = await vscode.window.showInformationMessage(
       'Do you want to stop running instances of this macro before deleting it?',
@@ -55,7 +54,7 @@ async function deleteMacro(context: ExtensionContext, { uri }: Macro): Promise<v
     }
   }
 
-  if (await StartupMacroLibrarySourceManager.instance.removeSourceFor(uri)) {
+  if (await context.startupManager.removeSourceFor(uri)) {
     context.log.info('Removed startup macro', uri.toString(true));
   }
 

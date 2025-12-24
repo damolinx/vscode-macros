@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
-import { TreeElement } from '../explorer/explorerTreeDataProvider';
-import { explorerTreeView } from '../explorer/explorerTreeView';
 import { resolveUri, UriLocator } from '../utils/uri';
+import { TreeElement } from '../views/explorer/explorerTreeDataProvider';
+import { explorerTreeView } from '../views/treeViews';
 
 export function getUriOrTreeSelection(
   locator?: UriLocator,

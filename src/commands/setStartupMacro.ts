@@ -1,27 +1,32 @@
 import * as vscode from 'vscode';
-import { StartupMacroLibrarySourceManager } from '../core/library/startupMacroLibrarySourceManager';
-import { explorerTreeDataProvider } from '../explorer/explorerTreeView';
+import { getMacroUriFromStartupMacroUri } from '../core/startupMacroId';
 import { ExtensionContext } from '../extensionContext';
-import { UriLocator, resolveUri } from '../utils/uri';
+import { isUntitled, resolveUri, UriLocator } from '../utils/uri';
 
-export async function setStartupMacro(context: ExtensionContext, locator: UriLocator) {
-  const uri = resolveUri(locator);
-  if (!uri) {
-    return; // Nothing to run.
+export function setStartupMacro(
+  context: ExtensionContext,
+  locator: UriLocator,
+  target?: vscode.ConfigurationTarget,
+) {
+  return setStartupMacros(context, [locator], target);
+}
+
+export async function setStartupMacros(
+  context: ExtensionContext,
+  locators: UriLocator[],
+  configTarget?: vscode.ConfigurationTarget,
+) {
+  for (const uri of locators.map((loc) => getMacroUriFromStartupMacroUri(resolveUri(loc)))) {
+    if (isUntitled(uri)) {
+      context.log.info('Cannot set an untitled macro as startup macro', uri.toString());
+      continue;
+    }
+
+    const { added, target, value } = await context.startupManager.addLibrary(uri, configTarget);
+    context.log.info(
+      added ? 'Added startup macro' : 'Startup already registered',
+      vscode.ConfigurationTarget[target],
+      value,
+    );
   }
-
-  const {
-    added,
-    target: scope,
-    value,
-  } = await StartupMacroLibrarySourceManager.instance.addLibrary(uri);
-
-  let logMessage: string;
-  if (added) {
-    logMessage = 'Added startup macro';
-    explorerTreeDataProvider?.refresh();
-  } else {
-    logMessage = 'Startup already registered';
-  }
-  context.log.info(logMessage, `(${vscode.ConfigurationTarget[scope]})`, '—', value);
 }

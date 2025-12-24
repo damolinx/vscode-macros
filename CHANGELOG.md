@@ -1,24 +1,27 @@
 # Changelog
 
+## 0.6.0
+- Introduce the new **Startup Macros** view, replacing the former **Startup** node in the **Macro Explorer** view.
+
 ## 0.5.23
 - **Macro Explorer** view:
   - Startup nodes include a new context menu action, **Reveal Macro in Macro Explorer**, and inline the existing **Remove as Startup Macro** action.
   - Improve tooltips for greater consistency and more useful information.
-  - Add icons to all nodes to prevent layout shifting. 
-- **Macros: Run Macro** dropdown shows proper labels for `untitled` documents and excludes entries from the **Startup** virtual library. 
+  - Add icons to all nodes to prevent layout shifting.
+- **Macros: Run Macro** dropdown shows proper labels for `untitled` documents and excludes entries from the **Startup** virtual library.
 - Deleting a macro configured for startup automatically removes its corresponding settings entry.
 - Better TypeScript transpilation error reporting.
 
 ## 0.5.22
 - **Macro Explorer** view:
-  - Closing an untitled editor with pending runs keeps its node under the **Temporary** library for management. 
+  - Closing an untitled editor with pending runs keeps its node under the **Temporary** library for management.
   - Update tooltips to align with VS Code’s handling of Windows paths.
-  - Untitled macros get an icon matching their current target language. 
+  - Untitled macros get an icon matching their current target language.
   - Block drag‑and‑drop of `untitled:` macros onto the **Startup** node.
 - Fix: Creating `(empty)` template ends on error.
 
 ## 0.5.21
-- Rename **Apply Template** CodeLens to **Fill with Snippet**. 
+- Rename **Apply Template** CodeLens to **Fill with Snippet**.
 - Refactor macro execution APIs.
 - Update stacktrace parsing for TypeScript.
 

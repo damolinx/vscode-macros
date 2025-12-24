@@ -27,14 +27,8 @@ import { stopMacro } from './commands/stopMacro';
 import { SandboxExecutionDescriptor } from './core/execution/sandboxExecutionDescriptor';
 import { MacroLibrary } from './core/library/macroLibrary';
 import { SOURCE_DIRS_CONFIG } from './core/library/macroLibrarySourceManager';
-import { StartupMacroLibrarySourceManager } from './core/library/startupMacroLibrarySourceManager';
 import { Macro } from './core/macro';
 import { StartupMacro } from './core/startupMacro';
-import {
-  explorerTreeDataProvider,
-  MACRO_EXPLORER_VIEW_ID,
-  registerExplorerTreeview,
-} from './explorer/explorerTreeView';
 import { ExtensionContext } from './extensionContext';
 import { registerContextValueHandlers } from './extensionContextValues';
 import { MacroStatusBarItem } from './macroStatusBarItem';
@@ -46,6 +40,7 @@ import { registerMacroOptionsCompletionProvider } from './providers/macroOptions
 import { registerMacroSnapshotContentProvider } from './providers/macroSnapshotContentProvider';
 import { existsFile } from './utils/fsEx';
 import { UriLocator, areUriEqual } from './utils/uri';
+import { refreshTreeView, registerTreeViews, revealTreeView } from './views/treeViews';
 
 /**
  * Extension startup.
@@ -60,7 +55,8 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
   registerCreateMacroContentTool(context);
   registerMacroChatParticipant(context);
 
-  registerExplorerTreeview(context);
+  registerTreeViews(context);
+
   registerMacroSnapshotContentProvider(context);
   registerContextValueHandlers(context);
   registerSourceDirectoryVerifier(context);
@@ -86,7 +82,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.downloadAsset', (assetUri: vscode.Uri, locator: UriLocator) =>
       downloadAsset(context, assetUri, locator),
     ),
-    cr('macros.explorer.refresh', () => explorerTreeDataProvider?.refresh()),
+    cr('macros.explorer.refresh', () => refreshTreeView('explorer')),
     cr('macros.new.macro', (locator?: UriLocator) => createMacro(context, locator)),
     cr('macros.new.macro.activeEditor', (locator?: UriLocator) => updateEditor(context, locator)),
     cr('macros.new.macro.repl', () => createRepl(context)),
@@ -107,13 +103,13 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.run.mru', (...args: any[]) => runMacro(context, context.mruMacro, ...args)),
     cr('macros.run.show', () => showRunningMacros(context)),
     cr('macros.runView', (descriptor: SandboxExecutionDescriptor) => showRunCode(descriptor)),
-    cr('macros.showMacroExplorer', () =>
-      vscode.commands.executeCommand(`${MACRO_EXPLORER_VIEW_ID}.focus`),
-    ),
+    cr('macros.showMacroExplorer', () => revealTreeView('explorer')),
+    cr('macros.showStartupMacros', () => revealTreeView('startup')),
     cr('macros.sourceDirectories.settings', () =>
       vscode.commands.executeCommand('workbench.action.openSettings', SOURCE_DIRS_CONFIG),
     ),
     cr('macros.sourceDirectories.setup', (uri: vscode.Uri) => setupSourceDirectory(context, uri)),
+    cr('macros.startup.refresh', () => refreshTreeView('startup')),
     cr('macros.startup.settings', () =>
       vscode.commands.executeCommand('workbench.action.openSettings', 'macros.startup'),
     ),
@@ -126,7 +122,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
 }
 
 async function runStartupMacros(context: ExtensionContext): Promise<void> {
-  const uris = StartupMacroLibrarySourceManager.instance.sources.map((s) => s.uri);
+  const uris = context.startupManager.sources.map((s) => s.uri);
   if (uris.length === 0) {
     context.log.info('No startup macros to execute — none registered');
     return;

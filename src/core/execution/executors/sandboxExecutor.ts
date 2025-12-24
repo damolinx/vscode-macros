@@ -47,6 +47,10 @@ export class SandboxExecutor implements vscode.Disposable {
     return canceledDescriptors;
   }
 
+  public get count(): number {
+    return this.executionMap.size;
+  }
+
   public async createDescriptor(params?: { startup?: true }): Promise<SandboxExecutionDescriptor> {
     const execution = await SandboxExecutionDescriptor.create(this.macro, {
       index: ++this.index,
@@ -61,7 +65,7 @@ export class SandboxExecutor implements vscode.Disposable {
   }
 
   public async executeDescriptor(descriptor: SandboxExecutionDescriptor): Promise<void> {
-    if (this.executionCount > 0 && descriptor.snapshot.options.singleton) {
+    if (this.count > 0 && descriptor.snapshot.options.singleton) {
       throw new Error(`Singleton macro ${this.macro.name} is already running`);
     }
 
@@ -86,10 +90,6 @@ export class SandboxExecutor implements vscode.Disposable {
       this.onExecutionEndEmitter.fire(descriptor);
       descriptor.dispose();
     }
-  }
-
-  public get executionCount(): number {
-    return this.executionMap.size;
   }
 
   public get executions(): SandboxExecutionDescriptor[] {

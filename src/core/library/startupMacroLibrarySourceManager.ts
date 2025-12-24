@@ -5,19 +5,13 @@ import { Source } from './source';
 import { SourceManager } from './sourceManager';
 
 export class StartupMacroLibrarySourceManager extends SourceManager {
-  private static _instance: StartupMacroLibrarySourceManager;
-
-  public static get instance(): StartupMacroLibrarySourceManager {
-    this._instance ??= new StartupMacroLibrarySourceManager();
-    return this._instance;
-  }
-
   private readonly onDidChangeSourcesEmitter: vscode.EventEmitter<void>;
 
-  private constructor() {
+  constructor() {
     super('macros.startupMacros');
+    this.onDidChangeSourcesEmitter = new vscode.EventEmitter();
     this.disposables.push(
-      (this.onDidChangeSourcesEmitter = new vscode.EventEmitter()),
+      this.onDidChangeSourcesEmitter,
       vscode.workspace.onDidChangeConfiguration((e) => {
         if (e.affectsConfiguration(this.configKey)) {
           this._sources.reset();

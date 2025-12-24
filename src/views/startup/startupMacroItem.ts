@@ -3,15 +3,16 @@ import { SandboxExecutionDescriptor } from '../../core/execution/sandboxExecutio
 import { tryResolveMacroLanguage } from '../../core/language';
 import { StartupMacro } from '../../core/startupMacro';
 import { getMacroUriFromStartupMacroUri } from '../../core/startupMacroId';
-import { IconColor, JsIconColor, TsIconColor } from '../../ui/icons';
-import { formatDisplayUri, formatStartTimestampLabel } from '../../utils/ui';
-
-const Icon = new vscode.ThemeIcon('symbol-event', IconColor);
-const JsIcon = new vscode.ThemeIcon('symbol-event', JsIconColor);
-const TsIcon = new vscode.ThemeIcon('symbol-event', TsIconColor);
+import { getIcon } from '../../ui/icons';
+import {
+  formatDisplayUri,
+  formatHomeRelativePath,
+  formatStartTimestampLabel,
+  formatWorkspaceRelativePath,
+} from '../../utils/ui';
 
 export function createStartupItem(
-  { name, uri }: StartupMacro,
+  { macroUri, name, uri }: StartupMacro,
   descriptor?: SandboxExecutionDescriptor,
 ) {
   const item = new vscode.TreeItem(uri, vscode.TreeItemCollapsibleState.None);
@@ -20,32 +21,21 @@ export function createStartupItem(
     command: 'vscode.open',
     title: 'Open',
   };
-  item.iconPath = getIcon(uri);
+  item.description = formatWorkspaceRelativePath(macroUri) ?? formatHomeRelativePath(macroUri);
+  item.iconPath = getIcon(tryResolveMacroLanguage(uri)?.language.languageId);
   item.label = name;
   item.tooltip = new vscode.MarkdownString(formatDisplayUri(getMacroUriFromStartupMacroUri(uri)));
 
   if (descriptor) {
     item.contextValue = 'startupMacro running';
-    item.description = '(active)';
+    item.tooltip.appendMarkdown('  \n**Status:** Running');
     item.tooltip.appendMarkdown(
       `  \n**Started:** ${formatStartTimestampLabel(descriptor.startedOn)}`,
     );
   } else {
     item.contextValue = 'startupMacro';
-    item.description = '(inactive)';
     item.tooltip.appendMarkdown('  \n**Status:** Not running');
   }
 
   return item;
-}
-
-function getIcon(uri: vscode.Uri): vscode.ThemeIcon {
-  switch (tryResolveMacroLanguage(uri)?.language.languageId) {
-    case 'javascript':
-      return JsIcon;
-    case 'typescript':
-      return TsIcon;
-    default:
-      return Icon;
-  }
 }

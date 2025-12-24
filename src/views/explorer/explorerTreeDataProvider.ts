@@ -1,46 +1,36 @@
 import * as vscode from 'vscode';
-import { SandboxExecutionDescriptor } from '../core/execution/sandboxExecutionDescriptor';
-import { Library } from '../core/library/library';
-import { LibraryId } from '../core/library/libraryId';
-import { LibraryItem } from '../core/library/libraryItem';
-import { StartupMacroLibrary } from '../core/library/startupMacroLibrary';
-import { Macro } from '../core/macro';
-import { MacroId, getMacroId } from '../core/macroId';
-import { StartupMacro } from '../core/startupMacro';
-import { ExtensionContext } from '../extensionContext';
-import { NaturalComparer } from '../utils/ui';
-import { createExecutionItem } from './items/executionItem';
-import { createLibraryItem } from './items/libraryItem';
-import { createMacroItem } from './items/macroItem';
-import { createStartupItem } from './items/startupItem';
+import { SandboxExecutionDescriptor } from '../../core/execution/sandboxExecutionDescriptor';
+import { Library } from '../../core/library/library';
+import { LibraryId } from '../../core/library/libraryId';
+import { LibraryItem } from '../../core/library/libraryItem';
+import { Macro } from '../../core/macro';
+import { MacroId, getMacroId } from '../../core/macroId';
+import { ExtensionContext } from '../../extensionContext';
+import { NaturalComparer } from '../../utils/ui';
+import { TreeDataProvider } from '../treeDataProvider';
+import { createExecutionItem } from './executionItem';
+import { createLibraryItem } from './libraryItem';
+import { createMacroItem } from './macroItem';
 
-export type TreeElement = Library | Macro | StartupMacro | SandboxExecutionDescriptor;
-export type TreeEvent = TreeElement | TreeElement[] | undefined;
+export type TreeElement = Library | Macro | SandboxExecutionDescriptor;
 
 interface MonitoredLibraryData {
   disposable: vscode.Disposable;
   files: Set<MacroId>;
 }
 
-export class ExplorerTreeDataProvider
-  implements vscode.TreeDataProvider<TreeElement>, vscode.Disposable
-{
-  private readonly context: ExtensionContext;
-  private readonly disposables: vscode.Disposable[];
+export class ExplorerTreeDataProvider extends TreeDataProvider<TreeElement> {
   private readonly monitoredLibraries: Map<LibraryId, MonitoredLibraryData>;
-  private readonly onDidChangeTreeDataEmitter: vscode.EventEmitter<TreeEvent>;
 
   constructor(context: ExtensionContext) {
-    this.context = context;
+    super(context);
     this.monitoredLibraries = new Map();
-    this.onDidChangeTreeDataEmitter = new vscode.EventEmitter();
 
     this.context.libraryManager.libraries.forEach((library) =>
       this.ensureLibraryIsMonitored(library),
     );
 
-    this.disposables = [
-      this.onDidChangeTreeDataEmitter,
+    this.disposables.push(
       this.context.libraryManager.onDidChangeLibraries(() => {
         this.disposeMonitoredLibraries();
         this.onDidChangeTreeDataEmitter.fire(undefined);
@@ -48,18 +38,16 @@ export class ExplorerTreeDataProvider
       this.context.sandboxManager.onExecutionStart(({ macro }) =>
         this.fireOnDidChangeTreeData(macro),
       ),
-      this.context.sandboxManager.onExecutionEnd(({ macro, startup }) => {
+      this.context.sandboxManager.onExecutionEnd(({ macro }) => {
         this.fireOnDidChangeTreeData(macro);
-        if (startup) {
-          this.fireOnDidChangeTreeData(new StartupMacro(macro.uri), StartupMacroLibrary.instance());
-        }
+        // if (startup) {
+        //   this.fireOnDidChangeTreeData(new StartupMacro(macro.uri), StartupMacroLibrary.instance());
+        // }
       }),
-    ];
-  }
-
-  dispose() {
-    vscode.Disposable.from(...this.disposables).dispose();
-    this.disposeMonitoredLibraries();
+      {
+        dispose: () => this.disposeMonitoredLibraries(),
+      },
+    );
   }
 
   private disposeMonitoredLibraries() {
@@ -114,7 +102,7 @@ export class ExplorerTreeDataProvider
   }
 
   private fireOnDidChangeTreeData(element: TreeElement, library?: Library): void {
-    if (element instanceof Macro || element instanceof StartupMacro) {
+    if (element instanceof Macro) {
       // Refresh parent as Macro changes collapsible state, and
       // that won't be refreshed unless parent changes.
       const parent = library ?? this.getParent(element);
@@ -124,7 +112,7 @@ export class ExplorerTreeDataProvider
     }
   }
 
-  async getChildren(element?: TreeElement): Promise<TreeElement[]> {
+  public override async getChildren(element?: TreeElement): Promise<TreeElement[]> {
     let children: TreeElement[];
 
     if (!element) {
@@ -133,11 +121,9 @@ export class ExplorerTreeDataProvider
       );
     } else if (element instanceof Library) {
       const uris = await element.getFiles();
-      children = (
-        element instanceof StartupMacroLibrary
-          ? uris.map(({ uri }) => new StartupMacro(uri))
-          : uris.map(({ uri }) => new Macro(uri))
-      ).sort((a, b) => NaturalComparer.compare(a.name, b.name));
+      children = uris
+        .map(({ uri }) => new Macro(uri))
+        .sort((a, b) => NaturalComparer.compare(a.name, b.name));
       const entry = this.ensureLibraryIsMonitored(element);
       entry.files = new Set((children as Macro[]).map((macro) => macro.id));
     } else if (element instanceof Macro) {
@@ -150,7 +136,7 @@ export class ExplorerTreeDataProvider
     return children;
   }
 
-  getParent(element: TreeElement): TreeElement | undefined {
+  public override getParent(element: TreeElement): TreeElement | undefined {
     let parent: TreeElement | undefined;
     if (element instanceof Macro) {
       parent = this.context.libraryManager.libraryFor(element.uri);
@@ -160,34 +146,17 @@ export class ExplorerTreeDataProvider
     return parent;
   }
 
-  async getTreeItem(element: TreeElement): Promise<vscode.TreeItem> {
+  public override async getTreeItem(element: TreeElement): Promise<vscode.TreeItem> {
     let treeItem: vscode.TreeItem;
 
     if (element instanceof Library) {
       treeItem = createLibraryItem(element);
     } else if (element instanceof Macro) {
-      const executor = this.context.sandboxManager.getExecutor(element.uri);
-      treeItem = await createMacroItem(element, executor);
-    } else if (element instanceof StartupMacro) {
-      const executor = this.context.sandboxManager.getExecutor(
-        element.uri.with({ scheme: element.uri.fragment }),
-      );
-      treeItem = createStartupItem(
-        element,
-        executor?.executions.find((i) => i.startup),
-      );
+      treeItem = await createMacroItem(element, this.context);
     } else {
       treeItem = createExecutionItem(element);
     }
 
     return treeItem;
-  }
-
-  get onDidChangeTreeData(): vscode.Event<TreeEvent> {
-    return this.onDidChangeTreeDataEmitter.event;
-  }
-
-  refresh(): void {
-    return this.onDidChangeTreeDataEmitter.fire(undefined);
   }
 }

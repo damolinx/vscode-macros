@@ -19,3 +19,18 @@ export const MacrosLightIconUri = new Lazy(({ extensionContext }: ExtensionConte
 export const IconColor = new vscode.ThemeColor('macros.general');
 export const JsIconColor = new vscode.ThemeColor('macros.js');
 export const TsIconColor = new vscode.ThemeColor('macros.ts');
+
+export const Icon = new vscode.ThemeIcon('symbol-function', IconColor);
+export const JsIcon = new vscode.ThemeIcon('symbol-function', JsIconColor);
+export const TsIcon = new vscode.ThemeIcon('symbol-function', TsIconColor);
+
+export function getIcon(languageId?: string): vscode.ThemeIcon {
+  switch (languageId) {
+    case 'javascript':
+      return JsIcon;
+    case 'typescript':
+      return TsIcon;
+    default:
+      return Icon;
+  }
+}

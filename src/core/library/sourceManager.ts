@@ -25,10 +25,11 @@ export abstract class SourceManager implements vscode.Disposable {
 
   public async addLibrary(
     uri: vscode.Uri,
+    target?: vscode.ConfigurationTarget,
   ): Promise<{ added: boolean; target: vscode.ConfigurationTarget; value: string }> {
     const source = SourceManager.normalizePath(uri.scheme === 'file' ? uri.fsPath : uri.toString());
     const { tokenizedSource, configurationTarget: detectedTarget } = getTokenizedSource(uri);
-    const configurationTarget = detectedTarget ?? vscode.ConfigurationTarget.Global;
+    const configurationTarget = target ?? detectedTarget ?? vscode.ConfigurationTarget.Global;
 
     const configuration = vscode.workspace.getConfiguration();
     const uniqueExistingValues = this.loadConfigurationValues(configurationTarget, configuration);

@@ -190,8 +190,8 @@
       },
       {
         "command": "macros.revealRelatedMacroInTree",
-        "title": "Reveal Macro in Macro Explorer",
-        "enablement": "focusedView == macros.macroExplorer"
+        "title": "Reveal in Macro Explorer",
+        "enablement": "focusedView == macros.startupMacros && viewItem =~ /startupMacro/"
       },
       {
         "command": "macros.run",
@@ -229,6 +229,11 @@
         "category": "Macros"
       },
       {
+        "command": "macros.showStartupMacros",
+        "title": "Show Startup Macros",
+        "category": "Macros"
+      },
+      {
         "command": "macros.sourceDirectories.settings",
         "title": "Configure Source Directories",
         "category": "Macros",
@@ -238,6 +243,13 @@
         "command": "macros.sourceDirectories.setup",
         "title": "Setup Source Directory for Development",
         "category": "Macros"
+      },
+      {
+        "command": "macros.startup.refresh",
+        "title": "Refresh Startup Macros",
+        "category": "Macros",
+        "icon": "$(refresh)",
+        "enablement": "macros:startupCount"
       },
       {
         "command": "macros.startup.settings",
@@ -363,6 +375,10 @@
           "when": "false"
         },
         {
+          "command": "macros.startup.refresh",
+          "when": "false"
+        },
+        {
           "command": "macros.stop",
           "when": "false"
         }
@@ -407,12 +423,12 @@
         },
         {
           "command": "macros.delete.startupMacro",
-          "when": "view == macros.macroExplorer && viewItem =~ /startup/ && !(viewItem =~ /startupLibrary/)",
+          "when": "viewItem =~ /startup(Macro)?/",
           "group": "4_tools@2"
         },
         {
           "command": "macros.delete.startupMacro",
-          "when": "view == macros.macroExplorer && viewItem =~ /startupMacro/",
+          "when": "view == macros.startupMacros && viewItem =~ /startupMacro/",
           "group": "inline"
         },
         {
@@ -442,7 +458,7 @@
         },
         {
           "command": "macros.revealRelatedMacroInTree",
-          "when": "view == macros.macroExplorer && viewItem =~ /startupMacro/",
+          "when": "view == macros.startupMacros && viewItem =~ /startupMacro/",
           "group": "3_navigation@3"
         },
         {
@@ -481,23 +497,13 @@
           "group": "4_tools@1"
         },
         {
-          "command": "macros.startup.settings",
-          "when": "view == macros.macroExplorer && viewItem =~ /startupLibrary/",
-          "group": "inline"
-        },
-        {
-          "command": "macros.startup.settings",
-          "when": "view == macros.macroExplorer && viewItem =~ /startupLibrary/",
-          "group": "configuration"
-        },
-        {
           "command": "macros.stop",
-          "when": "view == macros.macroExplorer && viewItem =~ /macroRun|running/",
+          "when": "(view == macros.macroExplorer || view == macros.startupMacros) && viewItem =~ /macroRun|running/",
           "group": "1_execution@3"
         },
         {
           "command": "macros.stop",
-          "when": "view == macros.macroExplorer && viewItem =~ /macroRun|running/",
+          "when": "(view == macros.macroExplorer || view == macros.startupMacros) && viewItem =~ /macroRun|running/",
           "group": "inline"
         }
       ],
@@ -516,6 +522,16 @@
           "command": "macros.new.macro.repl",
           "when": "view == macros.macroExplorer",
           "group": "navigation@1"
+        },
+        {
+          "command": "macros.startup.refresh",
+          "when": "view == macros.startupMacros && macros:startupCount > 0",
+          "group": "navigation@1"
+        },
+        {
+          "command": "macros.startup.settings",
+          "when": "view == macros.startupMacros",
+          "group": "navigation@10"
         }
       ]
     },
@@ -526,6 +542,13 @@
           "name": "Macro Explorer",
           "type": "tree",
           "icon": "resources/images/macros.svg"
+        },
+        {
+          "id": "macros.startupMacros",
+          "name": "Startup Macros",
+          "type": "tree",
+          "icon": "resources/images/macros.svg",
+          "visibility": "collapsed"
         },
         {
           "id": "macrosView.treeview1",

@@ -1,49 +1,27 @@
 import * as vscode from 'vscode';
-import { setStartupMacro } from '../commands/setStartupMacro';
-import {
-  isMacro,
-  MACRO_LANGUAGES,
-  MACRO_PREFERRED_LANGUAGE,
-  MacroLanguageId,
-} from '../core/language';
-import { Macro } from '../core/macro';
-import { ExtensionContext } from '../extensionContext';
-import { existsFile } from '../utils/fsEx';
-import { isStartup, isUntitled, uriBasename } from '../utils/uri';
-import { saveTextEditor } from '../utils/vscodeEx';
-import { TreeElement } from './explorerTreeDataProvider';
+import { MACRO_LANGUAGES, MACRO_PREFERRED_LANGUAGE, MacroLanguageId } from '../../core/language';
+import { Macro } from '../../core/macro';
+import { existsFile } from '../../utils/fsEx';
+import { areUriEqual, isUntitled, uriBasename } from '../../utils/uri';
+import { saveTextEditor } from '../../utils/vscodeEx';
+import { TreeElement } from '../../views/explorer/explorerTreeDataProvider';
+import { TreeDragAndDropController } from '../treeDragAndDropController';
 
-export const FILELIST_MIMETYPE = 'text/uri-list';
-export const FILELIST_SEP = '\r\n';
-export const TREE_MIMETYPE = 'application/vnd.code.tree.macros.macroexplorer';
-
-export class ExplorerTreeDragAndDropController implements vscode.TreeDragAndDropController<TreeElement> {
-  private readonly context: ExtensionContext;
-  public readonly dropMimeTypes: readonly string[];
-  public readonly dragMimeTypes: readonly string[];
-
-  constructor(context: ExtensionContext) {
-    this.context = context;
-    this.dragMimeTypes = [];
-    this.dropMimeTypes = [FILELIST_MIMETYPE];
+export class ExplorerTreeDragAndDropController extends TreeDragAndDropController<Macro> {
+  protected override get treeMimeType(): string {
+    return 'application/vnd.code.tree.macros.macroexplorer';
   }
 
-  public handleDrag(
+  public override handleDrag(
     source: TreeElement[],
     dataTransfer: vscode.DataTransfer,
-    _token: vscode.CancellationToken,
+    token: vscode.CancellationToken,
   ): void {
-    const macros = source.filter((item): item is Macro => item instanceof Macro);
-    if (macros.length) {
-      dataTransfer.set(
-        FILELIST_MIMETYPE,
-        new vscode.DataTransferItem(macros.map((macro) => macro.uri.toString()).join(FILELIST_SEP)),
-      );
-      dataTransfer.set(TREE_MIMETYPE, new vscode.DataTransferItem(macros));
-    }
+    const filteredSource = source.filter((item) => item instanceof Macro);
+    super.handleDrag(filteredSource, dataTransfer, token);
   }
 
-  public async handleDrop(
+  public override async handleDrop(
     target: TreeElement | undefined,
     dataTransfer: vscode.DataTransfer,
     _token: vscode.CancellationToken,
@@ -51,7 +29,6 @@ export class ExplorerTreeDragAndDropController implements vscode.TreeDragAndDrop
     if (!target || !('uri' in target) || isUntitled(target)) {
       return;
     }
-
     if (target instanceof Macro) {
       target = this.context.libraryManager.libraryFor(target.uri);
       if (!target) {
@@ -59,13 +36,8 @@ export class ExplorerTreeDragAndDropController implements vscode.TreeDragAndDrop
       }
     }
 
-    const sources = await getSourceUris();
+    const sources = await this.getSourceUris(dataTransfer);
     if (!sources) {
-      return;
-    }
-
-    if (isStartup(target.uri)) {
-      sources.forEach((uri) => !isUntitled(uri) && setStartupMacro(this.context, uri));
       return;
     }
 
@@ -113,27 +85,11 @@ export class ExplorerTreeDragAndDropController implements vscode.TreeDragAndDrop
           }
 
           const targetUri = vscode.Uri.joinPath(target, sourceName);
-
-          return source.toString() !== targetUri.toString() ? { source, target: targetUri } : null;
+          return areUriEqual(source, targetUri) ? null : { source, target: targetUri };
         }),
       );
 
       return moveOps.filter(Boolean) as { source: vscode.Uri; target: vscode.Uri }[];
-    }
-
-    async function getSourceUris() {
-      let uris: vscode.Uri[] | undefined;
-      let item: vscode.DataTransferItem | undefined;
-      if ((item = dataTransfer.get(TREE_MIMETYPE))) {
-        uris = (item.value as Macro[]).map(({ uri }) => uri);
-      } else if ((item = dataTransfer.get(FILELIST_MIMETYPE))) {
-        uris = (await item.asString())
-          .split(FILELIST_SEP)
-          .filter(isMacro)
-          .map((str) => vscode.Uri.parse(str, true));
-      }
-
-      return uris;
     }
   }
 

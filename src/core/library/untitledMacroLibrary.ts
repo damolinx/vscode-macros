@@ -33,11 +33,11 @@ export class UntitledMacroLibrary extends Library {
       vscode.workspace.onDidCloseTextDocument(({ uri }) => {
         if (this.owns(uri)) {
           const executor = sandboxManager.getExecutor(uri);
-          if (!executor?.executionCount) {
+          if (!executor?.count) {
             this.removeItems(getMacroId(uri));
           } else {
             const disposable = executor.onExecutionEnd(() => {
-              if (!executor.executionCount) {
+              if (!executor.count) {
                 this.removeItems(getMacroId(uri));
                 disposable.dispose();
               }

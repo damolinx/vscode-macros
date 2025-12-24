@@ -23,6 +23,7 @@ TypeScript support is transparent, with transpilation happening on demand, provi
   * [Removing a Library](#removing-a-library)
 * [User Interface](#user-interface)
   * [Macro Explorer View](#macro-explorer-view)
+  * [Startup Macros View](#startup-macros-view)
   * [Macro REPL](#macro-repl)
   * [AI Assistant](#ai-assistant)
   * [Commands](#commands)
@@ -39,9 +40,6 @@ TypeScript support is transparent, with transpilation happening on demand, provi
   * [`@macro` Options](#macro-options)
   * [Download Definition Files](#download-definition-files)
   * [Debugging a Macro](#debugging-a-macro)
-    * [Debugger](#debugger)
-    * [Logs](#logs)
-    * [REPL](#repl)
 
 # Getting Started
 
@@ -136,7 +134,7 @@ Startup macros are defined via the `macros.startupMacros` setting in your worksp
 
 * **Option 3**: in the [**Macro Explorer**](#macro-explorer-view) view, drag a macro into the **Startup** library.
 
-The `macros.startupMacros` setting is additive across Global, Workspace, and Workspace Folder scopes, this is to say macros registered in all scopes will be run. The system deduplicates macros before execution so only one instance of any given startup macro file is run.
+The `macros.startupMacros` setting is additive across Global, Workspace, and Workspace Folder scopes, this is to say macros registered in all scopes will be run. The system deduplicates macros before execution so **only one instance** of any given startup macro file is run.
 
 Startup macro paths may be defined using tokens like `${workspaceFolder}` or `${userHome}` for dynamic path resolution. This, for example, allows to define startup macros in user settings and have that match across different workspaces. Any paths that do not resolve to existing files are ignored. Check the *Macros* output channel for details logs, if needed.
 
@@ -213,6 +211,14 @@ The **Macros: Show Macro Explorer** command can be used to bring it into view.
 <p align=center>
    <img width="600" alt="Macro Explorer View with diff" src="https://github.com/user-attachments/assets/bc684a9a-6641-455a-aba9-e2df2680e076" />
 </p>
+
+[↑ Back to top](#table-of-contents)
+
+## Startup Macros View
+
+The **Startup Macros** [view](https://code.visualstudio.com/docs/getstarted/userinterface#_views) gives you a dedicated place to manage [startup macros](#running-a-macro-on-startup). It exposes all configuration locations where startup macros may be defined, making it easy to understand why a macro is being executed. You can add or remove items directly from each location using context actions or by simply dragging and dropping them into the desired section.
+
+The **Macros: Show Startup Macros** command can be used to bring it into view.
 
 [↑ Back to top](#table-of-contents)
 

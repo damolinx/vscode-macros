@@ -6,27 +6,16 @@ import {
   formatHomeRelativePath,
   formatWorkspaceRelativePath,
 } from '../../utils/ui';
-import { parentUri } from '../../utils/uri';
 
 const LibraryIcon = new vscode.ThemeIcon('file-directory');
-
-const StartupLibraryIcon = new vscode.ThemeIcon('file-symlink-directory');
-const StartupLibraryTooltip = new vscode.MarkdownString(
-  'Lists macros [configured](command:macros.startup.settings) to run on startup.',
-);
-StartupLibraryTooltip.isTrusted = true;
-
 const UntitledLibraryIcon = new vscode.ThemeIcon('root-folder');
 const UntitledLibraryTooltip = new vscode.MarkdownString(
-  'Lists `untitled` macro documents. These exist only in memory  \nuntil saved, which limits IntelliSense and other tooling support.',
+  'Lists `untitled` macro documents. These live only in memory  \nuntil saved, which limits IntelliSense and other tooling features.',
 );
 
 export function createLibraryItem(library: Library) {
   const item = new vscode.TreeItem(library.uri, vscode.TreeItemCollapsibleState.Collapsed);
   switch (library.uri.scheme) {
-    case 'startup':
-      updateStartupLibraryItem(item);
-      break;
     case 'untitled':
       updateUntitledLibraryItem(item);
       break;
@@ -41,7 +30,7 @@ export function createLibraryItem(library: Library) {
 function updateLibraryItem(item: vscode.TreeItem, library: Library) {
   item.contextValue = 'macroLibrary';
   item.description =
-    formatWorkspaceRelativePath(library.uri) ?? formatHomeRelativePath(parentUri(library.uri));
+    formatWorkspaceRelativePath(library.uri) ?? formatHomeRelativePath(library.uri);
   item.iconPath = LibraryIcon;
   item.tooltip = new vscode.MarkdownString(formatDisplayUri(library.uri));
 
@@ -59,13 +48,6 @@ function updateLibraryItem(item: vscode.TreeItem, library: Library) {
     item.tooltip.appendMarkdown(`  \nThis library is defined in ${settings.join(', ')} settings.`);
     item.tooltip.isTrusted = true;
   }
-}
-
-function updateStartupLibraryItem(item: vscode.TreeItem) {
-  item.contextValue = 'startupLibrary';
-  item.description = 'Startup macros';
-  item.iconPath = StartupLibraryIcon;
-  item.tooltip = StartupLibraryTooltip;
 }
 
 function updateUntitledLibraryItem(item: vscode.TreeItem) {

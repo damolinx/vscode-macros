@@ -31,6 +31,7 @@ export function formatHomeRelativePath(uri: vscode.Uri): string | undefined {
       return join(
         process.platform === 'win32' ? '‹home›' : '~/',
         normalizedPath.slice(homedir.length + 1),
+        '..',
       );
     } else {
       return normalizedPath;
@@ -41,9 +42,9 @@ export function formatHomeRelativePath(uri: vscode.Uri): string | undefined {
 }
 
 export function formatWorkspaceRelativePath(uri: vscode.Uri): string | undefined {
-  const wsRelativepath = vscode.workspace.asRelativePath(uri);
-  if (uri.fsPath !== wsRelativepath) {
-    return join('‹workspace›', wsRelativepath, '..');
+  const relativePath = vscode.workspace.asRelativePath(uri);
+  if (uri.fsPath !== relativePath) {
+    return join('‹workspace›', relativePath, '..');
   }
 
   return;
