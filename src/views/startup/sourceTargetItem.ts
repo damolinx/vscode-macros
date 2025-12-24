@@ -8,7 +8,7 @@ export function createSourceTargetItem(sourceTarget: SourceTarget): vscode.TreeI
     case vscode.ConfigurationTarget.Global:
       treeItem = new vscode.TreeItem('Global');
       treeItem.tooltip = new vscode.MarkdownString(
-        'Macros that run whenever VS Code starts.  \nDefined in [User](command:workbench.action.openSettings?%5B%22macros.startupMacros%22%5D) settings.',
+        'Macros that run whenever the current workspace changes.  \nDefined in [User](command:workbench.action.openSettings?%5B%22macros.startupMacros%22%5D) settings.',
       );
       treeItem.tooltip.isTrusted = true;
       break;
