@@ -65,7 +65,7 @@ export abstract class SandboxRunner<TContext = unknown> {
 
   public matchTypeScriptSourceName(str: string): { name: string; index: string } | undefined {
     // This should match `getExecutionSourceName` format.
-    const match = str.match(/^\[@(\d+)\]\s(.+?)\.js$/);
+    const match = str.match(/^\[@(startup|\d+)\]\s(.+?)\.js$/);
     return match ? { name: match[2], index: match[1] } : undefined;
   }
 
