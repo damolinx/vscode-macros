@@ -96,9 +96,9 @@ main()
 
 ## Running a Macro
 
-* **Option 1**: From the [Command Palette](https://code.visualstudio.com/docs/getstarted/userinterface#_command-palette), use the **Macros: Run Active Editor as Macro** or **Macros: Run Macro** commands.
+* **Option 1**: From the [Command Palette](https://code.visualstudio.com/docs/getstarted/userinterface#_command-palette), use the **Macros: Run Active Editor as Macro** or **Macros: Run Macro…** commands.
 
-* **Option 2**: On supported editors, i.e. those matching `*.macro.*` or saved in a [macro library](#macro-libraries), use the equivalent **Run Macro** or **Debug Macro** buttons available in the editor title bar.
+* **Option 2**: On supported editors, i.e. those matching `*.macro.*` or saved in a [macro library](#macro-libraries), use the equivalent **Run Active Editor as Macro** button in the editor title bar.
 
    <p align=center>
       <img width="600" alt=""Macro editor showing the Debug Macro button" src="https://github.com/user-attachments/assets/78acb656-8c1c-4939-823f-72fbd84c13ea" />
@@ -309,7 +309,7 @@ See [Debugging a Macro](#debugging-a-macro) for additional information:
 
 * **Macros: Run Active File as Macro**: run current editor as a macro (document will be saved before running).
 * **Macros: Rerun Last Macro**: execute the most recently run macro.
-* **Macros: Run Macro**: select a macro to run. Provides access to macros in configured `macros.sourceDirectories` directories.
+* **Macros: Run Macro…**: select a macro to run. Provides access to macros in configured `macros.sourceDirectories` directories.
 
 [↑ Back to top](#table-of-contents)
 
