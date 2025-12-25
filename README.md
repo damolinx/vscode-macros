@@ -25,7 +25,9 @@ TypeScript support is transparent, with transpilation happening on demand, provi
   * [Macro Explorer View](#macro-explorer-view)
   * [Startup Macros View](#startup-macros-view)
   * [Macro REPL](#macro-repl)
-  * [AI Assistant](#ai-assistant)
+  * [AI Assistance](#ai-assistance)
+    * [Chat Participant (VS Code)](#chat-participant-vs-code)
+    * [Cursor Rules (Cursor)](#cursor-rules-cursor)
   * [Commands](#commands)
     * [Debugging](#debugging)
     * [Development](#development)
@@ -51,19 +53,20 @@ Any JavaScript or TypeScript document can be treated as a macro, even if not sav
   * You will be prompted to choose from a list of templates to populate your macro.
   * By default, this command uses the JavaScript templates but you can change this behavior via the **Macros: Template Default Language** setting.
 
-* **Option 2**: Use the **New Macro** action in the **Temporary** node in the [**Macro Explorer**](#macro-explorer-view) view.
+* **Option 2**: Use the **New Macro** action in the **Temporary** node in the [Macro Explorer](#macro-explorer-view) view.
 
 * **Option 3**: Create a new *untitled* document using your preferred method—for example, via the **Create: New File...** or **Create: New Untitled Text File** commands, or by double-clicking an empty area in the editor bar.
   * Change the editor language to JavaScript or TypeScript.
   * Use the **Macros: Fill File with Template** command, or the **Fill with Snippet** CodeLens to add content from a template. The command respects the language the editor is set to.
 
-* **Option 4**: Ask the [`@macros` assistant](#ai-assistant) to create a macro for you.
+* **Option 4**: Ask the [`@macros` assistant](#chat-participant-vs-code) to create a macro for you.
 
 [↑ Back to top](#table-of-contents)
 
 ## Writing Macro Code
 
-The **Macros: Fill File with Template** command, or the **Fill with Snippet** CodeLens on empty documents, can jumpstart your development by adding sample code to the currenr editor. To generate custom code, however, you can ask the [`@macros` assistant](#ai-assistant) for help.
+The **Macros: Fill File with Template** command, or the **Fill with Snippet** CodeLens on empty documents, can jumpstart your development by adding sample code to the currenr editor. To generate custom code, however, you can ask the [`@macros` assistant](#chat-participant-vs-code) for help.
+
 You can write your own code, of course—see [Development](#development) for available APIs. When doing so, keep these basic rules in mind:
 * Macros are standalone JavaScript or TypeScript files executed in a Node.js sandbox.
 * Use CommonJS syntax (JavaScript) and avoid `export`, top-level `await` or `return` statements.
@@ -71,7 +74,7 @@ You can write your own code, of course—see [Development](#development) for ava
 * Macros have access to globals like `vscode` and `macros`, and they can import Node.js libraries, but there is no defined way to include arbitrary libraries.
 * Macros cannot be forcefully stopped. They must either complete on their own or respect cancellation request received via the `__cancellationToken` token.
 
-**Example**: Async "Hello, World!" macro
+**Example**: Async _Hello, World!_ macro
 ```javascript
 // @macro:singleton
 
@@ -101,17 +104,17 @@ main()
       <img width="600" alt=""Macro editor showing the Debug Macro button" src="https://github.com/user-attachments/assets/78acb656-8c1c-4939-823f-72fbd84c13ea" />
    </p>
 
-* **Option 3**: Use the **Run Macro** button on macro nodes in the [**Macro Explorer**](#macro-explorer-view) view.
+* **Option 3**: Use the **Run Macro** button on macro nodes in the [Macro Explorer](#macro-explorer-view) view.
 
-* **Option 4**: If you asked the [`@macros` assistant](#ai-assistant) to generate macro code, ask it to run it for you.
+* **Option 4**: If you asked the [`@macros` assistant](#chat-participant-vs-code) to generate macro code, ask it to run it for you.
 
 [↑ Back to top](#table-of-contents)
 
 ## Stopping a Macro
 
-> ℹ️ A macro **cannot** be forcefully terminated. Instead, a cancellation request is issued via the unique [`__cancellationToken`](https://code.visualstudio.com/api/references/vscode-api#CancellationToken) token provided to each instance. Macros must integrate this token into their asynchronous operations and logic—such as loops or long-running tasks.
+> ℹ️ A macro **cannot** be forcefully terminated. Instead, they should integrate [`__cancellationToken`](https://code.visualstudio.com/api/references/vscode-api#CancellationToken) into their asynchronous operations and logic — such as loops or other long‑running tasks — so they can exit cooperatively when cancellation is requested.
 
-* **Option 1**: Use **Request to Stop** button on the macro node (all running instances) or the given run instance from the [**Macro Explorer**](#macro-explorer-view) view to stop a macro.
+* **Option 1**: Use **Request to Stop** button on the macro node (all running instances) or the given run instance from the [Macro Explorer](#macro-explorer-view) view to stop a macro.
 
 * **Option 2**: Use the **Macros: Show Running Macros** command to select a specific instance to stop.
   * This is also available from the status bar item shown when there are active macros instances.
@@ -122,27 +125,27 @@ If a macro does not respond to a cancellation request, it will continue running.
 
 ## Running a Macro on Startup
 
-> ⚠️ **Workspace Trust**: Startup macros are disabled in [untrusted workspaces](https://code.visualstudio.com/docs/editing/workspaces/workspace-trust).
+> ⚠️ Startup macros are **disabled** in [untrusted workspaces](https://code.visualstudio.com/docs/editing/workspaces/workspace-trust).
 
 Startup macros let you customize your environment immediately when it launches. Considering that extensions restart whenever you switch workspaces, these macros can be scoped per workspace, giving you tailored setups across different projects. In practice, startup macros behave much like lightweight extensions, because they are initialized curing the **Macros** extension initialization.
 
-Startup macros are defined via the `macros.startupMacros` setting in your workspace or user settings:
+Startup macros are configured through the `macros.startupMacros` setting at the Global, Workspace, or Workspace Folder level. The setting is additive across scopes, and the system deduplicates entries so each startup macro is run only once.
 
-* **Option 1**: Configure the **Macros: Startup Macros** setting in the **Settings Editor** or `macros.startupMacros` in the `settings.json`. Use the **Macros: Configure Startup Macros** command to jump there quickly.
+You can configure startup macros in several ways, depending on whether you prefer using settings directly or managing them through the UI:
 
-* **Option 2**: in the [**Macro Explorer**](#macro-explorer-view) view, select **Set as Startup Macro** or **Remove as Startup Macro** from a macro’s context menu.
+* **Option 1**: Configure the **Macros: Startup Macros** setting in the [Settings Editor](https://code.visualstudio.com/docs/configure/settings) or `macros.startupMacros` in the `settings.json`. Use the **Macros: Configure Startup Macros** command to jump there quickly.
 
-* **Option 3**: in the [**Macro Explorer**](#macro-explorer-view) view, drag a macro into the **Startup** library.
+* **Option 2**: Using the [Macro Explorer](#macro-explorer-view) view, select **Set as Startup Macro** or **Remove as Startup Macro** from a macro's context menu.
 
-The `macros.startupMacros` setting is additive across Global, Workspace, and Workspace Folder scopes, this is to say macros registered in all scopes will be run. The system deduplicates macros before execution so **only one instance** of any given startup macro file is run.
+* **Option 3**: Using the dedicated [Startup Macros](#startup-macros-view), you can drag macros from the [Macro Explorer](#macro-explorer-view) into the right settings scope folder, or use the **×** button to remove it.
 
-Startup macro paths may be defined using tokens like `${workspaceFolder}` or `${userHome}` for dynamic path resolution. This, for example, allows to define startup macros in user settings and have that match across different workspaces. Any paths that do not resolve to existing files are ignored. Check the *Macros* output channel for details logs, if needed.
+Startup macro paths may include tokens like `${workspaceFolder}` or `${userHome}` for dynamic path resolution. Any paths that do not resolve to existing files are ignored. For more detail, check the **Macros** log output channel for diagnostic logs.
 
 [↑ Back to top](#table-of-contents)
 
 ## Keybinding a Macro
 
-To bind a macro to a keyboard shortcut, all you need to do is keybind the `macros.run` command, passing a single argument that is the path to the macro to run. This must be configured directly in your `keybindings.json` file as the **Keyboard Shortcuts** UI does not allow to define arguments. Check the VS Code [documentation](https://code.visualstudio.com/docs/editor/keybindings#_advanced-customization) for details.
+To bind a macro to a keyboard shortcut, all you need to do is keybind the `macros.run` command, passing a single argument that is the path to the macro to run. This must be configured directly in your `keybindings.json` file as the **Keyboard Shortcuts** editor does not allow to define arguments. Check the VS Code [documentation](https://code.visualstudio.com/docs/editor/keybindings#_advanced-customization) for details.
 
 1. Use the **Preferences: Open Keyboard Shortcuts (JSON)** command to open the `keybindings.json` file.
 
@@ -167,7 +170,7 @@ To bind a macro to a keyboard shortcut, all you need to do is keybind the `macro
 
 A *macro library* is simply a folder registered in the `macros.sourceDirectories` setting. Any JavaScript or TypeScript file directly under these folders (no recursive discovery) is considered a macro. Additionally, the extension automatically adds files (e.g. `jsconfig.json`, `global.d.ts`) to support development.
 
-Macro libraries are the core of managing your macros, and the [**Macro Explorer**](#macro-explorer-view) view itself, with a *virtual* **Temporary** library used to manage all *untitled* documents.
+Macro libraries are the core of managing your macros, and the [Macro Explorer](#macro-explorer-view) view itself, with a *virtual* **Temporary** library used to manage all *untitled* documents.
 
 When a macro file is saved to disk, and it does not belong to a registered library, it will cause for some features to be automatically disabled for them.
 
@@ -175,11 +178,11 @@ When a macro file is saved to disk, and it does not belong to a registered libra
 
 ## Adding a Library
 
-* **Option 1**: Use the **Add Library Folder** action from [**Macro Explorer**](#macro-explorer-view) view title bar.
+* **Option 1**: Use the **Add Library Folder** action from [Macro Explorer](#macro-explorer-view) view title bar.
 
 * **Option 2**: Use the **Macros: Add Library Folder** command the [Command Palette](https://code.visualstudio.com/docs/getstarted/userinterface#_command-palette).
 
-* **Option 3**: Edit the `macros.sourceDirectories` setting. You can use the **Macros: Source Directories** entry in the [**Settings** editor](https://code.visualstudio.com/docs/configure/settings).
+* **Option 3**: Edit the `macros.sourceDirectories` setting. You can use the **Macros: Source Directories** entry in the [Settings Editor](https://code.visualstudio.com/docs/configure/settings).
 
 The `macros.sourceDirectories` setting supports using tokens like `${workspaceFolder}` or `${userHome}` for dynamic resolution, e.g. `${workspaceFolder}/.macros` if you use that pattern to save macros in your workspaces. A missing folder won't lead to error, just to an empty library node. The latter behavior allows to easily create later the folder in the file-system by just adding a macro.
 
@@ -187,10 +190,10 @@ The `macros.sourceDirectories` setting supports using tokens like `${workspaceFo
 
 ## Removing a Library
 
-* **Option 1**: Use the **Delete** action from the context menu of the given library from [**Macro Explorer**](#macro-explorer-view) view.
+* **Option 1**: Use the **Delete** action from the context menu of the given library from [Macro Explorer](#macro-explorer-view) view.
  * This only deletes the relevant entry from the `macros.sourceDirectories` setting, it does not delete the folder.
 
-* **Option 2**: Edit the `macros.sourceDirectories` setting. You can use the **Macros: Source Directories** entry in the [**Settings** editor](https://code.visualstudio.com/docs/configure/settings).
+* **Option 2**: Edit the `macros.sourceDirectories` setting. You can use the **Macros: Source Directories** entry in the [Settings Editor](https://code.visualstudio.com/docs/configure/settings).
 
 [↑ Back to top](#table-of-contents)
 
@@ -236,7 +239,7 @@ You can start a new macros REPL using either of the following:
 
 * **Option 1**: Run the **Macros: Create REPL** command from the [Command Palette](https://code.visualstudio.com/docs/getstarted/userinterface#_command-palette).
 
-* **Option 2**: Click the **Create REPL** button in the [**Macro Explorer**](#macro-explorer-view) view title bar.
+* **Option 2**: Click the **Create REPL** button in the [Macro Explorer](#macro-explorer-view) view title bar.
 
 You can have as many REPL instances as you need, with each one being run in full isolation.
 
@@ -250,14 +253,17 @@ Some useful commands:
   <img width="700" alt="Macro REPL demo"  src="https://github.com/user-attachments/assets/29502571-a18a-41f2-a2b7-7e50f9c7496d" />
 </p>
 
-
 [↑ Back to top](#table-of-contents)
 
-## AI Assistant
+## AI Assistance
 
-The `@macros` [chat particpant](https://code.visualstudio.com/api/extension-guides/ai/chat) is an AI assistant specialized in macro development. It is a domain expert on macro code specifics, which allows it to avoid common mistakes that generic AI models might introduce — such as adding `export` or using top‑level `await` statements, or generating code in the wrong language.
+Macro development can be assisted by AI in two different ways, depending on whether you are using VS Code or Cursor. Each environment exposes a different AI surface, so the extension provides different experiences.
 
-The assistant goes beyond code generation: it can save and execute macros in a single prompt, enabling tasks to be completed end‑to‑end. Performance depends on the language model in use. Larger models such as *Claude Sonnet 4.5* and *GPT‑5* have been verified to deliver good results, while lighter models like *GPT‑5 mini* or *Claude Haiku* have fallen short or been unable to fulfill certain requests.
+### Chat Participant (VS Code)
+
+In VS Code, the extension provides the `@macros` [chat particpant](https://code.visualstudio.com/api/extension-guides/ai/chat). This assistant is a domain expert in macro development and understands the constraints of the macro runtime — such as avoiding export, not using top‑level await, selecting the correct language, and respecting macro directives.
+
+The chat participant can also save and execute macros directly from a prompt, enabling end‑to‑end workflows. Results vary by model size: larger models like *Claude Sonnet 4.5* and *GPT‑5* perform reliably, while lighter models may struggle with generation.
 
 **Example**: Ask `@macros` to dump all diagnostics for further analysis.
 
@@ -265,13 +271,19 @@ The assistant goes beyond code generation: it can save and execute macros in a s
 <img width="700" height="327" alt="@macros created a macro to dump diagnostics and ran it" src="https://github.com/user-attachments/assets/3a5f202d-c37c-4b9b-b32e-d2d7183041e1" />
 </p>
 
+### Cursor Rules (Cursor)
+
+Cursor does not support chat participants. Instead, Cursor's agent is configured through rule files stored under the `.cursor/` directory. The extension provides a **Macros: Create Cursor Rules** command which generates a Markdown rules file that you can save as: `.cursor/rules/macro-rules.md`.
+
+The rules file encodes the macro specification, constraints, and behavioral guidelines that Cursor's agent should follow when generating or refining macro code.
+
 [↑ Back to top](#table-of-contents)
 
 ## Commands
 
 ### Debugging
 
-See [Debugging a Macro](#debugging-a-macro) for additional information.
+See [Debugging a Macro](#debugging-a-macro) for additional information:
 * **Macros: Debug Active File as Macro**: debug current editor as a macro (document will be saved before running).
 * **Macro: Debug Macro**: select a macro file to debug. Provides access to configured `macros.sourceDirectories`.
 
@@ -469,7 +481,7 @@ Currently, there is no clear path to streamline this process. Ideally, the secon
 
 ### Logs
 The [`macros.log` API](#macros-api) writes messages directly to the **Macros** output channel. Every log entry is prefixed with the run-id specific to the instance of your macro you are logging from.
-* Use the [**Developer: Set Log Level...**](https://code.visualstudio.com/updates/v1_73#_setting-log-level-per-output-channel) command to control the granurality of logs for the **Macros** extension. This a global setting for the extension and all macro instances.
+* Use the [Developer: Set Log Level...](https://code.visualstudio.com/updates/v1_73#_setting-log-level-per-output-channel) command to control the granurality of logs for the **Macros** extension. This a global setting for the extension and all macro instances.
 * Use the **Output: Show Output Channels...** command to bring the **Macros** output channel into view, if needed.
 
 [↑ Back to top](#table-of-contents)

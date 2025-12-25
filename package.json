@@ -96,6 +96,11 @@
         "enablement": "focusedView == macros.macroExplorer"
       },
       {
+        "command": "macros.createCursorRules",
+        "title": "Macros: Create Cursor Rules",
+        "enablement": "workspaceFolderCount > 0 && env.appHost == cursor"
+      },
+      {
         "command": "macros.debug",
         "title": "Debug Macro",
         "category": "Macros",

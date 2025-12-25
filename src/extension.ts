@@ -5,7 +5,9 @@ import { addLibrary } from './commands/addLibrary';
 import { copyFile, pasteFile } from './commands/copyPasteFile';
 import { copyPath } from './commands/copyPath';
 import { createMacro, updateEditor } from './commands/createMacro';
+import { createMacroContent, CreateMacroContentArgs } from './commands/createMacroContent';
 import { createRepl } from './commands/createRepl';
+import { createCursorRules } from './commands/cursor/createCursorRules';
 import { debugActiveEditor, debugMacro } from './commands/debugMacro';
 import { deleteMacroOrMacroLibrary } from './commands/deleteMacroOrMacroLibrary';
 import { downloadAsset } from './commands/downloadAsset';
@@ -74,6 +76,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.copy.file', (locator: UriLocator) => copyFile(context, locator)),
     cr('macros.copy.name', (locator: UriLocator) => copyPath(context, locator, true)),
     cr('macros.copy.path', (locator?: UriLocator) => copyPath(context, locator)),
+    cr('macros.createCursorRules', () => createCursorRules()),
     cr('macros.debug', (locator?: UriLocator) => debugMacro(context, locator)),
     cr('macros.debug.activeEditor', () => debugActiveEditor(context)),
     cr('macros.delete.macroOrMacroLibrary', (macroOrLibrary?: Macro | MacroLibrary) =>
@@ -84,6 +87,9 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
       downloadAsset(context, assetUri, locator),
     ),
     cr('macros.explorer.refresh', () => refreshTreeView('explorer')),
+    cr('macros.lmtools.createMacro', (args: CreateMacroContentArgs) =>
+      createMacroContent(context, args),
+    ),
     cr('macros.new.macro', (locator?: UriLocator) => createMacro(context, locator)),
     cr('macros.new.macro.activeEditor', (locator?: UriLocator) => updateEditor(context, locator)),
     cr('macros.new.macro.repl', () => createRepl(context)),

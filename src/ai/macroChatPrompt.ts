@@ -130,9 +130,7 @@ Follow these rules when creating a macro:
     explicitly — including creation timing, visibility toggling, and disposal.  Failure
     to do so may result in empty or orphaned views.
 
-
 6. Example Macro: JavaScript Macro accessing references API
-
     \`\`\`
     async function main() {
       const editor = vscode.window.activeTextEditor;
@@ -195,4 +193,64 @@ Follow these rules when creating a macro:
 
     main();
     \`\`\`
-`;
+`.trim();
+
+export function generateCursorRule(): string {
+  return `
+# Macro Authoring Rules
+
+These rules define how macros work and how the Cursor agent should generate,
+validate, and refine them. The specification below is the authoritative
+source of truth for macro behavior.
+
+## Macro Specification
+${MACRO_PROMPT}
+
+## Behavioral Directives
+- Always follow the Macro Specification above.
+- When generating a macro, produce complete, runnable code.
+- Do not include explanations unless explicitly requested.
+- When appropriate, call the \`run_macro\` tool to validate macro behavior.
+- Use the tool output to refine or correct the macro.
+- Maintain consistency with the macro language semantics defined in the specification.
+
+## Command Invocation Rules
+
+Cursor does not have direct access to macro tools. Instead, when user intent
+requires creating or running a macro, the agent must request the appropriate
+editor command using natural language.
+
+### Creating a Macro
+When the user asks to create a macro, write a macro, generate macro code, or
+produce a new macro file:
+
+1. Generate complete macro code that follows the Macro Specification.
+2. Determine the language:
+   - Use \`javascript\` unless the user explicitly requests TypeScript.
+3. After generating the code, request the editor to run:
+
+   Run the VS Code command: macros.lmtools.createMacro {
+     "content": "<the generated macro code>",
+     "language": "<javascript|typescript>",
+     "run": <true|false>
+   }
+
+4. If the user expresses immediate execution intent (e.g., "run this macro",
+   "execute now", "test it"), set \`"run": true\`.
+
+5. If the user only wants the code (e.g., "show me the macro", "write the macro
+   but don't run it"), set \`"run": false\`.
+
+### Running a Macro
+If the user asks to run the macro that was just created with \`"run": false\`,
+or asks to execute the macro currently open in the editor:
+
+Run the VS Code command: macros.run.activeEditor
+
+### Saving Macros
+If the user asks to save a macro to a file:
+
+- Do not call \`macros.lmtools.createMacro\`.
+- Instead, instruct the user to use the "Save Macro As…" command.
+`.trim();
+}

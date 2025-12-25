@@ -5,6 +5,7 @@
 - New APIs for macros:
    - `structuredClone` available as a global.
    - `macros.extensionContext` provides access to the extension context.
+- New **Macros: Create Cursor Rules** command, available in Cursor workspaces.
 - Fix: `macros.log` is missing type information from `global.d.ts`.
 
 ## 0.5.23
