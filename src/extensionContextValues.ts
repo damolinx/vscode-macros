@@ -7,7 +7,6 @@ import { areUriEqual } from './utils/uri';
 export function registerContextValueHandlers(context: ExtensionContext): void {
   registerInDebugMode(context);
   registerMruSet(context);
-  registerStartupMacros(context);
   registerSupported(context);
 }
 
@@ -30,18 +29,6 @@ function registerMruSet(context: ExtensionContext): void {
       setContext(contextKey, true);
     }),
   );
-}
-
-function registerStartupMacros(context: ExtensionContext): void {
-  const startupCountKey = 'macros:startupCount';
-
-  setStartupCount();
-
-  context.disposables.push(context.startupManager.onDidChangeSources(setStartupCount));
-
-  function setStartupCount() {
-    setContext(startupCountKey, context.startupManager.sources.length);
-  }
 }
 
 function registerSupported(context: ExtensionContext): void {

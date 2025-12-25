@@ -54,7 +54,7 @@ async function updateMacroType(
 
     item.iconPath = getIcon((await macro.getCode()).languageId);
   } else if (context.startupManager.getSource(macro.uri)) {
-    item.contextValue += ' startup';
+    item.contextValue += ' startupMacro';
     item.tooltip += '\nStartup macro';
   }
 }

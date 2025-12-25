@@ -10,6 +10,7 @@ import { debugActiveEditor, debugMacro } from './commands/debugMacro';
 import { deleteMacroOrMacroLibrary } from './commands/deleteMacroOrMacroLibrary';
 import { downloadAsset } from './commands/downloadAsset';
 import { openMacro } from './commands/openMacro';
+import { openSourceDirectoriestSettings, openStartupMacrosSettings } from './commands/openSettings';
 import { removeStartupMacro } from './commands/removeStartupMacro';
 import { renameMacro } from './commands/renameMacro';
 import { resetSharedContext } from './commands/resetContext';
@@ -26,7 +27,6 @@ import { showRunningMacros } from './commands/showRunningMacros';
 import { stopMacro } from './commands/stopMacro';
 import { SandboxExecutionDescriptor } from './core/execution/sandboxExecutionDescriptor';
 import { MacroLibrary } from './core/library/macroLibrary';
-import { SOURCE_DIRS_CONFIG } from './core/library/macroLibrarySourceManager';
 import { Macro } from './core/macro';
 import { StartupMacro } from './core/startupMacro';
 import { ExtensionContext } from './extensionContext';
@@ -40,6 +40,7 @@ import { registerMacroOptionsCompletionProvider } from './providers/macroOptions
 import { registerMacroSnapshotContentProvider } from './providers/macroSnapshotContentProvider';
 import { existsFile } from './utils/fsEx';
 import { UriLocator, areUriEqual } from './utils/uri';
+import { SourceTarget } from './views/startup/sourceTarget';
 import { refreshTreeView, registerTreeViews, revealTreeView } from './views/treeViews';
 
 /**
@@ -105,13 +106,11 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.runView', (descriptor: SandboxExecutionDescriptor) => showRunCode(descriptor)),
     cr('macros.showMacroExplorer', () => revealTreeView('explorer')),
     cr('macros.showStartupMacros', () => revealTreeView('startup')),
-    cr('macros.sourceDirectories.settings', () =>
-      vscode.commands.executeCommand('workbench.action.openSettings', SOURCE_DIRS_CONFIG),
-    ),
+    cr('macros.sourceDirectories.settings', () => openSourceDirectoriestSettings()),
     cr('macros.sourceDirectories.setup', (uri: vscode.Uri) => setupSourceDirectory(context, uri)),
     cr('macros.startup.refresh', () => refreshTreeView('startup')),
-    cr('macros.startup.settings', () =>
-      vscode.commands.executeCommand('workbench.action.openSettings', 'macros.startup'),
+    cr('macros.startup.settings', (sourceTarget?: SourceTarget) =>
+      openStartupMacrosSettings(sourceTarget?.target),
     ),
     cr('macros.stop', (locator: Macro | SandboxExecutionDescriptor | StartupMacro | vscode.Uri) =>
       stopMacro(context, locator),

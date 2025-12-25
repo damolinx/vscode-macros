@@ -248,8 +248,7 @@
         "command": "macros.startup.refresh",
         "title": "Refresh Startup Macros",
         "category": "Macros",
-        "icon": "$(refresh)",
-        "enablement": "macros:startupCount"
+        "icon": "$(refresh)"
       },
       {
         "command": "macros.startup.settings",
@@ -423,7 +422,7 @@
         },
         {
           "command": "macros.delete.startupMacro",
-          "when": "viewItem =~ /startup(Macro)?/",
+          "when": "viewItem =~ /startupMacro/",
           "group": "4_tools@2"
         },
         {
@@ -497,6 +496,16 @@
           "group": "4_tools@1"
         },
         {
+          "command": "macros.startup.settings",
+          "when": "view == macros.startupMacros && viewItem =~ /startupLibrary/",
+          "group": "4_tools@1"
+        },
+        {
+          "command": "macros.startup.settings",
+          "when": "view == macros.startupMacros && viewItem =~ /startupLibrary/",
+          "group": "inline"
+        },
+        {
           "command": "macros.stop",
           "when": "(view == macros.macroExplorer || view == macros.startupMacros) && viewItem =~ /macroRun|running/",
           "group": "1_execution@3"
@@ -525,13 +534,8 @@
         },
         {
           "command": "macros.startup.refresh",
-          "when": "view == macros.startupMacros && macros:startupCount > 0",
-          "group": "navigation@1"
-        },
-        {
-          "command": "macros.startup.settings",
           "when": "view == macros.startupMacros",
-          "group": "navigation@10"
+          "group": "navigation@1"
         }
       ]
     },

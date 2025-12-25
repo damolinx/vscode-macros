@@ -4,11 +4,13 @@ import { getMacroUriFromStartupMacroUri } from '../startupMacroId';
 import { Source } from './source';
 import { SourceManager } from './sourceManager';
 
+export const STARTUP_MACROS_CONFIG = 'macros.startupMacros';
+
 export class StartupMacroLibrarySourceManager extends SourceManager {
   private readonly onDidChangeSourcesEmitter: vscode.EventEmitter<void>;
 
   constructor() {
-    super('macros.startupMacros');
+    super(STARTUP_MACROS_CONFIG);
     this.onDidChangeSourcesEmitter = new vscode.EventEmitter();
     this.disposables.push(
       this.onDidChangeSourcesEmitter,
