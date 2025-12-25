@@ -1,13 +1,12 @@
 import * as vscode from 'vscode';
-import { Lazy } from '../utils/lazy';
 import { getMacroId, MacroId } from './macroId';
 import { MacroOptions, parseOptions } from './macroOptions';
 import { TranspilationError, transpileOrThrow } from './typescript/transpilation';
 
 export class MacroCode {
+  private _options?: MacroOptions;
   public readonly languageId: string;
   public readonly macroId: MacroId;
-  private readonly parsedOptions: Lazy<MacroOptions>;
   public readonly rawCode: string;
   private runnableCode?: string;
   private transpilationError?: TranspilationError;
@@ -17,7 +16,6 @@ export class MacroCode {
   constructor(document: vscode.TextDocument, macroId = getMacroId(document.uri)) {
     this.languageId = document.languageId;
     this.macroId = macroId;
-    this.parsedOptions = new Lazy(() => parseOptions(this.rawCode));
     this.rawCode = document.getText();
     this.uri = document.uri;
     this.version = document.version;
@@ -56,6 +54,7 @@ export class MacroCode {
    * Gets {@link MacroOptions options} defined in the macro document.
    */
   public get options(): MacroOptions {
-    return this.parsedOptions.get();
+    this._options ??= parseOptions(this.rawCode);
+    return this._options;
   }
 }

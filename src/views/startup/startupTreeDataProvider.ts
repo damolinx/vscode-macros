@@ -27,12 +27,12 @@ export class StartupTreeDataProvider extends TreeDataProvider<StartupTreeElement
       const roots: StartupTreeElement[] = [SourceTarget.Global];
 
       const { workspaceFolders } = vscode.workspace;
-      if (!workspaceFolders) {
-        return roots;
-      } else if (workspaceFolders.length === 1) {
-        roots.push(SourceTarget.Workspace);
-      } else {
-        roots.push(...workspaceFolders.map(SourceTarget.WorkspaceFolder));
+      if (workspaceFolders) {
+        if (workspaceFolders.length === 1) {
+          roots.push(SourceTarget.Workspace);
+        } else {
+          roots.push(...workspaceFolders.map(SourceTarget.WorkspaceFolder));
+        }
       }
 
       return roots;

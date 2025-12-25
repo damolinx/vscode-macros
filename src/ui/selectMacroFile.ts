@@ -19,7 +19,6 @@ export async function selectMacroFile(
 export async function selectSourceDirectory(
   manager: MacroLibraryManager,
 ): Promise<vscode.Uri | undefined> {
-  // TODO: virtual ones
   const libraries = manager.libraries;
   if (libraries.length === 0) {
     const OptionConfigure = 'Configure';

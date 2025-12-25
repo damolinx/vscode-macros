@@ -5,21 +5,19 @@ import { MacroCode } from './macroCode';
 import { getMacroId, MacroId } from './macroId';
 
 export class Macro {
+  private _name?: string;
   private code?: MacroCode;
   public readonly id: MacroId;
-  public readonly name: string;
   public readonly uri: vscode.Uri;
 
   constructor(uri: vscode.Uri, id = getMacroId(uri)) {
     this.id = id;
-    this.name = uriBasename(uri, tryResolveMacroExt(uri) ?? true);
     this.uri = uri;
   }
 
   /**
-   * Returns a {@link MacroCode snapshot} of the current state of the document
-   * associated with this macro's {@link uri}. A new instance may be returned
-   * if cached one is stale.
+   * Returns the *current* document state for this macro. Successive calls may
+   * return different instances.
    */
   public async getCode(): Promise<MacroCode> {
     const document = await vscode.workspace.openTextDocument(this.uri);
@@ -27,5 +25,13 @@ export class Macro {
       this.code = new MacroCode(document, this.id);
     }
     return this.code;
+  }
+
+  /**
+   * Returns this macro’s display name.
+   */
+  public get name(): string {
+    this._name ??= uriBasename(this.uri, tryResolveMacroExt(this.uri) ?? true);
+    return this._name;
   }
 }
