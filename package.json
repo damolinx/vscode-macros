@@ -200,7 +200,7 @@
       },
       {
         "command": "macros.run",
-        "title": "Run Macro…",
+        "title": "Run Macro",
         "category": "Macros",
         "icon": "$(debug-start)"
       },
@@ -443,7 +443,7 @@
         {
           "command": "macros.new.macro",
           "when": "view == macros.macroExplorer && viewItem =~ /macroLibrary/",
-          "group": "3_navigation@1"
+          "group": "2_creation@1"
         },
         {
           "command": "macros.new.startupMacro",
