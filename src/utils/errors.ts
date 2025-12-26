@@ -3,9 +3,7 @@ export function cleanError<T extends Error>(error: T, repl?: true): T {
 
   if (error.stack) {
     clone ??= cloneError(error);
-    clone.stack = (repl ? error.stack.replace(/^.*(?:evalmachine\.).*\n*$/gm, '') : error.stack)
-      .replace(/^(.*?(?:Script\.runInContext\.|(?:vscode|damolinx)-macros).*\n[\s\S]*)$/m, '')
-      .replace(/^(.*?vscode-file:\/\/.*\n[\s\S]*)$/m, '');
+    clone.stack = cleanStack(error.stack, repl);
   }
 
   if ('requireStack' in error) {
@@ -15,6 +13,13 @@ export function cleanError<T extends Error>(error: T, repl?: true): T {
   }
 
   return clone ?? error;
+}
+
+export function cleanStack(stack: string, repl?: boolean) {
+  return (repl ? stack.replace(/^.*(?:evalmachine\.).*\n*$/gm, '') : stack)
+    .replace(/^(.*?(?:new Script|\.runIn(?:New)?Context|(?:vscode|damolinx)-macros)[\s\S]*)$/m, '')
+    .replace(/^(.*?vscode-file:\/\/[\s\S]*)$/m, '')
+    .trim();
 }
 
 export function cloneError<T extends Error>(error: T): T {
