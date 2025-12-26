@@ -17,7 +17,7 @@ declare global {
   /**
    * Array of [disposables](https://code.visualstudio.com/api/references/vscode-api#Disposable) to release when macro completes.
    */
-  const __disposables: ({ dispose: () => any })[];
+  const __disposables: _vscode.Disposable[];
 
   /**
    * ID of macro run.

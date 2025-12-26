@@ -11,7 +11,7 @@ export interface MacrosApi {
   /**
    * Array of disposables to release when macro completes.
    */
-  readonly __disposables: { dispose: () => any }[];
+  readonly __disposables: vscode.Disposable[];
   /**
    * ID of macro run.
    */
