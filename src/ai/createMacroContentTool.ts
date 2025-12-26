@@ -5,7 +5,8 @@ import { ExtensionContext } from '../extensionContext';
 export const CREATE_MACRO_TOOL_ID = 'create_macro';
 
 export function registerCreateMacroContentTool(context: ExtensionContext): void {
-  vscode.lm.registerTool(CREATE_MACRO_TOOL_ID, new CreateMacroContentTool(context));
+  const tool = new CreateMacroContentTool(context);
+  vscode.lm.registerTool(CREATE_MACRO_TOOL_ID, tool);
 }
 
 export class CreateMacroContentTool implements vscode.LanguageModelTool<CreateMacroContentArgs> {

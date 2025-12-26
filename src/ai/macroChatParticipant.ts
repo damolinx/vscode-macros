@@ -3,7 +3,7 @@ import { ExtensionContext } from '../extensionContext';
 import { MACRO_PROMPT } from './macroChatPrompt';
 
 export const MACROS_CHAT_PARTICIPANT_ID = 'macros.chatParticipant';
-export const MACRO_TAG = 'macro';
+export const MACRO_TOOL_TAG = 'macro';
 
 export function registerMacroChatParticipant(context: ExtensionContext): void {
   const macroParticipant = new MacroChatParticipant(context);
@@ -14,12 +14,6 @@ export function registerMacroChatParticipant(context: ExtensionContext): void {
   );
   participant.iconPath = new vscode.ThemeIcon('run-all');
   context.disposables.push(participant);
-}
-
-export interface ToolRequest {
-  input: any;
-  name: string;
-  toolInvocationToken?: vscode.ChatParticipantToolToken;
 }
 
 export class MacroChatParticipant {
@@ -62,7 +56,7 @@ export class MacroChatParticipant {
     token: vscode.CancellationToken,
   ): Promise<vscode.ChatResult> {
     const result: vscode.ChatResult = {};
-    const toolRequests: ToolRequest[] = [];
+    const toolRequests: vscode.LanguageModelToolCallPart[] = [];
     switch (request.command) {
       case 'create':
         response.button({
@@ -73,7 +67,7 @@ export class MacroChatParticipant {
       default:
         for await (const part of (
           await request.model.sendRequest(
-            await this.getMessages(request, context),
+            this.getMessages(request, context),
             { tools: this.tools },
             token,
           )
@@ -81,38 +75,35 @@ export class MacroChatParticipant {
           if (part instanceof vscode.LanguageModelTextPart) {
             response.markdown(part.value);
           } else if (part instanceof vscode.LanguageModelToolCallPart) {
-            toolRequests.push({
-              name: part.name,
-              input: part.input,
-              toolInvocationToken: request.toolInvocationToken,
-            });
+            toolRequests.push(part);
           }
         }
         break;
     }
 
     if (toolRequests.length) {
-      await this.handleToolRequests(toolRequests, response, token);
+      await this.handleToolRequests(request, toolRequests, response, token);
     }
     return result;
   }
 
   private async handleToolRequests(
-    toolRequests: ToolRequest[],
+    { toolInvocationToken }: vscode.ChatRequest,
+    toolRequests: vscode.LanguageModelToolCallPart[],
     response: vscode.ChatResponseStream,
     token: vscode.CancellationToken,
   ) {
     response.progress(`Running ${toolRequests.length} tools`);
     const toolResults = await Promise.allSettled(
-      toolRequests.map(async ({ input, name, toolInvocationToken }) => {
+      toolRequests.map(async ({ input, name }) => {
         const toolResponse = await vscode.lm.invokeTool(
           name,
           { input, toolInvocationToken },
           token,
         );
-        toolResponse.content.forEach(
-          (part) => part instanceof vscode.LanguageModelTextPart && response.markdown(part.value),
-        );
+        toolResponse.content
+          .filter((part) => part instanceof vscode.LanguageModelTextPart)
+          .forEach((part) => response.markdown(part.value));
       }),
     );
 
@@ -124,6 +115,6 @@ export class MacroChatParticipant {
   }
 
   private get tools(): vscode.LanguageModelChatTool[] {
-    return vscode.lm.tools.filter(({ tags }) => tags.includes(MACRO_TAG));
+    return vscode.lm.tools.filter(({ tags }) => tags.includes(MACRO_TOOL_TAG));
   }
 }
