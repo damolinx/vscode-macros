@@ -16,31 +16,20 @@
     "vscode": "^1.99.0"
   },
   "categories": [
-    "Other",
-    "Programming Languages"
+    "Other"
   ],
   "keywords": [
     "automation",
-    "custom editor",
-    "custom view",
-    "explorer",
-    "extension",
+    "commands",
     "javascript",
-    "macro",
     "macros",
     "productivity",
-    "prototyping",
-    "repl",
-    "sandbox",
-    "script",
-    "sidebar",
-    "tooling",
-    "treeview",
-    "typescript",
-    "webview"
+    "scripting",
+    "typescript"
   ],
   "extensionKind": [
-    "workspace"
+    "workspace", 
+    "ui"
   ],
   "activationEvents": [
     "onStartupFinished"
