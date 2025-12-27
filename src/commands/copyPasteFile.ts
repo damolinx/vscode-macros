@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { tryResolveMacroExt } from '../core/language';
 import { Macro } from '../core/macro';
+import { resolveMacroExt } from '../core/macroLanguages';
 import { ExtensionContext } from '../extensionContext';
 import { setContext } from '../extensionContextValues';
 import { existsFile, fsType } from '../utils/fsEx';
@@ -82,11 +82,10 @@ export async function pasteFile({ log }: ExtensionContext, locator?: UriLocator)
 async function safeTargetName(parentUri: vscode.Uri, source: vscode.Uri, maxAttempts = 1000) {
   let uri: vscode.Uri | undefined;
 
-  const ext = tryResolveMacroExt(source);
-  const name = uriBasename(source);
+  const ext = resolveMacroExt(source);
   const nameWithoutExt = uriBasename(source, ext ?? true).replace(/(?:\s-)?\s[Cc]opy(\s\d+)?/, '');
 
-  let candidateName = name;
+  let candidateName = uriBasename(source);
   for (let i = 1; !uri && i <= maxAttempts; i++) {
     const candidate = vscode.Uri.joinPath(parentUri, candidateName);
     if (!(await existsFile(candidate))) {

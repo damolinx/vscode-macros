@@ -2,7 +2,6 @@ import * as vscode from 'vscode';
 import { ExtensionContext } from '../../extensionContext';
 import { LazyDisposable } from '../../utils/lazy';
 import { Library } from './library';
-import { LibraryItem } from './libraryItem';
 import { MacroLibrary } from './macroLibrary';
 import { MacroLibrarySourceManager } from './macroLibrarySourceManager';
 import { UntitledMacroLibrary } from './untitledMacroLibrary';
@@ -39,31 +38,15 @@ export class MacroLibraryManager implements vscode.Disposable {
     vscode.Disposable.from(...this.disposables).dispose();
   }
 
-  public async getFiles(
-    filter?: (library: Library) => boolean,
-  ): Promise<Record<string, vscode.Uri[]>> {
-    const libraries = filter ? this.libraries.filter(filter) : this.libraries;
-    const files = await Promise.all(
-      libraries.map(
-        async (lib) => [lib.uri.fsPath, await lib.getFiles()] as [string, LibraryItem[]],
-      ),
-    );
-    return Object.fromEntries(
-      files
-        .filter(([_, files]) => files.length)
-        .map(([root, items]) => [root, items.map(({ uri }) => uri)]),
-    );
-  }
-
   public get libraries(): readonly Library[] {
     return [...this.persistentLibraries.get(), ...this.virtualLibraries.get()];
   }
 
-  public libraryFor(uri: vscode.Uri): Library | undefined {
-    return this.libraries.find((lib) => lib.owns(uri));
-  }
-
   public get onDidChangeLibraries(): vscode.Event<void> {
     return this.onDidChangeLibrariesEmitter.event;
+  }
+
+  public libraryFor(uri: vscode.Uri): Library | undefined {
+    return this.libraries.find((lib) => lib.owns(uri));
   }
 }

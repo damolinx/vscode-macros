@@ -7,7 +7,7 @@ export async function selectMacroFile(
   manager: MacroLibraryManager,
   options?: OpenMacroOptions,
 ): Promise<vscode.Uri | undefined> {
-  const macroFiles = await manager.getFiles((lib) => lib.runnable);
+  const macroFiles = await getFiles(manager);
   const targetUri = await pickMacroFile(macroFiles, options);
   if (!targetUri) {
     return; // No macro selected.
@@ -45,4 +45,16 @@ export async function selectSourceDirectory(
   );
 
   return selectedItem?.uri;
+}
+
+async function getFiles(manager: MacroLibraryManager): Promise<Record<string, vscode.Uri[]>> {
+  const entries: [string, vscode.Uri[]][] = await Promise.all(
+    manager.libraries.map(async (lib) => {
+      const items = await lib.getFiles();
+      const uris = items.map(({ uri }) => uri);
+      return [lib.uri.fsPath, uris];
+    }),
+  );
+
+  return Object.fromEntries(entries.filter(([_, uris]) => uris.length > 0));
 }

@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { isParent } from '../../utils/uri';
-import { isMacro, macroGlobPattern } from '../language';
 import { getMacroId } from '../macroId';
+import { AllLanguages, isMacro } from '../macroLanguages';
 import { Library } from './library';
 import { LibraryItem } from './libraryItem';
 import { Source } from './source';
@@ -18,7 +18,9 @@ export class MacroLibrary extends Library {
     this.sorting = 0;
 
     if (this.uri.scheme === 'file') {
-      this.watcher = vscode.workspace.createFileSystemWatcher(macroGlobPattern(this.uri));
+      this.watcher = vscode.workspace.createFileSystemWatcher(
+        MacroLibrary.buildMacroGlobPattern(this.uri),
+      );
       this.watcher.onDidCreate(
         (uri) => isMacro(uri) && this.addItems({ id: getMacroId(uri), uri }),
       );
@@ -52,5 +54,12 @@ export class MacroLibrary extends Library {
 
   public override owns(uri: vscode.Uri): boolean {
     return isParent(this.uri, uri, { mustBeImmediate: true });
+  }
+
+  private static buildMacroGlobPattern(base: vscode.Uri): vscode.RelativePattern {
+    const extensions = AllLanguages.flatMap((language) =>
+      language.extensions.map((ext) => ext.substring(1)),
+    );
+    return new vscode.RelativePattern(base, `*.{${extensions.join(',')}}`);
   }
 }

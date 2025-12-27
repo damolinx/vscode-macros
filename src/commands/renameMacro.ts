@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { basename, extname } from 'path';
-import { isMacro } from '../core/language';
+import { isMacro } from '../core/macroLanguages';
 import { ExtensionContext } from '../extensionContext';
 import { existsFile } from '../utils/fsEx';
 import { isUntitled, parentUri, uriBasename, UriLocator } from '../utils/uri';

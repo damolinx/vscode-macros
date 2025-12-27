@@ -96,8 +96,4 @@ export abstract class Library<
       this.onDidChangeFilesEmitter.fire(changed);
     }
   }
-
-  public get runnable(): boolean {
-    return true;
-  }
 }

@@ -1,4 +1,4 @@
-import { MacroLanguageId } from '../core/language';
+import { MacroLanguageId } from '../core/language/macroLanguage';
 import { ExtensionContext } from '../extensionContext';
 import { createMacro } from './createMacro';
 import { runMacro } from './runMacro';

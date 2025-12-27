@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { MACRO_LANGUAGES, MACRO_PREFERRED_LANGUAGE, MacroLanguageId } from '../../core/language';
 import { Macro } from '../../core/macro';
+import { PreferredLanguage, resolveMacroLanguage } from '../../core/macroLanguages';
 import { existsFile } from '../../utils/fsEx';
 import { areUriEqual, isUntitled, uriBasename } from '../../utils/uri';
 import { saveTextEditor } from '../../utils/vscodeEx';
@@ -79,9 +79,9 @@ export class ExplorerTreeDragAndDropController extends TreeDragAndDropController
 
           if (isUntitled(source) && sourceName === uriBasename(source, true)) {
             const document = await vscode.workspace.openTextDocument(source);
-            sourceName += (
-              MACRO_LANGUAGES[document.languageId as MacroLanguageId] ??
-              MACRO_LANGUAGES[MACRO_PREFERRED_LANGUAGE]
+            sourceName += resolveMacroLanguage(
+              document.languageId,
+              PreferredLanguage,
             ).defaultExtension;
           }
 

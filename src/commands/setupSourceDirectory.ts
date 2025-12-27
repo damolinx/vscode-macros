@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { isFeatureEnabled } from '../core/language';
+import { isFeatureMacro } from '../core/macroLanguages';
 import { ExtensionContext } from '../extensionContext';
 import { selectSourceDirectory } from '../ui/selectMacroFile';
 import { LazyDisposable } from '../utils/lazy';
@@ -18,7 +18,7 @@ export function registerSourceDirectoryVerifier(context: ExtensionContext): void
       if (
         uri?.scheme !== 'file' ||
         verifiedPaths.has(uri.toString()) ||
-        !isFeatureEnabled(uri) ||
+        !isFeatureMacro(uri) ||
         !context.libraryManager.libraryFor(uri)
       ) {
         return;

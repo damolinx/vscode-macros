@@ -1,10 +1,10 @@
 import * as vscode from 'vscode';
-import { MacroPreferredSelector } from '../core/language';
+import { FeatureEnabledSelector } from '../core/macroLanguages';
 import { ExtensionContext } from '../extensionContext';
 
 export function registerFillCodeLensProvider(context: ExtensionContext): void {
   context.disposables.push(
-    vscode.languages.registerCodeLensProvider(MacroPreferredSelector, new FillCodeLensProvider()),
+    vscode.languages.registerCodeLensProvider(FeatureEnabledSelector, new FillCodeLensProvider()),
   );
 }
 

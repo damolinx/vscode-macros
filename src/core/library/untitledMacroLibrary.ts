@@ -2,8 +2,8 @@ import * as vscode from 'vscode';
 import { isCreatingMacro } from '../../commands/createMacro';
 import { ExtensionContext } from '../../extensionContext';
 import { isUntitled } from '../../utils/uri';
-import { isMacroLangId } from '../language';
 import { getMacroId } from '../macroId';
+import { isMacroLanguage } from '../macroLanguages';
 import { Library } from './library';
 
 export const UNTITLED_MACRO_LIBRARY_NAME = 'Temporary';
@@ -21,7 +21,7 @@ export class UntitledMacroLibrary extends Library {
 
     this.disposables.push(
       vscode.workspace.onDidOpenTextDocument(({ languageId, uri }) => {
-        if (this.owns(uri) && (isCreatingMacro() || isMacroLangId(languageId))) {
+        if (this.owns(uri) && (isCreatingMacro() || isMacroLanguage(languageId))) {
           this.addItems({ id: getMacroId(uri), uri });
         }
       }),

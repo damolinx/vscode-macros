@@ -1,10 +1,14 @@
 import * as vscode from 'vscode';
 import { SandboxExecutor } from '../../core/execution/executors/sandboxExecutor';
-import { tryResolveMacroLanguage } from '../../core/language';
 import { Macro } from '../../core/macro';
+import { resolveMacroLanguageFromUri } from '../../core/macroLanguages';
 import { ExtensionContext } from '../../extensionContext';
 import { getIcon } from '../../ui/icons';
-import { formatDisplayUri } from '../../utils/ui';
+import {
+  formatDisplayUri,
+  formatHomeRelativePath,
+  formatWorkspaceRelativePath,
+} from '../../utils/ui';
 import { isUntitled, parentUri } from '../../utils/uri';
 
 export async function createMacroItem(
@@ -14,7 +18,7 @@ export async function createMacroItem(
   const item = new vscode.TreeItem(macro.uri, vscode.TreeItemCollapsibleState.None);
   item.contextValue = 'macroFile';
   item.command = { arguments: [macro.uri], command: 'vscode.open', title: 'Open' };
-  item.iconPath = getIcon(tryResolveMacroLanguage(macro.uri)?.language.languageId);
+  item.iconPath = getIcon(resolveMacroLanguageFromUri(macro.uri)?.id);
   item.label = macro.name;
   item.tooltip = formatDisplayUri(macro.uri);
 
@@ -48,7 +52,8 @@ async function updateMacroType(
     if (!item.description) {
       const parent = parentUri(macro.uri);
       if (parent.path !== '.') {
-        item.description = formatDisplayUri(parent);
+        item.description =
+          formatWorkspaceRelativePath(macro.uri) ?? formatHomeRelativePath(macro.uri);
       }
     }
 

@@ -1,18 +1,33 @@
 import * as vscode from 'vscode';
 import { uriBasename } from '../utils/uri';
-import { tryResolveMacroExt } from './language';
 import { MacroCode } from './macroCode';
 import { getMacroId, MacroId } from './macroId';
+import { resolveMacroExt } from './macroLanguages';
 
-export class Macro {
+export abstract class MacroBase<TId extends string> {
   private _name?: string;
-  private code?: MacroCode;
-  public readonly id: MacroId;
+  public readonly id: TId;
   public readonly uri: vscode.Uri;
 
-  constructor(uri: vscode.Uri, id = getMacroId(uri)) {
+  constructor(uri: vscode.Uri, id: TId) {
     this.id = id;
     this.uri = uri;
+  }
+
+  /**
+   * Returns this macro’s display name.
+   */
+  public get name(): string {
+    this._name ??= uriBasename(this.uri, resolveMacroExt(this.uri) ?? true);
+    return this._name;
+  }
+}
+
+export class Macro extends MacroBase<MacroId> {
+  private code?: MacroCode;
+
+  constructor(uri: vscode.Uri, id = getMacroId(uri)) {
+    super(uri, id);
   }
 
   /**
@@ -25,13 +40,5 @@ export class Macro {
       this.code = new MacroCode(document, this.id);
     }
     return this.code;
-  }
-
-  /**
-   * Returns this macro’s display name.
-   */
-  public get name(): string {
-    this._name ??= uriBasename(this.uri, tryResolveMacroExt(this.uri) ?? true);
-    return this._name;
   }
 }

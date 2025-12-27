@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { isMacro } from '../core/language';
+import { isMacro } from '../core/macroLanguages';
 import { ExtensionContext } from '../extensionContext';
 
 export const FILELIST_MIMETYPE = 'text/uri-list';

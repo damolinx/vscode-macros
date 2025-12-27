@@ -2,15 +2,12 @@ import * as vscode from 'vscode';
 import * as os from 'os';
 import * as path from 'path';
 import { join } from 'path';
-import { MACRO_LANGUAGES } from '../core/language';
+import { AllLanguages } from '../core/macroLanguages';
 
 export const NaturalComparer = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
 
 export const MacroFilter: Record<string, string[]> = Object.fromEntries(
-  Object.values(MACRO_LANGUAGES).map(({ name, extensions }) => [
-    name,
-    extensions.map((ext) => ext.substring(1)),
-  ]),
+  AllLanguages.map(({ name, extensions }) => [name, extensions.map((ext) => ext.substring(1))]),
 );
 
 export function formatDisplayUri(uri: vscode.Uri) {
