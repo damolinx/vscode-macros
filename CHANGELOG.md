@@ -1,11 +1,12 @@
 # Changelog
 
 ## 0.6.0
-- Introduce the new **Startup Macros** view, replacing the former **Startup** node in the **Macro Explorer** view.
+- New **Startup Macros** view replaces the **Startup** node in the **Macro Explorer** view.
+- New **Command Sequence** template demonstrates a "classic editor macro" pattern.
+- New **Macros: Create Cursor Rules** command, available in Cursor workspaces.
 - New APIs for macros:
    - `structuredClone` available as a global.
    - `macros.extensionContext` provides access to the extension context.
-- New **Macros: Create Cursor Rules** command, available in Cursor workspaces.
 - Fix: `macros.log` is missing type information from `global.d.ts`.
 
 ## 0.5.23

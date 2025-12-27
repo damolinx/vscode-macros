@@ -25,6 +25,15 @@
     },
     {
       "category": "Basics",
+      "label": "Command Sequence",
+      "description": "A macro defined as a sequence of VS Code commands.",
+      "path": "js/command.js",
+      "alternates": {
+        "typescript": "ts/command.ts"
+      }
+    },
+    {
+      "category": "Basics",
       "label": "Dispose",
       "description": "Ensure disposable objects are cleaned up on exit",
       "path": "js/dispose.js",

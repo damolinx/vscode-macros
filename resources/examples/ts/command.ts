@@ -1,0 +1,16 @@
+// @ts-nocheck
+import * as os from 'os';
+
+async function runCommands(cmds: { cmd: string, args?: any[] }[]) {
+  for (const { cmd, args = [] } of cmds) {
+    await vscode.commands.executeCommand(cmd, ...args);
+  }
+}
+
+// Insert a TODO comment at current cursor line
+runCommands([
+  { cmd: "editor.action.insertLineBefore" },
+  { cmd: "type", args: [{ text: `TODO (${os.userInfo().username}): <describe task>` }] },
+  { cmd: "editor.action.addCommentLine" },
+  { cmd: "cursorEnd" },
+]);

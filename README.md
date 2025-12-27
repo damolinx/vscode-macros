@@ -92,6 +92,31 @@ async function main() {
 main()
 ```
 
+### Writing a Command-Sequence macro
+Many automations don’t require much code at all, they can be written as a simple list of VS Code command IDs executed in order, just like a classic editor macro. The **Command Sequence** template provides an easy starting point for this pattern.
+
+**Example**: _Add a TODO_ macro defined as a sequence of commands
+```typescript
+import * as os from 'os';
+
+async function runCommands(cmds: { cmd: string, args?: any[] }[]) {
+  for (const { cmd, args = [] } of cmds) {
+    await vscode.commands.executeCommand(cmd, ...args);
+  }
+}
+
+// Insert a TODO comment at current cursor line
+runCommands([
+  { cmd: "editor.action.insertLineBefore" },
+  { cmd: "type", args: [{ text: `TODO (${os.userInfo().username}): <describe task>` }] },
+  { cmd: "editor.action.addCommentLine" },
+  { cmd: "cursorEnd" },
+]);
+```
+
+And when you need a bit more functionality—such as conditionals, loops, or calling VS Code APIs—you can extend the same file naturally without giving up the simplicity of the core pattern.
+
+
 [↑ Back to top](#table-of-contents)
 
 ## Running a Macro
