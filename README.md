@@ -7,7 +7,7 @@ Under the hood, macros run inside [Node.js VM sandboxes](https://nodejs.org/api/
 TypeScript support is transparent, with transpilation happening on demand, providing a seamless experience.
 
 <p align=center>
-  <img width="800" alt="VS Code with Macro Explorer view and a macro editor open" src="https://github.com/user-attachments/assets/34637385-782a-4578-863e-35d8e3caa2c7" />
+  <img width="800" alt="VS Code with Macro Explorer and Startup Macros views, as well as a macro editor open" src="https://github.com/user-attachments/assets/f075d80b-a21f-4201-b7c7-1ce3b2bf7707" />
 </p>
 
 ## Table of Contents
