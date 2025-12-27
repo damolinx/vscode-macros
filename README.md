@@ -93,7 +93,7 @@ main()
 ```
 
 ### Writing a Command-Sequence macro
-Many automations don’t require much code at all, they can be written as a simple list of VS Code command IDs executed in order, just like a classic editor macro. The **Command Sequence** template provides an easy starting point for this pattern.
+Many automations don’t require much code at all, they can be written as a simple list of VS Code command IDs executed in order, just like a classic editor macro. The **Command Sequence** [template](#creating-a-macro) can help you get started, and if you need additional logic, or API access, you can easily extend it to match your needs.
 
 **Example**: _Add a TODO_ macro defined as a sequence of commands
 ```typescript
@@ -114,8 +114,7 @@ runCommands([
 ]);
 ```
 
-And when you need a bit more functionality—such as conditionals, loops, or calling VS Code APIs—you can extend the same file naturally without giving up the simplicity of the core pattern.
-
+The [Built-in Commands](https://code.visualstudio.com/api/references/commands) page describes the commands that ship with VS Code, but installed extensions can contribute their own. For those, you will need to refer to the extension’s documentation for the expected arguments.
 
 [↑ Back to top](#table-of-contents)
 

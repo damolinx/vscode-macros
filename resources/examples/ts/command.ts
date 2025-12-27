@@ -7,7 +7,8 @@ async function runCommands(cmds: { cmd: string, args?: any[] }[]) {
   }
 }
 
-// Insert a TODO comment at current cursor line
+// Insert a TODO comment at current cursor line.
+// Reference: https://code.visualstudio.com/api/references/commands
 runCommands([
   { cmd: "editor.action.insertLineBefore" },
   { cmd: "type", args: [{ text: `TODO (${os.userInfo().username}): <describe task>` }] },
