@@ -1,6 +1,6 @@
 # Macros
 
-A **macro** is a JavaScript or TypeScript script executed within the context of an extension, giving it full access to the [VS Code extensibility APIs](https://code.visualstudio.com/api/references/vscode-api). Macros let you automate tasks, customize your development workflow, and prototype extension behavior—all without the overhead of building and maintaining a full extension.
+A **macro** is a JavaScript or TypeScript script executed within the context of an extension, with full access to [VS Code extensibility APIs](https://code.visualstudio.com/api/references/vscode-api). Macros let you automate tasks, customize your development workflow, and prototype extension behavior—all without the overhead of building and maintaining a full extension.
 
 Under the hood, macros run inside [Node.js VM sandboxes](https://nodejs.org/api/vm.html#class-vmscript). Each sandbox is its own isolated data context, but all macros run within a single shared process. This means macro instances cannot be forcefully terminated; instead depending on cancellation token semantics to complete their execution.
 
