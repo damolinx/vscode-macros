@@ -38,15 +38,6 @@ export function formatHomeRelativePath(uri: vscode.Uri): string | undefined {
   return;
 }
 
-export function formatWorkspaceRelativePath(uri: vscode.Uri): string | undefined {
-  const relativePath = vscode.workspace.asRelativePath(uri);
-  if (uri.fsPath !== relativePath) {
-    return join('‹workspace›', relativePath, '..');
-  }
-
-  return;
-}
-
 export function formatStartTimestampLabel(timestamp: number): string {
   const now = new Date();
   const date = new Date(timestamp);
@@ -74,6 +65,15 @@ export function formatStartTimestampLabel(timestamp: number): string {
   });
 
   return `${day} at ${time}`;
+}
+
+export function formatWorkspaceRelativePath(uri: vscode.Uri): string | undefined {
+  const relativePath = vscode.workspace.asRelativePath(uri);
+  if (uri.fsPath !== relativePath) {
+    return join('‹workspace›', relativePath, '..');
+  }
+
+  return;
 }
 
 function normalizeFsPath({ fsPath }: vscode.Uri) {
