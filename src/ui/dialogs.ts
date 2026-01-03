@@ -26,17 +26,6 @@ export async function showMacroOpenDialog(
   return selectedUris?.pop();
 }
 
-export async function showMacroSaveDialog(
-  options?: vscode.SaveDialogOptions,
-): Promise<vscode.Uri | undefined> {
-  const selectedUri = await vscode.window.showSaveDialog({
-    filters: MacroFilter,
-    ...options,
-  });
-
-  return selectedUri;
-}
-
 export async function showMacroQuickPick(
   manager: MacroLibraryManager,
   options?: OpenMacroOptions,
