@@ -4,7 +4,7 @@ import { Lazy } from './utils/lazy';
 import { readFile } from './utils/resources';
 import { NaturalComparer } from './utils/ui';
 
-export const MACRO_TEMPLATES_DIR_RESOURCE = 'examples/';
+export const MACRO_TEMPLATES_DIR_RESOURCE = 'templates/';
 export const MACRO_TEMPLATES_MANIFEST_RESOURCE = `${MACRO_TEMPLATES_DIR_RESOURCE}/manifest.json`;
 
 export interface MacroTemplate {
