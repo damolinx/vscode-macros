@@ -15,29 +15,36 @@ export class VmSandboxRunner extends SandboxRunner<vm.Context> {
       filename: this.getExecutionSourceName(descriptor),
     };
 
-    let runPromise: Promise<any>;
-    if (descriptor.snapshot.options.persistent) {
-      const initialKeys = Object.keys(context).filter((k) => !k.startsWith('__'));
-      runPromise = Promise.resolve(vm.runInContext(descriptor.code, context, options)).finally(
-        () => {
-          const currentKeys = Object.keys(context).filter((k) => !k.startsWith('__'));
-          const removedKeys = [...initialKeys].filter((key) => !currentKeys.includes(key));
-          if (this.sharedMacroContext) {
-            for (const key of currentKeys) {
-              this.sharedMacroContext[key] = context[key];
-            }
-            for (const key of removedKeys) {
-              delete this.sharedMacroContext[key];
-            }
-          }
-        },
-      );
-    } else {
-      runPromise = vm.runInNewContext(descriptor.code, context, options);
-    }
+    const runPromise = descriptor.snapshot.options.persistent
+      ? this.executeInternalPersistent(descriptor, context, options)
+      : vm.runInNewContext(descriptor.code, context, options);
 
     const result = await runPromise;
     return result;
+  }
+
+  private async executeInternalPersistent(
+    descriptor: SandboxExecutionDescriptor,
+    context: vm.Context,
+    options: vm.RunningScriptOptions,
+  ): Promise<any> {
+    const initialKeys = Object.keys(context).filter((k) => !k.startsWith('__'));
+    try {
+      const result = await vm.runInContext(descriptor.code, context, options);
+      return result;
+    } finally {
+      if (this.sharedMacroContext) {
+        const currentKeys = Object.keys(context).filter((k) => !k.startsWith('__'));
+        for (const key of currentKeys) {
+          this.sharedMacroContext[key] = context[key];
+        }
+
+        const removedKeys = [...initialKeys].filter((key) => !currentKeys.includes(key));
+        for (const key of removedKeys) {
+          delete this.sharedMacroContext[key];
+        }
+      }
+    }
   }
 
   protected override getContext(
