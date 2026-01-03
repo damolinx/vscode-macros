@@ -57,25 +57,6 @@ export async function createMacro(
   } finally {
     creatingMacro = false;
   }
-
-  async function createUntitledUri(parentUri: vscode.Uri, language: string, maxAttempts = 1000) {
-    let uri: vscode.Uri | undefined;
-
-    const extension = resolveMacroLanguage(language)?.defaultExtension ?? '';
-
-    for (let i = 1; !uri && i <= maxAttempts; i++) {
-      const fsCandidate = vscode.Uri.joinPath(parentUri, `Untitled-${i}${extension}`);
-      if (!(await existsFile(fsCandidate))) {
-        const untitledCandidate = fsCandidate.with({ scheme: 'untitled' });
-        if (
-          !vscode.workspace.textDocuments.some(({ uri }) => areUriEqual(uri, untitledCandidate))
-        ) {
-          uri = untitledCandidate;
-        }
-      }
-    }
-    return uri;
-  }
 }
 
 export async function updateEditor(
@@ -108,6 +89,25 @@ export async function updateEditor(
       content,
     ),
   );
+}
+
+async function createUntitledUri(parentUri: vscode.Uri, language: string, maxAttempts = 1000) {
+  let uri: vscode.Uri | undefined;
+
+  const extension = resolveMacroLanguage(language)?.defaultExtension ?? '';
+
+  for (let i = 1; !uri && i <= maxAttempts; i++) {
+    const fsCandidate = vscode.Uri.joinPath(parentUri, `Untitled-${i}${extension}`);
+    if (!(await existsFile(fsCandidate))) {
+      const untitledCandidate = fsCandidate.with({ scheme: 'untitled' });
+      if (
+        !vscode.workspace.textDocuments.some(({ uri }) => areUriEqual(uri, untitledCandidate))
+      ) {
+        uri = untitledCandidate;
+      }
+    }
+  }
+  return uri;
 }
 
 async function getTemplateContent(
