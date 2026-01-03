@@ -26,7 +26,7 @@
     {
       "category": "Basics",
       "label": "Command Sequence",
-      "description": "A macro defined as a sequence of VS Code commands.",
+      "description": "A macro defined as a sequence of VS Code commands",
       "path": "js/command.js",
       "alternates": {
         "typescript": "ts/command.ts"

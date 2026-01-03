@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.6.1
+- Updated the macro‑template selection dropdown to better match the layout of VS Code’s built‑in Snippets picker.
+
 ## 0.6.0
 - New **Startup Macros** view replaces the **Startup** node in the **Macro Explorer** view.
 - New **Command Sequence** template demonstrates a "classic editor macro" pattern.

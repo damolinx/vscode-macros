@@ -186,7 +186,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
         if (history?.length) {
           const document = await createMacro(this.context, undefined, {
             content: `\n// History: ${new Date().toLocaleString()}\n\n` + history.join('\n'),
-            language: this.useTs ? 'typescript' : 'javascript',
+            languageId: this.useTs ? 'typescript' : 'javascript',
             preserveFocus: true,
           });
           if (document) {

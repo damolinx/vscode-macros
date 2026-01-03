@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
-import { PreferredLanguage, resolveMacroLanguage } from '../core/macroLanguages';
+import { MacroLanguageId } from '../core/language/macroLanguage';
+import { isMacroLanguage, PreferredLanguage, resolveMacroLanguage } from '../core/macroLanguages';
 import { ExtensionContext } from '../extensionContext';
-import { templates } from '../macroTemplates';
+import { loadTemplates } from '../macroTemplates';
 import { createGroupedQuickPickItems } from '../ui/ui';
 import { activeMacroEditor } from '../utils/activeMacroEditor';
 import { existsFile } from '../utils/fsEx';
@@ -19,14 +20,14 @@ export async function createMacro(
   locator?: UriLocator,
   options?: vscode.TextDocumentShowOptions & {
     content?: string;
-    language?: string;
+    languageId?: MacroLanguageId;
   },
 ): Promise<vscode.TextDocument | undefined> {
-  const language =
-    options?.language ??
+  const languageId =
+    options?.languageId ??
     vscode.workspace.getConfiguration().get('macros.templateDefaultLanguage', PreferredLanguage.id);
 
-  const content = options?.content ?? (await getTemplateContent(context, language));
+  const content = options?.content ?? (await getTemplateContent(context, languageId));
   if (content === undefined) {
     return;
   }
@@ -35,7 +36,7 @@ export async function createMacro(
   if (locator !== undefined) {
     const parentUri = resolveUri(locator);
     if (!isUntitled(parentUri)) {
-      uri = await createUntitledUri(parentUri, language);
+      uri = await createUntitledUri(parentUri, languageId);
     }
   }
 
@@ -49,7 +50,7 @@ export async function createMacro(
         await editor.edit((editBuilder) => editBuilder.insert(new vscode.Position(0, 0), content));
       }
     } else {
-      document = await vscode.workspace.openTextDocument({ content, language });
+      document = await vscode.workspace.openTextDocument({ content, language: languageId });
       await vscode.window.showTextDocument(document, options);
     }
     return document;
@@ -82,14 +83,18 @@ export async function updateEditor(
   locator?: UriLocator,
   defaultContent?: string,
 ): Promise<void> {
-  const editor = locator
-    ? await showTextDocument(resolveUri(locator))
-    : await activeMacroEditor(false);
+  const editor = await (locator ? showTextDocument(resolveUri(locator)) : activeMacroEditor(false));
   if (!editor) {
     return;
   }
 
-  const content = defaultContent ?? (await getTemplateContent(context, editor.document.languageId));
+  let content = defaultContent;
+  if (content === undefined) {
+    const { languageId } = editor.document;
+    if (isMacroLanguage(languageId)) {
+      content = await getTemplateContent(context, languageId);
+    }
+  }
   if (!content) {
     return;
   }
@@ -107,26 +112,27 @@ export async function updateEditor(
 
 async function getTemplateContent(
   context: ExtensionContext,
-  language?: string,
+  languageId: MacroLanguageId,
 ): Promise<string | undefined> {
-  const selectedTemplate = await vscode.window.showQuickPick(
-    createGroupedQuickPickItems(await templates(context, language), {
-      groupBy: (template) => template.category ?? '',
-      itemBuilder: (template) => ({
-        label: template.label,
-        description: template.description,
-        template,
-      }),
+  const templates = await loadTemplates(context, languageId);
+  const items = createGroupedQuickPickItems(templates, {
+    groupBy: (template) => template.category ?? '',
+    itemBuilder: ({ description, label, load }) => ({
+      detail: description,
+      label,
+      load,
     }),
-    {
-      matchOnDescription: true,
-      placeHolder: `Select a template (${language})`,
-    },
-  );
-  if (!selectedTemplate) {
+  });
+
+  const { name } = resolveMacroLanguage(languageId);
+  const selectedItem = await vscode.window.showQuickPick(items, {
+    matchOnDescription: true,
+    placeHolder: `Select a ${name} template`,
+  });
+  if (!selectedItem) {
     return;
   }
 
-  const content = await selectedTemplate.template.load();
+  const content = await selectedItem.load();
   return content;
 }

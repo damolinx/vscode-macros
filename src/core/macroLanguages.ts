@@ -35,8 +35,8 @@ export function isMacro(pathOrUri: PathLike): boolean {
   return Boolean(resolveMacroLanguageFromUri(pathOrUri));
 }
 
-export function isMacroLanguage(language: string): language is MacroLanguageId {
-  return AllLanguages.some(({ id }) => id === language);
+export function isMacroLanguage(languageId: string): languageId is MacroLanguageId {
+  return AllLanguages.some(({ id }) => id === languageId);
 }
 
 export function resolveMacroExt(pathOrUri: PathLike): string | undefined;
@@ -52,6 +52,7 @@ export function resolveMacroExt(pathOrUri: PathLike, defaultValue?: string): str
   return defaultValue;
 }
 
+export function resolveMacroLanguage(language: MacroLanguageId): MacroLanguage;
 export function resolveMacroLanguage(language: string): MacroLanguage | undefined;
 export function resolveMacroLanguage(language: string, defaultValue: MacroLanguage): MacroLanguage;
 export function resolveMacroLanguage(
