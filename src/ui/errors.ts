@@ -62,12 +62,12 @@ export function showMacroErrorMessage(
 
   function findErrorLocation(
     stack: string,
-    language: string,
+    languageId: string,
   ): { uri: vscode.Uri; range?: vscode.Range } | undefined {
     let location: { uri: vscode.Uri; range?: vscode.Range } | undefined;
 
     const regex =
-      language === 'typescript'
+      languageId === 'typescript'
         ? /at\s+(?<prefix>.+?):(?<line>\d+)(:(?<offset>\d+))?(?:\)|$)/m
         : /(?<prefix>.+?):(?<line>\d+)(:(?<offset>\d+))?(?:\)|$)/m;
 

@@ -5,7 +5,7 @@ import { runMacro } from './runMacro';
 
 export interface CreateMacroContentArgs {
   content: string;
-  language: MacroLanguageId;
+  languageId: MacroLanguageId;
   run?: boolean;
 }
 

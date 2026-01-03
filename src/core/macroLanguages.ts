@@ -52,14 +52,17 @@ export function resolveMacroExt(pathOrUri: PathLike, defaultValue?: string): str
   return defaultValue;
 }
 
-export function resolveMacroLanguage(language: MacroLanguageId): MacroLanguage;
-export function resolveMacroLanguage(language: string): MacroLanguage | undefined;
-export function resolveMacroLanguage(language: string, defaultValue: MacroLanguage): MacroLanguage;
+export function resolveMacroLanguage(languageId: MacroLanguageId): MacroLanguage;
+export function resolveMacroLanguage(languageId: string): MacroLanguage | undefined;
 export function resolveMacroLanguage(
-  language: string,
+  languageId: string,
+  defaultValue: MacroLanguage,
+): MacroLanguage;
+export function resolveMacroLanguage(
+  languageId: string,
   defaultValue?: MacroLanguage,
 ): MacroLanguage | undefined {
-  return AllLanguages.find(({ id }) => language === id) ?? defaultValue;
+  return AllLanguages.find(({ id }) => languageId === id) ?? defaultValue;
 }
 
 export function resolveMacroLanguageFromUri(pathOrUri: PathLike): MacroLanguage | undefined;

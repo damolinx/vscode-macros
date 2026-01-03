@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { MacroLanguageId } from '../core/language/macroLanguage';
 import { isMacroLanguage, PreferredLanguage, resolveMacroLanguage } from '../core/macroLanguages';
 import { ExtensionContext } from '../extensionContext';
-import { loadTemplates } from '../macroTemplates';
+import { loadTemplates } from '../templates/templates';
 import { createGroupedQuickPickItems } from '../ui/ui';
 import { activeMacroEditor } from '../utils/activeMacroEditor';
 import { existsFile } from '../utils/fsEx';
