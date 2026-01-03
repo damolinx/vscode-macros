@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 import { ExtensionContext } from '../extensionContext';
 import { showMacroErrorDialog, showMacroQuickPick } from '../ui/dialogs';
-import { activeMacroEditor } from '../utils/activeMacroEditor';
 import { isUntitled, UriLocator, resolveUri } from '../utils/uri';
+import { activeMacroEditor } from './utils';
 
 export async function runMacro(
   { libraryManager, mruMacro, sandboxManager }: ExtensionContext,

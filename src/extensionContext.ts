@@ -6,22 +6,21 @@ import { StartupMacroLibrarySourceManager } from './core/library/startupMacroLib
 
 export class ExtensionContext {
   public readonly extensionContext: vscode.ExtensionContext;
-  public readonly isRemote: boolean;
   public readonly libraryManager: MacroLibraryManager;
   public readonly log: vscode.LogOutputChannel;
   public mruMacro?: vscode.Uri;
   public readonly sandboxManager: SandboxManager;
   public readonly startupManager: StartupMacroLibrarySourceManager;
-  public readonly treeViewManager: ViewManager;
-  public readonly webviewManager: ViewManager;
+  public readonly viewManagers: { tree: ViewManager; web: ViewManager };
 
   constructor(extensionContext: vscode.ExtensionContext) {
     this.extensionContext = extensionContext;
-    this.isRemote = Boolean(vscode.env.remoteName);
     this.log = vscode.window.createOutputChannel('Macros', { log: true });
     this.startupManager = new StartupMacroLibrarySourceManager();
-    this.treeViewManager = new ViewManager('macrosView.treeview', 5);
-    this.webviewManager = new ViewManager('macrosView.webview', 5);
+    this.viewManagers = {
+      tree: new ViewManager('macrosView.treeview', 5),
+      web: new ViewManager('macrosView.webview', 5),
+    };
 
     this.libraryManager = new MacroLibraryManager(this);
     this.sandboxManager = new SandboxManager(this);
@@ -37,5 +36,9 @@ export class ExtensionContext {
    */
   public get disposables(): vscode.Disposable[] {
     return this.extensionContext.subscriptions;
+  }
+
+  public get isRemote(): boolean {
+    return Boolean(vscode.env.remoteName);
   }
 }

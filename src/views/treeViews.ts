@@ -32,41 +32,41 @@ export function refreshTreeView(tree: 'all' | 'explorer' | 'startup') {
 export function registerTreeViews(context: ExtensionContext): void {
   registerExplorerTreeview(context);
   registerStartupTreeview(context);
-}
 
-function registerExplorerTreeview(context: ExtensionContext): void {
-  explorerTreeDataProvider = new ExplorerTreeDataProvider(context);
-  explorerTreeView = vscode.window.createTreeView(MACRO_EXPLORER_VIEW_ID, {
-    dragAndDropController: new ExplorerTreeDragAndDropController(context),
-    showCollapseAll: true,
-    treeDataProvider: explorerTreeDataProvider,
-  });
+  function registerExplorerTreeview(context: ExtensionContext): void {
+    explorerTreeDataProvider = new ExplorerTreeDataProvider(context);
+    explorerTreeView = vscode.window.createTreeView(MACRO_EXPLORER_VIEW_ID, {
+      dragAndDropController: new ExplorerTreeDragAndDropController(context),
+      showCollapseAll: true,
+      treeDataProvider: explorerTreeDataProvider,
+    });
 
-  context.disposables.push(
-    explorerTreeDataProvider,
-    explorerTreeView,
-    explorerTreeDataProvider.onDidChangeTreeData(async (elementOrElements) => {
-      const element =
-        elementOrElements instanceof Array
-          ? elementOrElements.findLast((elem) => elem instanceof Macro)
-          : elementOrElements instanceof Macro
-            ? elementOrElements
-            : undefined;
-      if (element) {
-        await explorerTreeView?.reveal(element);
-      }
-    }),
-  );
-}
+    context.disposables.push(
+      explorerTreeDataProvider,
+      explorerTreeView,
+      explorerTreeDataProvider.onDidChangeTreeData(async (elementOrElements) => {
+        const element =
+          elementOrElements instanceof Array
+            ? elementOrElements.findLast((elem) => elem instanceof Macro)
+            : elementOrElements instanceof Macro
+              ? elementOrElements
+              : undefined;
+        if (element) {
+          await explorerTreeView?.reveal(element);
+        }
+      }),
+    );
+  }
 
-function registerStartupTreeview(context: ExtensionContext): void {
-  startupTreeDataProvider = new StartupTreeDataProvider(context);
-  const treeView = vscode.window.createTreeView(STARTUP_MACROS_VIEW_ID, {
-    dragAndDropController: new StartupTreeDragAndDropController(context),
-    treeDataProvider: startupTreeDataProvider,
-  });
+  function registerStartupTreeview(context: ExtensionContext): void {
+    startupTreeDataProvider = new StartupTreeDataProvider(context);
+    const treeView = vscode.window.createTreeView(STARTUP_MACROS_VIEW_ID, {
+      dragAndDropController: new StartupTreeDragAndDropController(context),
+      treeDataProvider: startupTreeDataProvider,
+    });
 
-  context.disposables.push(startupTreeDataProvider, treeView);
+    context.disposables.push(startupTreeDataProvider, treeView);
+  }
 }
 
 export async function revealTreeView(tree: 'explorer' | 'startup'): Promise<void> {

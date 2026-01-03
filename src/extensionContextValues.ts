@@ -40,9 +40,9 @@ function registerSupported(context: ExtensionContext): void {
 
   context.disposables.push(
     // This is needed to support changing Language on current editor
-    vscode.workspace.onDidOpenTextDocument((doc) => {
+    vscode.workspace.onDidOpenTextDocument(({ uri }) => {
       const editor = vscode.window.activeTextEditor;
-      if (editor && areUriEqual(doc.uri, editor.document.uri)) {
+      if (editor && areUriEqual(uri, editor.document.uri)) {
         setSupportedFromEditor(editor);
       }
     }),

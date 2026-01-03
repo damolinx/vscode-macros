@@ -48,16 +48,13 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
       log: new MacroLogOutputChannel(runId, context),
       executionId: runId,
       token: this.cts.token,
-      viewManagers: {
-        tree: this.context.treeViewManager,
-        web: this.context.webviewManager,
-      },
+      viewManagers: this.context.viewManagers,
     };
   }
 
   public close(): void {
-    this.context.treeViewManager.releaseOwnedIds(this.macroInitParams.executionId);
-    this.context.webviewManager.releaseOwnedIds(this.macroInitParams.executionId);
+    this.context.viewManagers.tree.releaseOwnedIds(this.macroInitParams.executionId);
+    this.context.viewManagers.web.releaseOwnedIds(this.macroInitParams.executionId);
     vscode.Disposable.from(...this.macroInitParams.disposables).dispose();
     this.cts.dispose();
     this.onDidCloseEmitter.dispose();

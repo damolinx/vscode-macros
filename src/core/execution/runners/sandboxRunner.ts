@@ -47,10 +47,7 @@ export abstract class SandboxRunner<TContext = unknown> {
       startup: descriptor.startup,
       token: descriptor.cts.token,
       uri: descriptor.macro.uri,
-      viewManagers: {
-        tree: this.context.treeViewManager,
-        web: this.context.webviewManager,
-      },
+      viewManagers: this.context.viewManagers,
     };
   }
 

@@ -23,9 +23,7 @@ export abstract class TreeDataProvider<T> implements vscode.TreeDataProvider<T>,
 
   public abstract getChildren(element?: T): Promise<T[] | undefined> | T[] | undefined;
 
-  public getParent(_element?: T): Promise<T | undefined> | T | undefined {
-    return undefined;
-  }
+  public abstract getParent(_element?: T): Promise<T | undefined> | T | undefined;
 
   public abstract getTreeItem(element: T): Promise<vscode.TreeItem> | vscode.TreeItem;
 

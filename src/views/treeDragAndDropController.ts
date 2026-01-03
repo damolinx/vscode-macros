@@ -54,7 +54,7 @@ export abstract class TreeDragAndDropController<
   public abstract handleDrop(
     target: T | undefined,
     dataTransfer: vscode.DataTransfer,
-    _token: vscode.CancellationToken,
+    token: vscode.CancellationToken,
   ): Promise<void> | void;
 
   protected async getSourceUris(

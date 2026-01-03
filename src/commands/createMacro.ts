@@ -4,10 +4,10 @@ import { isMacroLanguage, PreferredLanguage, resolveMacroLanguage } from '../cor
 import { ExtensionContext } from '../extensionContext';
 import { loadTemplates } from '../templates/templates';
 import { createGroupedQuickPickItems } from '../ui/ui';
-import { activeMacroEditor } from '../utils/activeMacroEditor';
 import { existsFile } from '../utils/fsEx';
 import { isUntitled, areUriEqual, UriLocator, resolveUri } from '../utils/uri';
 import { showTextDocument } from '../utils/vscodeEx';
+import { activeMacroEditor } from './utils';
 
 let creatingMacro = false;
 

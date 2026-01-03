@@ -48,6 +48,10 @@ export class StartupTreeDataProvider extends TreeDataProvider<StartupTreeElement
     return undefined;
   }
 
+  public override getParent(_element?: StartupTreeElement): undefined {
+    return undefined;
+  }
+
   public override getTreeItem(element: StartupTreeElement): vscode.TreeItem {
     if (element instanceof SourceTarget) {
       return element.treeItem;

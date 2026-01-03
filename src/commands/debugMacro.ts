@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
 import { ExtensionContext } from '../extensionContext';
 import { showMacroQuickPick } from '../ui/dialogs';
-import { activeMacroEditor } from '../utils/activeMacroEditor';
 import { UriLocator, parentUri, uriBasename, resolveUri } from '../utils/uri';
 import { showTextDocument } from '../utils/vscodeEx';
+import { activeMacroEditor } from './utils';
 
 export const MACROS_EXT_DEBUG_VAR = 'MACROS_EXT_DEBUG';
 
