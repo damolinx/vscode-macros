@@ -50,13 +50,6 @@ export function isParent(
 /**
  * Check if {@link locator} describes an `untitled:` document.
  */
-export function isStartup(locator: UriLocator): boolean {
-  return resolveUri(locator).scheme === 'startup';
-}
-
-/**
- * Check if {@link locator} describes an `untitled:` document.
- */
 export function isUntitled(locator: UriLocator): boolean {
   return resolveUri(locator).scheme === 'untitled';
 }

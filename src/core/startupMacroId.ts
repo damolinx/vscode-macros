@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import { isStartup } from '../utils/uri';
 import { getId, Id } from './id';
 
 export type StartupMacroId = Id<'StartupMacro'>;
@@ -20,4 +19,8 @@ export function getMacroUriFromStartupMacroId(id: StartupMacroId): vscode.Uri {
 
 export function getMacroUriFromStartupMacroUri(uri: vscode.Uri): vscode.Uri {
   return isStartup(uri) ? uri.with({ scheme: uri.fragment, fragment: '' }) : uri;
+}
+
+function isStartup(uri: vscode.Uri): boolean {
+  return uri.scheme === 'startup';
 }
