@@ -172,7 +172,7 @@ To bind a macro to a keyboard shortcut, all you need to do is keybind the `macro
 1. Use the **Preferences: Open Keyboard Shortcuts (JSON)** command to open the `keybindings.json` file.
 
 2. Add a keybinding for the `macros.run` command:
-    * Add the path to the macro file as argument, with `${userhome}` and `${workspaceFolder}` tokens being supported.
+    * Add the path to the macro file as argument, with `${userHome}` and `${workspaceFolder}` tokens being supported.
 
     **Example**: Macro keybinding definition
     ```json
@@ -180,7 +180,7 @@ To bind a macro to a keyboard shortcut, all you need to do is keybind the `macro
       {
         "key": "Shift+Alt+X",
         "command": "macros.run",
-        "args": "${userhome}/macros/references.macro.js",
+        "args": "${userHome}/macros/references.macro.js",
         "when": "editorTextFocus"
       }
     ]

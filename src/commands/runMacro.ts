@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { resolveTokenizedPath } from '../core/pathTokenization';
 import { ExtensionContext } from '../extensionContext';
 import { showMacroErrorDialog, showMacroQuickPick } from '../ui/dialogs';
 import { isUntitled, UriLocator, resolveUri } from '../utils/uri';
@@ -6,12 +7,19 @@ import { activeMacroEditor } from './utils';
 
 export async function runMacro(
   { libraryManager, mruMacro, sandboxManager }: ExtensionContext,
-  locator?: UriLocator,
+  locatorOrTokenizedPath?: UriLocator | string,
   options?: { ignoreDiagnosticErrors?: true; startup?: true },
 ): Promise<void> {
-  const uri = locator
-    ? resolveUri(locator)
-    : await showMacroQuickPick(libraryManager, { selectUri: mruMacro });
+  let uri: vscode.Uri | undefined;
+  if (!locatorOrTokenizedPath) {
+    uri = await showMacroQuickPick(libraryManager, { selectUri: mruMacro });
+  } else if (typeof locatorOrTokenizedPath === 'string') {
+    const resolvedPath = resolveTokenizedPath(locatorOrTokenizedPath);
+    uri = vscode.Uri.file(resolvedPath[0]);
+  } else {
+    uri = resolveUri(locatorOrTokenizedPath);
+  }
+
   if (!uri) {
     return; // Nothing to run.
   }

@@ -10,6 +10,7 @@
   - Add **Add Macro…** as both, an inline and context menu action, on configuration folders for selecting an existing macro to add.
   - **Configure Startup Macro** is no longer shown as an inline action.
   - **Remove as Startup Macro** inline action is always on the far right.
+- Fix: Keybinding via `macro.run` not working.
 
 ## 0.6.0
 - New **Startup Macros** view replaces the **Startup** node in the **Macro Explorer** view.

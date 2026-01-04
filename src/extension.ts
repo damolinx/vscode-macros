@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { registerCreateMacroContentTool } from './ai/createMacroContentTool';
 import { registerMacroChatParticipant } from './ai/macroChatParticipant';
 import { addLibrary } from './commands/addLibrary';
+import { addStartupMacro } from './commands/addStartupMacro';
 import { copyFile, pasteFile } from './commands/copyPasteFile';
 import { copyPath } from './commands/copyPath';
 import { createMacro, updateEditor } from './commands/createMacro';
@@ -44,7 +45,6 @@ import { existsFile } from './utils/fsEx';
 import { UriLocator, areUriEqual } from './utils/uri';
 import { SourceTarget } from './views/startup/sourceTarget';
 import { refreshTreeView, registerTreeViews, revealTreeView } from './views/treeViews';
-import { addStartupMacro } from './commands/addStartupMacro';
 
 /**
  * Extension startup.
@@ -74,7 +74,9 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     commands: { registerCommand: cr },
   } = vscode;
   context.disposables.push(
-    cr('macros.add.startupMacro', (sourceTarget?: SourceTarget) => addStartupMacro(context, sourceTarget?.target)),
+    cr('macros.add.startupMacro', (sourceTarget?: SourceTarget) =>
+      addStartupMacro(context, sourceTarget?.target),
+    ),
     cr('macros.copy.file', (locator: UriLocator) => copyFile(context, locator)),
     cr('macros.copy.name', (locator: UriLocator) => copyPath(context, locator, true)),
     cr('macros.copy.path', (locator?: UriLocator) => copyPath(context, locator)),

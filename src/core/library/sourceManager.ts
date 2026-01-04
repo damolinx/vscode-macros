@@ -1,12 +1,8 @@
 import * as vscode from 'vscode';
-import * as os from 'os';
-import { join, posix, relative } from 'path';
 import { Lazy } from '../../utils/lazy';
-import { areUriEqual, isParent, resolveAsUri } from '../../utils/uri';
+import { areUriEqual, resolveAsUri } from '../../utils/uri';
+import { normalizePathSeparators, resolveTokenizedPath, tokenizeUri } from '../pathTokenization';
 import { ConfigurationSource, Source } from './source';
-
-export const USER_HOME_TOKEN = '${userHome}';
-export const WORKSPACE_TOKEN = '${workspaceFolder}';
 
 export abstract class SourceManager implements vscode.Disposable {
   protected readonly _sources: Lazy<readonly Source[]>;
@@ -27,8 +23,8 @@ export abstract class SourceManager implements vscode.Disposable {
     uri: vscode.Uri,
     target?: vscode.ConfigurationTarget,
   ): Promise<{ added: boolean; target: vscode.ConfigurationTarget; value: string }> {
-    const source = SourceManager.normalizePath(uri.scheme === 'file' ? uri.fsPath : uri.toString());
-    const { tokenizedSource, configurationTarget: detectedTarget } = getTokenizedSource(uri);
+    const source = normalizePathSeparators(uri.scheme === 'file' ? uri.fsPath : uri.toString());
+    const { tokenizedSource, configurationTarget: detectedTarget } = tokenizeUri(uri);
     const configurationTarget = target ?? detectedTarget ?? vscode.ConfigurationTarget.Global;
 
     const configuration = vscode.workspace.getConfiguration();
@@ -51,31 +47,6 @@ export abstract class SourceManager implements vscode.Disposable {
     }
 
     return result;
-
-    function getTokenizedSource(uri: vscode.Uri): {
-      tokenizedSource?: string;
-      configurationTarget?: vscode.ConfigurationTarget;
-    } {
-      const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
-      if (workspaceFolder) {
-        return {
-          tokenizedSource: SourceManager.normalizePath(
-            join(WORKSPACE_TOKEN, relative(workspaceFolder.uri.fsPath, uri.fsPath)),
-          ),
-          configurationTarget: vscode.ConfigurationTarget.Workspace,
-        };
-      }
-      const userHome = vscode.Uri.file(os.homedir());
-      if (uri.scheme === 'file' && (userHome.fsPath === uri.fsPath || isParent(userHome, uri))) {
-        return {
-          tokenizedSource: SourceManager.normalizePath(
-            join(USER_HOME_TOKEN, relative(os.homedir(), uri.fsPath)),
-          ),
-          configurationTarget: vscode.ConfigurationTarget.Global,
-        };
-      }
-      return {};
-    }
   }
 
   public getSource(uri: vscode.Uri): Source | undefined {
@@ -95,9 +66,7 @@ export abstract class SourceManager implements vscode.Disposable {
       allInspected?.[
         configurationTarget === vscode.ConfigurationTarget.Global ? 'globalValue' : 'workspaceValue'
       ];
-    const uniqueExistingValues = new Set<string>(
-      preferredInspected?.map(SourceManager.normalizePath),
-    );
+    const uniqueExistingValues = new Set<string>(preferredInspected?.map(normalizePathSeparators));
     return uniqueExistingValues;
   }
 
@@ -119,7 +88,7 @@ export abstract class SourceManager implements vscode.Disposable {
         continue;
       }
 
-      for (const normalized of values.map(SourceManager.normalizePath)) {
+      for (const normalized of values.map(normalizePathSeparators)) {
         const scopes = rawValueToScopes.get(normalized);
         if (scopes) {
           scopes.add(scope);
@@ -135,7 +104,7 @@ export abstract class SourceManager implements vscode.Disposable {
       const sources = [...scopes].map(
         (scope): ConfigurationSource => ({ target: scope, value: rawValue }),
       );
-      for (const expandedValue of expand(rawValue)) {
+      for (const expandedValue of resolveTokenizedPath(rawValue)) {
         const entry = expandedToSource.get(expandedValue);
         if (entry) {
           entry.configSources.push(...sources);
@@ -150,20 +119,6 @@ export abstract class SourceManager implements vscode.Disposable {
     }
 
     return Array.from(expandedToSource.values());
-
-    function expand(path: string): string[] {
-      const paths = new Set<string>();
-      if (path.includes(USER_HOME_TOKEN)) {
-        paths.add(path.replace(USER_HOME_TOKEN, os.homedir()));
-      } else if (path.includes(WORKSPACE_TOKEN)) {
-        vscode.workspace.workspaceFolders?.forEach((folder) => {
-          paths.add(path.replace(WORKSPACE_TOKEN, folder.uri.fsPath));
-        });
-      } else {
-        paths.add(path);
-      }
-      return [...paths].map(SourceManager.normalizePath);
-    }
   }
 
   public async removeSourceFor(
@@ -187,10 +142,5 @@ export abstract class SourceManager implements vscode.Disposable {
 
   public get sources(): readonly Source[] {
     return this._sources.get();
-  }
-
-  protected static normalizePath(path: string): string {
-    const normalized = posix.normalize(path.replaceAll('\\', '/'));
-    return normalized !== '/' && normalized.endsWith('/') ? normalized.slice(0, -1) : normalized;
   }
 }
