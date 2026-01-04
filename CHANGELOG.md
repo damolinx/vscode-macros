@@ -5,6 +5,7 @@
 - Rename **Add Library Folder…** to **Add Folder…**.
 - Rename **Setup Source Directory for Development** to **Setup Folder for Development**.
 - **Reveal** commands now detect missing paths and show a warning instead of failing silently.
+- **Refresh Macro Explorer** now reliably updates the tree when library folders are created or deleted in the file system.
 
 ## 0.6.0
 - New **Startup Macros** view replaces the **Startup** node in the **Macro Explorer** view.

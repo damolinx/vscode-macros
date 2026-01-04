@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { exists } from '../../utils/fsEx';
 import { isParent } from '../../utils/uri';
 import { getMacroId } from '../macroId';
 import { AllLanguages, isMacro } from '../macroLanguages';
@@ -32,22 +33,28 @@ export class MacroLibrary extends Library {
   }
 
   public override async getFiles(): Promise<LibraryItem[]> {
-    if (!this.initialized) {
-      const entries = await vscode.workspace.fs.readDirectory(this.uri).then(
-        (entries) =>
-          entries
-            .filter(
-              ([name, type]) =>
-                (type === vscode.FileType.File || type === vscode.FileType.SymbolicLink) &&
-                isMacro(name),
-            )
-            .map(([name, _]) => vscode.Uri.joinPath(this.uri, name))
-            .map((uri) => ({ id: getMacroId(uri), uri })),
-        (_error) => [],
-      );
-      this.addItems(...entries);
-      this.initialized = true;
+    if (await exists(this.uri)) {
+      if (!this.initialized) {
+        const entries = await vscode.workspace.fs.readDirectory(this.uri).then(
+          (entries) =>
+            entries
+              .filter(
+                ([name, type]) =>
+                  (type === vscode.FileType.File || type === vscode.FileType.SymbolicLink) &&
+                  isMacro(name),
+              )
+              .map(([name, _]) => vscode.Uri.joinPath(this.uri, name))
+              .map((uri) => ({ id: getMacroId(uri), uri })),
+          (_error) => [],
+        );
+        this.addItems(...entries);
+        this.initialized = true;
+      }
+    } else {
+      this.items.clear();
+      this.initialized = false;
     }
+
     const files = await super.getFiles();
     return files;
   }
