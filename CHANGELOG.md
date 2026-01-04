@@ -8,7 +8,7 @@
 - **Refresh Macro Explorer** now reliably updates the tree when library folders are created or deleted in the file system.
 - **Startup Macros** view:
   - Add **Add Macro…** as both, an inline and context menu action, on configuration folders for selecting an existing macro to add.
-  - **Configure Startup Macro** is no longer shown as an inline action.
+  - **Configure Startup Macros** is no longer shown as an inline action.
   - **Remove as Startup Macro** inline action is always on the far right.
 - Singleton macros now show a status bar warning instead of throwing an error when already running, improving UX.
 - Update templates.
