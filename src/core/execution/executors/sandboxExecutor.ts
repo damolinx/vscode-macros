@@ -66,7 +66,9 @@ export class SandboxExecutor implements vscode.Disposable {
 
   public async executeDescriptor(descriptor: SandboxExecutionDescriptor): Promise<void> {
     if (this.count > 0 && descriptor.snapshot.options.singleton) {
-      throw new Error(`Singleton macro ${this.macro.name} is already running`);
+      this.context.log.warn('Macro is already running (singleton), skipping —', descriptor.id);
+      vscode.window.setStatusBarMessage(`$(info) Singleton macro ${this.macro.name} is already running`, 3000);
+      return;
     }
 
     this.executionMap.set(descriptor.id, descriptor);
