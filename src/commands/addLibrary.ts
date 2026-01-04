@@ -25,7 +25,7 @@ export async function addLibrary(context: ExtensionContext): Promise<void> {
       `(${vscode.ConfigurationTarget[scope]})`,
     );
   } else {
-    context.log.error('Failed to add folder —', addResult.reason);
+    context.log.error('Failed to add folder', addResult.reason);
     vscode.window.showErrorMessage(`Failed to add folder: ${addResult.reason}`);
   }
 }
