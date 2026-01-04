@@ -236,7 +236,7 @@
       },
       {
         "command": "macros.sourceDirectories.setup",
-        "title": "Setup Source Directory for Development",
+        "title": "Setup Folder for Development",
         "category": "Macros"
       },
       {

@@ -3,6 +3,7 @@
 ## 0.6.1
 - Update the macro‑template dropdown to better match the layout of VS Code’s built‑in Snippets dropdown.
 - Rename **Add Library Folder…** to **Add Folder…**.
+- Rename **Setup Source Directory for Development** to **Setup Folder for Development**.
 
 ## 0.6.0
 - New **Startup Macros** view replaces the **Startup** node in the **Macro Explorer** view.

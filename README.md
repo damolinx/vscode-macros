@@ -315,7 +315,7 @@ See [Debugging a Macro](#debugging-a-macro) for additional information:
 
 * **Macros: Create REPL**: create a REPL terminal to evaluate JavaScript or TypeScript code whose context matches the one used by running macros.
 
-* **Macros: Setup Source Directory for Development**: adds or updates optional files used to improve IntelliSense on macro files. This action is run automatically in the background when saving a `.macro.js` or `.macro.ts` file, provided that `macros.sourceDirectories.verify` is enabled.
+* **Macros: Setup Folder for Development**: adds or updates optional files used to improve IntelliSense on macro files. This action is run automatically in the background when saving a `.macro.js` or `.macro.ts` file, provided that `macros.sourceDirectories.verify` is enabled.
 
 [↑ Back to top](#table-of-contents)
 
