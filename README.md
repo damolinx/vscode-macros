@@ -43,13 +43,11 @@ Under the hood, macros run inside [Node.js VM sandboxes](https://nodejs.org/api/
 
 # Getting Started
 
-Any JavaScript or TypeScript document can be treated as a macro, even if not saved to disk—i.e. *untitled* documents. Once saved, certain tools—in particular UI ones such as CodeLens actions or custom IntelliSense—are enabled only if the file is either in a registered [macro library](#macro-libraries) or if its name matches the `*.macro.*` pattern. This restriction prevents confusion when working in workspaces containing JavaScript or TypeScript files.
-
 ## Creating a Macro
 
 * **Option 1**: Use the **Macros: New Macro** command to create a new macro document.
   * You will be prompted to choose from a list of templates to populate your macro.
-  * By default, this command uses the JavaScript templates but you can change this behavior via the **Macros: Template Default Language** setting.
+  * By default, this command uses the JavaScript templates, but you can change this behavior via the **Macros: Template Default Language** setting.
 
 * **Option 2**: Use the **New Macro** action in the **Temporary** node in the [Macro Explorer](#macro-explorer-view) view.
 
@@ -63,7 +61,7 @@ Any JavaScript or TypeScript document can be treated as a macro, even if not sav
 
 ## Writing Macro Code
 
-The **Macros: Fill File with Template** command, or the **Fill with Snippet** CodeLens on empty documents, can jumpstart your development by adding sample code to the currenr editor. To generate custom code, however, you can ask the [`@macros` assistant](#chat-participant-vs-code) for help.
+The **Macros: Fill File with Template** command, or the **Fill with Snippet** CodeLens on empty documents, can jumpstart your development by adding sample code to the current editor. To generate custom code, however, you can ask the [`@macros` assistant](#chat-participant-vs-code) for help.
 
 You can write your own code, of course—see [Development](#development) for available APIs. When doing so, keep these basic rules in mind:
 * Macros are standalone JavaScript or TypeScript files executed in a Node.js sandbox.
@@ -112,7 +110,7 @@ runCommands([
 ]);
 ```
 
-The [Built-in Commands](https://code.visualstudio.com/api/references/commands) page describes the commands that ship with VS Code, but installed extensions can contribute their own. For those, you will need to refer to the extension’s documentation for the expected arguments.
+The [Built-in Commands](https://code.visualstudio.com/api/references/commands) page describes the commands that ship with VS Code, but installed extensions can contribute their own. For those, you will need to refer to the extension documentation for the expected arguments.
 
 [↑ Back to top](#table-of-contents)
 
@@ -141,7 +139,7 @@ The [Built-in Commands](https://code.visualstudio.com/api/references/commands) p
 * **Option 2**: Use the **Macros: Show Running Macros** command to select a specific instance to stop.
   * This is also available from the status bar item shown when there are active macros instances.
 
-If a macro does not respond to a cancellation request, it will continue running. You can use the **Developer: Restart Extension Host** command to restart all extensions, or fully restart your IDE to stop the macro. While this is not ideal, it provides a way to recover from unresponsive macros. This approach does not implicitly terminate external processes started by the macro, however.
+If a macro does not respond to a cancellation request, it will continue running. You can use the **Developer: Restart Extension Host** command to restart all extensions or fully restart your IDE to stop the macro. While this is not ideal, it provides a way to recover from unresponsive macros. This approach does not implicitly terminate external processes started by the macro, however.
 
 [↑ Back to top](#table-of-contents)
 
@@ -149,9 +147,9 @@ If a macro does not respond to a cancellation request, it will continue running.
 
 > ⚠️ Startup macros are **disabled** in [untrusted workspaces](https://code.visualstudio.com/docs/editing/workspaces/workspace-trust).
 
-Startup macros let you customize your environment immediately when it launches. Considering that extensions restart whenever you switch workspaces, these macros can be scoped per workspace, giving you tailored setups across different projects. In practice, startup macros behave much like lightweight extensions, because they are initialized curing the **Macros** extension initialization.
+Startup macros let you customize your environment immediately when it is launched. Considering that extensions restart whenever you switch workspaces, these macros can be scoped per workspace, giving you tailored setups across different projects. In practice, startup macros behave like lightweight extensions, because they are initialized curing the **Macros** extension initialization.
 
-Startup macros are configured through the `macros.startupMacros` setting at the Global, Workspace, or Workspace Folder level. The setting is additive across scopes, and the system deduplicates entries so each startup macro is run only once.
+Startup macros are configured through the `macros.startupMacros` setting at the Global, Workspace, or Workspace Folder level. The setting is additive across scopes, and the system deduplicates entries, so each startup macro is run only once.
 
 You can configure startup macros in several ways, depending on whether you prefer using settings directly or managing them through the UI:
 
@@ -159,15 +157,15 @@ You can configure startup macros in several ways, depending on whether you prefe
 
 * **Option 2**: Using the [Macro Explorer](#macro-explorer-view) view, select **Set as Startup Macro** or **Remove as Startup Macro** from a macro's context menu.
 
-* **Option 3**: Using the dedicated [Startup Macros](#startup-macros-view), you can drag macros from the [Macro Explorer](#macro-explorer-view) into the right settings scope folder, or use the **×** button to remove it.
+* **Option 3**: Using the dedicated [Startup Macros](#startup-macros-view), you can drag macros from the [Macro Explorer](#macro-explorer-view) into the right settings scope folder or use the **×** button to remove it.
 
-Startup macro paths may include tokens like `${workspaceFolder}` or `${userHome}` for dynamic path resolution. Any paths that do not resolve to existing files are ignored. For more detail, check the **Macros** log output channel for diagnostic logs.
+Startup macro paths may include tokens like `${workspaceFolder}` or `${userHome}` for dynamic path resolution. Any paths that do not resolve to existing files are ignored. For more details, check the **Macros** log output channel for diagnostic logs.
 
 [↑ Back to top](#table-of-contents)
 
 ## Keybinding a Macro
 
-To bind a macro to a keyboard shortcut, all you need to do is keybind the `macros.run` command, passing a single argument that is the path to the macro to run. This must be configured directly in your `keybindings.json` file as the **Keyboard Shortcuts** editor does not allow to define arguments. Check the VS Code [documentation](https://code.visualstudio.com/docs/editor/keybindings#_advanced-customization) for details.
+To bind a macro to a keyboard shortcut, all you need to do is bind the `macros.run` command, passing a single argument that is the path to the macro to run. This must be configured directly in your `keybindings.json` file as the **Keyboard Shortcuts** editor does not allow to define arguments. Check the VS Code [documentation](https://code.visualstudio.com/docs/editor/keybindings#_advanced-customization) for details.
 
 1. Use the **Preferences: Open Keyboard Shortcuts (JSON)** command to open the `keybindings.json` file.
 
@@ -206,7 +204,7 @@ When a macro file is saved to disk, and it does not belong to a registered libra
 
 * **Option 3**: Edit the `macros.sourceDirectories` setting. You can use the **Macros: Source Directories** entry in the [Settings Editor](https://code.visualstudio.com/docs/configure/settings).
 
-The `macros.sourceDirectories` setting supports using tokens like `${workspaceFolder}` or `${userHome}` for dynamic resolution, e.g. `${workspaceFolder}/.macros` if you use that pattern to save macros in your workspaces. A missing folder won't lead to error, just to an empty library node. The latter behavior allows to easily create later the folder in the file-system by just adding a macro.
+The `macros.sourceDirectories` setting supports using tokens like `${workspaceFolder}` or `${userHome}` for dynamic resolution, e.g. `${workspaceFolder}/.macros` if you use that pattern to save macros in your workspaces. A missing folder won't lead to error, just to an empty library node. The latter behavior allows to easily create the folder in the filesystem by just adding a macro.
 
 [↑ Back to top](#table-of-contents)
 
@@ -233,6 +231,7 @@ The **Macro Explorer** [view](https://code.visualstudio.com/docs/getstarted/user
 * **Macro Run Instances**: see active runs and stop existing ones from the view.
 
 The **Macros: Show Macro Explorer** command can be used to bring it into view.
+
 <p align=center>
    <img width="600" alt="Macro Explorer View with diff" src="https://github.com/user-attachments/assets/bc684a9a-6641-455a-aba9-e2df2680e076" />
 </p>
@@ -249,13 +248,13 @@ The **Macros: Show Startup Macros** command can be used to bring it into view.
 
 ## Macro REPL
 
-The  REPL is one of the more powerful out-of-box tools offered by the extension. It lets you evaluate JavaScript or TypeScript code interactively, in a context set up just like any macro, without resorting to disconnected experiences like the **Developer Tools** console.
+The REPL is one of the more powerful out-of-box tools offered by the extension. It lets you evaluate JavaScript or TypeScript code interactively, in a context set up just like any macro, without resorting to disconnected experiences like the **Developer Tools** console.
 
 * **Debug**: Easily inspect the current context, evaluate any statement, or `.load` any macro into context.
 
 * **Develop**: Build full logic step by step, then `.save` your history to a macro file.
 
-* **Experiment**:  Run any JavaScript or TypeScript snippet and see the result instantly.
+* **Experiment**: Run any JavaScript or TypeScript snippet and see the result instantly.
 
 You can start a new macros REPL using either of the following:
 
@@ -288,7 +287,6 @@ In VS Code, the extension provides the `@macros` [chat particpant](https://code.
 The chat participant can also save and execute macros directly from a prompt, enabling end‑to‑end workflows. Results vary by model size: larger models like *Claude Sonnet 4.5* and *GPT‑5* perform reliably, while lighter models may struggle with generation.
 
 **Example**: Ask `@macros` to dump all diagnostics for further analysis.
-
 <p align=center>
 <img width="700" height="327" alt="@macros created a macro to dump diagnostics and ran it" src="https://github.com/user-attachments/assets/3a5f202d-c37c-4b9b-b32e-d2d7183041e1" />
 </p>
@@ -337,13 +335,11 @@ See [Debugging a Macro](#debugging-a-macro) for additional information:
 
 ### IntelliSense
 
-JavaScript and TypeScript macro files get [IntelliSense](https://code.visualstudio.com/docs/editing/intellisense) support, as long as files have been saved to a [macro library](#macro-libraries). The features can be made more accurate when the library is fully setup for development which means `global.d.ts` and `jsconfig.json` have been added to it. The extension verifies these files them when an editor for a file a library is opened for the first time in a given session and updates them when new versions are available.
+JavaScript and TypeScript macro files get [IntelliSense](https://code.visualstudio.com/docs/editing/intellisense) support, if they have been saved to a [macro library](#macro-libraries). The features requires the library to be fully set up for development which means a `global.d.ts` and `jsconfig.json` have been added to it. The extension verifies these files the first time a file from a library is opened in a session and updates them whenever newer versions are available. This update-logic means it is currently not recommended to customize them.
 
-> ⚠️Automatic updating of `global.d.ts` and `jsconfig.json` means it is not recommended to customize them.
+> ⚠️ Untitled documents will not show proper IntelliSense until saved to disk, because a `global.d.ts` file is needed to describe the global context. This is particular visible in TypeScript editors, which will incorrectly report several missing references.
 
-> ⚠️ Untitled documents will not show proper IntelliSense until saved to disk as a `global.d.ts` is needed to describe the `global` context.
-
-Some custom features that the extension provides is autocomplete on `vscode.commands.executeCommand` showing all currently registered command IDs in your box, or on `@macros` [options](#macro-options).
+There is custom autocomplete for command IDs provided to `vscode.commands.executeCommand`, as well as for `@macros` [options](#macro-options).
 
 [↑ Back to top](#table-of-contents)
 
@@ -371,13 +367,13 @@ The following references are available from the global context of your macro:
 * `window`: Provides access to UI-related APIs.
   Provides access to UI-related APIs for managing predefined macro views.
 
-  * `getTreeViewId(id: string): string | undefined`: Claims an available `treeview` ID for the given macro run. Returns `undefined` if none are available.
+  * `getTreeViewId(id: string): string | undefined`: Claims an available tree view ID for the given macro run. Returns `undefined` if none are available.
 
-  * `getWebviewId(id: string): string | undefined`: Claims an available `webview` ID for the given macro run. Returns `undefined` if none are available.
+  * `getWebviewId(id: string): string | undefined`: Claims an available webview ID for the given macro run. Returns `undefined` if none are available.
 
-  * `releaseTreeViewId(id: string): boolean`: Releases a previously claimed `treeview` ID. Returns `true` if successful.
+  * `releaseTreeViewId(id: string): boolean`: Releases a previously claimed tree view ID. Returns `true` if successful.
 
-  * `releaseWebviewId(id: string): boolean`: Releases a previously claimed `webview` ID. Returns `true` if successful.
+  * `releaseWebviewId(id: string): boolean`: Releases a previously claimed webview ID. Returns `true` if successful.
 
 [↑ Back to top](#table-of-contents)
 
@@ -395,7 +391,7 @@ The following references are available from the global context of your macro:
 
 Views such as sidebars and panels cannot be created dynamically—they must be declared in the extension's `package.json` manifest. To work around this limitation, the extension predefines a **Macros** view container (`macrosViews`) that includes a fixed set of generic `treeview` and `webview` views.
 
-**Macro-backed tree view ("Tree View" template)**
+**Example**: Macro-backed tree view
 <p align=center>
    <img width="600" alt="TreeView example" src="https://github.com/user-attachments/assets/b69089a7-3de1-442f-be7b-eff7bbb547a1" />
 </p>
@@ -406,10 +402,10 @@ Views such as sidebars and panels cannot be created dynamically—they must be d
 
 The following views are statically registered and available for use:
 
-* `macrosView.treeview1` through `macrosView.treeview5` — for `treeview`-based UIs
-* `macrosView.webview1` through `macrosView.webview5` — for `webview`-based UIs
+* `macrosView.treeview1` through `macrosView.treeview5` for tree views
+* `macrosView.webview1` through `macrosView.webview5` for webviews
 
-Avoid hardcoding view IDs unless necessary—there's no enforcement mechanism, so conflicts between macros may occur. Additionally, the predefined ID pool may expand in the future, meaning macros with hardcoded values could end up competing for a limited subset.
+Avoid hardcoding view IDs unless necessary—there is no enforcement mechanism, so conflicts between macros may occur. Additionally, the predefined ID pool may expand in the future, meaning macros with hardcoded values could end up competing for a limited subset.
 
 [↑ Back to top](#table-of-contents)
 
@@ -480,9 +476,7 @@ vscode.window.showInformationMessage("“There can only be one!");
 
 Any URL-like string in a macro file pointing to a `.d.ts` file will automatically receive a code action, **Download .d.ts**, enabling you to download the file directly to the macro's parent folder. This simplifies adding type definitions to support [IntelliSense](#intellisense) in your macros.
 
-GitHub URLs containing matching `*/blob/*` are automatically converted to their `raw` equivalent. For example: `https://github.com/Microsoft/vscode/blob/main/extensions/git/src/api/git.d.ts` is automatically handled as `https://github.com/Microsoft/vscode/raw/refs/heads/main/extensions/git/src/api/git.d.ts`.
-
-All URLs use a standard HTTP GET to download the file, which is not customizable at this time.
+GitHub URLs containing matching `*/blob/*` are automatically converted to their `raw` equivalent. For example: `https://github.com/Microsoft/vscode/blob/main/extensions/git/src/api/git.d.ts` is automatically handled as `https://github.com/Microsoft/vscode/raw/refs/heads/main/extensions/git/src/api/git.d.ts`. Files are downloaded using a standard HTTP GET request.
 
 [↑ Back to top](#table-of-contents)
 
@@ -503,7 +497,7 @@ Currently, there is no clear path to streamline this process. Ideally, the secon
 
 ### Logs
 The [`macros.log` API](#macros-api) writes messages directly to the **Macros** output channel. Every log entry is prefixed with the run-id specific to the instance of your macro you are logging from.
-* Use the [Developer: Set Log Level...](https://code.visualstudio.com/updates/v1_73#_setting-log-level-per-output-channel) command to control the granurality of logs for the **Macros** extension. This a global setting for the extension and all macro instances.
+* Use the [Developer: Set Log Level...](https://code.visualstudio.com/updates/v1_73#_setting-log-level-per-output-channel) command to control the granularity of logs for the **Macros** extension. This is a global setting for the extension and all macro instances.
 * Use the **Output: Show Output Channels...** command to bring the **Macros** output channel into view, if needed.
 
 [↑ Back to top](#table-of-contents)
