@@ -15,7 +15,6 @@ export abstract class SandboxRunner<TContext = unknown> {
   public async execute(descriptor: SandboxExecutionDescriptor): Promise<any> {
     const contextInitParams = this.getContextInitParams(descriptor);
     const context = this.getContext(descriptor, contextInitParams);
-
     const executePromise = this.executeInternal(descriptor, context);
 
     const result = await (descriptor.snapshot.options.retained

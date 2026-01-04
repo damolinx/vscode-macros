@@ -415,11 +415,11 @@ Avoid hardcoding view IDs unless necessary—there's no enforcement mechanism, s
 
 ### Dynamic View ID Claiming
 
-While macros can hardcode and use these IDs directly, this approach becomes fragile as macro libraries grow—multiple macros may attempt to use the same view, causing conflicts.
+While macros can hardcode and use these IDs directly, this approach becomes fragile as macro libraries grow and multiple macros may attempt to use the same view, causing conflicts.
 
 To avoid this, macros can dynamically claim an available view ID using the following APIs:
 
-  ```ts
+  ```typescript
   macros.window.getTreeViewId(): string | undefined
   macros.window.getWebviewId(): string | undefined
   ```
@@ -428,12 +428,12 @@ If no view ID is available, these methods return `undefined` so make sure to acc
 
 Once a macro is finished using a view, it can release the ID explicitly using the following APIs:
 
-  ```ts
+  ```typescript
   macros.window.releaseTreeViewId(id: string): boolean
   macros.window.releaseWebviewId(id: string): boolean
   ```
 
-Alternatively, all claimed IDs are automatically released when the macro completes. This includes REPL sessions, as each session is equivalent to a macro.
+Claimed IDs are automatically released when the macro completes **only** for non‑persistent and non‑retained macros. Persistent or retained macros must explicitly call the appropriate `release…Id` method.
 
 [↑ Back to top](#table-of-contents)
 

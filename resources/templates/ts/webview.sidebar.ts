@@ -82,12 +82,7 @@ new Promise<void>((resolve) => {
     vscode.window.registerWebviewViewProvider(
       viewId,
       createWebviewViewProvider(viewId, resolve)),
-    {
-      dispose: () => {
-        macros.window.releaseWebviewId(viewId);
-        vscode.commands.executeCommand('setContext', `${viewId}.show`, false);
-      }
-    },
+    { dispose: () => vscode.commands.executeCommand('setContext', `${viewId}.show`, false) },
   );
 
   vscode.commands.executeCommand('setContext', `${viewId}.show`, true);

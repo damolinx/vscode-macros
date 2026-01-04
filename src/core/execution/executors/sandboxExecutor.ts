@@ -52,7 +52,7 @@ export class SandboxExecutor implements vscode.Disposable {
   }
 
   public async createDescriptor(params?: { startup?: true }): Promise<SandboxExecutionDescriptor> {
-    const execution = await SandboxExecutionDescriptor.create(this.macro, {
+    const execution = await SandboxExecutionDescriptor.create(this.context, this.macro, {
       index: ++this.index,
       startup: params?.startup,
     });
@@ -67,7 +67,10 @@ export class SandboxExecutor implements vscode.Disposable {
   public async executeDescriptor(descriptor: SandboxExecutionDescriptor): Promise<void> {
     if (this.count > 0 && descriptor.snapshot.options.singleton) {
       this.context.log.warn('Macro is already running (singleton), skipping —', descriptor.id);
-      vscode.window.setStatusBarMessage(`$(info) Singleton macro ${this.macro.name} is already running`, 3000);
+      vscode.window.setStatusBarMessage(
+        `$(info) Singleton macro ${this.macro.name} is already running`,
+        3000,
+      );
       return;
     }
 

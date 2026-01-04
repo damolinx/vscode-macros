@@ -13,6 +13,7 @@
 - Singleton macros now show a status bar warning instead of throwing an error when already running, improving UX.
 - Update templates.
 - Fix: Keybinding via `macro.run` not working.
+- Fix: Claimed Tree/WebView IDs now auto‑released on macro completion. This is limited to non‑persistent and non‑retained macros.
 
 ## 0.6.0
 - New **Startup Macros** view replaces the **Startup** node in the **Macro Explorer** view.
