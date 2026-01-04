@@ -10,6 +10,7 @@
   - Add **Add Macro…** as both, an inline and context menu action, on configuration folders for selecting an existing macro to add.
   - **Configure Startup Macro** is no longer shown as an inline action.
   - **Remove as Startup Macro** inline action is always on the far right.
+- Update templates.
 - Fix: Keybinding via `macro.run` not working.
 
 ## 0.6.0
@@ -281,10 +282,10 @@
   - Better tracking of macro documents.
   - Download `.d.ts` supports any FS.
 - New **Fill File with Template** command replaces **Initialize** CodeLens.
-- Updated templates.
+- Update templates.
 
 ## 0.2.6
-- Updated templates and documentation.
+- Update templates and documentation.
 
 ## 0.2.5
 - Fix: Duplicate capture group name.
@@ -307,7 +308,7 @@
 - New `Git` template.
 
 ## 0.2.1
-- Updated templates.
+- Update templates.
 
 ## 0.2.0
 - Remove `javascriptmacro` language and lean on `.macro.js` whenever surfacing a feature would cause confusion with standard JavaScript files (e.g. UI buttons).

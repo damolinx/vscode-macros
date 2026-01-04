@@ -1,11 +1,8 @@
 // @ts-nocheck
 // @macro: singleton
-//   singleton – ensures no more than one instance runs at a time
+//   singleton – ensures only one macro instance runs at a time
 
-import * as vscode from 'vscode';
-
-// References:
-//   - Webview API: https://code.visualstudio.com/api/extension-guides/webview
+// Reference: https://code.visualstudio.com/api/extension-guides/webview
 
 function createHtml(): string {
   return `
@@ -14,7 +11,25 @@ function createHtml(): string {
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Webview Example</title>
+    <title>Webview Sidebar</title>
+    <style>
+      button {
+        background-color: var(--vscode-button-background);
+        border: 1px solid var(--vscode-button-border, transparent);
+        border-radius: 2px;
+        color: var(--vscode-button-foreground);
+        margin-bottom: 8px;
+        padding: 4px 12px;
+        width: 100%;
+      }
+      button:focus {
+        outline: 1px solid var(--vscode-focusBorder);
+        outline-offset: 1px;
+      }
+      button:hover {
+        background-color: var(--vscode-button-hoverBackground);
+      }
+    </style>
   </head>
   <body>
     <p>Closing this webview disposes its supporting macro as well.</p>
@@ -66,9 +81,14 @@ new Promise<void>((resolve) => {
   __disposables.push(
     vscode.window.registerWebviewViewProvider(
       viewId,
-      createWebviewViewProvider(viewId, resolve)), {
-    dispose: () => vscode.commands.executeCommand('setContext', `${viewId}.show`, false)
-  });
+      createWebviewViewProvider(viewId, resolve)),
+    {
+      dispose: () => {
+        macros.window.releaseWebviewId(viewId);
+        vscode.commands.executeCommand('setContext', `${viewId}.show`, false);
+      }
+    },
+  );
 
   vscode.commands.executeCommand('setContext', `${viewId}.show`, true);
   vscode.commands.executeCommand(`${viewId}.focus`);

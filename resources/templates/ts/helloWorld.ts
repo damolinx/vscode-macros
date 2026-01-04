@@ -1,5 +1,4 @@
 // @ts-nocheck
-import * as vscode from 'vscode';
 import { basename } from 'path';
 
 async function main(): Promise<void> {

@@ -1,7 +1,5 @@
 // @ts-nocheck
-import * as vscode from 'vscode';
-
-// Learn about the Language Model API at https://code.visualstudio.com/api/extension-guides/language-model
+// Reference: https://code.visualstudio.com/api/extension-guides/language-model
 
 async function main(): Promise<void> {
   const [model] = await vscode.lm.selectChatModels();

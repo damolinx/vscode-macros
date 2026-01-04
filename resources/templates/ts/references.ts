@@ -1,5 +1,4 @@
 // @ts-nocheck
-import * as vscode from 'vscode';
 
 async function main(): Promise<void> {
   const editor = vscode.window.activeTextEditor;
@@ -8,9 +7,9 @@ async function main(): Promise<void> {
     return;
   }
 
-  const { document: { uri }, selection: { active: position } } = editor;
+  const { document: { uri }, selection: { active } } = editor;
   const references = await vscode.commands.executeCommand(
-    'vscode.executeReferenceProvider', uri, position) as vscode.Location[];
+    'vscode.executeReferenceProvider', uri, active) as vscode.Location[];
 
   if (!references.length) {
     vscode.window.showInformationMessage('No references found');

@@ -1,4 +1,5 @@
-const os = require('os');
+
+const { userInfo } = require('os');
 
 async function runCommands(...cmds) {
   for (const { cmdId, args = [] } of cmds) {
@@ -10,7 +11,7 @@ async function runCommands(...cmds) {
 // Reference: https://code.visualstudio.com/api/references/commands
 runCommands(
   { cmdId: 'editor.action.insertLineBefore' },
-  { cmdId: 'type', args: [{ text: `TODO (${os.userInfo().username}): <describe task>` }] },
+  { cmdId: 'type', args: [{ text: `TODO (${userInfo().username}): <describe task>` }] },
   { cmdId: 'editor.action.addCommentLine' },
   { cmdId: 'cursorEnd' },
 );

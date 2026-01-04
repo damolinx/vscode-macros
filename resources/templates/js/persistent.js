@@ -1,7 +1,8 @@
 
-// @macro:persistent
+// @macro: persistent
+//   persistent – shares the macro context across all instances of this macro
 
-// Global variables is shared across invocations of persistent macros
+// Use `var` for globals in persistent macros; `let`/`const` redeclarations fail on reruns.
 var invocationCount;
 
 async function main() {

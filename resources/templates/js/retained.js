@@ -1,9 +1,10 @@
 
-// @macro:retained
+// @macro: retained
+//   retained  – keeps the macro context alive until explicitly stopped
 
-// In retained mode, the macro isn’t disposed when the script finishes,
-// allowing long-lived listeners or providers. To stop it, use the
-// `Macros: Show Running Macros` command.
+// The macro context isn’t disposed when the script finishes; it must be
+// explicitly stopped via the "Macros: Show Running Macros" command or the
+//  "Request to Stop" action in the Macro Explorer.
 
 __disposables.push(
   vscode.window.onDidChangeActiveTextEditor((editor) => {

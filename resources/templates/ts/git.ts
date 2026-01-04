@@ -1,5 +1,4 @@
 // @ts-nocheck
-import * as vscode from 'vscode';
 import { basename } from 'path';
 
 // Download https://github.com/microsoft/vscode/blob/main/extensions/git/src/api/git.d.ts

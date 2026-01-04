@@ -6,11 +6,11 @@ async function main() {
     return;
   }
 
-  const { document: { uri }, selection: { active: position } } = editor;
+  const { document: { uri }, selection: { active } } = editor;
 
   /** @type {import('vscode').Location[] | undefined} */
   const references = await vscode.commands.executeCommand(
-    'vscode.executeReferenceProvider', uri, position);
+    'vscode.executeReferenceProvider', uri, active);
 
   if (!references.length) {
     vscode.window.showInformationMessage('No references found');

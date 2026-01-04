@@ -1,5 +1,5 @@
 
-// Learn about the Language Model API at https://code.visualstudio.com/api/extension-guides/language-model
+// Reference: https://code.visualstudio.com/api/extension-guides/language-model
 
 async function main() {
   const [model] = await vscode.lm.selectChatModels();
