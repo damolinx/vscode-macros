@@ -6,6 +6,10 @@
 - Rename **Setup Source Directory for Development** to **Setup Folder for Development**.
 - **Reveal** commands now detect missing paths and show a warning instead of failing silently.
 - **Refresh Macro Explorer** now reliably updates the tree when library folders are created or deleted in the file system.
+- **Startup Macros** view:
+  - Add **Add Macro…** as both, an inline and context menu action, on configuration folders for selecting an existing macro to add.
+  - **Configure Startup Macro** is no longer shown as an inline action.
+  - **Remove as Startup Macro** inline action is always on the far right.
 
 ## 0.6.0
 - New **Startup Macros** view replaces the **Startup** node in the **Macro Explorer** view.

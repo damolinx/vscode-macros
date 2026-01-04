@@ -68,6 +68,12 @@
     ],
     "commands": [
       {
+        "command": "macros.add.startupMacro",
+        "title": "Add Macro…",
+        "category": "Macros",
+        "icon": "$(new-file)"
+      },
+      {
         "command": "macros.copy.file",
         "title": "Copy",
         "category": "Macros",
@@ -313,6 +319,10 @@
     "menus": {
       "commandPalette": [
         {
+          "command": "macros.add.startupMacro",
+          "when": "false"
+        },
+        {
           "command": "macros.copy.file",
           "when": "false"
         },
@@ -391,6 +401,16 @@
       ],
       "view/item/context": [
         {
+          "command": "macros.add.startupMacro",
+          "when": "view == macros.startupMacros && viewItem =~ /startupLibrary/",
+          "group": "inline"
+        },
+        {
+          "command": "macros.add.startupMacro",
+          "when": "view == macros.startupMacros && viewItem =~ /startupLibrary/",
+          "group": "2_creation@1"
+        },
+        {
           "command": "macros.copy.file",
           "when": "view == macros.macroExplorer && viewItem =~ /macroFile/ && !(viewItem =~ /untitled/)",
           "group": "5_copy@1"
@@ -423,7 +443,7 @@
         {
           "command": "macros.delete.startupMacro",
           "when": "view == macros.startupMacros && viewItem =~ /startupMacro/",
-          "group": "inline"
+          "group": "inline@1"
         },
         {
           "command": "macros.new.macro",
@@ -494,11 +514,6 @@
           "command": "macros.startup.settings",
           "when": "view == macros.startupMacros && viewItem =~ /startupLibrary/",
           "group": "4_tools@1"
-        },
-        {
-          "command": "macros.startup.settings",
-          "when": "view == macros.startupMacros && viewItem =~ /startupLibrary/",
-          "group": "inline"
         },
         {
           "command": "macros.stop",

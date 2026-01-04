@@ -44,6 +44,7 @@ import { existsFile } from './utils/fsEx';
 import { UriLocator, areUriEqual } from './utils/uri';
 import { SourceTarget } from './views/startup/sourceTarget';
 import { refreshTreeView, registerTreeViews, revealTreeView } from './views/treeViews';
+import { addStartupMacro } from './commands/addStartupMacro';
 
 /**
  * Extension startup.
@@ -73,6 +74,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     commands: { registerCommand: cr },
   } = vscode;
   context.disposables.push(
+    cr('macros.add.startupMacro', (sourceTarget?: SourceTarget) => addStartupMacro(context, sourceTarget?.target)),
     cr('macros.copy.file', (locator: UriLocator) => copyFile(context, locator)),
     cr('macros.copy.name', (locator: UriLocator) => copyPath(context, locator, true)),
     cr('macros.copy.path', (locator?: UriLocator) => copyPath(context, locator)),
