@@ -4,7 +4,7 @@
 async function main() {
   const [model] = await vscode.lm.selectChatModels();
   if (!model) {
-    vscode.window.showErrorMessage("No chat model selected");
+    vscode.window.showErrorMessage('No chat model selected');
     return;
   }
 

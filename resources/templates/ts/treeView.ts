@@ -3,7 +3,7 @@
 //   retained  – keeps the TreeDataProvider alive until stopped
 //   singleton – ensures no more than one instance runs at a time
 
-import * as vscode from "vscode";
+import * as vscode from 'vscode';
 
 // References:
 //   - Tree View API: https://code.visualstudio.com/api/extension-guides/tree-view
@@ -12,7 +12,7 @@ function createTreeProvider(): vscode.TreeDataProvider<string> {
   return {
     getTreeItem: (element: string) => {
       switch (element) {
-        case "root":
+        case 'root':
           return new vscode.TreeItem(element, vscode.TreeItemCollapsibleState.Collapsed);
         default:
           return new vscode.TreeItem(element);
@@ -21,9 +21,9 @@ function createTreeProvider(): vscode.TreeDataProvider<string> {
     getChildren: (element: string) => {
       switch (element) {
         case undefined:
-          return ["root"];
-        case "root":
-          return ["foo", "bar", "baz"];
+          return ['root'];
+        case 'root':
+          return ['foo', 'bar', 'baz'];
         default:
           return undefined;
       }

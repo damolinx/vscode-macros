@@ -2,7 +2,7 @@
 // @macro: singleton
 //   singleton – ensures no more than one instance runs at a time
 
-import * as vscode from "vscode";
+import * as vscode from 'vscode';
 
 // References:
 //   - Webview API: https://code.visualstudio.com/api/extension-guides/webview

@@ -1,5 +1,6 @@
 // @ts-nocheck
-import * as vscode from "vscode";
+import * as vscode from 'vscode';
+import { basename } from 'path';
 
 // Download https://github.com/microsoft/vscode/blob/main/extensions/git/src/api/git.d.ts
 // to the same directory as this macro to enable type definitions. You can use the
@@ -20,7 +21,7 @@ async function main(): Promise<void> {
   }
 
   await vscode.window.showInformationMessage(
-    `Repository: ${require('path').basename(repo.rootUri.toString())}` +
+    `Repository: ${basename(repo.rootUri.toString())}` +
     `\nBranch: ${repo.state.HEAD.name}` +
     `\nStaged changes: ${repo.state.indexChanges.length}` +
     `\nUnstaged changes: ${repo.state.workingTreeChanges.length}`,

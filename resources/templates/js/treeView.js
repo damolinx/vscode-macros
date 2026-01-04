@@ -10,7 +10,7 @@ function createTreeProvider() {
   return {
     getTreeItem: (element) => {
       switch (element) {
-        case "root":
+        case 'root':
           return new vscode.TreeItem(element, vscode.TreeItemCollapsibleState.Collapsed);
         default:
           return new vscode.TreeItem(element);
@@ -19,9 +19,9 @@ function createTreeProvider() {
     getChildren: (element) => {
       switch (element) {
         case undefined:
-          return ["root"];
-        case "root":
-          return ["foo", "bar", "baz"];
+          return ['root'];
+        case 'root':
+          return ['foo', 'bar', 'baz'];
         default:
           return undefined;
       }
@@ -30,7 +30,7 @@ function createTreeProvider() {
 }
 
 /**
- * @param {string} viewId - The ID of the view to create. 
+ * @param {string} viewId - The ID of the view to create.
  * @returns {import('vscode').TreeView<string>}
  */
 function createTreeView(viewId) {

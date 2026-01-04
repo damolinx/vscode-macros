@@ -1,6 +1,6 @@
 // @ts-nocheck
 // @macro:retained
-import * as vscode from "vscode";
+import * as vscode from 'vscode';
 
 // In retained mode, the macro isn’t disposed when the script finishes,
 // allowing long-lived listeners or providers. To stop it, use the

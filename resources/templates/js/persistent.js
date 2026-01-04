@@ -9,7 +9,7 @@ async function main() {
   const invocation = ++invocationCount;
 
   await vscode.window.showInformationMessage(
-    `Hello from invocation #${invocation}. Try running this macro multiple times!`
+    `Hello from invocation @${invocation}. Try running this macro multiple times!`
   );
 }
 

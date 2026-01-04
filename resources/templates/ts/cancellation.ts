@@ -1,5 +1,5 @@
 // @ts-nocheck
-import * as vscode from "vscode";
+import * as vscode from 'vscode';
 
 vscode.window.withProgress({
   title: `Cancel '${__runId}' using the 'Macro Explorer' or 'Show Running Macros' command`,

@@ -2,7 +2,7 @@
 // @macro: singleton
 //   singleton – ensures no more than one instance runs at a time
 
-import * as vscode from "vscode";
+import * as vscode from 'vscode';
 
 // Creates a Webview editor in the editors container area.
 // This example omits `retained` for simplicity as the custom
