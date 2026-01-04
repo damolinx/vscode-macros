@@ -21,7 +21,7 @@ const QuickPickOpenFile: vscode.QuickPickItem = {
 };
 
 const QuickPickConfigureSourceDirectories: vscode.QuickPickItem = {
-  label: 'Configure Source Directories …',
+  label: 'Configure Source Directories',
   iconPath: new vscode.ThemeIcon('gear'),
 };
 
@@ -74,9 +74,9 @@ export async function pickMacroFile(
     const openFileButton = options?.hideOpenPerItem
       ? undefined
       : {
-          iconPath: new vscode.ThemeIcon('go-to-file'),
-          tooltip: 'Open File',
-        };
+        iconPath: new vscode.ThemeIcon('go-to-file'),
+        tooltip: 'Open File',
+      };
     const items: UriQuickPickItem[] = createMacroFileItems(openFileButton);
     if (!options?.hideOpen) {
       items.unshift(QuickPickOpenFile, QuickPickConfigureSourceDirectories, {
