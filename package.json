@@ -29,7 +29,7 @@
     "typescript"
   ],
   "extensionKind": [
-    "workspace", 
+    "workspace",
     "ui"
   ],
   "activationEvents": [
@@ -130,7 +130,7 @@
       },
       {
         "command": "macros.new.macroLibrary",
-        "title": "Add Library Folder…",
+        "title": "Add Folder…",
         "category": "Macros",
         "icon": "$(new-folder)"
       },

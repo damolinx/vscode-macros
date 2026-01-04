@@ -21,11 +21,11 @@ export async function addLibrary(context: ExtensionContext) {
   if (addResult.status === 'fulfilled') {
     const { added, target: scope } = addResult.value;
     context.log.info(
-      added ? 'Added library result' : 'Library already registered',
+      added ? 'Added folder' : 'Folder already registered',
       `(${vscode.ConfigurationTarget[scope]})`,
     );
   } else {
-    context.log.error('Failed to add library —', addResult.reason);
+    context.log.error('Failed to add folder —', addResult.reason);
     vscode.window.showErrorMessage(`Failed to add folder: ${addResult.reason}`);
   }
 }

@@ -200,9 +200,9 @@ When a macro file is saved to disk, and it does not belong to a registered libra
 
 ## Adding a Library
 
-* **Option 1**: Use the **Add Library Folder** action from [Macro Explorer](#macro-explorer-view) view title bar.
+* **Option 1**: Use the **Add Folder…** action from [Macro Explorer](#macro-explorer-view) view title bar.
 
-* **Option 2**: Use the **Macros: Add Library Folder** command the [Command Palette](https://code.visualstudio.com/docs/getstarted/userinterface#_command-palette).
+* **Option 2**: Use the **Macros: Add Folder…** command the [Command Palette](https://code.visualstudio.com/docs/getstarted/userinterface#_command-palette).
 
 * **Option 3**: Edit the `macros.sourceDirectories` setting. You can use the **Macros: Source Directories** entry in the [Settings Editor](https://code.visualstudio.com/docs/configure/settings).
 
