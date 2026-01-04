@@ -3,7 +3,7 @@ import { SandboxExecutionDescriptor } from '../core/execution/sandboxExecutionDe
 import { createSnapshotUri } from '../providers/macroSnapshotContentProvider';
 import { showTextDocument } from '../utils/vscodeEx';
 
-export async function showRunCode(descriptor: SandboxExecutionDescriptor) {
+export async function showRunCode(descriptor: SandboxExecutionDescriptor): Promise<void> {
   const macroDocument = await vscode.workspace.openTextDocument(descriptor.macro.uri);
   if (macroDocument.version === descriptor.snapshot.version) {
     await showTextDocument(macroDocument.uri);

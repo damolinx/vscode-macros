@@ -3,7 +3,7 @@ import * as vscode from "vscode";
 
 // Learn about the Language Model API at https://code.visualstudio.com/api/extension-guides/language-model
 
-async function main() {
+async function main(): Promise<void> {
   const [model] = await vscode.lm.selectChatModels();
   if (!model) {
     vscode.window.showErrorMessage("No chat model selected");

@@ -8,7 +8,7 @@ export async function runMacro(
   { libraryManager, mruMacro, sandboxManager }: ExtensionContext,
   locator?: UriLocator,
   options?: { ignoreDiagnosticErrors?: true; startup?: true },
-) {
+): Promise<void> {
   const uri = locator
     ? resolveUri(locator)
     : await showMacroQuickPick(libraryManager, { selectUri: mruMacro });

@@ -76,7 +76,7 @@ export function formatWorkspaceRelativePath(uri: vscode.Uri): string | undefined
   return;
 }
 
-function normalizeFsPath({ fsPath }: vscode.Uri) {
+function normalizeFsPath({ fsPath }: vscode.Uri): string {
   return process.platform === 'win32' && fsPath.length > 1
     ? fsPath[0].toUpperCase() + fsPath.slice(1)
     : fsPath;

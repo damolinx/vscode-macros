@@ -10,7 +10,7 @@ export const MACROS_EXT_DEBUG_VAR = 'MACROS_EXT_DEBUG';
 export async function debugMacro(
   { libraryManager, mruMacro }: ExtensionContext,
   locator?: UriLocator,
-) {
+): Promise<boolean | undefined> {
   const uri = locator
     ? resolveUri(locator)
     : await showMacroQuickPick(libraryManager, { selectUri: mruMacro });
@@ -51,12 +51,16 @@ export async function debugMacro(
     args: [`--extensionDevelopmentPath=${parentUri(document.uri).fsPath}`],
     env: { [MACROS_EXT_DEBUG_VAR]: '1' },
   };
-  vscode.debug.startDebugging(undefined, debugConfig);
+
+  const started = await vscode.debug.startDebugging(undefined, debugConfig);
+  return started;
 }
 
-export async function debugActiveEditor(context: ExtensionContext) {
+export async function debugActiveEditor(context: ExtensionContext): Promise<boolean | undefined> {
+  let started: boolean | undefined;
   const editor = await activeMacroEditor(true);
   if (editor) {
-    await debugMacro(context, editor.document.uri);
+    started = await debugMacro(context, editor.document.uri);
   }
+  return started;
 }

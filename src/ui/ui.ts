@@ -70,7 +70,7 @@ export async function pickMacroFile(
 
   return uri;
 
-  function createMacroQuickPick() {
+  function createMacroQuickPick(): vscode.QuickPick<UriQuickPickItem> {
     const openFileButton = options?.hideOpenPerItem
       ? undefined
       : {
@@ -92,7 +92,10 @@ export async function pickMacroFile(
     return quickPick;
   }
 
-  function createMacroFileItems(openFileButton?: { iconPath: vscode.ThemeIcon; tooltip: string }) {
+  function createMacroFileItems(openFileButton?: {
+    iconPath: vscode.ThemeIcon;
+    tooltip: string;
+  }): UriQuickPickItem[] {
     const items = [] as UriQuickPickItem[];
     if (macroFiles instanceof Array) {
       items.push(...createItems(macroFiles));

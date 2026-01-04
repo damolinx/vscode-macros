@@ -37,7 +37,8 @@ export class MacroOptionsCompletionProvider implements vscode.CompletionItemProv
 
     switch (context.triggerKind) {
       case vscode.CompletionTriggerKind.Invoke:
-        match = (line = getLine()).match(MACRO_OPTIONS_REGEX);
+        line = getLine();
+        match = line.match(MACRO_OPTIONS_REGEX);
         if (match) {
           result = this.provideMacroOptionsCompletions(line, position, match);
         } else {
@@ -58,7 +59,7 @@ export class MacroOptionsCompletionProvider implements vscode.CompletionItemProv
 
     return result;
 
-    function getLine() {
+    function getLine(): string {
       return document.lineAt(position).text.substring(0, position.character);
     }
   }

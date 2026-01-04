@@ -53,7 +53,7 @@ export function registerSourceDirectoryVerifier(context: ExtensionContext): void
     onDidChangeActiveTextEditorDisposable.initialize();
   }
 
-  function isSettingEnabled() {
+  function isSettingEnabled(): boolean {
     return vscode.workspace.getConfiguration().get(AUTO_VERIFY_SETTING, true);
   }
 }

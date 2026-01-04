@@ -9,7 +9,7 @@ import { resolveUri } from '../utils/uri';
 export async function stopMacro(
   { log, sandboxManager }: ExtensionContext,
   target: Macro | SandboxExecutionDescriptor | StartupMacro | vscode.Uri,
-) {
+): Promise<void> {
   let canceledDescriptors: SandboxExecutionDescriptor[];
 
   if (target instanceof SandboxExecutionDescriptor) {

@@ -1,8 +1,8 @@
 // @ts-nocheck
 import * as os from 'os';
 
-async function runCommands(cmds: { cmd: string, args?: any[] }[]) {
-  for (const { cmd, args = [] } of cmds) {
+async function runCommands(cmds: { cmdId: string, args?: any[] }[]): Promise<void> {
+  for (const { cmdId: cmd, args = [] } of cmds) {
     await vscode.commands.executeCommand(cmd, ...args);
   }
 }
@@ -10,8 +10,8 @@ async function runCommands(cmds: { cmd: string, args?: any[] }[]) {
 // Insert a TODO comment at current cursor line.
 // Reference: https://code.visualstudio.com/api/references/commands
 runCommands([
-  { cmd: "editor.action.insertLineBefore" },
-  { cmd: "type", args: [{ text: `TODO (${os.userInfo().username}): <describe task>` }] },
-  { cmd: "editor.action.addCommentLine" },
-  { cmd: "cursorEnd" },
+  { cmdId: "editor.action.insertLineBefore" },
+  { cmdId: "type", args: [{ text: `TODO (${os.userInfo().username}): <describe task>` }] },
+  { cmdId: "editor.action.addCommentLine" },
+  { cmdId: "cursorEnd" },
 ]);

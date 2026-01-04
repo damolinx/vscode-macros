@@ -61,7 +61,7 @@ export function isUntitled(locator: UriLocator): boolean {
   return resolveUri(locator).scheme === 'untitled';
 }
 
-function normalizePath(path: string) {
+function normalizePath(path: string): string {
   return process.platform === 'win32' ? path.toLowerCase() : path;
 }
 

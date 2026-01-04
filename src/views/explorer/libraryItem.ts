@@ -13,7 +13,7 @@ const UntitledLibraryTooltip = new vscode.MarkdownString(
   'Lists `untitled` macro documents. These live only in memory  \nuntil saved, which limits IntelliSense and other tooling features.',
 );
 
-export function createLibraryItem(library: Library) {
+export function createLibraryItem(library: Library): vscode.TreeItem {
   const item = new vscode.TreeItem(library.uri, vscode.TreeItemCollapsibleState.Collapsed);
   switch (library.uri.scheme) {
     case 'untitled':
@@ -27,7 +27,7 @@ export function createLibraryItem(library: Library) {
   return item;
 }
 
-function updateLibraryItem(item: vscode.TreeItem, library: Library) {
+function updateLibraryItem(item: vscode.TreeItem, library: Library): void {
   item.contextValue = 'macroLibrary';
   item.description =
     formatWorkspaceRelativePath(library.uri) ?? formatHomeRelativePath(library.uri);
@@ -50,7 +50,7 @@ function updateLibraryItem(item: vscode.TreeItem, library: Library) {
   }
 }
 
-function updateUntitledLibraryItem(item: vscode.TreeItem) {
+function updateUntitledLibraryItem(item: vscode.TreeItem): void {
   item.contextValue = 'macroLibrary untitled';
   item.description = 'Untitled macros';
   item.iconPath = UntitledLibraryIcon;

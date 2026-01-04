@@ -1,7 +1,7 @@
 // @ts-nocheck
 import * as vscode from "vscode";
 
-async function main() {
+async function main(): Promise<void> {
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
     vscode.window.showInformationMessage('No active editor');

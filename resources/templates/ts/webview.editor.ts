@@ -11,7 +11,7 @@ import * as vscode from "vscode";
 // References:
 //   - Webview API: https://code.visualstudio.com/api/extension-guides/webview
 
-function createHtml() {
+function createHtml(): string {
   return `
 <!DOCTYPE html>
 <html lang="en">
@@ -51,7 +51,7 @@ function createHtml() {
 </html>`;
 }
 
-function createWebview(resolve: () => void) {
+function createWebview(resolve: () => void): vscode.WebviewPanel {
   const panel = vscode.window.createWebviewPanel(
     'mywebview.id',
     'My Webview Editor',

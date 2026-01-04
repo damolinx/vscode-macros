@@ -9,12 +9,10 @@ __disposables.push(
   vscode.languages.registerCodeLensProvider(
     { scheme: 'file', language: 'javascript' },
     {
-      provideCodeLenses(document, token) {
-        return [
-          new vscode.CodeLens(
-            new vscode.Range(0, 0, 0, 0),
-            { title: 'Say Hi', command: CommandId })
-        ];
-      }
+      provideCodeLenses: () => [
+        new vscode.CodeLens(
+          new vscode.Range(0, 0, 0, 0),
+          { title: 'Say Hi', command: CommandId })
+      ]
     }
   ));

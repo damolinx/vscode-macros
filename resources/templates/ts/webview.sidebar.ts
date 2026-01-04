@@ -7,7 +7,7 @@ import * as vscode from "vscode";
 // References:
 //   - Webview API: https://code.visualstudio.com/api/extension-guides/webview
 
-function createHtml() {
+function createHtml(): string {
   return `
 <!DOCTYPE html>
 <html lang="en">
@@ -32,7 +32,7 @@ function createHtml() {
 </html>`;
 }
 
-function createWebviewViewProvider(viewId: string, resolve: () => void) {
+function createWebviewViewProvider(viewId: string, resolve: () => void): vscode.WebviewViewProvider {
   return {
     resolveWebviewView: (webviewView) => {
       webviewView.webview.html = createHtml();

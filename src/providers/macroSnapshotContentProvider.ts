@@ -21,10 +21,10 @@ export function registerMacroSnapshotContentProvider(context: ExtensionContext):
   );
 }
 
-export function createSnapshotUri({ id, macro }: SandboxExecutionDescriptor) {
+export function createSnapshotUri({ id, macro: { uri } }: SandboxExecutionDescriptor): vscode.Uri {
   return vscode.Uri.from({
     scheme: 'macro-snapshot',
-    path: macro.uri.toString(),
+    path: uri.toString(),
     fragment: id,
   });
 }

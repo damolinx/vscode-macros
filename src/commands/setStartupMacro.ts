@@ -7,7 +7,7 @@ export function setStartupMacro(
   context: ExtensionContext,
   locator: UriLocator,
   target?: vscode.ConfigurationTarget,
-) {
+): Promise<void> {
   return setStartupMacros(context, [locator], target);
 }
 
@@ -15,7 +15,7 @@ export async function setStartupMacros(
   context: ExtensionContext,
   locators: UriLocator[],
   configTarget?: vscode.ConfigurationTarget,
-) {
+): Promise<void> {
   for (const uri of locators.map((loc) => getMacroUriFromStartupMacroUri(resolveUri(loc)))) {
     if (isUntitled(uri)) {
       context.log.info('Cannot set an untitled macro as startup macro', uri.toString());

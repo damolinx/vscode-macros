@@ -49,7 +49,7 @@ function registerSupported(context: ExtensionContext): void {
     vscode.window.onDidChangeActiveTextEditor((editor) => setSupportedFromEditor(editor)),
   );
 
-  function setSupportedFromEditor(editor?: vscode.TextEditor) {
+  function setSupportedFromEditor(editor?: vscode.TextEditor): void {
     const supportedLangId = !!editor && isMacroLanguage(editor.document.languageId);
     const supportedFeatureExt =
       supportedLangId &&
@@ -61,6 +61,6 @@ function registerSupported(context: ExtensionContext): void {
   }
 }
 
-export function setContext<T>(contextKey: string, arg: T) {
+export function setContext<T>(contextKey: string, arg: T): void {
   vscode.commands.executeCommand('setContext', contextKey, arg);
 }

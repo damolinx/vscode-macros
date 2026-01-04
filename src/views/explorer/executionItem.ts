@@ -7,7 +7,7 @@ import { formatStartTimestampLabel } from '../../utils/ui';
 const RunInfoIcon = new vscode.ThemeIcon('circle-outline', IconColor);
 const StartupRunInfoIcon = new vscode.ThemeIcon('record-small', IconColor);
 
-export function createExecutionItem(descriptor: SandboxExecutionDescriptor) {
+export function createExecutionItem(descriptor: SandboxExecutionDescriptor): vscode.TreeItem {
   const item = new vscode.TreeItem(
     getSandboxExecutionIdToken(descriptor.id),
     vscode.TreeItemCollapsibleState.None,

@@ -38,12 +38,9 @@ export class ExplorerTreeDataProvider extends TreeDataProvider<TreeElement> {
       this.context.sandboxManager.onExecutionStart(({ macro }) =>
         this.fireOnDidChangeTreeData(macro),
       ),
-      this.context.sandboxManager.onExecutionEnd(({ macro }) => {
-        this.fireOnDidChangeTreeData(macro);
-        // if (startup) {
-        //   this.fireOnDidChangeTreeData(new StartupMacro(macro.uri), StartupMacroLibrary.instance());
-        // }
-      }),
+      this.context.sandboxManager.onExecutionEnd(({ macro }) =>
+        this.fireOnDidChangeTreeData(macro),
+      ),
       {
         dispose: () => this.disposeMonitoredLibraries(),
       },
@@ -150,7 +147,7 @@ export class ExplorerTreeDataProvider extends TreeDataProvider<TreeElement> {
     let treeItem: vscode.TreeItem;
 
     if (element instanceof Library) {
-      treeItem = createLibraryItem(element);
+      treeItem = await createLibraryItem(element);
     } else if (element instanceof Macro) {
       treeItem = await createMacroItem(element, this.context);
     } else {

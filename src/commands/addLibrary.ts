@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { ExtensionContext } from '../extensionContext';
 import { setupSourceDirectory } from './setupSourceDirectory';
 
-export async function addLibrary(context: ExtensionContext) {
+export async function addLibrary(context: ExtensionContext): Promise<void> {
   const selection = await vscode.window.showOpenDialog({
     canSelectFolders: true,
     canSelectFiles: false,

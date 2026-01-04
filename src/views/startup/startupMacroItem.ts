@@ -14,7 +14,7 @@ import {
 export function createStartupItem(
   { macroUri, name, uri }: StartupMacro,
   descriptor?: SandboxExecutionDescriptor,
-) {
+): vscode.TreeItem {
   const item = new vscode.TreeItem(uri, vscode.TreeItemCollapsibleState.None);
   item.command = {
     arguments: [getMacroUriFromStartupMacroUri(uri)],

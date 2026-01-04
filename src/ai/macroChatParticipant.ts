@@ -92,7 +92,7 @@ export class MacroChatParticipant {
     toolRequests: vscode.LanguageModelToolCallPart[],
     response: vscode.ChatResponseStream,
     token: vscode.CancellationToken,
-  ) {
+  ): Promise<void> {
     response.progress(`Running ${toolRequests.length} tools`);
     const toolResults = await Promise.allSettled(
       toolRequests.map(async ({ input, name }) => {

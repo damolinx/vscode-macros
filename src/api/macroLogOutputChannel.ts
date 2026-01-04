@@ -16,11 +16,11 @@ export class MacroLogOutputChannel implements vscode.LogOutputChannel {
     this.#id = `[${executionId}]`;
   }
 
-  #blocked(op: string) {
+  #blocked(op: string): void {
     this.warn(`Macro is not allowed to call \`${op}\`; ignoring call.`);
   }
 
-  #prefix(message: string) {
+  #prefix(message: string): string {
     return `${this.#id} ${message}`;
   }
 

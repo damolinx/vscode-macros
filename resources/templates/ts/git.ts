@@ -6,7 +6,7 @@ import * as vscode from "vscode";
 // `Download d.ts files` code action on the link above.
 import { API } from './git';
 
-async function main() {
+async function main(): Promise<void> {
   const git = vscode.extensions.getExtension('vscode.git')?.exports.getAPI(1) as API | undefined;
   if (!git) {
     vscode.window.showErrorMessage('Git API not found');

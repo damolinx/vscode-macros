@@ -11,7 +11,7 @@ import { showTextDocument } from '../utils/vscodeEx';
 import { removeStartupMacro } from './removeStartupMacro';
 import { stopMacro } from './stopMacro';
 
-export async function showRunningMacros(context: ExtensionContext) {
+export async function showRunningMacros(context: ExtensionContext): Promise<void> {
   const {
     sandboxManager: { executions },
   } = context;

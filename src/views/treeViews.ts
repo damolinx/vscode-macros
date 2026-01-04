@@ -14,7 +14,7 @@ export let explorerTreeView: vscode.TreeView<TreeElement> | undefined;
 let explorerTreeDataProvider: ExplorerTreeDataProvider | undefined;
 let startupTreeDataProvider: StartupTreeDataProvider | undefined;
 
-export function refreshTreeView(tree: 'all' | 'explorer' | 'startup') {
+export function refreshTreeView(tree: 'all' | 'explorer' | 'startup'): void {
   switch (tree) {
     case 'all':
       explorerTreeDataProvider?.refresh();

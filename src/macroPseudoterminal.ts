@@ -66,7 +66,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     code: string,
     context: vm.Context,
     callback: (error: Error | null, result: any) => void,
-  ) {
+  ): Promise<void> {
     try {
       const targetCode = this.useTs ? transpileOrThrow(code, this.uri) : code;
       const result = await vm.runInContext(targetCode, context);
@@ -76,7 +76,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
       callback(targetError, null);
     }
 
-    function isRecoverable(e: Error) {
+    function isRecoverable(e: Error): boolean {
       let recoverable = false;
       if (e.name === 'SyntaxError') {
         // TODO: edge case "e.push({}{})"
@@ -246,7 +246,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     this.repl?.server.displayPrompt();
   }
 
-  private setupContext(context: vm.Context) {
+  private setupContext(context: vm.Context): void {
     // REPL's context contains additional values that would not normally be
     // available to a macro and could cause confusion, so resetting first.
     Object.keys(context).forEach((k) => delete context[k]);

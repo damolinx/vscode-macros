@@ -23,7 +23,7 @@ export function transpile(input: string, uri?: vscode.Uri): TranspileResult {
 
   return diagnostics?.length ? { diagnostics } : { code: stripModuleDefine(outputText) };
 
-  function stripModuleDefine(outputText: string) {
+  function stripModuleDefine(outputText: string): string {
     return outputText.replace(
       /Object\.defineProperty\s*\(\s*exports\s*,\s*"__esModule"\s*,\s*{\s*value:\s*true\s*}\s*\);?/g,
       '',

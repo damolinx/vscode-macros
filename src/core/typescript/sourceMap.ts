@@ -30,7 +30,7 @@ const smsSupport = new Lazy(({ sandboxManager }: ExtensionContext, runner: Sandb
   }),
 );
 
-export function ensureSourceMapSupport(context: ExtensionContext, runner: SandboxRunner) {
+export function ensureSourceMapSupport(context: ExtensionContext, runner: SandboxRunner): void {
   smsSupport.initialize(context, runner);
 }
 

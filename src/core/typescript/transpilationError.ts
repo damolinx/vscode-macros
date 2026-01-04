@@ -15,7 +15,7 @@ export class TranspilationError extends Error {
     this.uri = uri;
   }
 
-  [util.inspect.custom](_depth: number, options: util.InspectOptionsStylized) {
+  [util.inspect.custom](_depth: number, options: util.InspectOptionsStylized): string {
     const host: ts.FormatDiagnosticsHost = {
       getCurrentDirectory: () =>
         this.uri ? parentUri(this.uri).fsPath : ts.sys.getCurrentDirectory(),

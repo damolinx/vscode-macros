@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { generateCursorRule } from '../../ai/macroChatPrompt';
 
-export async function createCursorRules() {
+export async function createCursorRules(): Promise<void> {
   const document = await vscode.workspace.openTextDocument({
     content: generateCursorRule(),
     language: 'markdown',

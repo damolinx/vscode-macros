@@ -95,7 +95,7 @@ async function createUntitledUri(
   parentUri: vscode.Uri,
   languageId: MacroLanguageId,
   maxAttempts = 1000,
-) {
+): Promise<vscode.Uri | undefined> {
   const { defaultExtension: extension } = resolveMacroLanguage(languageId);
   for (let i = 1; i <= maxAttempts; i++) {
     const candidate = vscode.Uri.joinPath(parentUri, `Untitled-${i}${extension}`);
