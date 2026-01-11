@@ -93,9 +93,9 @@ Many automations don’t require much code at all, they can be written as a simp
 
 **Example**: _Add a TODO_ macro defined as a sequence of commands
 ```typescript
-import * as os from 'os';
+import { userInfo } from 'os';
 
-async function runCommands(cmds: { cmd: string, args?: any[] }[]) {
+async function runCommands(cmds: { cmd: string, args?: any[] }[]): Promise<void> {
   for (const { cmd, args = [] } of cmds) {
     await vscode.commands.executeCommand(cmd, ...args);
   }
@@ -104,7 +104,7 @@ async function runCommands(cmds: { cmd: string, args?: any[] }[]) {
 // Insert a TODO comment at current cursor line
 runCommands([
   { cmd: "editor.action.insertLineBefore" },
-  { cmd: "type", args: [{ text: `TODO (${os.userInfo().username}): <describe task>` }] },
+  { cmd: "type", args: [{ text: `TODO (${userInfo().username}): <describe task>` }] },
   { cmd: "editor.action.addCommentLine" },
   { cmd: "cursorEnd" },
 ]);
