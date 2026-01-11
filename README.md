@@ -305,8 +305,8 @@ The rules file encodes the macro specification, constraints, and behavioral guid
 
 | Command | Description |
 |--------|-------------|
-| **Macros: Debug Active File as Macro** | Debug the current editor as a macro (the document will be saved before running). |
-| **Macro: Debug Macro** | Select a macro file to debug. |
+| **Debug Active File as Macro** | Debug the current editor as a macro (the document will be saved before running). |
+| **Debug Macro** | Select a macro file to debug. |
 
 [↑ Back to top](#table-of-contents)
 
@@ -314,8 +314,8 @@ The rules file encodes the macro specification, constraints, and behavioral guid
 
 | Command | Description |
 |--------|-------------|
-| **Macros: Create REPL** | Create a REPL terminal to evaluate JavaScript or TypeScript code in the same context used by running macros. |
-| **Macros: Setup Folder for Development** | Add or update optional files that improve IntelliSense for macro files. This runs automatically when saving a `.macro.js` or `.macro.ts` file if `macros.sourceDirectories.verify` is enabled. |
+| **Create REPL** | Create a REPL terminal to evaluate JavaScript or TypeScript code in the same context used by running macros. |
+| **Setup Folder for Development** | Add or update optional files that improve IntelliSense for macro files. This runs automatically when saving a `.macro.js` or `.macro.ts` file if `macros.sourceDirectories.verify` is enabled. |
 
 [↑ Back to top](#table-of-contents)
 
@@ -323,9 +323,9 @@ The rules file encodes the macro specification, constraints, and behavioral guid
 
 | Command | Description |
 |--------|-------------|
-| **Macros: Fill File with Template** | Initialize an existing file with example macro content. |
-| **Macros: New Macro** | Create a new file pre-filled with example macro content. |
-| **Macros: Show Running Macros** | View and manage currently running macros. |
+| **Fill File with Template** | Initialize an existing file with example macro content. |
+| **New Macro** | Create a new file pre-filled with example macro content. |
+| **Show Running Macros** | View and manage currently running macros. |
 
 [↑ Back to top](#table-of-contents)
 
@@ -333,9 +333,9 @@ The rules file encodes the macro specification, constraints, and behavioral guid
 
 | Command | Description |
 |--------|-------------|
-| **Macros: Run Active File as Macro** | Run the current editor as a macro (the document will be saved before running). |
-| **Macros: Rerun Last Macro** | Execute the most recently run macro. |
-| **Macros: Run Macro…** | Select a macro to run. Provides access to macros in configured `macros.sourceDirectories`. |
+| **Run Active File as Macro** | Run the current editor as a macro (the document will be saved before running). |
+| **Rerun Last Macro** | Execute the most recently run macro. |
+| **Run Macro…** | Select a macro to run. Provides access to macros in configured `macros.sourceDirectories`. |
 
 [↑ Back to top](#table-of-contents)
 
