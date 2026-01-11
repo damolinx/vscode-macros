@@ -31,7 +31,7 @@ Under the hood, macros run inside [Node.js VM sandboxes](https://nodejs.org/api/
     * [Development](#development)
     * [Manage Macros](#manage-macros)
     * [Run Macros](#run-macros)
-   * [IntelliSense](#intellisense)
+  * [IntelliSense](#intellisense)
 * [Development](#development-1)
   * [Available Code References](#available-code-references)
   * [`macros` API](#macros-api)
@@ -303,37 +303,43 @@ The rules file encodes the macro specification, constraints, and behavioral guid
 
 ### Debugging
 
-See [Debugging a Macro](#debugging-a-macro) for additional information:
-* **Macros: Debug Active File as Macro**: debug current editor as a macro (document will be saved before running).
-* **Macro: Debug Macro**: select a macro file to debug. Provides access to configured `macros.sourceDirectories`.
+| Command | Description |
+|--------|-------------|
+| **Macros: Debug Active File as Macro** | Debug the current editor as a macro (the document will be saved before running). |
+| **Macro: Debug Macro** | Select a macro file to debug. |
 
 [↑ Back to top](#table-of-contents)
 
 ### Development
 
-* **Macros: Create REPL**: create a REPL terminal to evaluate JavaScript or TypeScript code whose context matches the one used by running macros.
-
-* **Macros: Setup Folder for Development**: adds or updates optional files used to improve IntelliSense on macro files. This action is run automatically in the background when saving a `.macro.js` or `.macro.ts` file, provided that `macros.sourceDirectories.verify` is enabled.
+| Command | Description |
+|--------|-------------|
+| **Macros: Create REPL** | Create a REPL terminal to evaluate JavaScript or TypeScript code in the same context used by running macros. |
+| **Macros: Setup Folder for Development** | Add or update optional files that improve IntelliSense for macro files. This runs automatically when saving a `.macro.js` or `.macro.ts` file if `macros.sourceDirectories.verify` is enabled. |
 
 [↑ Back to top](#table-of-contents)
 
 ### Manage Macros
 
-* **Macros: Fill File with Template**: initialize an existing file with example macro content.
-* **Macros: New Macro**: creates a new file with example macro content.
-* **Macros: Show Running Macros**: view and manage running macros.
+| Command | Description |
+|--------|-------------|
+| **Macros: Fill File with Template** | Initialize an existing file with example macro content. |
+| **Macros: New Macro** | Create a new file pre-filled with example macro content. |
+| **Macros: Show Running Macros** | View and manage currently running macros. |
 
 [↑ Back to top](#table-of-contents)
 
 ### Run Macros
 
-* **Macros: Run Active File as Macro**: run current editor as a macro (document will be saved before running).
-* **Macros: Rerun Last Macro**: execute the most recently run macro.
-* **Macros: Run Macro…**: select a macro to run. Provides access to macros in configured `macros.sourceDirectories` directories.
+| Command | Description |
+|--------|-------------|
+| **Macros: Run Active File as Macro** | Run the current editor as a macro (the document will be saved before running). |
+| **Macros: Rerun Last Macro** | Execute the most recently run macro. |
+| **Macros: Run Macro…** | Select a macro to run. Provides access to macros in configured `macros.sourceDirectories`. |
 
 [↑ Back to top](#table-of-contents)
 
-### IntelliSense
+## IntelliSense
 
 JavaScript and TypeScript macro files get [IntelliSense](https://code.visualstudio.com/docs/editing/intellisense) support, if they have been saved to a [macro library](#macro-libraries). The features requires the library to be fully set up for development which means a `global.d.ts` and `jsconfig.json` have been added to it. The extension verifies these files the first time a file from a library is opened in a session and updates them whenever newer versions are available. This update-logic means it is currently not recommended to customize them.
 
