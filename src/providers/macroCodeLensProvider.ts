@@ -10,7 +10,7 @@ export function registerMacroCodeLensProvider(context: ExtensionContext): void {
 }
 
 /**
- * Provides a CodeLens to initialize or reset the context of a persistent macro.
+ * Provides a CodeLens to reset the context of a persistent macro.
  */
 export class MacroCodeLensProvider implements vscode.CodeLensProvider {
   provideCodeLenses(
@@ -27,7 +27,7 @@ export class MacroCodeLensProvider implements vscode.CodeLensProvider {
             title: 'Reset Context',
             command: 'macros.resetContext',
             arguments: [document.uri],
-            tooltip: 'Reset shared macro context',
+            tooltip: 'Reset persistent macro shared-data context',
           }),
         );
       }
