@@ -81,7 +81,7 @@ async function main() {
   let answer;
   do {
     answer = await vscode.window.showInformationMessage(
-      `Hello, World! Close this dialog?`, { modal: true }, yes, no);
+      'Hello, World! Close this dialog?', { modal: true }, yes, no);
   } while (answer !== yes && !__cancellationToken.isCancellationRequested);
 }
 
@@ -91,9 +91,12 @@ main()
 [↑ Back to top](#table-of-contents)
 
 ### Writing a Command-Sequence macro
-Many automations don’t require much code at all, they can be written as a simple list of VS Code command IDs executed in order, just like a classic editor macro. The **Command Sequence** [template](#creating-a-macro) can help you get started, and if you need additional logic, or API access, you can easily extend it to match your needs.
 
-**Example**: _Add a TODO_ macro defined as a sequence of commands
+Many macros do not require much code at all, they can be expressed as a sequence of VS Code command calls. This approach is powerful because it lets you compose existing behaviors for free, while still giving you room to add custom logic whenever needed.
+
+The **Command Sequence** [template](#creating-a-macro) provides a starting point for this style of macro.
+
+**Example**: "Add a TODO" macro
 ```typescript
 import { userInfo } from 'os';
 
@@ -105,14 +108,14 @@ async function runCommands(cmds: { cmd: string, args?: any[] }[]): Promise<void>
 
 // Insert a TODO comment at current cursor line
 runCommands([
-  { cmd: "editor.action.insertLineBefore" },
-  { cmd: "type", args: [{ text: `TODO (${userInfo().username}): <describe task>` }] },
-  { cmd: "editor.action.addCommentLine" },
-  { cmd: "cursorEnd" },
+  { cmd: 'editor.action.insertLineBefore' },
+  { cmd: 'type', args: [{ text: `TODO (${userInfo().username}): <describe task>` }] },
+  { cmd: 'editor.action.addCommentLine' },
+  { cmd: 'cursorEnd' },
 ]);
 ```
 
-The [Built-in Commands](https://code.visualstudio.com/api/references/commands) page describes the commands that ship with VS Code, but installed extensions can contribute their own. For those, you will need to refer to the extension documentation for the expected arguments.
+The downside of this approach is that all commands — both built‑in and extension‑contributed — accept custom, untyped argument lists. Since there is no IntelliSense for command arguments, you will need to refer to the command's documentation for information. The [Built-in Commands](https://code.visualstudio.com/api/references/commands) page covers the commands that ship with VS Code, and extension‑contributed commands should be documented in their respective extension pages.
 
 [↑ Back to top](#table-of-contents)
 
@@ -462,14 +465,14 @@ Be sure to reset the context when the macro finishes, there is no automatic trac
 A `@macro` option defines runtime behaviors for your macro. It is added to macro file as a comment using this `//@macro:«option»[,…«option»]` syntax.
 
 The following options are available:
-* `persistent`: All invocations of the macro use the same [execution context](https://nodejs.org/api/vm.html#scriptrunincontextcontextifiedobject-options) so global variables persist across runs. Use the `Reset Context` CodeLens to reinitialize context.
+* `persistent`: All invocations of the macro use the same [execution context](https://nodejs.org/api/vm.html#scriptrunincontextcontextifiedobject-options) so global variables persist across runs. Use the **Reset Context** CodeLens to reinitialize context.
 * `retained`: An instance of the macro will remain active until explicitly stopped, e.g., using the **Macros: Show Running Macros** command. This removes the need to await `__cancellationToken.onCancellationRequested` (or similar signal) to keep the macro's services and listeners running.
 * `singleton`: Only one instance of the macro may run at a time; additional invocations fail.
 
 **Example**: Using the `singleton` option
 ```javascript
 // @macro:singleton
-vscode.window.showInformationMessage("“There can only be one!");
+vscode.window.showInformationMessage('There can only be one!');
 ```
 
 [↑ Back to top](#table-of-contents)
@@ -478,7 +481,7 @@ vscode.window.showInformationMessage("“There can only be one!");
 
 Any URL-like string in a macro file pointing to a `.d.ts` file will automatically receive a code action, **Download .d.ts**, enabling you to download the file directly to the macro's parent folder. This simplifies adding type definitions to support [IntelliSense](#intellisense) in your macros.
 
-GitHub URLs containing matching `*/blob/*` are automatically converted to their `raw` equivalent. For example: `https://github.com/Microsoft/vscode/blob/main/extensions/git/src/api/git.d.ts` is automatically handled as `https://github.com/Microsoft/vscode/raw/refs/heads/main/extensions/git/src/api/git.d.ts`. Files are downloaded using a standard HTTP GET request.
+GitHub URLs containing matching `*/blob/*` are automatically converted to their `*/raw/*` equivalent. For example: `https://github.com/Microsoft/vscode/blob/main/extensions/git/src/api/git.d.ts` is automatically handled as `https://github.com/Microsoft/vscode/raw/refs/heads/main/extensions/git/src/api/git.d.ts`. Files are downloaded using a standard HTTP GET request.
 
 [↑ Back to top](#table-of-contents)
 
