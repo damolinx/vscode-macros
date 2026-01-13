@@ -46,16 +46,30 @@ export interface MacrosApi {
     };
 
     /**
-     * Namespace providing window / UI functionality.
+     * Namespace providing command APIs.
+     */
+    readonly commands: {
+      /**
+       * Executes one or more commands in sequence.
+       * @param cmds Each command may be specified as either:
+       * - a string command ID
+       * - a `[id, ...args]` tuple providing the command ID and its arguments.
+       * @returns A promise that resolves after all commands have completed.
+       */
+      executeCommands(...cmds: (string | [id: string, ...args: any[]])[]): Promise<void>;
+    };
+
+    /**
+     * Namespace providing window and UI APIs.
      */
     readonly window: {
       /**
-       * Assigns an available TreeView ID to the caller.
+       * Returns an available TreeView ID for the caller.
        */
       getTreeViewId(): string | undefined;
 
       /**
-       * Assigns an available WebView ID to the caller.
+       * Returns an available Webview ID for the caller.
        */
       getWebviewId(): string | undefined;
 
@@ -65,7 +79,7 @@ export interface MacrosApi {
       releaseTreeViewId(id: string): boolean;
 
       /**
-       * Releases a previously assigned WebView ID.
+       * Releases a previously assigned Webview ID.
        */
       releaseWebviewId(id: string): boolean;
     };

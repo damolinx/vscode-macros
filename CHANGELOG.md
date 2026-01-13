@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.2
+- New `macros.commands.executeCommands` API to execute commands by ID.
+  - Update **Command Sequence** template to use it.
+
 ## 0.6.1
 - Update the macro‑template dropdown to better match the layout of VS Code’s built‑in Snippets dropdown.
 - Rename **Add Library Folder…** to **Add Folder…**.

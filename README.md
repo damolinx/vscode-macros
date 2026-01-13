@@ -96,23 +96,17 @@ Many macros do not require much code at all, they can be expressed as a sequence
 
 The **Command Sequence** [template](#creating-a-macro) provides a starting point for this style of macro.
 
-**Example**: "Add a TODO" macro
+**Example**: "Insert a TODO comment at current cursor line" macro using the `macros.commands.executeCommands` method
 ```typescript
 import { userInfo } from 'os';
 
-async function runCommands(cmds: { cmd: string, args?: any[] }[]): Promise<void> {
-  for (const { cmd, args = [] } of cmds) {
-    await vscode.commands.executeCommand(cmd, ...args);
-  }
-}
-
-// Insert a TODO comment at current cursor line
-runCommands([
-  { cmd: 'editor.action.insertLineBefore' },
-  { cmd: 'type', args: [{ text: `TODO (${userInfo().username}): <describe task>` }] },
-  { cmd: 'editor.action.addCommentLine' },
-  { cmd: 'cursorEnd' },
-]);
+// executeCommands takes in a single ID, or a [ID, ...args] tuple
+macros.commands.executeCommands(
+  'editor.action.insertLineBefore',
+  ['type', { text: `TODO (${userInfo().username}): <describe task>` }],
+  'editor.action.addCommentLine',
+  'cursorEnd',
+);
 ```
 
 The downside of this approach is that all commands — both built‑in and extension‑contributed — accept custom, untyped argument lists. Since there is no IntelliSense for command arguments, you will need to refer to the command's documentation for information. The [Built-in Commands](https://code.visualstudio.com/api/references/commands) page covers the commands that ship with VS Code, and extension‑contributed commands should be documented in their respective extension pages.
@@ -369,8 +363,11 @@ The following references are available from the global context of your macro:
 * `macro`: Current macro.
   * `uri`: URI of the current macro instance. It can be `undefined` if running from an in-memory buffer.
 
-* `window`: Provides access to UI-related APIs.
-  Provides access to UI-related APIs for managing predefined macro views.
+* `commands`: Namespace providing command APIs.
+
+  * `executeCommands(...cmds: (string | [id: string, ...args: any[]])[]): Promise<void>`:  Executes one or more commands in sequence, defined as the command ID or a command ID and args tuple. Returns a promise that resolves after all commands have completed.
+
+* `window`: Namespace providing window and UI APIs.
 
   * `getTreeViewId(id: string): string | undefined`: Claims an available tree view ID for the given macro run. Returns `undefined` if none are available.
 

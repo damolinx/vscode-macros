@@ -1,6 +1,7 @@
 import * as vm from 'vm';
 import { MacroContext } from '../../../api/macroContext';
-import { initializeContext, initializeMacrosApi, MacroContextInitParams } from '../macroRunContext';
+import { initializeMacrosApi } from '../../../api/utils';
+import { initializeContext, MacroContextInitParams } from '../macroRunContext';
 import { SandboxExecutionDescriptor } from '../sandboxExecutionDescriptor';
 import { SandboxRunner } from './sandboxRunner';
 
