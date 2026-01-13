@@ -100,7 +100,7 @@ The **Command Sequence** [template](#creating-a-macro) provides a starting point
 ```typescript
 import { userInfo } from 'os';
 
-// executeCommands takes in a single ID, or a [ID, ...args] tuple
+// executeCommands takes in a list of command IDs, or [ID, ...args] tuples
 macros.commands.executeCommands(
   'editor.action.insertLineBefore',
   ['type', { text: `TODO (${userInfo().username}): <describe task>` }],
