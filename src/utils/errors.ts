@@ -17,7 +17,7 @@ export function cleanError<T extends Error>(error: T, repl?: true): T {
 
 export function cleanStack(stack: string, repl?: boolean) {
   return (repl ? stack.replace(/^.*(?:evalmachine\.).*\n*$/gm, '') : stack)
-    .replace(/^(.*?(?:new Script|\.runIn(?:New)?Context|(?:vscode|damolinx)-macros)[\s\S]*)$/m, '')
+    .replace(/^(.*?(?:new Script|\.runIn(?:New)?Context|(?:vscode-macros[\/\\]src|damolinx-macros))[\s\S]*)$/m, '')
     .replace(/^(.*?vscode-file:\/\/[\s\S]*)$/m, '')
     .trim();
 }

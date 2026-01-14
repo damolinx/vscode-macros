@@ -3,6 +3,7 @@
 ## 0.6.3
 - Improve **Rename…** action name validation.
 - Fix: **Rename…** action unexpectedly accessible on library nodes via keybinding.
+- Fix: Stacktraces from `vscode-macros`‑named libraries were processed as internal frames.
 
 ## 0.6.2
 - New `macros.commands.executeCommands` API to execute commands by ID.
