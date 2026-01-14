@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.3
+- Improve **Rename…** action name validation.
+- Fix: **Rename…** action unexpectedly accessible on library nodes via keybinding.
+
 ## 0.6.2
 - New `macros.commands.executeCommands` API to execute commands by ID.
   - Update **Command Sequence** template to use it.
