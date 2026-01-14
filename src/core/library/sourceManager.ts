@@ -53,7 +53,7 @@ export abstract class SourceManager implements vscode.Disposable {
     return this.sources.find((s) => areUriEqual(s.uri, uri));
   }
 
-  public inLibrary(uri: vscode.Uri): boolean {
+  public hasSource(uri: vscode.Uri): boolean {
     return Boolean(this.getSource(uri));
   }
 
