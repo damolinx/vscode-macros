@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import { createSourceTargetItem } from './sourceTargetItem';
 
 export class SourceTarget {
   public static readonly Global = new SourceTarget(vscode.ConfigurationTarget.Global);
@@ -9,7 +8,6 @@ export class SourceTarget {
     return new SourceTarget(vscode.ConfigurationTarget.WorkspaceFolder, folder);
   }
 
-  private _treeItem?: vscode.TreeItem;
   public readonly folder?: vscode.WorkspaceFolder;
   public readonly target: vscode.ConfigurationTarget;
 
@@ -23,10 +21,5 @@ export class SourceTarget {
   private constructor(target: vscode.ConfigurationTarget, folder?: vscode.WorkspaceFolder) {
     this.folder = folder;
     this.target = target;
-  }
-
-  public get treeItem(): vscode.TreeItem {
-    this._treeItem ??= createSourceTargetItem(this);
-    return this._treeItem;
   }
 }

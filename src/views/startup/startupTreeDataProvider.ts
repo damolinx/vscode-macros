@@ -5,6 +5,7 @@ import { ExtensionContext } from '../../extensionContext';
 import { NaturalComparer } from '../../utils/ui';
 import { TreeDataProvider } from '../treeDataProvider';
 import { SourceTarget } from './sourceTarget';
+import { createSourceTargetItem } from './sourceTargetItem';
 import { createStartupItem } from './startupMacroItem';
 
 export type StartupTreeElement = StartupMacro | SourceTarget;
@@ -54,7 +55,7 @@ export class StartupTreeDataProvider extends TreeDataProvider<StartupTreeElement
 
   public override getTreeItem(element: StartupTreeElement): vscode.TreeItem {
     if (element instanceof SourceTarget) {
-      return element.treeItem;
+      return createSourceTargetItem(element);
     }
 
     return createStartupItem(
