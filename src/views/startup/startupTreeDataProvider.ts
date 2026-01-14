@@ -42,7 +42,7 @@ export class StartupTreeDataProvider extends TreeDataProvider<StartupTreeElement
     if (element instanceof SourceTarget) {
       return this.context.startupManager.sources
         .filter((src) => src.configSources.some(({ target }) => target === element.target))
-        .map(({ uri }) => new StartupMacro(uri))
+        .map(({ uri }) => new StartupMacro(uri, element.target))
         .sort((a, b) => NaturalComparer.compare(a.name, b.name));
     }
 

@@ -6,9 +6,9 @@ import { isUntitled, resolveUri, UriLocator } from '../utils/uri';
 export function setStartupMacro(
   context: ExtensionContext,
   locator: UriLocator,
-  target?: vscode.ConfigurationTarget,
+  configTarget?: vscode.ConfigurationTarget,
 ): Promise<void> {
-  return setStartupMacros(context, [locator], target);
+  return setStartupMacros(context, [locator], configTarget);
 }
 
 export async function setStartupMacros(

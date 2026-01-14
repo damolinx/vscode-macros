@@ -8,7 +8,6 @@ import { ExtensionContext } from '../extensionContext';
 import { createGroupedQuickPickItems } from '../ui/ui';
 import { formatStartTimestampLabel } from '../utils/ui';
 import { showTextDocument } from '../utils/vscodeEx';
-import { removeStartupMacro } from './removeStartupMacro';
 import { stopMacro } from './stopMacro';
 
 export async function showRunningMacros(context: ExtensionContext): Promise<void> {
@@ -39,13 +38,7 @@ export async function showRunningMacros(context: ExtensionContext): Promise<void
       iconPath: new vscode.ThemeIcon('go-to-file'),
       tooltip: 'Open macro file',
     };
-    const removeStartupButton = {
-      iconPath: new vscode.ThemeIcon('remove-close'),
-      tooltip: 'Remove as startup macro',
-    };
     const buttons = [openButton];
-    const startupButtons = [removeStartupButton, openButton];
-
     const quickPick = vscode.window.createQuickPick<
       vscode.QuickPickItem & { descriptor?: SandboxExecutionDescriptor }
     >();
@@ -54,7 +47,7 @@ export async function showRunningMacros(context: ExtensionContext): Promise<void
       groupBy: (execution) => getSandboxExecutionIdName(execution.id),
       itemBuilder: (execution) =>
         ({
-          buttons: execution.startup ? startupButtons : buttons,
+          buttons,
           description: `version: ${execution.snapshot.version}`,
           detail: `started: ${formatStartTimestampLabel(execution.startedOn)}`,
           label: getSandboxExecutionIdToken(execution.id),
@@ -67,9 +60,6 @@ export async function showRunningMacros(context: ExtensionContext): Promise<void
       switch (e.button) {
         case openButton:
           await showTextDocument(e.item.descriptor!.macro.uri);
-          break;
-        case removeStartupButton:
-          await removeStartupMacro(context, e.item.descriptor!.macro);
           break;
       }
     });

@@ -86,7 +86,11 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.delete.macroOrMacroLibrary', (macroOrLibrary?: Macro | MacroLibrary) =>
       deleteMacroOrMacroLibrary(context, macroOrLibrary),
     ),
-    cr('macros.delete.startupMacro', (locator: UriLocator) => removeStartupMacro(context, locator)),
+    cr(
+      'macros.delete.startupMacro',
+      (startupMacroOrUri: StartupMacro | vscode.Uri, target?: vscode.ConfigurationTarget) =>
+        removeStartupMacro(context, startupMacroOrUri, target),
+    ),
     cr('macros.downloadAsset', (assetUri: vscode.Uri, locator: UriLocator) =>
       downloadAsset(context, assetUri, locator),
     ),
