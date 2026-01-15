@@ -183,7 +183,7 @@ async function runStartupMacros(context: ExtensionContext): Promise<void> {
         .map((uri) => vscode.workspace.asRelativePath(uri)),
     );
   } else {
-    context.log.info('Executing all', existingUris.length, 'of registered macros.');
+    context.log.info('Executing', existingUris.length, 'registered macros.');
   }
 
   // DO NO await, macros might be long running
