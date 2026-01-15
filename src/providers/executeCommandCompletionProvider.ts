@@ -44,16 +44,22 @@ export class ExecuteCommandCompletionProvider
     _token: vscode.CancellationToken,
     _context: vscode.CompletionContext,
   ): Promise<vscode.CompletionItem[] | undefined> {
-    const line = document.lineAt(position).text.substring(0, position.character);
-    const match = line.match(
-      /(?:^\s*\.?|\.)executeCommand\s*\(\s*(?:(?<quote1>["'`])[a-zA-Z0-9._-]*|(?<quote2>["'`])?)$/,
-    );
+    const line = document.getText(new vscode.Range(new vscode.Position(0, 0), position));
+    const match =
+      line.match(
+        /\bvscode(?:\s*\.\s*)commands(?:\s*\.\s*)executeCommand\s*\(\s*(?:(?<quote1>["'`])[a-zA-Z0-9._-]*|(?<quote2>["'`])?)$/,
+      ) ||
+      line.match(
+        /\bmacros(?:\s*\.\s*)commands(?:\s*\.\s*)executeCommands\s*\(\s*(?:(?:["'`][a-zA-Z0-9._-]+["'`]|\[[^\]]*\])\s*,\s*)*(?:(?:\[\s*)?(?<quote1>["'`])[a-zA-Z0-9._-]*|(?<quote2>["'`])?)$/,
+      );
     if (!match) {
       return;
     }
 
     const quote = match.groups?.quote1 || match.groups?.quote2;
-    const range = document.getWordRangeAtPosition(position, /[a-zA-Z0-9._-]+/);
+    const range = quote
+      ? document.getWordRangeAtPosition(position, /[a-zA-Z0-9.]+/)
+      : new vscode.Range(position, position);
 
     const commandMetadata = await this.commandMetadata.get();
     return commandMetadata.map(({ command: id, extensionName, title }) => {

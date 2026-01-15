@@ -1,7 +1,10 @@
 # Changelog
 
 ## 0.6.3
-- `vscode.commands.executeCommand` ID autocomplete improved to include source extension and command title whenever possible.
+- CommandId completion provider improvements:
+  - Autocomplete entries include the source extension and command title when available.
+  - Supports `macros.commands.executeCommands` for all arguments, in both tuple and string formats.
+  - Supports multiline definitions for `vscode.commands.executeCommand` and `macros.commands.executeCommands`; full namespace is now required. I
 - Improve **Rename…** action name validation.
 - Fix: **Rename…** action was unexpectedly accessible on library nodes via keybinding.
 - Fix: Stacktraces from `vscode-macros`‑named libraries were processed as internal frames.
