@@ -93,7 +93,8 @@
       },
       {
         "command": "macros.createCursorRules",
-        "title": "Macros: Create Cursor Rules",
+        "title": "Create Cursor Rules",
+        "category": "Macros",
         "enablement": "workspaceFolderCount > 0 && env.appHost == cursor"
       },
       {
