@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.6.3
+- `vscode.commands.executeCommand` ID autocomplete improved to include source extension and command title whenever possible.
 - Improve **Rename…** action name validation.
 - Fix: **Rename…** action was unexpectedly accessible on library nodes via keybinding.
 - Fix: Stacktraces from `vscode-macros`‑named libraries were processed as internal frames.
