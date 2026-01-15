@@ -25,7 +25,8 @@ interface CommandMetadata {
  * Provide autocompletion for `executeCommand`.
  */
 export class ExecuteCommandCompletionProvider
-  implements vscode.Disposable, vscode.CompletionItemProvider {
+  implements vscode.Disposable, vscode.CompletionItemProvider
+{
   private readonly commandMetadata: Lazy<Promise<readonly CommandMetadata[]>>;
   private readonly disposables: vscode.Disposable[];
 
