@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.6.4
+- Upgrade minimum VS Code version to 1.105 (Cursor upgraded extensibility compat back in November 2025).
+
 ## 0.6.3
 - CommandId completion provider improvements:
   - Autocomplete entries include the source extension and command title when available.

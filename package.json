@@ -13,7 +13,7 @@
     "url": "https://github.com/damolinx/vscode-macros/issues"
   },
   "engines": {
-    "vscode": "^1.99.0"
+    "vscode": "^1.105.0"
   },
   "categories": [
     "Other"
@@ -763,7 +763,7 @@
     "@types/mocha": "^10.0.0",
     "@types/node": "^20.18.0",
     "@types/source-map-support": "^0.5.10",
-    "@types/vscode": "~1.99",
+    "@types/vscode": "~1.105",
     "@typescript-eslint/eslint-plugin": "^8.25.0",
     "@typescript-eslint/parser": "^8.25.0",
     "@vscode/test-electron": "^2.5.0",
