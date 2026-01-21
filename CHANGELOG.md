@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.6.5
+- Re‑published 0.6.4 with updated NPM dependencies after a VS Code Marketplace-side publishing failure (the service offers no retry).
+
 ## 0.6.4
 - Upgrade minimum VS Code version to 1.105 (Cursor upgraded extensibility compat back in November 2025).
 
