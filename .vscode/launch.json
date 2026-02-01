@@ -1,36 +1,41 @@
 {
-	"version": "0.2.0",
-	"configurations": [
-		{
-			"name": "Debug Extension",
-			"type": "extensionHost",
-			"request": "launch",
-			"runtimeExecutable": "${execPath}",
-			"args": [
-				"--extensionDevelopmentPath=${workspaceFolder}"
-			],
-			"outFiles": [],
-			"preLaunchTask": "npm: watch",
-			"resolveSourceMapLocations": [
-				"${workspaceFolder}/out/**",
-				"!**/node_modules/**"
-			]
-		},
-		{
-			"name": "Test Extension",
-			"type": "extensionHost",
-			"request": "launch",
-			"runtimeExecutable": "${execPath}",
-			"args": [
-				"--extensionDevelopmentPath=${workspaceFolder}",
-				"--extensionTestsPath=${workspaceFolder}/out/test/suite/index"
-			],
-			"outFiles": [],
-			"preLaunchTask": "npm: watch",
-			"resolveSourceMapLocations": [
-				"${workspaceFolder}/out/**",
-				"!**/node_modules/**"
-			]
-		}
-	]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Extension",
+      "type": "extensionHost",
+      "request": "launch",
+      "runtimeExecutable": "${execPath}",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/out/**/*.js"
+      ],
+      "preLaunchTask": "npm: watch",
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/out/**",
+        "!**/node_modules/**"
+      ]
+    },
+    {
+      "name": "Test Extension",
+      "type": "extensionHost",
+      "request": "launch",
+      "runtimeExecutable": "${execPath}",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}",
+        "--extensionTestsPath=${workspaceFolder}/out/test/suite/index",
+        "--disable-extensions"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/out/**/*.js"
+      ],
+      "preLaunchTask": "npm: compile",
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/out/**",
+        "!**/node_modules/**"
+      ]
+    }
+  ]
 }
