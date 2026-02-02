@@ -229,7 +229,9 @@ The **Macro Explorer** [view](https://code.visualstudio.com/docs/getstarted/user
 
 * **Macro Run Instances**: see active runs and stop existing ones from the view.
 
-The **Macros: Show Macro Explorer** command can be used to bring it into view.
+  * **View Running Version**: When a macro is run, the extension captures a snapshot of its source code. This action uses that snapshot to diff against the code’s current version. This is particularly useful during active macro development, when multiple revisions may be running. The version number comes from the corresponding [TextDocument.version](https://code.visualstudio.com/api/references/vscode-api#TextDocument) value.
+
+The **Macros: Show Macro Explorer** command opens the view and brings it into focus.
 
 <p align=center>
    <img width="600" alt="Macro Explorer View with diff" src="https://github.com/user-attachments/assets/bc684a9a-6641-455a-aba9-e2df2680e076" />
