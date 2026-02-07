@@ -58,13 +58,13 @@ declare global {
     readonly commands: {
       /**
        * Executes one or more commands in sequence.
-       * @param cmds Each command may be specified as either:
+       * @param cmds Commands to execute. Each command may be specified as either:
        * - a string command ID
        * - a `[id, ...args]` tuple providing the command ID and its arguments.
-       * @returns A promise that resolves after all commands have completed.
+       * @returns A promise resolving to an array of results, one per command.
        */
-      executeCommands(...cmds: Array<string | [id: string, ...args: Array<any>]>): Promise<void>;
-    }
+      executeCommands(...cmds: (string | [id: string, ...args: any[]])[]): Promise<any[]>;
+    };
 
     /**
      * Namespace providing window and UI APIs.

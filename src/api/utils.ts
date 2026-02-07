@@ -39,9 +39,12 @@ export function createMacroApi(params: MacroContextInitParams): MacrosApi {
   } as MacrosApi;
 }
 
-async function executeCommands(...cmds: (string | [id: string, ...args: any[]])[]): Promise<void> {
+async function executeCommands(...cmds: (string | [id: string, ...args: any[]])[]): Promise<any[]> {
+  const results: any[] = [];
   for (const cmd of cmds) {
     const [id, ...args] = Array.isArray(cmd) ? cmd : [cmd];
-    await vscode.commands.executeCommand(id, ...args);
+    const result = await vscode.commands.executeCommand(id, ...args);
+    results.push(result);
   }
+  return results;
 }

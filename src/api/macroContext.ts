@@ -3,7 +3,7 @@ import * as vm from 'vm';
 import { MacrosApi } from './macrosApi';
 
 /**
- * Minimum context provided to a macro.
+ * Global context provided to a macro.
  */
 export interface MacroContext extends vm.Context, MacrosApi {
   readonly atob: typeof atob;

@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.6.6
+- `macros.executeCommands` returns array with results for every command.
+
 ## 0.6.5
 - Re‑publish 0.6.4 with updated NPM dependencies after a VS Code Marketplace-side publishing failure (the service offers no retry).
 

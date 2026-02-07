@@ -25,7 +25,7 @@ export class MacroLogOutputChannel implements vscode.LogOutputChannel {
 
   [inspect.custom]() {
     return {
-      type: 'LogOutputChannel',
+      name: this.name,
       logLevel: vscode.LogLevel[this.logLevel],
       runId: this.#executionId,
     };
