@@ -90,13 +90,13 @@ main()
 
 [↑ Back to top](#table-of-contents)
 
-### Writing a Command-Sequence macro
+### Writing Macros using Command IDs
 
-Many macros do not require much code at all, they can be expressed as a sequence of VS Code command calls. This approach is powerful because it lets you compose existing behaviors for free, while still giving you room to add custom logic whenever needed.
+Many macros do not require much code at all, they can be expressed as a sequence of VS Code command ID calls.  You can use `vscode.commands.executeCommand` calls to implement such macros, or you can leverage the `macros.commands.executeCommands` method provided by the extension.  Reusing commands helps you leverage existing functionality without much code at all, and yet, add custom logic when needed.
 
-The **Command Sequence** [template](#creating-a-macro) provides a starting point for this style of macro.
+The **Command Sequence** [template](#creating-a-macro) provides a starting point for this style of macros.
 
-**Example**: "Insert a TODO comment at current cursor line" macro using the `macros.commands.executeCommands` method
+**Example**: Sample macro inserting a `TODO` comment at cursor position
 ```typescript
 import { userInfo } from 'os';
 
@@ -109,7 +109,11 @@ macros.commands.executeCommands(
 );
 ```
 
-The downside of this approach is that all commands — both built‑in and extension‑contributed — accept custom, untyped argument lists. Since there is no IntelliSense for command arguments, you will need to refer to the command's documentation for information. The [Built-in Commands](https://code.visualstudio.com/api/references/commands) page covers the commands that ship with VS Code, and extension‑contributed commands should be documented in their respective extension pages.
+The extension provides command-ID suggestions for `executeCommand` and `executeCommands` methods (see screenshot below). However, argument details are not available through the VS Code API, so you will need to consult the documentation for each command. The [Built-in Commands](https://code.visualstudio.com/api/references/commands) page covers all VS Code commands. Commands contributed by extensions should be documented in their respective extension pages.
+
+<p align=center>
+<img width="500" alt="Command-Id suggestions" src="https://github.com/user-attachments/assets/7029063f-25f9-42b1-a421-3f952bf0a262" />
+</p>
 
 [↑ Back to top](#table-of-contents)
 
