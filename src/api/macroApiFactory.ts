@@ -1,6 +1,6 @@
-import * as vscode from 'vscode';
 import { MacroContextInitParams } from '../core/execution/macroRunContext';
 import { ViewId } from '../core/execution/views/viewId';
+import { executeCommands } from './executeCommands';
 import { MacroContext } from './macroContext';
 import { MacrosApi } from './macrosApi';
 
@@ -37,14 +37,4 @@ export function createMacroApi(params: MacroContextInitParams): MacrosApi {
       },
     },
   } as MacrosApi;
-}
-
-async function executeCommands(...cmds: (string | [id: string, ...args: any[]])[]): Promise<any[]> {
-  const results: any[] = [];
-  for (const cmd of cmds) {
-    const [id, ...args] = Array.isArray(cmd) ? cmd : [cmd];
-    const result = await vscode.commands.executeCommand(id, ...args);
-    results.push(result);
-  }
-  return results;
 }

@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as vm from 'vm';
+import { createMacroApi } from '../../api/macroApiFactory';
 import { MacroContext } from '../../api/macroContext';
-import { createMacroApi } from '../../api/utils';
 import { SandboxExecutionId } from './sandboxExecutionId';
 import { ViewManager } from './views/viewManager';
 
