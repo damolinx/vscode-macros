@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.6.7
+- **Delete** action for a library allows to delete the folder from the file system.
+
 ## 0.6.6
 - `macros.executeCommands` returns array with results for every command.
 

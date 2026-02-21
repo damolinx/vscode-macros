@@ -77,6 +77,7 @@ export async function deleteMacroLibrary(
   }
 
   const items: (vscode.MessageItem & { target?: vscode.ConfigurationTarget })[] = [
+    { title: 'Delete' },
     ...library.configSources.map((s) => ({
       title: `Remove from ${s.target === vscode.ConfigurationTarget.Global ? 'User' : 'Workspace'} Settings`,
       target: s.target,
@@ -85,16 +86,19 @@ export async function deleteMacroLibrary(
   ];
 
   const result = await vscode.window.showInformationMessage(
-    'Do you want to remove this library?',
+    'Do you want to delete the folder, or just remove the library from settings?',
     {
       modal: true,
-      detail:
-        "Removing a library removes its corresponding setting entry; the library's folder and files remain on disk.",
+      detail: 'Deleting the folder also removes all of its settings entries.',
     },
     ...items,
   );
-
-  if (result && !result.isCloseAffordance) {
-    await libraryManager.sourcesManager.removeSourceFor(uri, result.target);
+  if (!result || result.isCloseAffordance) {
+    return;
   }
+
+  if (!result.target) {
+    await vscode.workspace.fs.delete(uri, { recursive: true, useTrash: true });
+  }
+  await libraryManager.sourcesManager.removeSourceFor(uri, result.target);
 }
