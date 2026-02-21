@@ -755,15 +755,15 @@
   },
   "dependencies": {
     "source-map-support": "^0.5.21",
-    "typescript": "^5.x"
+    "typescript": "^5.9.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.0",
     "@stylistic/eslint-plugin": "^5.2.0",
     "@types/mocha": "^10.0.0",
-    "@types/node": "^20.18.0",
+    "@types/node": "^22.0.0",
     "@types/source-map-support": "^0.5.10",
-    "@types/vscode": "~1.105",
+    "@types/vscode": "~1.105.0",
     "@typescript-eslint/eslint-plugin": "^8.25.0",
     "@typescript-eslint/parser": "^8.25.0",
     "@vscode/test-electron": "^2.5.0",
@@ -775,8 +775,6 @@
     "glob": "^11.1.0",
     "mocha": "^11.7.5",
     "prettier": "^3.6.2",
-    "source-map-support": "^0.5.21",
-    "typescript": "^5.9.0",
     "typescript-eslint": "^8.35.0"
   },
   "overrides": {
