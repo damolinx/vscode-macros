@@ -62,7 +62,6 @@ function createWebviewViewProvider(viewId: string, resolve: () => void): vscode.
         enableScripts: true
       };
       webviewView.title = `Macro ${__runId}`;
-      webviewView.onDidDispose(resolve);
     }
   };
 }

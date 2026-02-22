@@ -67,7 +67,6 @@ function createWebviewViewProvider(viewId, resolve) {
         enableScripts: true
       };
       webviewView.title = `Macro ${__runId}`;
-      webviewView.onDidDispose(resolve);
     }
   };
 }
