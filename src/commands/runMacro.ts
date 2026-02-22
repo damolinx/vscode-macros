@@ -24,21 +24,26 @@ export async function runMacro(
     return; // Nothing to run.
   }
 
-  const yesOption: vscode.MessageItem = { title: 'Run Anyway' };
+  const executor = await sandboxManager.ensureExecutor(uri);
   if (
-    !options?.ignoreDiagnosticErrors &&
-    hasDiagnosticErrors(uri) &&
-    (await vscode.window.showWarningMessage(
-      'This macro contains errors. Do you still want to run it?',
-      { modal: true },
-      yesOption,
-      { title: 'Cancel', isCloseAffordance: true },
-    )) !== yesOption
+    (!options?.ignoreDiagnosticErrors &&
+      hasDiagnosticErrors(uri) &&
+      !(await executor.macro.getCode()).options.singleton) ||
+    executor.count === 0
   ) {
-    return; // User canceled
+    const yesOption: vscode.MessageItem = { title: 'Run Anyway' };
+    if (
+      (await vscode.window.showWarningMessage(
+        'This macro contains errors. Do you still want to run it?',
+        { modal: true },
+        yesOption,
+        { title: 'Cancel', isCloseAffordance: true },
+      )) !== yesOption
+    ) {
+      return; // User canceled
+    }
   }
 
-  const executor = await sandboxManager.ensureExecutor(uri);
   const pareparedExecution = await executor.createDescriptor(options);
 
   try {
