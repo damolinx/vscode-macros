@@ -31,8 +31,11 @@ export class SandboxManager implements vscode.Disposable {
   }
 
   public cancel(target: Macro | MacroId | vscode.Uri): SandboxExecutionDescriptor[] {
-    const canceledDescriptors = this.getExecutor(target as any)?.cancel() ?? [];
-    return canceledDescriptors;
+    const executor = this.getExecutor(target as any);
+    if (!executor) {
+      return [];
+    }
+    return executor.cancel();
   }
 
   public ensureExecutor(macro: Macro): Promise<SandboxExecutor>;
@@ -55,6 +58,10 @@ export class SandboxManager implements vscode.Disposable {
 
   public get executions(): SandboxExecutionDescriptor[] {
     return [...this.executorMap.values()].flatMap((runner) => [...runner.executions]);
+  }
+
+  public get executors(): SandboxExecutor[] {
+    return Array.from(this.executorMap.values());
   }
 
   public getExecution(id: SandboxExecutionId): SandboxExecutionDescriptor | undefined {
@@ -85,8 +92,9 @@ export class SandboxManager implements vscode.Disposable {
     return this.executorMap.get(macroId);
   }
 
-  public get executors(): SandboxExecutor[] {
-    return Array.from(this.executorMap.values());
+  public isRunning(target: Macro | MacroId | vscode.Uri): boolean {
+    const executor = this.getExecutor(target as any);
+    return !!executor?.isRunning();
   }
 
   public get onExecutionEnd(): vscode.Event<SandboxExecutionDescriptor> {

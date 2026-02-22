@@ -99,18 +99,20 @@ export class ExplorerTreeDataProvider extends TreeDataProvider<TreeElement> {
   }
 
   private fireOnDidChangeTreeData(element: TreeElement, library?: Library): void {
+    let data: TreeElement[] | TreeElement = element;
     if (element instanceof Macro) {
       // Refresh parent as Macro changes collapsible state, and
       // that won't be refreshed unless parent changes.
       const parent = library ?? this.getParent(element);
-      this.onDidChangeTreeDataEmitter.fire(parent ? [parent, element] : element);
-    } else {
-      this.onDidChangeTreeDataEmitter.fire(element);
+      if (parent) {
+        data = [parent, element];
+      }
     }
+    this.onDidChangeTreeDataEmitter.fire(data);
   }
 
-  public override async getChildren(element?: TreeElement): Promise<TreeElement[]> {
-    let children: TreeElement[];
+  public override async getChildren(element?: TreeElement): Promise<TreeElement[] | undefined> {
+    let children: TreeElement[] | undefined;
 
     if (!element) {
       children = [...this.context.libraryManager.libraries].sort((a, b) =>
@@ -125,9 +127,9 @@ export class ExplorerTreeDataProvider extends TreeDataProvider<TreeElement> {
       entry.files = new Set((children as Macro[]).map((macro) => macro.id));
     } else if (element instanceof Macro) {
       const executor = this.context.sandboxManager.getExecutor(element);
-      children = executor?.executions.sort((a, b) => NaturalComparer.compare(a.id, b.id)) ?? [];
-    } else {
-      children = [];
+      if (executor) {
+        children = executor.executions.sort((a, b) => NaturalComparer.compare(a.id, b.id));
+      }
     }
 
     return children;

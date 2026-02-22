@@ -8,7 +8,7 @@ export function registerMacroSnapshotContentProvider(context: ExtensionContext):
       provideTextDocumentContent(snapshotUri: vscode.Uri) {
         const uri = vscode.Uri.parse(snapshotUri.path, true);
         const executor = context.sandboxManager.getExecutor(uri);
-        if (executor) {
+        if (executor?.isRunning()) {
           for (const instance of executor.executions) {
             if (instance.id === snapshotUri.fragment) {
               return instance.snapshot.rawCode;

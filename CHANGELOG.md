@@ -1,8 +1,9 @@
 # Changelog
 
 ## 0.6.7
-- **Delete** action for a library allows to delete the folder from the file system.
-- Running a `singleton` macro that is already running does not prompt for confirmation.
+- **Delete** action for a library now offers an option to delete the associated folder from the file-system, in addition to the options to remove registration.
+- Running singleton macros switch to **Restart** from **Run**, since the latter would be a no-op.
+- Fix: Sidebar Webview template should not dispose macro instance when the view is disposed to support moving view around.
 
 ## 0.6.6
 - `macros.executeCommands` returns array with results for every command.

@@ -1,9 +1,8 @@
 import * as vscode from 'vscode';
 import { SandboxExecutionDescriptor } from '../../core/execution/sandboxExecutionDescriptor';
-import { resolveMacroLanguageFromUri } from '../../core/macroLanguages';
 import { StartupMacro } from '../../core/startupMacro';
 import { getMacroUriFromStartupMacroUri } from '../../core/startupMacroId';
-import { getIcon } from '../../ui/icons';
+import { getIconFromUri } from '../../ui/icons';
 import {
   formatDisplayUri,
   formatHomeRelativePath,
@@ -22,7 +21,7 @@ export function createStartupItem(
     title: 'Open',
   };
   item.description = formatWorkspaceRelativePath(macroUri) ?? formatHomeRelativePath(macroUri);
-  item.iconPath = getIcon(resolveMacroLanguageFromUri(uri)?.id);
+  item.iconPath = getIconFromUri(uri);
   item.label = name;
   item.tooltip = formatDisplayUri(getMacroUriFromStartupMacroUri(uri));
 

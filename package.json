@@ -196,6 +196,12 @@
         "enablement": "focusedView == macros.startupMacros && viewItem =~ /startupMacro/"
       },
       {
+        "command": "macros.restart",
+        "title": "Restart Macro",
+        "category": "Macros",
+        "icon": "$(debug-restart)"
+      },
+      {
         "command": "macros.run",
         "title": "Run Macro",
         "category": "Macros",
@@ -376,6 +382,10 @@
           "when": "false"
         },
         {
+          "command": "macros.restart",
+          "when": "false"
+        },
+        {
           "command": "macros.runView",
           "when": "false"
         },
@@ -429,7 +439,7 @@
         {
           "command": "macros.debug",
           "when": "view == macros.macroExplorer && viewItem =~ /macroFile/",
-          "group": "1_execution@2"
+          "group": "1_execution@5"
         },
         {
           "command": "macros.delete.macroOrMacroLibrary",
@@ -492,13 +502,23 @@
           "group": "3_navigation@2"
         },
         {
+          "command": "macros.restart",
+          "when": "view == macros.macroExplorer && viewItem =~ /macroFile/ && viewItem =~ /restartOnly/",
+          "group": "inline"
+        },
+        {
+          "command": "macros.restart",
+          "when": "view == macros.macroExplorer && viewItem =~ /macroFile/ && viewItem =~ /restartOnly/",
+          "group": "1_execution@2"
+        },
+        {
           "command": "macros.run",
-          "when": "view == macros.macroExplorer && viewItem =~ /macroFile/",
+          "when": "view == macros.macroExplorer && viewItem =~ /macroFile/ && !(viewItem =~ /restartOnly/)",
           "group": "inline"
         },
         {
           "command": "macros.run",
-          "when": "view == macros.macroExplorer && viewItem =~ /macroFile/",
+          "when": "view == macros.macroExplorer && viewItem =~ /macroFile/ && !(viewItem =~ /restartOnly/)",
           "group": "1_execution@1"
         },
         {
@@ -519,7 +539,7 @@
         {
           "command": "macros.stop",
           "when": "(view == macros.macroExplorer || view == macros.startupMacros) && viewItem =~ /macroRun|running/",
-          "group": "1_execution@3"
+          "group": "1_execution@10"
         },
         {
           "command": "macros.stop",

@@ -33,15 +33,15 @@ export class UntitledMacroLibrary extends Library {
       vscode.workspace.onDidCloseTextDocument(({ uri }) => {
         if (this.owns(uri)) {
           const executor = sandboxManager.getExecutor(uri);
-          if (!executor?.count) {
-            this.removeItems(getMacroId(uri));
-          } else {
+          if (executor?.isRunning()) {
             const disposable = executor.onExecutionEnd(() => {
-              if (!executor.count) {
+              if (!executor.isRunning()) {
                 this.removeItems(getMacroId(uri));
                 disposable.dispose();
               }
             });
+          } else {
+            this.removeItems(getMacroId(uri));
           }
         }
       }),

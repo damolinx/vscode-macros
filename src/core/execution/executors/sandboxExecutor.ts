@@ -105,6 +105,10 @@ export class SandboxExecutor implements vscode.Disposable {
     return this.executionMap.get(id);
   }
 
+  public isRunning(): boolean {
+    return !!this.executionMap.size;
+  }
+
   public get onExecutionEnd(): vscode.Event<SandboxExecutionDescriptor> {
     return this.onExecutionEndEmitter.event;
   }
