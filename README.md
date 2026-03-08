@@ -604,6 +604,7 @@ function createHtml() {
       ui.tree(
         {
           id: 'exampleTree',
+          enableRemove: true,
           initialItems: [
             {
               id: 'root',
