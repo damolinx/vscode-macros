@@ -1,4 +1,3 @@
-
 // @macro: retained, singleton
 //   retained  – keeps the macro context alive until explicitly stopped
 //   singleton – ensures only one macro instance runs at a time
@@ -25,7 +24,7 @@ function createTreeProvider() {
         default:
           return undefined;
       }
-    }
+    },
   };
 }
 
@@ -34,9 +33,8 @@ function createTreeProvider() {
  * @returns {import('vscode').TreeView<string>}
  */
 function createTreeView(viewId) {
-  const treeView = vscode.window.createTreeView(
-    viewId, {
-    treeDataProvider: createTreeProvider()
+  const treeView = vscode.window.createTreeView(viewId, {
+    treeDataProvider: createTreeProvider(),
   });
   treeView.title = `Macro ${__runId}`;
   return treeView;
@@ -46,21 +44,18 @@ function createTreeView(viewId) {
 async function main() {
   const viewId = macros.window.getTreeViewId();
   if (!viewId) {
-    await vscode.window.showInformationMessage(
-      `Macro ${__runId} could not claim a TreeView ID`,
-    );
+    await vscode.window.showInformationMessage(`Macro ${__runId} could not claim a TreeView ID`);
     return;
   }
 
-  __disposables.push(
-    createTreeView(viewId), {
+  __disposables.push(createTreeView(viewId), {
     dispose: () => {
       macros.window.releaseTreeViewId(viewId);
       vscode.commands.executeCommand('setContext', `${viewId}.show`, false);
-    }
+    },
   });
   vscode.commands.executeCommand('setContext', `${viewId}.show`, true);
   vscode.commands.executeCommand(`${viewId}.focus`);
 }
 
-main()
+main();

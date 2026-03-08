@@ -3,14 +3,14 @@
 //   persistent – shares the macro context across all instances of this macro
 
 // Use `var` for globals in persistent macros; `let`/`const` redeclarations fail on reruns.
-var invocationCount: number | undefined;
+let invocationCount: number | undefined;
 
 async function main(): Promise<void> {
   invocationCount ??= 0;
   const invocation = ++invocationCount;
 
   await vscode.window.showInformationMessage(
-    `Hello from invocation @${invocation}. Try running this macro multiple times!`
+    `Hello from invocation @${invocation}. Try running this macro multiple times!`,
   );
 }
 

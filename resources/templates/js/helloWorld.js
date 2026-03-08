@@ -1,4 +1,3 @@
-
 const { basename } = require('path');
 
 async function main() {

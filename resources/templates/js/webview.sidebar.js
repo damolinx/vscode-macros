@@ -1,4 +1,3 @@
-
 // @macro: singleton
 //   singleton – ensures only one macro instance runs at a time
 
@@ -64,10 +63,10 @@ function createWebviewViewProvider(viewId, resolve) {
         }
       });
       webviewView.webview.options = {
-        enableScripts: true
+        enableScripts: true,
       };
       webviewView.title = `Macro ${__runId}`;
-    }
+    },
   };
 }
 
@@ -75,17 +74,15 @@ function createWebviewViewProvider(viewId, resolve) {
 new Promise((resolve) => {
   const viewId = macros.window.getWebviewId();
   if (!viewId) {
-    vscode.window.showInformationMessage(
-      `Macro ${__runId} could not claim a Webview ID`,
-    ).then(resolve);
+    vscode.window
+      .showInformationMessage(`Macro ${__runId} could not claim a Webview ID`)
+      .then(resolve);
     return;
   }
 
   __cancellationToken.onCancellationRequested(resolve);
   __disposables.push(
-    vscode.window.registerWebviewViewProvider(
-      viewId,
-      createWebviewViewProvider(viewId, resolve)),
+    vscode.window.registerWebviewViewProvider(viewId, createWebviewViewProvider(viewId, resolve)),
     { dispose: () => vscode.commands.executeCommand('setContext', `${viewId}.show`, false) },
   );
 

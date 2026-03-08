@@ -1,4 +1,3 @@
-
 // Reference: https://code.visualstudio.com/api/extension-guides/webview
 
 function createHtml() {
@@ -70,7 +69,7 @@ function createWebview() {
 
   panel.webview.html = createHtml();
   panel.webview.onDidReceiveMessage((message) =>
-    vscode.window.showInformationMessage(message.text || "Nothing to say?"),
+    vscode.window.showInformationMessage(message.text || 'Nothing to say?'),
   );
   return panel;
 }

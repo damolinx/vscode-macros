@@ -47,7 +47,10 @@ function createHtml(): string {
 </html>`;
 }
 
-function createWebviewViewProvider(viewId: string, resolve: () => void): vscode.WebviewViewProvider {
+function createWebviewViewProvider(
+  viewId: string,
+  resolve: () => void,
+): vscode.WebviewViewProvider {
   return {
     resolveWebviewView: (webviewView) => {
       webviewView.webview.html = createHtml();
@@ -59,10 +62,10 @@ function createWebviewViewProvider(viewId: string, resolve: () => void): vscode.
         }
       });
       webviewView.webview.options = {
-        enableScripts: true
+        enableScripts: true,
       };
       webviewView.title = `Macro ${__runId}`;
-    }
+    },
   };
 }
 
@@ -70,17 +73,15 @@ function createWebviewViewProvider(viewId: string, resolve: () => void): vscode.
 new Promise<void>((resolve) => {
   const viewId = macros.window.getWebviewId();
   if (!viewId) {
-    vscode.window.showInformationMessage(
-      `Macro ${__runId} could not claim a Webview ID`,
-    ).then(() => resolve());
+    vscode.window
+      .showInformationMessage(`Macro ${__runId} could not claim a Webview ID`)
+      .then(() => resolve());
     return;
   }
 
   __cancellationToken.onCancellationRequested(resolve);
   __disposables.push(
-    vscode.window.registerWebviewViewProvider(
-      viewId,
-      createWebviewViewProvider(viewId, resolve)),
+    vscode.window.registerWebviewViewProvider(viewId, createWebviewViewProvider(viewId, resolve)),
     { dispose: () => vscode.commands.executeCommand('setContext', `${viewId}.show`, false) },
   );
 

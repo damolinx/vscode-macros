@@ -1,4 +1,3 @@
-
 // Reference: https://code.visualstudio.com/api/extension-guides/language-model
 
 async function main() {
@@ -9,11 +8,17 @@ async function main() {
   }
 
   let question;
-  while (question = (await vscode.window.showInputBox({
-    ignoreFocusOut: true,
-    placeHolder: `Ask anything to ${model.name} …`,
-  },
-    __cancellationToken))?.trim()) {
+  while (
+    (question = (
+      await vscode.window.showInputBox(
+        {
+          ignoreFocusOut: true,
+          placeHolder: `Ask anything to ${model.name} …`,
+        },
+        __cancellationToken,
+      )
+    )?.trim())
+  ) {
     const response = await model.sendRequest([vscode.LanguageModelChatMessage.User(question)]);
 
     let message = '';

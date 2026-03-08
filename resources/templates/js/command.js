@@ -1,4 +1,3 @@
-
 const { userInfo } = require('os');
 
 // Insert a TODO comment at current cursor line.

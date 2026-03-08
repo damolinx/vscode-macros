@@ -11,8 +11,11 @@ __disposables.push(
     if (editor) {
       vscode.window.showInformationMessage(
         `Active editor: ${vscode.workspace.asRelativePath(editor.document.uri)}. ` +
-        `Macro ${__runId} must be manually stopped for this listener to be disposed.`);
+          `Macro ${__runId} must be manually stopped for this listener to be disposed.`,
+      );
     }
-  }), {
-  dispose: () => vscode.window.showInformationMessage(`Disposed ${__runId}`),
-});
+  }),
+  {
+    dispose: () => vscode.window.showInformationMessage(`Disposed ${__runId}`),
+  },
+);

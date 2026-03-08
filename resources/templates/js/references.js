@@ -1,4 +1,3 @@
-
 async function main() {
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
@@ -6,11 +5,17 @@ async function main() {
     return;
   }
 
-  const { document: { uri }, selection: { active } } = editor;
+  const {
+    document: { uri },
+    selection: { active },
+  } = editor;
 
   /** @type {import('vscode').Location[] | undefined} */
   const references = await vscode.commands.executeCommand(
-    'vscode.executeReferenceProvider', uri, active);
+    'vscode.executeReferenceProvider',
+    uri,
+    active,
+  );
 
   if (!references.length) {
     vscode.window.showInformationMessage('No references found');
@@ -19,7 +24,8 @@ async function main() {
 
   const content = references
     .map(({ uri, range: { start } }) =>
-      uri.with({ fragment: `${start.line + 1}:${start.character + 1}` }))
+      uri.with({ fragment: `${start.line + 1}:${start.character + 1}` }),
+    )
     .join('\n');
 
   const resultsDocument = await vscode.workspace.openTextDocument({ content });

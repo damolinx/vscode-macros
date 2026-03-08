@@ -765,6 +765,7 @@
   "scripts": {
     "compile": "npm run ts:check-types && npm run ts:compile",
     "lint": "eslint \"src/**/*.ts\" --fix",
+    "lint-res": "eslint \"resources/**/*.{js,ts}\" --fix",
     "test": "node ./out/test/runTest.js",
     "ts:check-types": "tsc --noEmit",
     "ts:compile": "tsc -p ./",

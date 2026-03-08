@@ -1,4 +1,3 @@
-
 __disposables.push({
   dispose: () => vscode.window.showInformationMessage(`Disposed ${__runId}`),
 });

@@ -9,4 +9,4 @@ async function main(): Promise<void> {
   macros.log.info('Greeted the world');
 }
 
-main()
+main();
