@@ -39,8 +39,8 @@ export abstract class SandboxRunner<TContext = unknown> {
 
   protected getContextInitParams(descriptor: SandboxExecutionDescriptor): MacroContextInitParams {
     return {
+      context: this.context,
       disposables: descriptor.macroDisposables,
-      extensionContext: this.context.extensionContext,
       log: new MacroLogOutputChannel(descriptor.id as any, this.context),
       executionId: descriptor.id as any,
       startup: descriptor.startup,

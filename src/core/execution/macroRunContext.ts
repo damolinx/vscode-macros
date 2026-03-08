@@ -2,12 +2,13 @@ import * as vscode from 'vscode';
 import * as vm from 'vm';
 import { createMacroApi } from '../../api/macroApiFactory';
 import { MacroContext } from '../../api/macroContext';
+import { ExtensionContext } from '../../extensionContext';
 import { SandboxExecutionId } from './sandboxExecutionId';
 import { ViewManager } from './views/viewManager';
 
 export interface MacroContextInitParams {
+  context: ExtensionContext;
   disposables: vscode.Disposable[];
-  extensionContext: vscode.ExtensionContext;
   log: vscode.LogOutputChannel;
   executionId: SandboxExecutionId;
   startup?: true;

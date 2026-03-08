@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { registerCreateMacroContentTool } from './ai/createMacroContentTool';
 import { registerMacroChatParticipant } from './ai/macroChatParticipant';
+import { loadRenderers } from './api/window/renderers';
 import { addLibrary } from './commands/addLibrary';
 import { addStartupMacro } from './commands/addStartupMacro';
 import { copyFile, pasteFile } from './commands/copyPasteFile';
@@ -134,6 +135,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     ),
   );
 
+  await loadRenderers(context);
   await runStartupMacros(context);
 }
 

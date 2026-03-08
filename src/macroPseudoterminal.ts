@@ -44,7 +44,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
 
     this.macroInitParams = {
       disposables: [],
-      extensionContext: this.context.extensionContext,
+      context: this.context,
       log: new MacroLogOutputChannel(runId, context),
       executionId: runId,
       token: this.cts.token,
