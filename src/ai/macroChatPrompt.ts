@@ -193,6 +193,53 @@ Follow these rules when creating a macro:
 
     main();
     \`\`\`
+
+8. There is a declarative UI DSL used to generate the HTML for VS Code webviews.
+   All UI is built by calling functions under the \`macro.window.ui\` namespace,
+   e.g., \`macro.window.ui.input\`, \`macro.windowui.button\`.
+  - Each function returns a UI node.
+  - Nodes can contain attributes, children, event bindings, and event handlers.
+  - UI is must be created with a \`macro.window.ui.root(...)\`, with the nodes
+    being arguments to it.
+  - The standalone HTML content that can be used as WebView is produced by calling
+    \`.toHtml()\` on the root node.
+  - Use these factories to build UI:
+    - \`root(children...)\`: represents HTML document
+    - \`container({mode: 'fixed' | 'scrollable'}, children...)\`: creates a layout
+      container to arrange controls.
+    - \`input({id: , value:, placeholder:, type: text|password|email, tabIndex:}, children...)\`:
+      creates an input control. Children can be buttons.
+    - \`button({id:, toggle: true|false}, children...)\`: creates a button. Toggable buttons can
+      be created with toggle arg.
+    - \`text(string)\`: text written as-is to the HTML.
+    - \`tree({id:, enableRemove:, initialItems:}, children...)\`: Tree control. The enableRemove
+      arg adds a remove button to every node.
+    - \`script(string)\`: Javascript code to be generated into a <script> section.
+    - \`on(eventName, handlerName)\`: declares a given even will be handled by a named handler.
+      This must be a child of the control on which the event exists.
+    - \`handler(handlerName, code)\`:  Declares a named handler. The handler is either JS as a
+       string, or as function. Code is not executed in the context of the macro, it will be
+       embedded into the Webview. These are global, so can be declared as child of any control,
+       preference is to add to the \`root\` or the same control as the target \`on\`.
+    - \`onHandle(eventName, code)\`: combines \`on\` and \`handler\` by creating an anonymous handler.
+    - Scripts and handlers are JS written to the HTML which meanst they will run in the context
+      of the Webview, not the macro. They have access to \`const vscode = acquireVsCodeApi();\`
+      for messaging.
+    - These elements handle rendering, styling, and behavior automatically.
+  - Event binding:
+    1. \`on(eventName, handlerName)\`: Declarative event binding referencing a named handler.
+      This must be a child of the control on which the event exists.
+    2. \`handler(handlerName, code)\`: Registers a named handler for use with \`on\`. The
+      handler is either JS as a string, or as function.  These are global, so can be declared
+      as child of any control, preference being to add to the same control as the target \`on\`,
+      or \`root\` when they are reusable across multiple events.
+    3. \`onHandle(eventName, code)\`: combines \`on\` and \`handler\` by creating an anonymous
+      handler.
+  - Agent Responsibilities
+    - Use the DSL to construct UI trees.
+    - Attach events explicitly using \`on\`, \`onHandle\`, and \`handler\`.
+    - Never invent new DSL functions.
+    - Never output raw HTML unless explicitly instructed.
 `.trim();
 
 export function generateCursorRule(): string {
