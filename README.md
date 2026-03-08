@@ -40,6 +40,7 @@ Macros run inside Node.js [VM sanbdoxes](https://nodejs.org/api/vm.html#class-vm
   * [`@macro` Options](#macro-options)
   * [Download Definition Files](#download-definition-files)
   * [Debugging a Macro](#debugging-a-macro)
+  * [UI DSL](#ui-dsl)
 
 # Getting Started
 
@@ -375,6 +376,8 @@ The following references are available from the global context of your macro:
 
   * `releaseWebviewId(id: string): boolean`: Releases a previously claimed webview ID. Returns `true` if successful.
 
+* `window.ui`: defines an **experimental** DSL to define Webviews. Refer to [UI DSL](#ui-dsl) documentaion below.
+
 [↑ Back to top](#table-of-contents)
 
 ### Special Variables
@@ -505,4 +508,121 @@ The [`macros.log` API](#macros-api) writes messages directly to the **Macros** o
 ### REPL
 The [Macro REPL](#macro-repl) is a great way to verify your logic step-by-step, or to verify the current context as the extension sees it.
 
+[↑ Back to top](#table-of-contents)
+
+## UI DSL
+
+> ⚠️ **Experimental**
+> This UI DSL is not final. Breaking changes are expected.
+
+The UI DSL provides a declarative way to build UI for VS Code webviews. Instead of writing HTML directly, you compose a tree using `macros.window.ui.*` factories. The framework generates custom HTML nodes for which JavaScript components are added to teh generated HTML, expanding them into themed and functional components.
+
+The use case fo rthe DSL is the same as for the macros: quickly generate a tool with minimal effort. Some flexibility is sacrificed in favor of simpliciy.
+
+[↑ Back to top](#table-of-contents)
+
+### Node Types
+
+- `macros.window.ui.root(...children)`: creates the top-level container. Calling `.toHtml()` on the root returns the final HTML string.
+
+- `macros.window.ui.container([options], ...children)`: creates a layout grouping, so you can fix a set of controls at the webview, and have a scrollable section at the bottom.
+
+  Options:
+    - `id?: string`
+    - `mode: "fixed" | "scrollable"`
+
+
+- `macros.window.ui.input([options], ...children)`: creates an input field with optional inline buttons and event bindings.
+
+  Options:
+  - `id?: string`
+  - `placeholder?: string`
+  - `tabIndex?: number`
+  - `type?: "text" | "password" | "number" | "email"`
+  - `value?: string`
+
+- `macros.window.ui.button([options], ...children)`: creates a clickable button.
+
+  Options:
+  - `id?: string`
+  - `label?: string`
+  - `tabIndex?: number`
+  - `toggle?: boolean` (enables toggle mode)
+
+- `macros.window.ui.text(string)`: creates a text node for inline content.
+- `macros.window.ui.tree([options], ...eventNodes)`: creates a hierarchical tree view.
+
+  Options:
+  - `id?: string`
+  - `enableRemove?: boolean`
+  - `initialItems?: TreeNode[]`
+
+  TreeNode:
+  - `id: string`
+  - `label: string`
+  - `children?: TreeNode[]`
+  - `action?: { handlerName: string }`
+
+[↑ Back to top](#table-of-contents)
+
+### Event Binding
+
+- `macros.window.ui.on(eventName, handlerName)`: binds an event to a named handler.
+- `macros.window.ui.handler(handlerName, code)`: registers a named handler referenced by `macros.window.ui.on`.
+- `macros.window.ui.onHandle(eventName, code)`: attaches an inline handler function.
+
+[↑ Back to top](#table-of-contents)
+
+### Scripts
+- `macros.window.ui.script(code)`: injects raw JavaScript into the final HTML.
+
+[↑ Back to top](#table-of-contents)
+
+### Example: Search-like sidebar
+
+```javascript
+function createHtml() {
+  const { ui } = macros.window;
+  const html = ui
+    .root(
+      ui.container(
+        { mode: 'fixed' },
+        ui.input(
+          { id: 'search', placeholder: 'Search' },
+          ui.onHandle('input', ({ value }) => {
+            console.log('Input changed:', value);
+          }),
+        ),
+        ui.button(
+          { id: 'searchButton', label: 'Search' },
+          ui.on('click', 'onSearch'),
+          ui.handler('onSearch', () => {
+            console.log('Search clicked');
+          }),
+        ),
+      ),
+      ui.tree(
+        {
+          id: 'exampleTree',
+          initialItems: [
+            {
+              id: 'root',
+              label: 'Root',
+              children: [{ id: 'child1', label: 'Child 1' }],
+            },
+          ],
+        },
+        ui.onHandle('activate', ({ item }) => {
+          console.log('Node activated:', item);
+        }),
+      ),
+    )
+    .toHtml();
+
+  // Print generated HTML for reference.
+  macros.log.info(html);
+  macros.log.show();
+  return html;
+}
+```
 [↑ Back to top](#table-of-contents)
