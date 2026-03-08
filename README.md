@@ -515,9 +515,9 @@ The [Macro REPL](#macro-repl) is a great way to verify your logic step-by-step, 
 > ⚠️ **Experimental**
 > This UI DSL is not final. Breaking changes are expected.
 
-The UI DSL provides a declarative way to build UI for VS Code webviews. Instead of writing HTML directly, you compose a tree using `macros.window.ui.*` factories. The framework generates custom HTML nodes for which JavaScript components are added to teh generated HTML, expanding them into themed and functional components.
+The UI DSL provides a declarative way to build UI for VS Code webviews. Instead of writing HTML directly, you compose a tree using `macros.window.ui.*` factories. The framework generates custom HTML nodes for which JavaScript components are added to the generated HTML, expanding them into themed and functional components.
 
-The use case fo rthe DSL is the same as for the macros: quickly generate a tool with minimal effort. Some flexibility is sacrificed in favor of simpliciy.
+The use case for the DSL is the same as for the macros: quickly generate a tool with minimal effort. Some flexibility is sacrificed in favor of simplicity.
 
 [↑ Back to top](#table-of-contents)
 
@@ -525,7 +525,7 @@ The use case fo rthe DSL is the same as for the macros: quickly generate a tool 
 
 - `macros.window.ui.root(...children)`: creates the top-level container. Calling `.toHtml()` on the root returns the final HTML string.
 
-- `macros.window.ui.container([options], ...children)`: creates a layout grouping, so you can fix a set of controls at the webview, and have a scrollable section at the bottom.
+- `macros.window.ui.container([options], ...children)`: creates a layout grouping, so you can fix a set of controls at the webview and have a scrollable section at the bottom.
 
   Options:
     - `id?: string`
