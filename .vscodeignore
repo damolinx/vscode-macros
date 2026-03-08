@@ -6,3 +6,7 @@ src/**
 esbuild.mjs
 eslint.config.mjs
 tsconfig.json
+
+# Trim typescript
+node_modules/typescript/**
+!node_modules/typescript/lib/typescript.js

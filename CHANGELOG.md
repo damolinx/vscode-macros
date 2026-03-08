@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.7.0
+- New UI DSL for building webviews with clear, typed primitives:
+  - Supported components include button, event handdler, input, layout container, tree.
+  - DSL is experimental and therefore **unstable**.
+- Reduce bundled TypeScript dependency from ~24 MB → ~8 MB by excluding tsserver, lib files, and other non‑runtime assets.
+
+
 ## 0.6.7
 - **Delete** action for a library now offers an option to delete the associated folder from the file-system, in addition to the options to remove registration.
 - Running singleton macros switch to **Restart** from **Run**, since the latter would be a no-op.
