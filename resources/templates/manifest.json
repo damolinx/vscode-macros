@@ -121,6 +121,15 @@
       "alternates": {
         "typescript": "ts/webview.sidebar.ts"
       }
+    },
+    {
+      "category": "UI",
+      "label": "Webview using DSL (Sidebar)",
+      "description": "Create a Webview in the `Macros` sidebar using UI DSL",
+      "path": "js/webview.sidebar.dsl.js",
+      "alternates": {
+        "typescript": "ts/webview.sidebar.dsl.ts"
+      }
     }
   ]
 }
