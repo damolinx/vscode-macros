@@ -580,6 +580,10 @@ The use case fo rthe DSL is the same as for the macros: quickly generate a tool 
 
 ### Example: Search-like sidebar
 
+<p align=center>
+<img width="307" height="169" alt="image" src="https://github.com/user-attachments/assets/b33974d2-79b0-4a3a-946f-f40d7cc6aa8c" />
+</p>
+
 ```javascript
 function createHtml() {
   const { ui } = macros.window;
