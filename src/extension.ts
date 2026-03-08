@@ -42,7 +42,7 @@ import { registerFillCodeLensProvider } from './providers/fillCodeLensProvider';
 import { registerMacroCodeLensProvider } from './providers/macroCodeLensProvider';
 import { registerMacroOptionsCompletionProvider } from './providers/macroOptionsCompletionProvider';
 import { registerMacroSnapshotContentProvider } from './providers/macroSnapshotContentProvider';
-import { existsFile } from './utils/fsEx';
+import { exists } from './utils/fsEx';
 import { UriLocator, areUriEqual } from './utils/uri';
 import { SourceTarget } from './views/startup/sourceTarget';
 import { refreshTreeView, registerTreeViews, revealTreeView } from './views/treeViews';
@@ -149,7 +149,9 @@ async function runStartupMacros(context: ExtensionContext): Promise<void> {
   }
 
   const existingUris = (
-    await Promise.all(uris.map((uri) => existsFile(uri).then((exists) => exists && uri)))
+    await Promise.all(
+      uris.map(async (uri) => ((await exists(uri, vscode.FileType.File)) ? uri : undefined)),
+    )
   ).filter((uri) => !!uri);
 
   if (existingUris.length === 0) {

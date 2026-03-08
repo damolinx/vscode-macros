@@ -4,7 +4,7 @@ import { isMacroLanguage, PreferredLanguage, resolveMacroLanguage } from '../cor
 import { ExtensionContext } from '../extensionContext';
 import { loadTemplates } from '../templates/templates';
 import { createGroupedQuickPickItems } from '../ui/ui';
-import { existsFile } from '../utils/fsEx';
+import { exists } from '../utils/fsEx';
 import { isUntitled, areUriEqual, UriLocator, resolveUri } from '../utils/uri';
 import { showTextDocument } from '../utils/vscodeEx';
 import { activeMacroEditor } from './utils';
@@ -99,7 +99,7 @@ async function createUntitledUri(
   const { defaultExtension: extension } = resolveMacroLanguage(languageId);
   for (let i = 1; i <= maxAttempts; i++) {
     const candidate = vscode.Uri.joinPath(parentUri, `Untitled-${i}${extension}`);
-    if (!(await existsFile(candidate))) {
+    if (!(await exists(candidate, vscode.FileType.File))) {
       const untitledCandidate = candidate.with({ scheme: 'untitled' });
       if (!vscode.workspace.textDocuments.some(({ uri }) => areUriEqual(uri, untitledCandidate))) {
         return untitledCandidate;

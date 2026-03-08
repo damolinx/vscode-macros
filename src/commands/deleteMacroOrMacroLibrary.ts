@@ -58,7 +58,7 @@ async function deleteMacro(context: ExtensionContext, { uri }: Macro): Promise<v
   }
 
   try {
-    await vscode.workspace.fs.delete(uri, { useTrash: uri.scheme === 'file' && !context.isRemote });
+    await vscode.workspace.fs.delete(uri, { useTrash: true });
   } catch (err) {
     vscode.window.showErrorMessage(
       `Failed to delete macro: ${err instanceof Error ? err.message : err}`,

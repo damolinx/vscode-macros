@@ -3,7 +3,7 @@ import { Macro } from '../core/macro';
 import { resolveMacroExt } from '../core/macroLanguages';
 import { ExtensionContext } from '../extensionContext';
 import { setContext } from '../extensionContextValues';
-import { existsFile, fsType } from '../utils/fsEx';
+import { exists, getFileType } from '../utils/fsEx';
 import { isUntitled, parentUri, uriBasename, UriLocator } from '../utils/uri';
 import { getUriOrTreeSelection } from './utils';
 
@@ -39,7 +39,7 @@ export async function pasteFile({ log }: ExtensionContext, locator?: UriLocator)
     return;
   }
 
-  if (!(await existsFile(source))) {
+  if (!(await exists(source, vscode.FileType.File))) {
     log.warn('Paste: Source does not exist', source.toString(true));
     setSource(undefined);
     return;
@@ -51,22 +51,14 @@ export async function pasteFile({ log }: ExtensionContext, locator?: UriLocator)
     return;
   }
 
-  switch (await fsType(target)) {
-    case undefined:
-      log.error('Paste: Target does not exist', target.toString(true));
-      target = undefined;
-      break;
-    case vscode.FileType.Directory:
-      log.debug('Paste: Target is a directory', target.toString(true));
-      break;
-    default:
-      log.debug('Paste: Target is a file, using parent', target.toString(true));
-      target = parentUri(target);
-      break;
-  }
-
-  if (!target) {
-    log.info('Paste: No target (unresolved)');
+  const type = await getFileType(target);
+  if (type && type & vscode.FileType.Directory) {
+    log.debug('Paste: Target is a directory', target.toString(true));
+  } else if (type && type & vscode.FileType.File) {
+    log.debug('Paste: Target is a file, using parent', target.toString(true));
+    target = parentUri(target);
+  } else {
+    log.error('Paste: No valid target', target.toString(true));
     return;
   }
 
@@ -88,7 +80,7 @@ async function safeTargetName(parentUri: vscode.Uri, source: vscode.Uri, maxAtte
   let candidateName = uriBasename(source);
   for (let i = 1; !uri && i <= maxAttempts; i++) {
     const candidate = vscode.Uri.joinPath(parentUri, candidateName);
-    if (!(await existsFile(candidate))) {
+    if (!(await exists(candidate, vscode.FileType.File))) {
       uri = candidate;
       break;
     }

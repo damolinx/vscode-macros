@@ -38,13 +38,11 @@ export class MacroLibrary extends Library {
         const entries = await vscode.workspace.fs.readDirectory(this.uri).then(
           (entries) =>
             entries
-              .filter(
-                ([name, type]) =>
-                  (type === vscode.FileType.File || type === vscode.FileType.SymbolicLink) &&
-                  isMacro(name),
-              )
-              .map(([name, _]) => vscode.Uri.joinPath(this.uri, name))
-              .map((uri) => ({ id: getMacroId(uri), uri })),
+              .filter(([name, type]) => type & vscode.FileType.File && isMacro(name))
+              .map(([name, _]) => {
+                const uri = vscode.Uri.joinPath(this.uri, name);
+                return { id: getMacroId(uri), uri };
+              }),
           (_error) => [],
         );
         this.addItems(...entries);

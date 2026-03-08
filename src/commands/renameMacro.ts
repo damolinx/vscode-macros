@@ -3,7 +3,7 @@ import { basename, extname } from 'path';
 import { Macro } from '../core/macro';
 import { isMacro } from '../core/macroLanguages';
 import { ExtensionContext } from '../extensionContext';
-import { existsFile } from '../utils/fsEx';
+import { exists } from '../utils/fsEx';
 import { isUntitled, parentUri, uriBasename, UriLocator } from '../utils/uri';
 import { getUriOrTreeSelection } from './utils';
 
@@ -40,7 +40,9 @@ async function showRenameInputBox(name: string, parentUri: vscode.Uri) {
         return 'This is not a valid name.';
       } else if (!isMacro(normalizedValue)) {
         return "This file extension doesn't match a supported macro language.";
-      } else if (await existsFile(vscode.Uri.joinPath(parentUri, normalizedValue))) {
+      } else if (
+        await exists(vscode.Uri.joinPath(parentUri, normalizedValue), vscode.FileType.File)
+      ) {
         return 'A file or folder with the same name already exists.';
       }
       return;

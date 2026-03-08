@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { Macro } from '../../core/macro';
 import { PreferredLanguage, resolveMacroLanguage } from '../../core/macroLanguages';
-import { existsFile } from '../../utils/fsEx';
+import { exists } from '../../utils/fsEx';
 import { areUriEqual, isUntitled, uriBasename } from '../../utils/uri';
 import { saveTextEditor } from '../../utils/vscodeEx';
 import { TreeElement } from '../../views/explorer/explorerTreeDataProvider';
@@ -119,7 +119,7 @@ export class ExplorerTreeDragAndDropController extends TreeDragAndDropController
   ): Promise<boolean> {
     const collisions: string[] = [];
     for (const { target } of moveOps) {
-      if (await existsFile(target)) {
+      if (await exists(target, vscode.FileType.File)) {
         collisions.push(uriBasename(target));
       }
     }

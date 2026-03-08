@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { get } from 'https';
 import { ExtensionContext } from '../extensionContext';
-import { existsFile } from '../utils/fsEx';
+import { exists } from '../utils/fsEx';
 import { MacroFilter } from '../utils/ui';
 import { isUntitled, parentUri, uriBasename, UriLocator, resolveUri } from '../utils/uri';
 import { saveTextEditor } from '../utils/vscodeEx';
@@ -21,7 +21,7 @@ export async function downloadAsset(
 
   const targetDownloadUri = vscode.Uri.joinPath(targetDownloadDir, uriBasename(assetUri));
   if (
-    (await existsFile(targetDownloadUri)) &&
+    (await exists(targetDownloadUri, vscode.FileType.File)) &&
     (await vscode.window.showWarningMessage(
       'Do you want to override existing file?',
       {
