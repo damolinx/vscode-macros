@@ -24,13 +24,7 @@ export async function runMacro(
     return; // Nothing to run.
   }
 
-  const executor = await sandboxManager.ensureExecutor(uri);
-  if (
-    (!options?.ignoreDiagnosticErrors &&
-      hasDiagnosticErrors(uri) &&
-      !(await executor.macro.getCode()).options.singleton) ||
-    executor.count === 0
-  ) {
+  if (!options?.ignoreDiagnosticErrors && hasDiagnosticErrors(uri)) {
     const yesOption: vscode.MessageItem = { title: 'Run Anyway' };
     if (
       (await vscode.window.showWarningMessage(
@@ -44,6 +38,7 @@ export async function runMacro(
     }
   }
 
+  const executor = await sandboxManager.ensureExecutor(uri);
   const pareparedExecution = await executor.createDescriptor(options);
 
   try {

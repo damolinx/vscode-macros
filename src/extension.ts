@@ -109,7 +109,9 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.rename.macro', (locator?: UriLocator) => renameMacro(context, locator)),
     cr('macros.resetContext', (locator: UriLocator) => resetSharedContext(context, locator)),
     cr('macros.restart', (locator: Macro | StartupMacro) =>
-      stopMacro(context, locator).then(() => runMacro(context, locator)),
+      stopMacro(context, locator).then(() =>
+        runMacro(context, locator, { ignoreDiagnosticErrors: true }),
+      ),
     ),
     cr('macros.revealInExplorer', (locator?: UriLocator) => revealInOS(context, locator)),
     cr('macros.revealInFinder', (locator?: UriLocator) => revealInOS(context, locator)),
