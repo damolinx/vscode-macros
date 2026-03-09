@@ -2,7 +2,7 @@ import { NaturalComparer } from '../../utils/ui';
 import { Container, groupByContainerMode } from './elements/container';
 import { BaseElementNode, ElementNode } from './elements/elementNode';
 import { ExpandableMetaNode, DefaultExpansionContext } from './meta/metaNode';
-import { isHtmlRenderable, Node, RenderableNode } from './node';
+import { isHtmlRenderable, Node, ParentNode, RenderableNode } from './node';
 import { RendererScripts } from './renderers';
 import { EventHandler } from './scripts/eventHandler';
 import { ScriptNode } from './scripts/scriptNode';
@@ -15,27 +15,28 @@ export class Root extends BaseElementNode {
     this.expanded = false;
   }
 
-  expandMeta(
+  public expandMeta(
     nodes: Node[],
     context = new DefaultExpansionContext(),
-    parent: ElementNode = this,
+    parent: ParentNode = this,
   ): void {
-    for (const node of nodes) {
+    for (const node of [...nodes]) {
       switch (node.renderKind) {
-        case 'element':
-          if ('children' in node) {
-            const elementNode = node as ElementNode;
-            if (elementNode.children.length) {
-              this.expandMeta(elementNode.children, context, elementNode);
-            }
+        case 'element': {
+          const elementNode = node as ElementNode;
+          if (elementNode.children.length) {
+            this.expandMeta(elementNode.children, context, elementNode);
           }
           break;
+        }
 
         case 'meta':
           if ('expand' in node) {
-            const expandableNode = node as ExpandableMetaNode;
-            const expandedNodes = expandableNode.expand(context, parent);
-            parent.children.push(...expandedNodes);
+            const expandedNodes = (node as ExpandableMetaNode).expand(context);
+            const index = parent.children.indexOf(node);
+            if (index !== -1) {
+              parent.children.splice(index, 1, ...expandedNodes);
+            }
             this.expandMeta(expandedNodes, context, parent);
           }
           break;

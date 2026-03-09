@@ -1,4 +1,4 @@
-import { Node, RenderableNode } from '../node';
+import { Node } from '../node';
 
 export type MetaKind = 'boundEvent' | 'eventHandler';
 
@@ -8,7 +8,7 @@ export interface MetaNode extends Node {
 }
 
 export interface ExpandableMetaNode extends MetaNode {
-  expand(context: ExpansionContext, parent: RenderableNode): Node[];
+  expand(context: ExpansionContext): Node[];
 }
 
 export interface ExpansionContext {
