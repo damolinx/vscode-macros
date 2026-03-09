@@ -2,7 +2,7 @@ import { Event } from '../attributes/event';
 import { Node, RenderableNode } from '../node';
 import { Code, normalizeCode } from '../scripts/code';
 import { EventHandler } from '../scripts/eventHandler';
-import { ExpandableMetaNode } from './metaNode';
+import { ExpandableMetaNode, ExpansionContext } from './metaNode';
 
 export class BoundEvent implements ExpandableMetaNode {
   public readonly kind = 'boundEvent';
@@ -11,10 +11,10 @@ export class BoundEvent implements ExpandableMetaNode {
   constructor(
     public readonly eventName: string,
     public readonly code: string,
-  ) {}
+  ) { }
 
-  public expand(context: Record<string, any>, _parent: RenderableNode): Node[] {
-    const id = context.nextId();
+  public expand(context: ExpansionContext, _parent: RenderableNode): Node[] {
+    const id = context.nextId(this.kind);
     const handlerName = `__on_${this.eventName}$${id}`;
 
     return [new Event(this.eventName, handlerName), new EventHandler(handlerName, this.code)];
