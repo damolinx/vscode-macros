@@ -2,10 +2,10 @@ import { NaturalComparer } from '../../utils/ui';
 import { Container, groupByContainerMode } from './elements/container';
 import { BaseElementNode, ElementNode } from './elements/elementNode';
 import { ExpandableMetaNode, DefaultExpansionContext } from './meta/metaNode';
-import { isHtmlRenderable, Kind, Node, RenderableNode } from './node';
+import { isHtmlRenderable, Node, RenderableNode } from './node';
 import { RendererScripts } from './renderers';
 import { EventHandler } from './scripts/eventHandler';
-import { Script } from './scripts/script';
+import { ScriptNode } from './scripts/scriptNode';
 
 export class Root extends BaseElementNode {
   private expanded: boolean;
@@ -59,34 +59,42 @@ export class Root extends BaseElementNode {
     return `${fixedHtml}\n${restHtml}`;
   }
 
-  private renderScripts(elementChildren: Node[]): string {
-    const eventHandlerRegistration = this.getChildrenByKind<EventHandler>('eventHandler', {
-      children: elementChildren,
-      recursive: true,
-    })
-      .sort((a, b) => NaturalComparer.compare(a.handlerName, b.handlerName))
-      .map((handler) => `localHandlers["${handler.handlerName}"] = ${handler.code};`);
-    const scripts = this.getChildrenByKind<Script>('script', { recursive: true }).map(
-      ({ code }) => code,
+  private renderScripts(): string {
+    const eventHandlers: EventHandler[] = [];
+    const scripts = this.getChildren<ScriptNode>(
+      (c): c is ScriptNode => {
+        if (c.renderKind !== 'script') {
+          return false;
+        }
+        if (c.kind === 'eventHandler') {
+          eventHandlers.push(c as EventHandler);
+          return false;
+        }
+        return true;
+      },
+      { recursive: true },
     );
 
-    if (!eventHandlerRegistration.length && !scripts.length) {
+    if (!eventHandlers.length && !scripts.length) {
       return '';
     }
 
     let scriptHtml = '      const vscode = acquireVsCodeApi();';
-    if (eventHandlerRegistration.length) {
+    if (eventHandlers.length) {
       scriptHtml += `
       const localHandlers = {};
       window.addEventListener("macro-event", (e) => {
         localHandlers[e.detail.handlerName]?.(e.detail);
       });
 
-      ${eventHandlerRegistration.join('\n      ')}`;
+      ${eventHandlers
+        .sort((a, b) => NaturalComparer.compare(a.handlerName, b.handlerName))
+        .map((handler) => `localHandlers["${handler.handlerName}"] = ${handler.code};`)
+        .join('\n      ')}`;
     }
 
     if (scripts.length) {
-      scriptHtml += `\n      ${scripts.join('\n      ')}`;
+      scriptHtml += `\n      ${scripts.map((s) => s.render()).join('\n      ')}`;
     }
     return scriptHtml;
   }
@@ -159,8 +167,8 @@ export class Root extends BaseElementNode {
   <body>
 ${this.renderBody(renderableChildren)}
     <script>
-${renderers.map((s) => s.code).join('\n')}
-${this.renderScripts(renderableChildren)}
+${renderers.map((s) => s.render()).join('\n')}
+${this.renderScripts()}
     </script>
   </body>
 </html>`;
@@ -175,12 +183,12 @@ export function createRoot(...children: Node[]): Root {
   return new Root(children);
 }
 
-function getRequiredRenderers(renderableNodes: RenderableNode[]): Script[] {
+function getRequiredRenderers(renderableNodes: RenderableNode[]): ScriptNode[] {
   const renderers = new Map(
     Array.from(RendererScripts.entries()).map(([kind, script]) => [
       kind,
       { script, required: false },
-    ]) as [Kind, { script: Script; required: boolean }][],
+    ]),
   );
   let remaining = renderers.size;
 

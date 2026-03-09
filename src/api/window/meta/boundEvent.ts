@@ -11,7 +11,7 @@ export class BoundEvent implements ExpandableMetaNode {
   constructor(
     public readonly eventName: string,
     public readonly code: string,
-  ) { }
+  ) {}
 
   public expand(context: ExpansionContext, _parent: RenderableNode): Node[] {
     const id = context.nextId(this.kind);
