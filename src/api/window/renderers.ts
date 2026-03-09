@@ -1,8 +1,10 @@
 import * as ts from 'typescript';
 import { ExtensionContext } from '../../extensionContext';
 import { readFile } from '../../utils/resources';
-import { Kind } from './node';
+import { ElementNode } from './elements/elementNode';
+import { isHtmlRenderable, Kind, RenderableNode } from './node';
 import { Script } from './scripts/script';
+import { ScriptNode } from './scripts/scriptNode';
 
 export const MACRO_RENDERERS_DIR_RESOURCE = 'renderers';
 export const SUPPORTED_RENDERERS: readonly Kind[] = ['button', 'container', 'input', 'tree'];
@@ -28,4 +30,40 @@ export async function loadRenderers({ extensionContext, log }: ExtensionContext)
     }),
   );
   log.debug(`Loaded UI component renderers in ${Date.now() - start}ms`);
+}
+
+export function resolveRenderers(renderableNodes: RenderableNode[]): ScriptNode[] {
+  const renderers = new Map(
+    Array.from(RendererScripts.entries()).map(([kind, script]) => [
+      kind,
+      { script, required: false },
+    ]),
+  );
+  let remaining = renderers.size;
+
+  recurse(renderableNodes);
+
+  return Array.from(renderers.values())
+    .filter((r) => r.required)
+    .map((r) => r.script);
+
+  function recurse(nodes: RenderableNode[]): void {
+    for (const node of nodes) {
+      const entry = renderers.get(node.kind);
+      if (entry && !entry.required) {
+        entry.required = true;
+        if (--remaining == 0) {
+          return;
+        }
+      }
+
+      if (node.renderKind === 'element') {
+        const elementNode = node as ElementNode;
+        const children = elementNode.children.filter(isHtmlRenderable);
+        if (children.length) {
+          recurse(children);
+        }
+      }
+    }
+  }
 }

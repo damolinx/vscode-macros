@@ -3,19 +3,20 @@ import { Container, groupByContainerMode } from './elements/container';
 import { BaseElementNode, ElementNode } from './elements/elementNode';
 import { ExpandableMetaNode, DefaultExpansionContext } from './meta/metaNode';
 import { isHtmlRenderable, Node, ParentNode, RenderableNode } from './node';
-import { RendererScripts } from './renderers';
+import { resolveRenderers } from './renderers';
 import { EventHandler } from './scripts/eventHandler';
 import { ScriptNode } from './scripts/scriptNode';
 
 export class Root extends BaseElementNode {
-  private expanded: boolean;
+  #cachedHtml?: string;
+  #metaExpanded: boolean;
 
   constructor(children: Node[]) {
     super('container', undefined, children);
-    this.expanded = false;
+    this.#metaExpanded = false;
   }
 
-  public expandMeta(
+  private expandMeta(
     nodes: Node[],
     context = new DefaultExpansionContext(),
     parent: ParentNode = this,
@@ -42,6 +43,23 @@ export class Root extends BaseElementNode {
           break;
       }
     }
+  }
+
+  public override render(): string {
+    if (this.#cachedHtml !== undefined) {
+      return this.#cachedHtml;
+    }
+
+    if (!this.#metaExpanded) {
+      this.expandMeta(this.children);
+      this.#metaExpanded = true;
+    }
+
+    const renderableChildren = this.getChildren(isHtmlRenderable);
+    const renderers = resolveRenderers(renderableChildren);
+
+    this.#cachedHtml = this.buildHtml(renderableChildren, renderers);
+    return this.#cachedHtml;
   }
 
   private renderBody(elementChildren: RenderableNode[]): string {
@@ -89,9 +107,9 @@ export class Root extends BaseElementNode {
       });
 
       ${eventHandlers
-        .sort((a, b) => NaturalComparer.compare(a.handlerName, b.handlerName))
-        .map((handler) => `localHandlers["${handler.handlerName}"] = ${handler.code};`)
-        .join('\n      ')}`;
+          .sort((a, b) => NaturalComparer.compare(a.handlerName, b.handlerName))
+          .map((handler) => `localHandlers["${handler.handlerName}"] = ${handler.code};`)
+          .join('\n      ')}`;
     }
 
     if (scripts.length) {
@@ -100,16 +118,15 @@ export class Root extends BaseElementNode {
     return scriptHtml;
   }
 
-  public override render(): string {
-    if (!this.expanded) {
-      this.expandMeta(this.children);
-      this.expanded = true;
-    }
+  public toHtml(): string {
+    return this.render();
+  }
 
-    const renderableChildren = this.getChildren(isHtmlRenderable);
-    const renderers = getRequiredRenderers(renderableChildren);
-
-    return `
+  private buildHtml(
+    renderableChildren: RenderableNode[],
+    renderers: ScriptNode[],
+  ): string {
+    const html = `
 <!DOCTYPE html>
 <html>
   <head>
@@ -173,49 +190,10 @@ ${this.renderScripts()}
     </script>
   </body>
 </html>`;
-  }
-
-  public toHtml(): string {
-    return this.render();
+    return html;
   }
 }
 
 export function createRoot(...children: Node[]): Root {
   return new Root(children);
-}
-
-function getRequiredRenderers(renderableNodes: RenderableNode[]): ScriptNode[] {
-  const renderers = new Map(
-    Array.from(RendererScripts.entries()).map(([kind, script]) => [
-      kind,
-      { script, required: false },
-    ]),
-  );
-  let remaining = renderers.size;
-
-  recurse(renderableNodes);
-
-  return Array.from(renderers.values())
-    .filter((r) => r.required)
-    .map((r) => r.script);
-
-  function recurse(nodes: RenderableNode[]): void {
-    for (const node of nodes) {
-      const entry = renderers.get(node.kind);
-      if (entry && !entry.required) {
-        entry.required = true;
-        if (--remaining == 0) {
-          return;
-        }
-      }
-
-      if (node.renderKind === 'element') {
-        const elementNode = node as ElementNode;
-        const children = elementNode.children.filter(isHtmlRenderable);
-        if (children.length) {
-          recurse(children);
-        }
-      }
-    }
-  }
 }
