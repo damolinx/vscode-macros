@@ -1,19 +1,27 @@
+import { EventHandlerName } from '../scripts/eventHandler';
 import { AttributeNode } from './attributeNode';
 
 export class Event implements AttributeNode {
   public readonly kind = 'event';
-  public readonly renderKind = 'attribute';
+  public readonly role = 'attribute';
+  public readonly name: string;
 
   constructor(
-    public readonly name: string,
-    public readonly handlerName: string,
-  ) {}
+    public readonly event: string,
+    public readonly handlerName: EventHandlerName,
+  ) {
+    this.name = `data-on-${this.event}`;
+  }
+
+  public get value(): string {
+    return this.handlerName;
+  }
 
   public render(): string {
-    return `data-on-${this.name}="${this.handlerName}"`;
+    return `${this.name}="${this.value}"`;
   }
 }
 
-export function createEvent(name: string, handlerName: string): Event {
+export function createEvent(name: string, handlerName: EventHandlerName): Event {
   return new Event(name, handlerName);
 }

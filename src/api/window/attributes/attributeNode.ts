@@ -1,8 +1,9 @@
-import { Kind, RenderableNode } from '../node';
+import { MarkupNode } from '../node';
 
-export type AttributeKind = Extract<Kind, 'attribute' | 'event'>;
+export type AttributeValue = string | number | boolean | null | undefined;
 
-export interface AttributeNode extends RenderableNode {
-  readonly kind: AttributeKind;
-  readonly renderKind: 'attribute';
+export interface AttributeNode extends MarkupNode {
+  readonly role: 'attribute';
+  readonly name: string;
+  readonly value?: AttributeValue;
 }

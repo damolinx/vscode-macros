@@ -1,10 +1,8 @@
-import { AttributeNode } from './attributeNode';
-
-export type AttributeValue = string | number | boolean | null | undefined;
+import { AttributeNode, AttributeValue } from './attributeNode';
 
 export class Attribute implements AttributeNode {
   public readonly kind = 'attribute';
-  public readonly renderKind = 'attribute';
+  public readonly role = 'attribute';
 
   public constructor(
     public readonly name: string,

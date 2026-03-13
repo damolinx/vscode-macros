@@ -1,39 +1,50 @@
 import { NaturalComparer } from '../../utils/ui';
-import { Container, groupByContainerMode } from './elements/container';
-import { BaseElementNode, ElementNode } from './elements/elementNode';
-import { ExpandableMetaNode, DefaultExpansionContext } from './meta/metaNode';
-import { isHtmlRenderable, Node, ParentNode, RenderableNode } from './node';
+import { BaseElementNode } from './elements/baseElementNode';
+import { createNodeFactory } from './elements/common';
+import { ElementNode, ElementNodeOptions } from './elements/elementNode';
+import { getLayout } from './layout';
+import { ExpansionContext } from './meta/expansionContext';
+import { MetaNode } from './meta/metaNode';
+import { ProgressMeta } from './meta/progressMeta';
+import { Node, RenderableNode } from './node';
 import { resolveRenderers } from './renderers';
 import { EventHandler } from './scripts/eventHandler';
 import { ScriptNode } from './scripts/scriptNode';
+import { Style } from './style/style';
 
-export class Root extends BaseElementNode {
+export interface RootOptions extends ElementNodeOptions {
+  id?: never;
+  progress?: true;
+}
+
+export class Root extends BaseElementNode<RootOptions> {
   #cachedHtml?: string;
   #metaExpanded: boolean;
 
-  constructor(children: Node[]) {
-    super('container', undefined, children);
+  constructor(options: RootOptions | undefined, children: Node[]) {
+    super('container', options, children);
     this.#metaExpanded = false;
   }
 
   private expandMeta(
     nodes: Node[],
-    context = new DefaultExpansionContext(),
-    parent: ParentNode = this,
+    context = new ExpansionContext(),
+    parent: ElementNode = this,
   ): void {
     for (const node of [...nodes]) {
-      switch (node.renderKind) {
-        case 'element': {
-          const elementNode = node as ElementNode;
-          if (elementNode.children.length) {
-            this.expandMeta(elementNode.children, context, elementNode);
+      switch (node.role) {
+        case 'element':
+          {
+            const elementNode = node as ElementNode;
+            if (elementNode.children.length) {
+              this.expandMeta(elementNode.children, context, elementNode);
+            }
           }
           break;
-        }
 
         case 'meta':
-          if ('expand' in node) {
-            const expandedNodes = (node as ExpandableMetaNode).expand(context);
+          {
+            const expandedNodes = (node as MetaNode).expand(context);
             const index = parent.children.indexOf(node);
             if (index !== -1) {
               parent.children.splice(index, 1, ...expandedNodes);
@@ -51,11 +62,17 @@ export class Root extends BaseElementNode {
     }
 
     if (!this.#metaExpanded) {
+      if (this.options?.progress) {
+        this.children.unshift(new ProgressMeta());
+      }
+
       this.expandMeta(this.children);
       this.#metaExpanded = true;
     }
 
-    const renderableChildren = this.getChildren(isHtmlRenderable);
+    const renderableChildren = this.getChildren((c): c is RenderableNode =>
+      ['content', 'element'].includes(c.role),
+    );
     const renderers = resolveRenderers(renderableChildren);
 
     this.#cachedHtml = this.buildHtml(renderableChildren, renderers);
@@ -63,33 +80,31 @@ export class Root extends BaseElementNode {
   }
 
   private renderBody(elementChildren: RenderableNode[]): string {
-    const containers = this.getChildrenByKind<Container>('container');
-    if (!containers.length) {
-      return elementChildren.map((c) => c.render()).join('\n');
-    }
-
-    const { fixed, scrollable, other } = groupByContainerMode(elementChildren);
+    const { decorations, fixed, scrollable, other } = getLayout(elementChildren);
+    const decorationsHtml = decorations.map((decoration) => decoration.render()).join('\n');
     const fixedHtml = fixed.map((container) => container.render()).join('\n');
     const rest = [...scrollable, ...other];
     const restHtml = rest.length
       ? `<div class="macro-scrollable">\n${rest.map((container) => container.render()).join('\n')}\n</div>`
       : '';
 
-    return `${fixedHtml}\n${restHtml}`;
+    return `${decorationsHtml}${fixedHtml}\n${restHtml}`;
   }
 
   private renderScripts(): string {
     const eventHandlers: EventHandler[] = [];
     const scripts = this.getChildren<ScriptNode>(
       (c): c is ScriptNode => {
-        if (c.renderKind !== 'script') {
-          return false;
+        let accept = false;
+        if (c.role === 'script') {
+          if (c.kind !== 'eventHandler') {
+            accept = true;
+          } else {
+            eventHandlers.push(c as EventHandler);
+          }
         }
-        if (c.kind === 'eventHandler') {
-          eventHandlers.push(c as EventHandler);
-          return false;
-        }
-        return true;
+
+        return accept;
       },
       { recursive: true },
     );
@@ -107,9 +122,9 @@ export class Root extends BaseElementNode {
       });
 
       ${eventHandlers
-          .sort((a, b) => NaturalComparer.compare(a.handlerName, b.handlerName))
-          .map((handler) => `localHandlers["${handler.handlerName}"] = ${handler.code};`)
-          .join('\n      ')}`;
+        .sort((a, b) => NaturalComparer.compare(a.handlerName, b.handlerName))
+        .map((handler) => `localHandlers["${handler.handlerName}"] = ${handler.code};`)
+        .join('\n      ')}`;
     }
 
     if (scripts.length) {
@@ -118,14 +133,16 @@ export class Root extends BaseElementNode {
     return scriptHtml;
   }
 
+  private renderStyle(): string {
+    const styleScripts = this.getChildrenByRole<Style>('style', { recursive: true });
+    return styleScripts.map((s) => s.render()).join('\n    ');
+  }
+
   public toHtml(): string {
     return this.render();
   }
 
-  private buildHtml(
-    renderableChildren: RenderableNode[],
-    renderers: ScriptNode[],
-  ): string {
+  private buildHtml(renderableChildren: RenderableNode[], renderers: ScriptNode[]): string {
     const html = `
 <!DOCTYPE html>
 <html>
@@ -181,6 +198,7 @@ export class Root extends BaseElementNode {
       flex: 1 1 auto;
       overflow: auto;
     }
+${this.renderStyle()}
   </style>
   <body>
 ${this.renderBody(renderableChildren)}
@@ -194,6 +212,4 @@ ${this.renderScripts()}
   }
 }
 
-export function createRoot(...children: Node[]): Root {
-  return new Root(children);
-}
+export const createRoot = createNodeFactory<RootOptions, Root>(Root);

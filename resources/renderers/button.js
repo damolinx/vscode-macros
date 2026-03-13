@@ -1,7 +1,7 @@
 // @ts-check
 class MacroButton extends HTMLElement {
   static get observedAttributes() {
-    return ['aria-label', 'disabled', 'tabindex', 'toggle', 'toggled'];
+    return ['aria-label', 'disabled', 'tabindex', 'toggled'];
   }
 
   constructor() {
@@ -30,10 +30,10 @@ class MacroButton extends HTMLElement {
 
   /**
    * @param {string} name
-   * @param {string | null} oldValue
+   * @param {string | null} _oldValue
    * @param {string | null} newValue
    */
-  attributeChangedCallback(name, oldValue, newValue) {
+  attributeChangedCallback(name, _oldValue, newValue) {
     if (!this.button) {
       return;
     }
@@ -56,22 +56,10 @@ class MacroButton extends HTMLElement {
         break;
 
       case 'toggled':
-        newValue
-          ? this.button.setAttribute('aria-pressed', 'true')
-          : this.button.removeAttribute('aria-pressed');
-
-        if (oldValue !== newValue) {
-          this.dispatchEvent(
-            new CustomEvent('macro-event', {
-              bubbles: true,
-              detail: {
-                eventName: 'toggle',
-                handlerName: this.getAttribute('data-on-toggle'),
-                target: this.button,
-                toggled: this.hasAttribute('toggled'),
-              },
-            }),
-          );
+        if (this.hasAttribute('toggle')) {
+          newValue
+            ? this.button.setAttribute('aria-pressed', 'true')
+            : this.button.removeAttribute('aria-pressed');
         }
         break;
     }
@@ -138,11 +126,16 @@ class MacroButton extends HTMLElement {
     }
 
     this.button.addEventListener('click', () => {
+      let toggled = undefined;
+
       if (this.hasAttribute('toggle')) {
-        if (this.hasAttribute('toggled')) {
-          this.removeAttribute('toggled');
-        } else {
+        const newState = !this.hasAttribute('toggled');
+        toggled = newState;
+
+        if (newState) {
           this.setAttribute('toggled', '');
+        } else {
+          this.removeAttribute('toggled');
         }
       }
 
@@ -155,11 +148,26 @@ class MacroButton extends HTMLElement {
               eventName: 'click',
               handlerName,
               target: this.button,
+              toggled, // undefined for normal buttons, boolean for toggle buttons
             },
           }),
         );
       }
     });
+  }
+
+  get toggled() {
+    return this.hasAttribute('toggle') ? this.hasAttribute('toggled') : undefined;
+  }
+
+  set toggled(value) {
+    if (this.hasAttribute('toggle')) {
+      if (value) {
+        this.setAttribute('toggled', '');
+      } else {
+        this.removeAttribute('toggled');
+      }
+    }
   }
 }
 

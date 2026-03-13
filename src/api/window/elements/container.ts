@@ -1,7 +1,8 @@
 import { Attribute } from '../attributes/attribute';
-import { Node, RenderableNode } from '../node';
+import { Node } from '../node';
+import { BaseElementNode } from './baseElementNode';
 import { createNodeFactory } from './common';
-import { BaseElementNode, ElementNodeOptions } from './elementNode';
+import { ElementNodeOptions, ElementRole } from './elementNode';
 
 export type ContainerMode = 'fixed' | 'scrollable';
 
@@ -10,9 +11,12 @@ export interface ContainerOptions extends ElementNodeOptions {
 }
 
 export class Container extends BaseElementNode<ContainerOptions> {
+  public readonly elementRole: ElementRole;
   public readonly mode: ContainerMode;
+
   constructor(options: ContainerOptions | undefined, children: Node[]) {
     super('container', options, children);
+    this.elementRole = 'container';
     this.mode = this.options?.mode ?? 'scrollable';
   }
 
@@ -24,26 +28,3 @@ export class Container extends BaseElementNode<ContainerOptions> {
 }
 
 export const createContainer = createNodeFactory<ContainerOptions, Container>(Container);
-
-export interface ContainerModeGroups {
-  fixed: Container[];
-  scrollable: Container[];
-  other: RenderableNode[];
-}
-
-export function groupByContainerMode(nodes: RenderableNode[]): ContainerModeGroups {
-  const grouped: ContainerModeGroups = {
-    fixed: [],
-    scrollable: [],
-    other: [],
-  };
-
-  for (const node of nodes) {
-    if (node instanceof Container) {
-      grouped[node.mode].push(node);
-    } else {
-      grouped.other.push(node);
-    }
-  }
-  return grouped;
-}

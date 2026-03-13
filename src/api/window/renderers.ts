@@ -1,15 +1,15 @@
 import * as ts from 'typescript';
 import { ExtensionContext } from '../../extensionContext';
 import { readFile } from '../../utils/resources';
-import { ElementNode } from './elements/elementNode';
-import { isHtmlRenderable, Kind, RenderableNode } from './node';
+import { ElementNode, isElement } from './elements/elementNode';
+import { RenderableNode } from './node';
 import { Script } from './scripts/script';
 import { ScriptNode } from './scripts/scriptNode';
 
 export const MACRO_RENDERERS_DIR_RESOURCE = 'renderers';
-export const SUPPORTED_RENDERERS: readonly Kind[] = ['button', 'container', 'input', 'tree'];
+export const SUPPORTED_RENDERERS: readonly string[] = ['button', 'container', 'input', 'tree'];
 
-export const RendererScripts = new Map<Kind, Script>();
+export const RendererScripts = new Map<string, Script>();
 
 export async function loadRenderers({ extensionContext, log }: ExtensionContext): Promise<void> {
   const printer = ts.createPrinter({ removeComments: true });
@@ -57,9 +57,9 @@ export function resolveRenderers(renderableNodes: RenderableNode[]): ScriptNode[
         }
       }
 
-      if (node.renderKind === 'element') {
+      if (node.role === 'element') {
         const elementNode = node as ElementNode;
-        const children = elementNode.children.filter(isHtmlRenderable);
+        const children = elementNode.children.filter(isElement);
         if (children.length) {
           recurse(children);
         }

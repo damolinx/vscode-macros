@@ -1,8 +1,9 @@
 import { Attribute } from '../attributes/attribute';
 import { Event } from '../attributes/event';
 import { Node } from '../node';
+import { BaseElementNode } from './baseElementNode';
 import { createNodeFactory } from './common';
-import { BaseElementNode, ElementNodeOptions } from './elementNode';
+import { ElementNodeOptions } from './elementNode';
 
 export interface TreeOptions extends ElementNodeOptions {
   readonly enableRemove?: true;

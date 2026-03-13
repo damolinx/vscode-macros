@@ -523,16 +523,20 @@ The use case for the DSL is the same as for the macros: quickly generate a tool 
 
 ### Node Types
 
-- `macros.window.ui.root(...children)`: creates the top-level container. Calling `.toHtml()` on the root returns the final HTML string.
+- `macros.window.ui.root([options,] ...children)`: creates the top-level container. Calling `.toHtml()` on the root returns the final HTML string.
 
-- `macros.window.ui.container([options], ...children)`: creates a layout grouping, so you can fix a set of controls at the webview and have a scrollable section at the bottom.
+  Options:
+    - `progress?: true`: adds an indeterminate progress bar to the UI, hidden by default. This gives your WebView script access to:
+      - `window.macro.progress.show()`:  shows the progress bar
+      - `window.macro.progress.hide()`: hides the progress bar
+
+- `macros.window.ui.container([options,] ...children)`: creates a layout grouping, so you can fix a set of controls at the webview and have a scrollable section at the bottom.
 
   Options:
     - `id?: string`
     - `mode: "fixed" | "scrollable"`
 
-
-- `macros.window.ui.input([options], ...children)`: creates an input field with optional inline buttons and event bindings.
+- `macros.window.ui.input([options,] ...children)`: creates an input field with optional inline buttons and event bindings.
 
   Options:
   - `id?: string`
@@ -541,16 +545,16 @@ The use case for the DSL is the same as for the macros: quickly generate a tool 
   - `type?: "text" | "password" | "number" | "email"`
   - `value?: string`
 
-- `macros.window.ui.button([options], ...children)`: creates a clickable button.
+- `macros.window.ui.button([options,] ...children)`: creates a clickable button.
 
   Options:
   - `id?: string`
   - `label?: string`
   - `tabIndex?: number`
-  - `toggle?: boolean` (enables toggle mode)
+  - `toggle?: boolean`: When `true`, button is a toggle-button.
 
 - `macros.window.ui.text(string)`: creates a text node for inline content.
-- `macros.window.ui.tree([options], ...eventNodes)`: creates a hierarchical tree view.
+- `macros.window.ui.tree([options,] ...eventNodes)`: creates a hierarchical tree view.
 
   Options:
   - `id?: string`
@@ -589,6 +593,7 @@ function createHtml() {
   const { ui } = macros.window;
   const html = ui
     .root(
+      { progress: true },
       ui.container(
         { mode: 'fixed' },
         ui.input(

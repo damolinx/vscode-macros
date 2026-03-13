@@ -1,7 +1,8 @@
 import { Attribute } from '../attributes/attribute';
 import { Node } from '../node';
+import { BaseElementNode } from './baseElementNode';
 import { createNodeFactory } from './common';
-import { BaseElementNode, ElementNodeOptions } from './elementNode';
+import { ElementNodeOptions } from './elementNode';
 
 export interface InputOptions extends ElementNodeOptions {
   readonly placeholder?: string;

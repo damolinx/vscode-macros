@@ -1,16 +1,16 @@
 import { ScriptNode } from './scriptNode';
 
 export class Script implements ScriptNode {
-  public readonly renderKind = 'script';
+  public readonly role = 'script';
   public readonly kind = 'script';
 
-  constructor(public readonly code: string) {}
+  constructor(private readonly code: string | (() => string)) {}
 
-  render(): string {
-    return this.code;
+  public render(): string {
+    return typeof this.code === 'function' ? this.code() : this.code;
   }
 }
 
-export function createScript(code: string): Script {
+export function createScript(code: string | (() => string)): Script {
   return new Script(code);
 }

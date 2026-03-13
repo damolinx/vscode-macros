@@ -1,8 +1,9 @@
 import { Attribute } from '../attributes/attribute';
 import { createText } from '../content/text';
 import { Node } from '../node';
+import { BaseElementNode } from './baseElementNode';
 import { createNodeFactory } from './common';
-import { BaseElementNode, ElementNodeOptions } from './elementNode';
+import { ElementNodeOptions } from './elementNode';
 
 export interface ButtonOptions extends ElementNodeOptions {
   readonly label?: string;

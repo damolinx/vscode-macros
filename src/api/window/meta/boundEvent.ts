@@ -1,23 +1,24 @@
 import { Event } from '../attributes/event';
 import { Node } from '../node';
 import { Code, normalizeCode } from '../scripts/code';
-import { EventHandler } from '../scripts/eventHandler';
-import { ExpandableMetaNode, ExpansionContext } from './metaNode';
+import { EventHandler, EventHandlerName } from '../scripts/eventHandler';
+import { ExpansionContext } from './expansionContext';
+import { MetaNode } from './metaNode';
 
-export class BoundEvent implements ExpandableMetaNode {
+export class BoundEvent implements MetaNode {
   public readonly kind = 'boundEvent';
-  public readonly renderKind = 'meta';
+  public readonly role = 'meta';
 
   constructor(
-    public readonly eventName: string,
+    public readonly event: string,
     public readonly code: string,
   ) {}
 
   public expand(context: ExpansionContext): Node[] {
     const id = context.nextId(this.kind);
-    const handlerName = `__on_${this.eventName}$${id}`;
+    const handlerName = `__on_${this.event}$${id}` as EventHandlerName;
 
-    return [new Event(this.eventName, handlerName), new EventHandler(handlerName, this.code)];
+    return [new Event(this.event, handlerName), new EventHandler(handlerName, this.code)];
   }
 }
 

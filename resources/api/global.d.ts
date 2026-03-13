@@ -109,6 +109,10 @@ declare global {
         ): macros.ui.Input;
         on(eventName: string, handlerName: string): macros.ui.Event;
         onHandle(eventName: string, code: macros.ui.EventHandlerCode): macros.ui.BoundEvent;
+        root(
+          options: macros.ui.RootOptions,
+          ...nodes: (macros.ui.Container | macros.ui.Node)[]
+        ): macros.ui.Root;
         root(...nodes: (macros.ui.Container | macros.ui.Node)[]): macros.ui.Root;
         script(code: string): macros.ui.Script;
         text(text: string): macros.ui.Text;
@@ -193,6 +197,10 @@ export declare namespace macros.ui {
 
   export interface Input extends BaseNode {
     readonly kind: 'input';
+  }
+
+  export interface Root {
+    readonly enableProgress?: boolean;
   }
 
   export interface Root extends Container {

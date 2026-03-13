@@ -1,8 +1,8 @@
-import { RenderableNode } from '../node';
+import { ContentNode } from './contentNode';
 
-export class Text implements RenderableNode {
+export class Text implements ContentNode {
   public readonly kind = 'text';
-  public readonly renderKind = 'content';
+  public readonly role = 'content';
 
   constructor(public readonly text: string) {}
 
