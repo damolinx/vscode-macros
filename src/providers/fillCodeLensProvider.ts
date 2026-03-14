@@ -24,10 +24,10 @@ export class FillCodeLensProvider implements vscode.CodeLensProvider {
 
     lenses.push(
       new vscode.CodeLens(new vscode.Range(0, 0, 0, 0), {
-        title: 'Fill with Snippet',
+        title: 'Fill with Template',
         command: 'macros.new.macro.activeEditor',
         arguments: [document.uri],
-        tooltip: 'Replace current content with a chosen snippet',
+        tooltip: 'Replace current contents with a chosen macro template',
       }),
     );
 
