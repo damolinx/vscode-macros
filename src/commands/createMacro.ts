@@ -127,6 +127,7 @@ async function getTemplateContent(
   const { name } = resolveMacroLanguage(languageId);
   const selectedItem = await vscode.window.showQuickPick(items, {
     matchOnDescription: true,
+    matchOnDetail: true,
     placeHolder: `Select a ${name} template`,
   });
   if (!selectedItem) {
