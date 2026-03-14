@@ -200,7 +200,8 @@ export declare namespace macros.ui {
   }
 
   export interface Root {
-    readonly enableProgress?: boolean;
+    readonly errorRelay?: boolean;
+    readonly progress?: boolean;
   }
 
   export interface Root extends Container {
@@ -223,7 +224,7 @@ export declare namespace macros.ui {
   }
 
   export interface TreeOptions extends NodeOptions {
-    readonly enableRemove?: boolean;
+    readonly remove?: boolean;
     readonly initialItems?: macros.ui.TreeNode[];
   }
 
@@ -236,4 +237,4 @@ export declare namespace macros.ui {
   export type EventNode = BoundEvent | Event | EventHandler;
 }
 
-export {};
+export { };

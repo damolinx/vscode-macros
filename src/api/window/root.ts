@@ -3,6 +3,7 @@ import { BaseElementNode } from './elements/baseElementNode';
 import { createNodeFactory } from './elements/common';
 import { ElementNode, ElementNodeOptions } from './elements/elementNode';
 import { getLayout } from './layout';
+import { ErrorRelayMeta } from './meta/errorRelay';
 import { ExpansionContext } from './meta/expansionContext';
 import { MetaNode } from './meta/metaNode';
 import { ProgressMeta } from './meta/progressMeta';
@@ -14,6 +15,7 @@ import { Style } from './style/style';
 
 export interface RootOptions extends ElementNodeOptions {
   id?: never;
+  errorRelay?: false;
   progress?: true;
 }
 
@@ -62,6 +64,9 @@ export class Root extends BaseElementNode<RootOptions> {
     }
 
     if (!this.#metaExpanded) {
+      if (this.options?.errorRelay !== false) {
+        this.children.unshift(new ErrorRelayMeta());
+      }
       if (this.options?.progress) {
         this.children.unshift(new ProgressMeta());
       }
@@ -109,26 +114,37 @@ export class Root extends BaseElementNode<RootOptions> {
       { recursive: true },
     );
 
-    if (!eventHandlers.length && !scripts.length) {
-      return '';
-    }
+    let scriptHtml = `
+      window.vscode ||= acquireVsCodeApi();
+      window.macro ||= {};`;
 
-    let scriptHtml = '      const vscode = acquireVsCodeApi();';
     if (eventHandlers.length) {
+      const errorRelayEnabled = this.options?.errorRelay !== false;
       scriptHtml += `
       const localHandlers = {};
       window.addEventListener("macro-event", (e) => {
-        localHandlers[e.detail.handlerName]?.(e.detail);
+        const handler = localHandlers[e.detail.handlerName];
+        if (!handler) { return; }
+        ${errorRelayEnabled
+          ? `try {
+            const result = handler(e.detail);
+            if (result?.catch) {
+              result.catch(err => window.macro.error?.(err));
+            }
+          } catch (err) {
+            window.macro.error(err);
+          }`
+          : `handler(e.detail);`}
       });
 
       ${eventHandlers
-        .sort((a, b) => NaturalComparer.compare(a.handlerName, b.handlerName))
-        .map((handler) => `localHandlers["${handler.handlerName}"] = ${handler.code};`)
-        .join('\n      ')}`;
+          .sort((a, b) => NaturalComparer.compare(a.handlerName, b.handlerName))
+          .map((handler) => `localHandlers["${handler.handlerName}"] = ${handler.code};`)
+          .join('\n      ')}`;
     }
 
     if (scripts.length) {
-      scriptHtml += `\n      ${scripts.map((s) => s.render()).join('\n      ')}`;
+      scriptHtml += `\n      ${scripts.map((s) => s.render()).join('\n')}`;
     }
     return scriptHtml;
   }

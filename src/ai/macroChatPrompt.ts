@@ -203,7 +203,9 @@ Follow these rules when creating a macro:
   - The standalone HTML content that can be used as WebView is produced by calling
     \`.toHtml()\` on the root node.
   - Use these factories to build UI:
-    - \`root(children...)\`: represents HTML document
+    - \`root({progress:}, children...)\`: represents HTML document. The progress arg enables a
+      progress bar in the webview that can be toggled using using \`window.macro.progress.show\`
+      and \`window.macro.progress.hide\` from a script running the webview side.
     - \`container({mode: 'fixed' | 'scrollable'}, children...)\`: creates a layout
       container to arrange controls.
     - \`input({id: , value:, placeholder:, type: text|password|email, tabIndex:}, children...)\`:
@@ -211,7 +213,7 @@ Follow these rules when creating a macro:
     - \`button({id:, toggle: true|false}, children...)\`: creates a button. Togglable buttons can
       be created with toggle arg.
     - \`text(string)\`: text written as-is to the HTML.
-    - \`tree({id:, enableRemove:, initialItems:}, children...)\`: Tree control. The enableRemove
+    - \`tree({id:, remove:, initialItems:}, children...)\`: Tree control. The remove
       arg adds a remove button to every node.
     - \`script(string)\`: Javascript code to be generated into a <script> section.
     - \`on(eventName, handlerName)\`: declares a given even will be handled by a named handler.

@@ -6,7 +6,7 @@ import { createNodeFactory } from './common';
 import { ElementNodeOptions } from './elementNode';
 
 export interface TreeOptions extends ElementNodeOptions {
-  readonly enableRemove?: true;
+  readonly remove?: true;
   readonly initialItems?: TreeNode[];
 }
 
@@ -26,7 +26,7 @@ export class Tree extends BaseElementNode<TreeOptions> {
     const attrs = super.getAttributes();
 
     if (this.options) {
-      if (this.options.enableRemove) {
+      if (this.options.remove) {
         attrs.push(new Attribute('enable-remove', undefined));
       }
       if (this.options.initialItems?.length) {

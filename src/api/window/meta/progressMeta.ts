@@ -10,7 +10,7 @@ export class ProgressMeta implements MetaNode {
   public readonly kind = 'progress';
   public readonly role = 'meta';
 
-  constructor(private readonly options?: ElementNodeOptions) {}
+  constructor(private readonly options?: ElementNodeOptions) { }
 
   public expand(context: ExpansionContext): Node[] {
     const id = this.options?.id ?? `__progress_${context.nextId(this.kind)}`;
@@ -55,21 +55,17 @@ function getScript(id: string): () => string {
       const el = document.getElementById("${id}");
       if (!el) { return; }
 
-      window.macro ||= {};
-
       window.macro.progress = {
         show() {
           el.style.opacity = "1";
           el.classList.remove("indeterminate");
-          void el.offsetWidth; // restart animation
+          void el.offsetWidth;
           el.classList.add("indeterminate");
         },
-
         hide() {
           el.style.opacity = "0";
           el.classList.remove("indeterminate");
         }
       };
-    })();
-  `;
+    })();`;
 }
