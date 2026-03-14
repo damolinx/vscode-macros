@@ -3,6 +3,8 @@
 //   retained  – keeps the macro context alive until explicitly stopped
 //   singleton – ensures only one macro instance runs at a time
 
+import * as vscode from 'vscode';
+
 const CommandId = 'macro.helloWorld';
 
 // Ensures all registered components are disposed when the macro instance ends

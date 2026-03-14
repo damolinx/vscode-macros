@@ -1,4 +1,5 @@
 // @ts-nocheck
+import * as vscode from 'vscode';
 
 vscode.window.withProgress(
   {

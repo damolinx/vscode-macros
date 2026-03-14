@@ -1,4 +1,5 @@
 // @ts-nocheck
+import * as vscode from 'vscode';
 
 // Reference: https://code.visualstudio.com/api/extension-guides/webview
 

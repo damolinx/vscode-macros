@@ -2,6 +2,8 @@
 // @macro: retained
 //   retained  – keeps the macro context alive until explicitly stopped
 
+import * as vscode from 'vscode';
+
 // The macro context isn’t disposed when the script finishes; it must be
 // explicitly stopped via the "Macros: Show Running Macros" command or the
 //  "Request to Stop" action in the Macro Explorer.

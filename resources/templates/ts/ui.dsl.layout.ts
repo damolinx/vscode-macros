@@ -2,6 +2,8 @@
 // @macro: singleton
 //   singleton – ensures only one macro instance runs at a time
 
+import * as vscode from 'vscode';
+
 // Reference: https://code.visualstudio.com/api/extension-guides/webview
 
 function createHtml(): string {

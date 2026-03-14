@@ -1,4 +1,5 @@
 // @ts-nocheck
+import * as vscode from 'vscode';
 
 async function main(): Promise<void> {
   const editor = vscode.window.activeTextEditor;

@@ -3,6 +3,8 @@
 //   retained  – keeps the macro context alive until explicitly stopped
 //   singleton – ensures only one macro instance runs at a time
 
+import * as vscode from 'vscode';
+
 // Reference: https://code.visualstudio.com/api/extension-guides/tree-view
 
 function createTreeProvider(): vscode.TreeDataProvider<string> {

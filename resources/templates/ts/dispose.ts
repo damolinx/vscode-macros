@@ -1,4 +1,5 @@
 // @ts-nocheck
+import * as vscode from 'vscode';
 
 __disposables.push({
   dispose: () => vscode.window.showInformationMessage(`Disposed ${__runId}`),

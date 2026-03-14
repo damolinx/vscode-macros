@@ -1,4 +1,6 @@
 // @ts-nocheck
+import * as vscode from 'vscode';
+
 // Reference: https://code.visualstudio.com/api/extension-guides/language-model
 
 async function main(): Promise<void> {

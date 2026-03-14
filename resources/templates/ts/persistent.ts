@@ -2,6 +2,8 @@
 // @macro: persistent
 //   persistent – shares the macro context across all instances of this macro
 
+import * as vscode from 'vscode';
+
 // Use `var` for globals in persistent macros; `let`/`const` redeclarations fail on reruns.
 let invocationCount: number | undefined;
 
