@@ -1,6 +1,7 @@
 import { NaturalComparer } from '../../utils/ui';
 import { BaseElementNode } from './elements/baseElementNode';
 import { createNodeFactory } from './elements/common';
+import { Container } from './elements/container';
 import { ElementNode, ElementNodeOptions } from './elements/elementNode';
 import { getLayout } from './layout';
 import { ErrorRelayMeta } from './meta/errorRelay';
@@ -86,14 +87,20 @@ export class Root extends BaseElementNode<RootOptions> {
 
   private renderBody(elementChildren: RenderableNode[]): string {
     const { decorations, fixed, scrollable, other } = getLayout(elementChildren);
-    const decorationsHtml = decorations.map((decoration) => decoration.render()).join('\n');
-    const fixedHtml = fixed.map((container) => container.render()).join('\n');
-    const rest = [...scrollable, ...other];
-    const restHtml = rest.length
-      ? `<div class="macro-scrollable">\n${rest.map((container) => container.render()).join('\n')}\n</div>`
-      : '';
+    const containers: string[] = [];
+    if (decorations.length) {
+      containers.push(...decorations.map((node) => node.render()));
+    }
+    if (fixed.length) {
+      containers.push(...fixed.map((container) => container.render()));
+    }
+    const rendereredScrollable = scrollable.map((container) => container.render());
+    if (other.length) {
+      containers.push(new Container({ mode: 'fixed' }, other).render());
+    }
+    containers.push(`<div class="macro-scrollable">\n${rendereredScrollable.join('\n')}\n</div>`);
 
-    return `${decorationsHtml}${fixedHtml}\n${restHtml}`;
+    return containers.join('\n');
   }
 
   private renderScripts(): string {
@@ -125,21 +132,24 @@ export class Root extends BaseElementNode<RootOptions> {
       window.addEventListener("macro-event", (e) => {
         const handler = localHandlers[e.detail.handlerName];
         if (!handler) { return; }
-        ${errorRelayEnabled
-          ? `try {
+        ${
+          errorRelayEnabled
+            ? `try {
           const result = handler(e.detail);
           if (result?.catch) {
             result.catch(err => window.macro.error?.(err));
           }
         } catch (err) {
           window.macro.error(err);
-        }` : `        handler(e.detail);`}
+        }`
+            : '        handler(e.detail);'
+        }
       });
 
       ${eventHandlers
-          .sort((a, b) => NaturalComparer.compare(a.handlerName, b.handlerName))
-          .map((handler) => `localHandlers["${handler.handlerName}"] = ${handler.code};`)
-          .join('\n      ')}`;
+        .sort((a, b) => NaturalComparer.compare(a.handlerName, b.handlerName))
+        .map((handler) => `localHandlers["${handler.handlerName}"] = ${handler.code};`)
+        .join('\n      ')}`;
     }
 
     if (scripts.length) {
@@ -218,7 +228,8 @@ ${this.renderStyle()}
   <body>
 ${this.renderBody(renderableChildren)}
     <script>
-${renderers.map((s) => s.render()).join('\n')}${this.renderScripts()}
+${renderers.map((s) => s.render()).join('\n')}
+${this.renderScripts()}
     </script>
   </body>
 </html>`;
