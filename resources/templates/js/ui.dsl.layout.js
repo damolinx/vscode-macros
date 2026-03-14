@@ -1,10 +1,9 @@
-// @ts-nocheck
 // @macro: singleton
 //   singleton – ensures only one macro instance runs at a time
 
 // Reference: https://code.visualstudio.com/api/extension-guides/webview
 
-function createHtml(): string {
+function createHtml() {
   const { ui } = macros.window;
   return ui
     .root(
@@ -44,13 +43,13 @@ function createHtml(): string {
     .toHtml();
 }
 
-function createWebviewViewProvider(
-  viewId: string,
-  resolve: () => void,
-): vscode.WebviewViewProvider {
+/**
+ * @param {string} viewId - The ID of the view to create.
+ * @returns {import('vscode').WebviewViewProvider }
+ */
+function createWebviewViewProvider(viewId) {
   return {
     resolveWebviewView: (webviewView) => {
-      webviewView.webview.html = createHtml();
       webviewView.webview.onDidReceiveMessage((message) => {
         switch (message.command) {
           case 'close':
@@ -61,24 +60,25 @@ function createWebviewViewProvider(
       webviewView.webview.options = {
         enableScripts: true,
       };
-      webviewView.title = `Macro ${__runId}`;
+      webviewView.webview.html = createHtml();
+      webviewView.title = 'Macro: UI DSL Layout';
     },
   };
 }
 
 // Keep macro alive until view is disposed (or use `@macro: retained`)
-new Promise<void>((resolve) => {
+new Promise((resolve) => {
   const viewId = macros.window.getWebviewId();
   if (!viewId) {
     vscode.window
       .showInformationMessage(`Macro ${__runId} could not claim a Webview ID`)
-      .then(() => resolve());
+      .then(resolve);
     return;
   }
 
   __cancellationToken.onCancellationRequested(resolve);
   __disposables.push(
-    vscode.window.registerWebviewViewProvider(viewId, createWebviewViewProvider(viewId, resolve)),
+    vscode.window.registerWebviewViewProvider(viewId, createWebviewViewProvider(viewId)),
     { dispose: () => vscode.commands.executeCommand('setContext', `${viewId}.show`, false) },
   );
 

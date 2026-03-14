@@ -48,13 +48,11 @@ function createHtml() {
 
 /**
  * @param {string} viewId - The ID of the view to create.
- * @param {(value: any) => void} resolve - Promise resolver.
  * @returns {import('vscode').WebviewViewProvider }
  */
-function createWebviewViewProvider(viewId, resolve) {
+function createWebviewViewProvider(viewId) {
   return {
     resolveWebviewView: (webviewView) => {
-      webviewView.webview.html = createHtml();
       webviewView.webview.onDidReceiveMessage((message) => {
         switch (message.command) {
           case 'close':
@@ -65,7 +63,8 @@ function createWebviewViewProvider(viewId, resolve) {
       webviewView.webview.options = {
         enableScripts: true,
       };
-      webviewView.title = `Macro ${__runId}`;
+      webviewView.webview.html = createHtml();
+      webviewView.title = 'Macro Webview';
     },
   };
 }
@@ -82,7 +81,7 @@ new Promise((resolve) => {
 
   __cancellationToken.onCancellationRequested(resolve);
   __disposables.push(
-    vscode.window.registerWebviewViewProvider(viewId, createWebviewViewProvider(viewId, resolve)),
+    vscode.window.registerWebviewViewProvider(viewId, createWebviewViewProvider(viewId)),
     { dispose: () => vscode.commands.executeCommand('setContext', `${viewId}.show`, false) },
   );
 

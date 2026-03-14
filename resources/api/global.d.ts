@@ -237,4 +237,4 @@ export declare namespace macros.ui {
   export type EventNode = BoundEvent | Event | EventHandler;
 }
 
-export { };
+export {};

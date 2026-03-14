@@ -8,7 +8,7 @@
     {
       "category": "Basics",
       "label": "Cancellation",
-      "description": "Support stopping execution via cancellation token",
+      "description": "Stop execution via cancellation token",
       "path": "js/cancellation.js",
       "alternates": {
         "typescript": "ts/cancellation.ts"
@@ -26,7 +26,7 @@
     {
       "category": "Basics",
       "label": "Command Sequence",
-      "description": "A macro defined as a sequence of VS Code commands",
+      "description": "A macro defined as a sequence of VS Code command IDs",
       "path": "js/command.js",
       "alternates": {
         "typescript": "ts/command.ts"
@@ -44,7 +44,7 @@
     {
       "category": "Tools",
       "label": "Git API",
-      "description": "Interact with the Git API via `git.d.ts` definitions",
+      "description": "Interact with the Git API",
       "path": "js/git.js",
       "alternates": {
         "typescript": "ts/git.ts"
@@ -53,7 +53,7 @@
     {
       "category": "Basics",
       "label": "Hello World",
-      "description": "Demonstrates a `Hello World` macro",
+      "description": "Classic `Hello World` macro",
       "path": "js/helloWorld.js",
       "alternates": {
         "typescript": "ts/helloWorld.ts"
@@ -80,7 +80,7 @@
     {
       "category": "Tools",
       "label": "References Provider",
-      "description": "Query symbol references via the language service API",
+      "description": "Query symbol references using the language service API",
       "path": "js/references.js",
       "alternates": {
         "typescript": "ts/references.ts"
@@ -123,12 +123,21 @@
       }
     },
     {
-      "category": "UI",
-      "label": "Webview using DSL (Sidebar)",
-      "description": "Create a Webview in the `Macros` sidebar using UI DSL",
-      "path": "js/webview.sidebar.dsl.js",
+      "category": "UI DSL",
+      "label": "Webview (Layout)",
+      "description": "Search-like Sidebar Webview using the Macros UI DSL",
+      "path": "js/ui.dsl.layout.js",
       "alternates": {
-        "typescript": "ts/webview.sidebar.dsl.ts"
+        "typescript": "ts/ui.dsl.layout.ts"
+      }
+    },
+    {
+      "category": "UI DSL",
+      "label": "Webview (Error Relay)",
+      "description": "Webview showing automatic error relay by the Macros UI DSL",
+      "path": "js/ui.dsl.error.js",
+      "alternates": {
+        "typescript": "ts/ui.dsl.error.ts"
       }
     }
   ]

@@ -68,7 +68,6 @@ function createWebview(): vscode.WebviewPanel {
     vscode.ViewColumn.Active,
     { enableScripts: true },
   );
-
   panel.webview.html = createHtml();
   panel.webview.onDidReceiveMessage((message) =>
     vscode.window.showInformationMessage(message.text || 'Nothing to say?'),

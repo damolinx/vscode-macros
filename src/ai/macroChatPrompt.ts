@@ -200,7 +200,7 @@ Follow these rules when creating a macro:
   - Each function returns a UI node.
   - Nodes can contain attributes, children, event bindings, and event handlers.
   - UI must be started with a \`macro.window.ui.root(...)\`.
-  - The standalone HTML content that can be used as WebView is produced by calling
+  - The standalone HTML content that can be used as Webview is produced by calling
     \`.toHtml()\` on the root node.
   - Use these factories to build UI:
     - \`root({progress:}, children...)\`: represents HTML document. The progress arg enables a

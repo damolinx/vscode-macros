@@ -7,36 +7,16 @@ function createHtml() {
   const { ui } = macros.window;
   return ui
     .root(
-      ui.container(
-        { mode: 'fixed' },
-        ui.input(
-          { id: 'search', placeholder: 'Search' },
-          ui.onHandle('input', ({ value }) => {
-            console.log('Input changed:', value);
-          }),
-        ),
-        ui.button(
-          { id: 'searchButton', label: 'Search' },
-          ui.on('click', 'onSearch'),
-          ui.handler('onSearch', () => {
-            console.log('Search clicked');
-          }),
-        ),
-      ),
-      ui.tree(
-        {
-          id: 'exampleTree',
-          enableRemove: true,
-          initialItems: [
-            {
-              id: 'root',
-              label: 'Root',
-              children: [{ id: 'child1', label: 'Child 1' }],
-            },
-          ],
-        },
-        ui.onHandle('activate', ({ item }) => {
-          console.log('Node activated:', item);
+      ui.text('Error message'),
+      ui.input({ id: 'errorMessage', placeholder: 'Type an error message …' }),
+      ui.button(
+        { id: 'errorButton', label: 'Error' },
+        ui.onHandle('click', () => {
+          // This code is executed in the context of the Webview, not the macro.
+          const input = /** @type {HTMLElement & { value: string } | null} */ (
+            document.getElementById('errorMessage')
+          );
+          throw new Error(input?.value || 'Did you forget to type an error message?');
         }),
       ),
     )
@@ -51,18 +31,21 @@ function createHtml() {
 function createWebviewViewProvider(viewId, resolve) {
   return {
     resolveWebviewView: (webviewView) => {
-      webviewView.webview.html = createHtml();
       webviewView.webview.onDidReceiveMessage((message) => {
-        switch (message.command) {
-          case 'close':
-            vscode.commands.executeCommand('setContext', `${viewId}.show`, false);
+        switch (message.type) {
+          case 'macro:error':
+            vscode.window.showErrorMessage(message.error?.message || 'Missing error message', {
+              modal: true,
+              detail: 'This a messaged posted on error from the WebView!',
+            });
             break;
         }
       });
       webviewView.webview.options = {
         enableScripts: true,
       };
-      webviewView.title = `Macro ${__runId}`;
+      webviewView.webview.html = createHtml();
+      webviewView.title = 'Macro: UI DSL Error Relay';
     },
   };
 }

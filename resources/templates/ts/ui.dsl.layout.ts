@@ -5,46 +5,43 @@
 // Reference: https://code.visualstudio.com/api/extension-guides/webview
 
 function createHtml(): string {
-  return `
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Webview Sidebar</title>
-    <style>
-      button {
-        background-color: var(--vscode-button-background);
-        border: 1px solid var(--vscode-button-border, transparent);
-        border-radius: 2px;
-        color: var(--vscode-button-foreground);
-        margin-bottom: 8px;
-        padding: 4px 12px;
-        width: 100%;
-      }
-      button:focus {
-        outline: 1px solid var(--vscode-focusBorder);
-        outline-offset: 1px;
-      }
-      button:hover {
-        background-color: var(--vscode-button-hoverBackground);
-      }
-    </style>
-  </head>
-  <body>
-    <p>Closing this webview disposes its supporting macro as well.</p>
-    <button id="closeButton">Close</button>
-
-    <script>
-      const vscode = acquireVsCodeApi();
-      const closeButton = document.getElementById('closeButton');
-
-      closeButton.addEventListener('click', () => {
-        vscode.postMessage({ command: 'close' });
-      });
-    </script>
-  </body>
-</html>`;
+  const { ui } = macros.window;
+  return ui
+    .root(
+      ui.container(
+        { mode: 'fixed' },
+        ui.input(
+          { id: 'search', placeholder: 'Search' },
+          ui.onHandle('input', ({ value }) => {
+            console.log('Input changed:', value);
+          }),
+        ),
+        ui.button(
+          { id: 'searchButton', label: 'Search' },
+          ui.on('click', 'onSearch'),
+          ui.handler('onSearch', () => {
+            console.log('Search clicked');
+          }),
+        ),
+      ),
+      ui.tree(
+        {
+          id: 'exampleTree',
+          enableRemove: true,
+          initialItems: [
+            {
+              id: 'root',
+              label: 'Root',
+              children: [{ id: 'child1', label: 'Child 1' }],
+            },
+          ],
+        },
+        ui.onHandle('activate', ({ item }) => {
+          console.log('Node activated:', item);
+        }),
+      ),
+    )
+    .toHtml();
 }
 
 function createWebviewViewProvider(viewId: string): vscode.WebviewViewProvider {
@@ -61,7 +58,7 @@ function createWebviewViewProvider(viewId: string): vscode.WebviewViewProvider {
         enableScripts: true,
       };
       webviewView.webview.html = createHtml();
-      webviewView.title = 'Macro Webview';
+      webviewView.title = 'Macro: UI DSL Layout';
     },
   };
 }
