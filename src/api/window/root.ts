@@ -115,8 +115,8 @@ export class Root extends BaseElementNode<RootOptions> {
     );
 
     let scriptHtml = `
-      window.vscode ||= acquireVsCodeApi();
-      window.macro ||= {};`;
+      window.vscode = acquireVsCodeApi();
+      window.macro = {};\n`;
 
     if (eventHandlers.length) {
       const errorRelayEnabled = this.options?.errorRelay !== false;
@@ -127,14 +127,13 @@ export class Root extends BaseElementNode<RootOptions> {
         if (!handler) { return; }
         ${errorRelayEnabled
           ? `try {
-            const result = handler(e.detail);
-            if (result?.catch) {
-              result.catch(err => window.macro.error?.(err));
-            }
-          } catch (err) {
-            window.macro.error(err);
-          }`
-          : `handler(e.detail);`}
+          const result = handler(e.detail);
+          if (result?.catch) {
+            result.catch(err => window.macro.error?.(err));
+          }
+        } catch (err) {
+          window.macro.error(err);
+        }` : `        handler(e.detail);`}
       });
 
       ${eventHandlers
@@ -219,8 +218,7 @@ ${this.renderStyle()}
   <body>
 ${this.renderBody(renderableChildren)}
     <script>
-${renderers.map((s) => s.render()).join('\n')}
-${this.renderScripts()}
+${renderers.map((s) => s.render()).join('\n')}${this.renderScripts()}
     </script>
   </body>
 </html>`;

@@ -51,21 +51,21 @@ function getCss(): string {
 
 function getScript(id: string): () => string {
   return () => `
-    (function() {
-      const el = document.getElementById("${id}");
-      if (!el) { return; }
+      (function() {
+        const el = document.getElementById("${id}");
+        if (!el) { return; }
 
-      window.macro.progress = {
-        show() {
-          el.style.opacity = "1";
-          el.classList.remove("indeterminate");
-          void el.offsetWidth;
-          el.classList.add("indeterminate");
-        },
-        hide() {
-          el.style.opacity = "0";
-          el.classList.remove("indeterminate");
-        }
-      };
-    })();`;
+        window.macro.progress = {
+          show() {
+            el.style.opacity = "1";
+            el.classList.remove("indeterminate");
+            void el.offsetWidth;
+            el.classList.add("indeterminate");
+          },
+          hide() {
+            el.style.opacity = "0";
+            el.classList.remove("indeterminate");
+          }
+        };
+      })();`;
 }

@@ -13,23 +13,23 @@ export class ErrorRelayMeta implements MetaNode {
 
 function getErrorRelayScript(): string {
   return `
-    (function() {
-      window.macro.error = function (err) {
-        vscode.postMessage({
-          type: 'macro:error',
-          error: {
-            message: err?.message ?? String(err),
-            stack: err?.stack ?? null,
-          }
+      (function() {
+        window.macro.error = function (err) {
+          vscode.postMessage({
+            type: 'macro:error',
+            error: {
+              message: err?.message ?? String(err),
+              stack: err?.stack ?? null,
+            }
+          });
+        };
+
+        window.addEventListener('error', (event) => {
+          window.macro.error(event.error || event.message);
         });
-      };
 
-      window.addEventListener('error', (event) => {
-        window.macro.error(event.error || event.message);
-      });
-
-      window.addEventListener('unhandledrejection', (event) => {
-        window.macro.error(event.reason);
-      });
-    })();`;
+        window.addEventListener('unhandledrejection', (event) => {
+          window.macro.error(event.reason);
+        });
+      })();`;
 }
