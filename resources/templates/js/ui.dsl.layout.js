@@ -73,9 +73,8 @@ function createWebviewViewProvider(viewId) {
 new Promise((resolve) => {
   const viewId = macros.window.getWebviewId();
   if (!viewId) {
-    vscode.window
-      .showInformationMessage(`Macro ${__runId} could not claim a Webview ID`)
-      .then(resolve);
+    vscode.window.showInformationMessage(`Macro ${__runId} could not claim a Webview ID`);
+    resolve();
     return;
   }
 
