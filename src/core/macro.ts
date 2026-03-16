@@ -15,7 +15,7 @@ export abstract class MacroBase<TId extends string> {
   }
 
   /**
-   * Returns this macro’s display name.
+   * Returns this macro's display name.
    */
   public get name(): string {
     this._name ??= uriBasename(this.uri, resolveMacroExt(this.uri) ?? true);

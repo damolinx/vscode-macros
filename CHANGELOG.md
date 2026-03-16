@@ -41,7 +41,7 @@
   - Update **Command Sequence** template to use it.
 
 ## 0.6.1
-- Update the macro‑template dropdown to better match the layout of VS Code’s built‑in Snippets dropdown.
+- Update the macro‑template dropdown to better match the layout of VS Code's built‑in Snippets dropdown.
 - Rename **Add Library Folder…** to **Add Folder…**.
 - Rename **Setup Source Directory for Development** to **Setup Folder for Development**.
 - **Reveal** commands now detect missing paths and show a warning instead of failing silently.
@@ -76,7 +76,7 @@
 ## 0.5.22
 - **Macro Explorer** view:
   - Closing an untitled editor with pending runs keeps its node under the **Temporary** library for management.
-  - Update tooltips to align with VS Code’s handling of Windows paths.
+  - Update tooltips to align with VS Code's handling of Windows paths.
   - Untitled macros get an icon matching their current target language.
   - Block drag‑and‑drop of `untitled:` macros onto the **Startup** node.
 - Fix: Creating `(empty)` template ends on error.
