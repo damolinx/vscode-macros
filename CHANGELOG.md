@@ -1,8 +1,9 @@
 # Changelog
 
 ## 0.7.1
-- UI DSL changes:
+- UI DSL:
   - `window.macro` and `window.vscode` are simplified to `macro` and `vscode`.
+  - Fix: Templates and docs incorrectly reference `enableRemove` instead of `remove` (late API change).
 
 ## 0.7.0
 - New UI DSL for building webviews with clear, typed primitives:

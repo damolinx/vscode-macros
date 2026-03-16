@@ -607,13 +607,14 @@ function createHtml() {
         ui.input(
           { id: 'search', placeholder: 'Search' },
           ui.onHandle('input', ({ value }) => {
+            // This logs to the Developer Tools console
             console.log('Input changed:', value);
           }),
         ),
         ui.button(
           { id: 'searchButton', label: 'Search' },
-          ui.on('click', 'onSearch'),
-          ui.handler('onSearch', () => {
+          ui.onHandle('click', () => {
+            // This logs to the Developer Tools console
             console.log('Search clicked');
           }),
         ),
@@ -621,7 +622,7 @@ function createHtml() {
       ui.tree(
         {
           id: 'exampleTree',
-          enableRemove: true,
+          remove: true,
           initialItems: [
             {
               id: 'root',
@@ -631,6 +632,7 @@ function createHtml() {
           ],
         },
         ui.onHandle('activate', ({ item }) => {
+          // This logs to the Developer Tools console
           console.log('Node activated:', item);
         }),
       ),
