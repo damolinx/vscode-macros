@@ -29,6 +29,10 @@ export class Root extends BaseElementNode<RootOptions> {
     this.#metaExpanded = false;
   }
 
+  public get enableErrorRelay(): boolean {
+    return this.options?.errorRelay !== false;
+  }
+
   private expandMeta(
     nodes: Node[],
     context = new ExpansionContext(),
@@ -65,7 +69,7 @@ export class Root extends BaseElementNode<RootOptions> {
     }
 
     if (!this.#metaExpanded) {
-      if (this.options?.errorRelay !== false) {
+      if (this.enableErrorRelay) {
         this.children.unshift(new ErrorRelayMeta());
       }
       if (this.options?.progress) {
@@ -104,58 +108,52 @@ export class Root extends BaseElementNode<RootOptions> {
   }
 
   private renderScripts(): string {
-    const eventHandlers: EventHandler[] = [];
-    const scripts = this.getChildren<ScriptNode>(
-      (c): c is ScriptNode => {
-        let accept = false;
-        if (c.role === 'script') {
-          if (c.kind !== 'eventHandler') {
-            accept = true;
-          } else {
-            eventHandlers.push(c as EventHandler);
-          }
+    const { eventHandlers, scripts } = this.getChildrenByRole<ScriptNode>('script', {
+      recursive: true,
+    }).reduce(
+      (acc, script) => {
+        if (script.kind === 'eventHandler') {
+          acc.eventHandlers.push(script as EventHandler);
+        } else {
+          acc.scripts.push(script);
         }
-
-        return accept;
+        return acc;
       },
-      { recursive: true },
+      { eventHandlers: [] as EventHandler[], scripts: [] as ScriptNode[] },
     );
 
-    let scriptHtml = `
-      window.vscode = acquireVsCodeApi();
-      window.macro = {};\n`;
+    const scriptLines = ['window.vscode = acquireVsCodeApi();', 'window.macro = {};'];
 
     if (eventHandlers.length) {
-      const errorRelayEnabled = this.options?.errorRelay !== false;
-      scriptHtml += `
-      const localHandlers = {};
-      window.addEventListener("macro-event", (e) => {
-        const handler = localHandlers[e.detail.handlerName];
-        if (!handler) { return; }
-        ${
-          errorRelayEnabled
-            ? `try {
-          const result = handler(e.detail);
-          if (result?.catch) {
-            result.catch(err => window.macro.error?.(err));
-          }
-        } catch (err) {
-          window.macro.error(err);
-        }`
-            : '        handler(e.detail);'
-        }
-      });
+      scriptLines.push(
+        'const localHandlers = {};',
+        'window.addEventListener("macro-event", ({detail}) => {',
+        '  const handler = localHandlers[detail.handlerName];',
+        '  if (!handler) { return; }',
+      );
 
-      ${eventHandlers
-        .sort((a, b) => NaturalComparer.compare(a.handlerName, b.handlerName))
-        .map((handler) => `localHandlers["${handler.handlerName}"] = ${handler.code};`)
-        .join('\n      ')}`;
+      if (this.enableErrorRelay) {
+        scriptLines.push(
+          '  try {',
+          '    const result = handler(detail);',
+          '    result?.catch?.((err) => window.macro.error(err));',
+          '  } catch(err) {',
+          '    window.macro.error(err);',
+          '  }',
+        );
+      } else {
+        scriptLines.push('  handler(detail);');
+      }
+      scriptLines.push('});');
+      scriptLines.push(
+        ...eventHandlers
+          .sort((a, b) => NaturalComparer.compare(a.handlerName, b.handlerName))
+          .map((handler) => `localHandlers["${handler.handlerName}"] = ${handler.render()};`),
+      );
     }
 
-    if (scripts.length) {
-      scriptHtml += `\n      ${scripts.map((s) => s.render()).join('\n')}`;
-    }
-    return scriptHtml;
+    scriptLines.push(...scripts.map((script) => script.render()));
+    return `      ${scriptLines.join('\n      ')}`;
   }
 
   private renderStyle(): string {
