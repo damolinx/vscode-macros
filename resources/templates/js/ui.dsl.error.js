@@ -36,7 +36,7 @@ function createWebviewViewProvider(viewId, resolve) {
           case 'macro:error':
             vscode.window.showErrorMessage(message.error?.message || 'Missing error message', {
               modal: true,
-              detail: 'This a messaged posted on error from the WebView!',
+              detail: 'This a message posted on error from the WebView!',
             });
             break;
         }
