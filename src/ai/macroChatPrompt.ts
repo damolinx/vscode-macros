@@ -204,8 +204,8 @@ Follow these rules when creating a macro:
     \`.toHtml()\` on the root node.
   - Use these factories to build UI:
     - \`root({progress:}, children...)\`: represents HTML document. The progress arg enables a
-      progress bar in the webview that can be toggled using using \`window.macro.progress.show\`
-      and \`window.macro.progress.hide\` from a script running the webview side.
+      progress bar in the webview that can be toggled using using \`macro.progress.show\`
+      and \`macro.progress.hide\` from a script running the webview side.
     - \`container({mode: 'fixed' | 'scrollable'}, children...)\`: creates a layout
       container to arrange controls.
     - \`input({id: , value:, placeholder:, type: text|password|email, tabIndex:}, children...)\`:

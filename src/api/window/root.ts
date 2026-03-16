@@ -122,7 +122,7 @@ export class Root extends BaseElementNode<RootOptions> {
       { eventHandlers: [] as EventHandler[], scripts: [] as ScriptNode[] },
     );
 
-    const scriptLines = ['window.vscode = acquireVsCodeApi();', 'window.macro = {};'];
+    const scriptLines = ['const vscode = acquireVsCodeApi();', 'const macro = {};'];
 
     if (eventHandlers.length) {
       scriptLines.push(
@@ -136,9 +136,9 @@ export class Root extends BaseElementNode<RootOptions> {
         scriptLines.push(
           '  try {',
           '    const result = handler(detail);',
-          '    result?.catch?.((err) => window.macro.error(err));',
+          '    result?.catch?.((err) => macro.error(err));',
           '  } catch(err) {',
-          '    window.macro.error(err);',
+          '    macro.error(err);',
           '  }',
         );
       } else {

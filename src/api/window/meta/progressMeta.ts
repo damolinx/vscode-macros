@@ -10,7 +10,7 @@ export class ProgressMeta implements MetaNode {
   public readonly kind = 'progress';
   public readonly role = 'meta';
 
-  constructor(private readonly options?: ElementNodeOptions) {}
+  constructor(private readonly options?: ElementNodeOptions) { }
 
   public expand(context: ExpansionContext): Node[] {
     const id = this.options?.id ?? `__progress_${context.nextId(this.kind)}`;
@@ -55,7 +55,7 @@ function getScript(id: string): () => string {
         const el = document.getElementById("${id}");
         if (!el) { return; }
 
-        window.macro.progress = {
+        macro.progress = {
           show() {
             el.style.opacity = "1";
             el.classList.remove("indeterminate");

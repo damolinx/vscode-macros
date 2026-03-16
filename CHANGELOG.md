@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.1
+- UI DSL changes:
+  - `window.macro` and `window.vscode` are simplified to `macro` and `vscode`.
+
 ## 0.7.0
 - New UI DSL for building webviews with clear, typed primitives:
   - Supported components include button, event handdler, input, layout container, tree.
