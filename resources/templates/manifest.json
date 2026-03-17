@@ -134,10 +134,19 @@
     {
       "category": "UI DSL",
       "label": "Webview (Error Relay)",
-      "description": "Webview showing automatic error relay by the Macros UI DSL",
+      "description": "Webview demonstrating error relaying and handling by the Macros UI DSL",
       "path": "js/ui.dsl.error.js",
       "alternates": {
         "typescript": "ts/ui.dsl.error.ts"
+      }
+    },
+    {
+      "category": "UI DSL",
+      "label": "Webview (Log Relay)",
+      "description": "Webview demonstrating log relaying and handling by the Macros UI DSL",
+      "path": "js/ui.dsl.log.js",
+      "alternates": {
+        "typescript": "ts/ui.dsl.log.ts"
       }
     }
   ]

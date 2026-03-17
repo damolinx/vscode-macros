@@ -12,9 +12,8 @@ export class ErrorRelayMeta implements MetaNode {
 }
 
 function getErrorRelayScript(): string {
-  return `
-      (function() {
-        macro.error = function (err) {
+  return `macro.error = (function() {
+        const sendError = (err) => {
           vscode.postMessage({
             type: 'macro:error',
             error: {
@@ -23,13 +22,8 @@ function getErrorRelayScript(): string {
             }
           });
         };
-
-        window.addEventListener('error', (event) => {
-          macro.error(event.error || event.message);
-        });
-
-        window.addEventListener('unhandledrejection', (event) => {
-          macro.error(event.reason);
-        });
+        window.addEventListener('error', (event) => sendError(event.error || event.message));
+        window.addEventListener('unhandledrejection', (event) => sendError(event.reason));
+        return sendError;
       })();`;
 }

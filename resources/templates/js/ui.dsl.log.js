@@ -5,22 +5,24 @@
 
 function createHtml() {
   const { ui } = macros.window;
-  return ui
+  const html = ui
     .root(
-      ui.text('Error message'),
-      ui.input({ id: 'errorMessage', placeholder: 'Type an error message …' }),
+      { logRelay: true },
+      ui.text('Log message'),
+      ui.input({ id: 'logMessage', placeholder: 'Type a log message …' }),
       ui.button(
-        { id: 'errorButton', label: 'Error' },
+        { label: 'Log' },
         ui.onHandle('click', () => {
           // This code is executed in the context of the Webview, not the macro.
           const input = /** @type {HTMLElement & { value: string } | null} */ (
-            document.getElementById('errorMessage')
+            document.getElementById('logMessage')
           );
-          macro.error(input?.value || 'Did you forget to type an error message?');
+          macro.log.info('Log received message:', input?.value.trim() || 'No message');
         }),
       ),
     )
     .toHtml();
+  return html;
 }
 
 /**
@@ -33,11 +35,25 @@ function createWebviewViewProvider(viewId, resolve) {
     resolveWebviewView: (webviewView) => {
       webviewView.webview.onDidReceiveMessage((message) => {
         switch (message.type) {
-          case 'macro:error':
-            vscode.window.showErrorMessage(message.error?.message || 'Missing error message', {
-              modal: true,
-              detail: 'This a message posted on error from the WebView!',
-            });
+          case 'macro:log':
+            macros.log.show();
+            switch (message.level) {
+              case 'debug':
+                macros.log.debug(message.message, message.data);
+                break;
+              case 'error':
+                macros.log.error(message.message, message.data);
+                break;
+              case 'info':
+                macros.log.info(message.message, message.data);
+                break;
+              case 'trace':
+                macros.log.trace(message.message, message.data);
+                break;
+              case 'warn':
+                macros.log.warn(message.message, message.data);
+                break;
+            }
             break;
         }
       });
@@ -45,7 +61,7 @@ function createWebviewViewProvider(viewId, resolve) {
         enableScripts: true,
       };
       webviewView.webview.html = createHtml();
-      webviewView.title = 'Macro: UI DSL Error Relay';
+      webviewView.title = 'Macro: UI DSL Log Relay';
     },
   };
 }

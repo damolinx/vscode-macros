@@ -199,8 +199,9 @@ export declare namespace macros.ui {
     readonly kind: 'input';
   }
 
-  export interface Root {
-    readonly errorRelay?: boolean;
+  export interface RootOptions {
+    readonly errorRelay?: false;
+    readonly logRelay?: true;
     readonly progress?: boolean;
   }
 

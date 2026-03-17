@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.7.2
+- UI DSL:
+  - Add `macro.log.[debug|error|info|trace|warn]` API.
+   - To enable this, `root`'s `RootOptions` gains a `logRelay` option.
+   - Add new template.
+  - Fix: Missing `macros.ui.RootOptions` in `globals.d.ts`.
+
 ## 0.7.1
 - UI DSL:
   - `window.macro` and `window.vscode` are simplified to `macro` and `vscode`.

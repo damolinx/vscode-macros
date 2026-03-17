@@ -6,6 +6,7 @@ import { ElementNode, ElementNodeOptions } from './elements/elementNode';
 import { getLayout } from './layout';
 import { ErrorRelayMeta } from './meta/errorRelay';
 import { ExpansionContext } from './meta/expansionContext';
+import { LogRelayMeta } from './meta/logRelay';
 import { MetaNode } from './meta/metaNode';
 import { ProgressMeta } from './meta/progressMeta';
 import { Node, RenderableNode } from './node';
@@ -17,6 +18,7 @@ import { Style } from './style/style';
 export interface RootOptions extends ElementNodeOptions {
   id?: never;
   errorRelay?: false;
+  logRelay?: true;
   progress?: true;
 }
 
@@ -31,6 +33,10 @@ export class Root extends BaseElementNode<RootOptions> {
 
   public get enableErrorRelay(): boolean {
     return this.options?.errorRelay !== false;
+  }
+
+  public get enableLogRelay(): boolean {
+    return this.options?.logRelay === true;
   }
 
   private expandMeta(
@@ -71,6 +77,9 @@ export class Root extends BaseElementNode<RootOptions> {
     if (!this.#metaExpanded) {
       if (this.enableErrorRelay) {
         this.children.unshift(new ErrorRelayMeta());
+      }
+      if (this.enableLogRelay) {
+        this.children.unshift(new LogRelayMeta());
       }
       if (this.options?.progress) {
         this.children.unshift(new ProgressMeta());
