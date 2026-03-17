@@ -638,6 +638,8 @@ function createHtml() {
           ui.onHandle('click', () => {
             // This logs to the Developer Tools console
             console.log('Search clicked');
+            // Show progress bar
+            macro.progress.show();
           }),
         ),
       ),
@@ -661,7 +663,7 @@ function createHtml() {
     )
     .toHtml();
 
-  // Print generated HTML for reference.
+  // You can log the generated HTML for reference
   macros.log.info(html);
   macros.log.show();
   return html;
