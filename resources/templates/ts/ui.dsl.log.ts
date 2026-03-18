@@ -35,23 +35,7 @@ function createWebviewViewProvider(viewId: string): vscode.WebviewViewProvider {
         switch (message.type) {
           case 'macro:log':
             macros.log.show();
-            switch (message.level) {
-              case 'debug':
-                macros.log.debug(message.message, message.data);
-                break;
-              case 'error':
-                macros.log.error(message.message, message.data);
-                break;
-              case 'info':
-                macros.log.info(message.message, message.data);
-                break;
-              case 'trace':
-                macros.log.trace(message.message, message.data);
-                break;
-              case 'warn':
-                macros.log.warn(message.message, message.data);
-                break;
-            }
+            macros.window.handleLogMessage(message);
             break;
         }
       });

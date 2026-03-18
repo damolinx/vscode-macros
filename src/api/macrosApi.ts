@@ -74,6 +74,15 @@ export interface MacrosApi {
       getWebviewId(): string | undefined;
 
       /**
+       * Processes a log message sent from the macro WebView runtime.
+       */
+      handleLogMessage(message: {
+        message: string;
+        level: 'debug' | 'error' | 'info' | 'trace' | 'warn';
+        data?: any;
+      }): void;
+
+      /**
        * Releases a previously assigned TreeView ID.
        */
       releaseTreeViewId(id: string): boolean;
@@ -82,6 +91,8 @@ export interface MacrosApi {
        * Releases a previously assigned Webview ID.
        */
       releaseWebviewId(id: string): boolean;
+
+      readonly ui: {};
     };
   };
 }

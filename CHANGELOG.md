@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.3
+- UI DSL:
+ - Add `macros.window.handleLogMessage` extension-host side helper to write logs.
+
 ## 0.7.2
 - UI DSL:
   - Add `macro.log.[debug|error|info|trace|warn]` API.

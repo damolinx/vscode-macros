@@ -10,6 +10,7 @@ import { createButton } from './window/elements/button';
 import { createContainer } from './window/elements/container';
 import { createInput } from './window/elements/input';
 import { createTree } from './window/elements/tree';
+import { handleLogMessage, LogMessage } from './window/helpers';
 import { createBoundEvent } from './window/meta/boundEvent';
 import { createRoot } from './window/root';
 import { createEventHandler } from './window/scripts/eventHandler';
@@ -54,6 +55,7 @@ export function createMacroApi(params: MacroContextInitParams): MacrosApi {
         },
         getTreeViewId: () => params.viewManagers.tree.getId(params.executionId),
         getWebviewId: () => params.viewManagers.web.getId(params.executionId),
+        handleLogMessage: (message: LogMessage) => handleLogMessage(params.context, message),
         releaseTreeViewId: (id: string) =>
           params.viewManagers.tree.releaseId(params.executionId, id as ViewId),
         releaseWebviewId: (id: string) =>

@@ -372,6 +372,8 @@ The following references are available from the global context of your macro:
 
   * `getWebviewId(id: string): string | undefined`: Claims an available webview ID for the given macro run. Returns `undefined` if none are available.
 
+  * `handleLogMessage(message): void`: Helper to process a `macro:log` message sent from the WebView when using the [UI DSL](#ui-dsl). It translates the message into the expected `macros.log.` call.
+
   * `releaseTreeViewId(id: string): boolean`: Releases a previously claimed tree view ID. Returns `true` if successful.
 
   * `releaseWebviewId(id: string): boolean`: Releases a previously claimed webview ID. Returns `true` if successful.
