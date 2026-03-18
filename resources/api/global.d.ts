@@ -98,6 +98,9 @@ declare global {
        */
       releaseWebviewId(id: string): boolean;
 
+      /**
+       * Namespace providing UI DSL.
+       */
       readonly ui: {
         attr(name: string, value: macros.ui.AttributeValue): macros.ui.Attribute;
         button(...nodes: (macros.ui.EventNode | macros.ui.Text)[]): macros.ui.Button;
@@ -173,14 +176,15 @@ export declare namespace macros.ui {
     readonly kind: 'container';
   }
 
-  export interface BoundEvent extends Attribute {
+  export interface BoundEvent extends BaseNode {
     readonly kind: 'boundEvent';
-    readonly eventName: string;
+    readonly code: string;
+    readonly event: string;
   }
 
-  export interface Event extends Attribute {
+  export interface Event extends BaseNode {
     readonly kind: 'event';
-    readonly eventName: string;
+    readonly event: string;
     readonly handlerName: string;
   }
 
