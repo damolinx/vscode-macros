@@ -91,8 +91,6 @@ export interface MacrosApi {
        * Releases a previously assigned Webview ID.
        */
       releaseWebviewId(id: string): boolean;
-
-      readonly ui: {};
     };
   };
 }
