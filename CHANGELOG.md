@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.7.4
+- Download `.d.ts` gains **Reveal** button and better URI formatting.
+
 ## 0.7.3
 - UI DSL:
  - Add `macros.window.handleLogMessage` extension-host side helper to write logs.

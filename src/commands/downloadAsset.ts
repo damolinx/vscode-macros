@@ -2,15 +2,16 @@ import * as vscode from 'vscode';
 import { get } from 'https';
 import { ExtensionContext } from '../extensionContext';
 import { exists } from '../utils/fsEx';
-import { MacroFilter } from '../utils/ui';
+import { formatDisplayUri, MacroFilter } from '../utils/ui';
 import { isUntitled, parentUri, uriBasename, UriLocator, resolveUri } from '../utils/uri';
 import { saveTextEditor } from '../utils/vscodeEx';
+import { revealInOS } from './revealInOS';
 
 const NO_OPTION: vscode.MessageItem = { title: 'No', isCloseAffordance: true };
 const YES_OPTION: vscode.MessageItem = { title: 'Yes' };
 
 export async function downloadAsset(
-  { log }: ExtensionContext,
+  context: ExtensionContext,
   assetUri: vscode.Uri,
   locator: UriLocator,
 ): Promise<vscode.Uri | undefined> {
@@ -41,7 +42,7 @@ export async function downloadAsset(
       const data: any[] = [];
       res.on('data', (chunk) => data.push(chunk)).on('end', () => resolve(Buffer.concat(data)));
     }).on('error', (err) => {
-      log.error(err);
+      context.log.error(err);
       reject(err);
     });
   });
@@ -51,8 +52,14 @@ export async function downloadAsset(
   }
 
   await vscode.workspace.fs.writeFile(targetDownloadUri, content);
-  log.info('Downloaded .d.ts file', targetDownloadUri.toString(true));
-  vscode.window.showInformationMessage(`Downloaded: ${targetDownloadUri.toString(true)}`);
+  context.log.info('Downloaded .d.ts file', targetDownloadUri.toString(true));
+  vscode.window
+    .showInformationMessage(`Downloaded: ${formatDisplayUri(targetDownloadUri)}`, 'Reveal')
+    .then((option) => {
+      if (option === 'Reveal') {
+        revealInOS(context, targetDownloadUri);
+      }
+    });
   return targetDownloadUri;
 }
 
