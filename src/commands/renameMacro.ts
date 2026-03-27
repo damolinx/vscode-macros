@@ -37,13 +37,13 @@ async function showRenameInputBox(name: string, parentUri: vscode.Uri) {
       } else if (normalizedValue === name) {
         return;
       } else if (!/^[^/\\:*?"<>|]+$/.test(normalizedValue)) {
-        return 'This is not a valid name.';
+        return 'This name contains invalid characters.';
       } else if (!isMacro(normalizedValue)) {
-        return "This file extension doesn't match a supported macro language.";
+        return 'File extension must be .js or .ts';
       } else if (
         await exists(vscode.Uri.joinPath(parentUri, normalizedValue), vscode.FileType.File)
       ) {
-        return 'A file or folder with the same name already exists.';
+        return 'A file or folder with this name already exists.';
       }
       return;
     },
