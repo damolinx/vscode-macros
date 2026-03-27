@@ -2,6 +2,8 @@
 
 ## 0.7.4
 - Download `.d.ts` gains **Reveal** button and better URI formatting.
+- UI DSL:
+ - Add `macros.window.ui.textarea` control.
 
 ## 0.7.3
 - UI DSL:

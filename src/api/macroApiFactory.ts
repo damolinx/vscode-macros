@@ -9,6 +9,7 @@ import { createText } from './window/content/text';
 import { createButton } from './window/elements/button';
 import { createContainer } from './window/elements/container';
 import { createInput } from './window/elements/input';
+import { createTextarea } from './window/elements/textarea';
 import { createTree } from './window/elements/tree';
 import { handleLogMessage, LogMessage } from './window/helpers';
 import { createBoundEvent } from './window/meta/boundEvent';
@@ -51,6 +52,7 @@ export function createMacroApi(params: MacroContextInitParams): MacrosApi {
           root: createRoot,
           script: createScript,
           text: createText,
+          textarea: createTextarea,
           tree: createTree,
         },
         getTreeViewId: () => params.viewManagers.tree.getId(params.executionId),

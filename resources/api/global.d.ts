@@ -128,6 +128,11 @@ declare global {
         root(...nodes: (macros.ui.Container | macros.ui.Node)[]): macros.ui.Root;
         script(code: string): macros.ui.Script;
         text(text: string): macros.ui.Text;
+        textarea(...nodes: macros.ui.EventNode[]): macros.ui.Textarea;
+        textarea(
+          options: macros.ui.TextareaOptions,
+          ...nodes: macros.ui.EventNode[]
+        ): macros.ui.Textarea;
         tree(...children: macros.ui.EventNode[]): macros.ui.Tree;
         tree(options: macros.ui.TreeOptions, ...children: macros.ui.EventNode[]): macros.ui.Tree;
       };
@@ -228,6 +233,18 @@ export declare namespace macros.ui {
 
   export interface Text extends BaseNode {
     readonly text: string;
+  }
+
+  export interface TextareaOptions extends NodeOptions {
+    readonly minRow?: number;
+    readonly maxRow?: number;
+    readonly placeholder?: string;
+    readonly tabIndex?: number;
+    readonly value?: string;
+  }
+
+  export interface Textarea extends BaseNode {
+    readonly kind: 'textarea';
   }
 
   export interface TreeNode {

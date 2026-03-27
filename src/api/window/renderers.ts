@@ -7,7 +7,13 @@ import { Script } from './scripts/script';
 import { ScriptNode } from './scripts/scriptNode';
 
 export const MACRO_RENDERERS_DIR_RESOURCE = 'renderers';
-export const SUPPORTED_RENDERERS: readonly string[] = ['button', 'container', 'input', 'tree'];
+export const SUPPORTED_RENDERERS: readonly string[] = [
+  'button',
+  'container',
+  'input',
+  'textarea',
+  'tree',
+];
 
 export const RendererScripts = new Map<string, Script>();
 

@@ -563,7 +563,7 @@ The use case for the DSL is the same as for the macros: quickly generate a tool 
   - `placeholder?: string`
   - `tabIndex?: number`
   - `type?: "text" | "password" | "number" | "email"`
-  - `value?: string`
+  - `value?: string`: initial text content
 
 - `macros.window.ui.button([options,] ...children)`: creates a clickable button.
 
@@ -574,6 +574,17 @@ The use case for the DSL is the same as for the macros: quickly generate a tool 
   - `toggle?: boolean`: When `true`, button is a toggle-button.
 
 - `macros.window.ui.text(string)`: creates a text node for inline content.
+
+- `macros.window.ui.textarea([options,] ...children)`: creates a multi‑line textarea. Buttons are not supported at this time.
+  
+  Options:
+  - `id?: string`
+  - `minRows?: number`: minimum number of visible rows (default: 1)
+  - `maxRows?: number`: maximum number of visible rows (`undefined` means not limited)
+  - `placeholder?: string`
+  - `tabIndex?: number`
+  - `value?: string`: initial text content
+  
 - `macros.window.ui.tree([options,] ...eventNodes)`: creates a hierarchical tree view.
 
   Options:

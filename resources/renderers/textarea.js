@@ -1,7 +1,7 @@
 // @ts-check
-class MacroInput extends HTMLElement {
+class MacroTextarea extends HTMLElement {
   static get observedAttributes() {
-    return ['aria-label', 'disabled', 'placeholder', 'tabindex', 'type', 'value'];
+    return ['aria-label', 'disabled', 'placeholder', 'tabindex', 'value'];
   }
 
   constructor() {
@@ -10,11 +10,11 @@ class MacroInput extends HTMLElement {
     this.root = this.attachShadow({ mode: 'open' });
   }
 
-  get input() {
-    if (!this.inputElement) {
-      this.inputElement = this.root.querySelector('input');
+  get textarea() {
+    if (!this.textareaElement) {
+      this.textareaElement = this.root.querySelector('textarea');
     }
-    return this.inputElement;
+    return this.textareaElement;
   }
 
   connectedCallback() {
@@ -22,10 +22,16 @@ class MacroInput extends HTMLElement {
       this.render();
     }
 
-    for (const name of MacroInput.observedAttributes) {
+    this.minRows = Number(this.getAttribute('data-min-rows')) || 1;
+    const maxAttr = this.getAttribute('data-max-rows');
+    this.maxRows = maxAttr !== null ? Number(maxAttr) : undefined;
+
+    for (const name of MacroTextarea.observedAttributes) {
       const value = this.getAttribute(name);
       this.attributeChangedCallback(name, null, value);
     }
+
+    this.autoSize();
   }
 
   /**
@@ -34,35 +40,38 @@ class MacroInput extends HTMLElement {
    * @param {string | null} newValue
    */
   attributeChangedCallback(name, _oldValue, newValue) {
-    if (!this.input) {
+    if (!this.textarea) {
       return;
     }
 
     switch (name) {
       case 'aria-label':
-        newValue
-          ? this.input.setAttribute('aria-label', newValue)
-          : this.input.removeAttribute('aria-label');
+        if (newValue) {
+          this.textarea.setAttribute('aria-label', newValue);
+        } else {
+          this.textarea.removeAttribute('aria-label');
+        }
         break;
 
       case 'disabled':
-        newValue ? this.input.setAttribute('disabled', '') : this.input.removeAttribute('disabled');
+        if (newValue) {
+          this.textarea.setAttribute('disabled', '');
+        } else {
+          this.textarea.removeAttribute('disabled');
+        }
         break;
 
       case 'placeholder':
-        this.input.placeholder = newValue ?? '';
+        this.textarea.placeholder = newValue ?? '';
         break;
 
       case 'tabindex':
-        this.input.tabIndex = newValue ? Number(newValue) : 0;
-        break;
-
-      case 'type':
-        this.input.type = newValue ?? 'text';
+        this.textarea.tabIndex = newValue ? Number(newValue) : 0;
         break;
 
       case 'value':
-        this.input.value = newValue ?? '';
+        this.textarea.value = newValue ?? '';
+        this.autoSize();
         break;
     }
   }
@@ -92,9 +101,10 @@ class MacroInput extends HTMLElement {
           box-shadow: inset 0 0 0 1px var(--vscode-focusBorder);
         }
 
-        input {
+        textarea {
           flex: 1 1 auto;
           min-width: 0;
+          resize: none;
 
           box-sizing: border-box;
           padding: 4px 6px;
@@ -103,48 +113,35 @@ class MacroInput extends HTMLElement {
           border: none;
           color: var(--vscode-input-foreground);
           outline: none;
+          overflow: hidden;
 
           line-height: 1.4;
-        }
-
-        ::slotted(macro-button) {
-          --button-bg: transparent;
-          --button-fg: var(--vscode-input-foreground);
-          --button-hover-bg: var(--vscode-inputOption-hoverBackground);
-          --button-hover-fg: var(--vscode-input-foreground);
-
-          --button-line-height: 1.6;
-          --button-min-width: 20px;
-          --button-padding: 0 4px;
-          --button-radius: 2px;
-
-          align-items: center;
-          display: flex;
-
-          margin: 1px;
-          padding: 2px 0;
-
-          cursor: pointer;
+          font-family: inherit;
+          font-size: inherit;
         }
       </style>
 
       <div class="wrapper">
-        <input />
-        <slot></slot>
-      </div>`;
+        <textarea></textarea>
+      </div>
+    `;
 
     const wrapper = this.root.querySelector('.wrapper');
-    if (!this.input || !wrapper) {
+    if (!this.textarea || !wrapper) {
       return;
     }
 
-    this.input.addEventListener('focus', () => wrapper.classList.add('focus'));
-    this.input.addEventListener('blur', () => wrapper.classList.remove('focus'));
-    this.input.addEventListener('input', () => {
+    this.textarea.addEventListener('focus', () => wrapper.classList.add('focus'));
+    this.textarea.addEventListener('blur', () => wrapper.classList.remove('focus'));
+
+    this.textarea.addEventListener('input', () => {
+      this.autoSize();
+
       const handlerName = this.getAttribute('data-on-input');
       if (!handlerName) {
         return;
       }
+
       this.dispatchEvent(
         new CustomEvent('macro-event', {
           bubbles: true,
@@ -159,8 +156,30 @@ class MacroInput extends HTMLElement {
     });
   }
 
+  autoSize() {
+    if (!this.textarea) {
+      return;
+    }
+
+    const min = this.minRows ?? 1;
+    this.textarea.rows = min;
+    this.textarea.style.height = 'auto';
+
+    const style = getComputedStyle(this.textarea);
+    const lineHeight = parseFloat(style.lineHeight) || 18;
+    const rowsFloat = this.textarea.scrollHeight / lineHeight;
+    const scrollRows = Math.max(1, Math.round(rowsFloat));
+
+    let newRows = Math.max(scrollRows, min);
+    if (this.maxRows !== undefined) {
+      newRows = Math.min(newRows, this.maxRows);
+    }
+
+    this.textarea.rows = newRows;
+  }
+
   get value() {
-    return this.input?.value ?? '';
+    return this.textarea?.value ?? '';
   }
 
   set value(value) {
@@ -168,4 +187,4 @@ class MacroInput extends HTMLElement {
   }
 }
 
-customElements.define('macro-input', MacroInput);
+customElements.define('macro-textarea', MacroTextarea);
