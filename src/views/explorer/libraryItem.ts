@@ -10,7 +10,7 @@ import {
 const LibraryIcon = new vscode.ThemeIcon('file-directory');
 const UntitledLibraryIcon = new vscode.ThemeIcon('root-folder');
 const UntitledLibraryTooltip = new vscode.MarkdownString(
-  'Lists `untitled` macro documents. These live only in memory  \nuntil saved, which limits IntelliSense and other tooling features.',
+  'This library includes all `untitled:` macro documents. They exist only in   \nmemory until saved, which limits IntelliSense and other tooling features.',
 );
 
 export function createLibraryItem(library: Library): vscode.TreeItem {
