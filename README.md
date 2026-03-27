@@ -1,4 +1,4 @@
-# Macros
+# Macros for VS Code
 
 A **macro** is a JavaScript or TypeScript script executed within the context of an extension, with full access to [VS Code extensibility APIs](https://code.visualstudio.com/api/references/vscode-api). Macros let you automate tasks, customize your development workflow, and prototype extension behavior, all without the overhead of building and maintaining a full extension.
 
