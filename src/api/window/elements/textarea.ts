@@ -8,6 +8,7 @@ export interface TextareaOptions extends ElementNodeOptions {
   readonly maxRows?: number;
   readonly minRows?: number;
   readonly placeholder?: string;
+  readonly readonly?: true;
   readonly tabIndex?: number;
   readonly value?: string;
 }
@@ -22,11 +23,16 @@ export class Textarea extends BaseElementNode<TextareaOptions> {
 
     if (this.options) {
       const { minRows, maxRows } = Textarea.getRowConstraints(this.options);
-      attrs.push(new Attribute('data-min-rows', minRows));
-
-      if (maxRows !== undefined) {
-        attrs.push(new Attribute('data-max-rows', maxRows));
+      if (this.options.readonly) {
+        attrs.push(new Attribute('readonly'));
+        attrs.push(new Attribute('rows', minRows));
+      } else {
+        attrs.push(new Attribute('data-min-rows', minRows));
+        if (maxRows !== undefined) {
+          attrs.push(new Attribute('data-max-rows', maxRows));
+        }
       }
+
       if (this.options.placeholder) {
         attrs.push(new Attribute('placeholder', this.options.placeholder));
       }

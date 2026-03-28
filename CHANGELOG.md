@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.5
+- UI DSL:
+ - `macros.window.ui.textarea` support `readonly: true`.
+  - Fix: `macros.ui.TextareaOptions` declare `maxRow` and `minRow` instead of `maxRows` and `minRows` in `globals.d.ts`.
+
 ## 0.7.4
 - Download `.d.ts` gains **Reveal** button and better URI formatting.
 - UI DSL:

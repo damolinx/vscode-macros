@@ -239,6 +239,7 @@ export declare namespace macros.ui {
     readonly minRows?: number;
     readonly maxRows?: number;
     readonly placeholder?: string;
+    readonly readonly?: true;
     readonly tabIndex?: number;
     readonly value?: string;
   }

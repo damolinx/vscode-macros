@@ -576,15 +576,16 @@ The use case for the DSL is the same as for the macros: quickly generate a tool 
 - `macros.window.ui.text(string)`: creates a text node for inline content.
 
 - `macros.window.ui.textarea([options,] ...children)`: creates a multi‑line textarea. Buttons are not supported at this time.
-  
+
   Options:
   - `id?: string`
-  - `minRows?: number`: minimum number of visible rows (default: 1)
-  - `maxRows?: number`: maximum number of visible rows (`undefined` means not limited)
+  - `maxRows?: number`: maximum number of visible rows (`undefined` means not limited). When `readonly`, this is ignored
+  - `minRows?: number`: minimum number of visible rows (default: 1). When `readonly`, this is the fixed height
   - `placeholder?: string`
+  - `readonly?: true`: control is readonly, `minRows` fixed‑height. Disables autosizing and input events
   - `tabIndex?: number`
   - `value?: string`: initial text content
-  
+
 - `macros.window.ui.tree([options,] ...eventNodes)`: creates a hierarchical tree view.
 
   Options:

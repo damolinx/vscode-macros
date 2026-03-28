@@ -22,16 +22,22 @@ class MacroTextarea extends HTMLElement {
       this.render();
     }
 
-    this.minRows = Number(this.getAttribute('data-min-rows')) || 1;
-    const maxAttr = this.getAttribute('data-max-rows');
-    this.maxRows = maxAttr !== null ? Number(maxAttr) : undefined;
-
     for (const name of MacroTextarea.observedAttributes) {
       const value = this.getAttribute(name);
       this.attributeChangedCallback(name, null, value);
     }
 
-    this.autoSize();
+    if (this.isReadonly) {
+      if (this.textarea) {
+        this.textarea.setAttribute('readonly', '');
+        this.textarea.rows = Number(this.getAttribute('rows')) || 1;
+      }
+    } else {
+      this.minRows = Number(this.getAttribute('data-min-rows')) || 1;
+      const maxAttr = this.getAttribute('data-max-rows');
+      this.maxRows = maxAttr !== null ? Number(maxAttr) : undefined;
+      this.autoSize();
+    }
   }
 
   /**
@@ -78,53 +84,63 @@ class MacroTextarea extends HTMLElement {
 
   render() {
     this.root.innerHTML = `
-      <style>
-        :host {
-          display: flex;
-          flex: 0 1 auto;
-          min-width: 0;
-        }
+        <style>
+          :host {
+            display: flex;
+            flex: 0 1 auto;
+            min-width: 0;
+          }
 
-        .wrapper {
-          display: flex;
-          flex: 1 1 auto;
-          min-width: 0;
+          .wrapper {
+            display: flex;
+            flex: 1 1 auto;
+            min-width: 0;
 
-          background: var(--vscode-input-background);
-          border: 1px solid var(--vscode-input-border);
-          border-radius: 2px;
-          padding: 0;
-        }
+            background: var(--vscode-input-background);
+            border: 1px solid var(--vscode-input-border);
+            border-radius: 2px;
+            padding: 0;
+          }
 
-        .wrapper.focus {
-          border-color: var(--vscode-focusBorder);
-          box-shadow: inset 0 0 0 1px var(--vscode-focusBorder);
-        }
+          .wrapper.focus {
+            border-color: var(--vscode-focusBorder);
+            box-shadow: inset 0 0 0 1px var(--vscode-focusBorder);
+          }
 
-        textarea {
-          flex: 1 1 auto;
-          min-width: 0;
-          resize: none;
+          .wrapper.focus textarea[readonly] {
+            box-shadow: none;
+            border-color: var(--vscode-input-border);
+          }
 
-          box-sizing: border-box;
-          padding: 4px 6px;
+          textarea {
+            flex: 1 1 auto;
+            min-width: 0;
+            resize: none;
 
-          background: transparent;
-          border: none;
-          color: var(--vscode-input-foreground);
-          outline: none;
-          overflow: hidden;
+            box-sizing: border-box;
+            padding: 4px 6px;
 
-          line-height: 1.4;
-          font-family: inherit;
-          font-size: inherit;
-        }
-      </style>
+            background: transparent;
+            border: none;
+            color: var(--vscode-input-foreground);
+            outline: none;
+            overflow: hidden;
 
-      <div class="wrapper">
-        <textarea></textarea>
-      </div>
-    `;
+            line-height: 1.4;
+            font-family: inherit;
+            font-size: inherit;
+          }
+
+          textarea[readonly] {
+            cursor: default;
+            overflow-y: auto;
+          }
+        </style>
+
+        <div class="wrapper">
+          <textarea></textarea>
+        </div>
+      `;
 
     const wrapper = this.root.querySelector('.wrapper');
     if (!this.textarea || !wrapper) {
@@ -134,30 +150,32 @@ class MacroTextarea extends HTMLElement {
     this.textarea.addEventListener('focus', () => wrapper.classList.add('focus'));
     this.textarea.addEventListener('blur', () => wrapper.classList.remove('focus'));
 
-    this.textarea.addEventListener('input', () => {
-      this.autoSize();
+    if (!this.isReadonly) {
+      this.textarea.addEventListener('input', () => {
+        this.autoSize();
 
-      const handlerName = this.getAttribute('data-on-input');
-      if (!handlerName) {
-        return;
-      }
+        const handlerName = this.getAttribute('data-on-input');
+        if (!handlerName) {
+          return;
+        }
 
-      this.dispatchEvent(
-        new CustomEvent('macro-event', {
-          bubbles: true,
-          detail: {
-            eventName: 'input',
-            handlerName,
-            target: this,
-            value: this.value,
-          },
-        }),
-      );
-    });
+        this.dispatchEvent(
+          new CustomEvent('macro-event', {
+            bubbles: true,
+            detail: {
+              eventName: 'input',
+              handlerName,
+              target: this,
+              value: this.value,
+            },
+          }),
+        );
+      });
+    }
   }
 
   autoSize() {
-    if (!this.textarea) {
+    if (!this.textarea || this.isReadonly) {
       return;
     }
 
@@ -176,6 +194,10 @@ class MacroTextarea extends HTMLElement {
     }
 
     this.textarea.rows = newRows;
+  }
+
+  get isReadonly() {
+    return this.hasAttribute('readonly');
   }
 
   get value() {
