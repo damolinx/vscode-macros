@@ -84,63 +84,62 @@ class MacroTextarea extends HTMLElement {
 
   render() {
     this.root.innerHTML = `
-        <style>
-          :host {
-            display: flex;
-            flex: 0 1 auto;
-            min-width: 0;
-          }
+      <style>
+        :host {
+          display: flex;
+          flex: 0 1 auto;
+          min-width: 0;
+        }
 
-          .wrapper {
-            display: flex;
-            flex: 1 1 auto;
-            min-width: 0;
+        .wrapper {
+          display: flex;
+          flex: 1 1 auto;
+          min-width: 0;
 
-            background: var(--vscode-input-background);
-            border: 1px solid var(--vscode-input-border);
-            border-radius: 2px;
-            padding: 0;
-          }
+          background: var(--vscode-input-background);
+          border: 1px solid var(--vscode-input-border);
+          border-radius: 2px;
+          padding: 0;
+        }
 
-          .wrapper.focus {
-            border-color: var(--vscode-focusBorder);
-            box-shadow: inset 0 0 0 1px var(--vscode-focusBorder);
-          }
+        .wrapper.focus {
+          border-color: var(--vscode-focusBorder);
+          box-shadow: inset 0 0 0 1px var(--vscode-focusBorder);
+        }
 
-          .wrapper.focus textarea[readonly] {
-            box-shadow: none;
-            border-color: var(--vscode-input-border);
-          }
+        .wrapper.focus textarea[readonly] {
+          box-shadow: none;
+          border-color: var(--vscode-input-border);
+        }
 
-          textarea {
-            flex: 1 1 auto;
-            min-width: 0;
-            resize: none;
+        textarea {
+          flex: 1 1 auto;
+          min-width: 0;
+          resize: none;
 
-            box-sizing: border-box;
-            padding: 4px 6px;
+          box-sizing: border-box;
+          padding: 4px 6px;
 
-            background: transparent;
-            border: none;
-            color: var(--vscode-input-foreground);
-            outline: none;
-            overflow: hidden;
+          background: transparent;
+          border: none;
+          color: var(--vscode-input-foreground);
+          outline: none;
+          overflow: hidden;
 
-            line-height: 1.4;
-            font-family: inherit;
-            font-size: inherit;
-          }
+          line-height: 1.4;
+          font-family: inherit;
+          font-size: inherit;
+        }
 
-          textarea[readonly] {
-            cursor: default;
-            overflow-y: auto;
-          }
-        </style>
+        textarea[readonly] {
+          cursor: default;
+          overflow-y: auto;
+        }
+      </style>
 
-        <div class="wrapper">
-          <textarea></textarea>
-        </div>
-      `;
+      <div class="wrapper">
+        <textarea></textarea>
+      </div>`;
 
     const wrapper = this.root.querySelector('.wrapper');
     if (!this.textarea || !wrapper) {
