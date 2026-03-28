@@ -103,10 +103,12 @@ declare global {
        */
       readonly ui: {
         attr(name: string, value: macros.ui.AttributeValue): macros.ui.Attribute;
-        button(...nodes: (macros.ui.EventNode | macros.ui.Text)[]): macros.ui.Button;
+        button(
+          ...nodes: (macros.ui.Attribute | macros.ui.EventNode | macros.ui.Text)[]
+        ): macros.ui.Button;
         button(
           options: macros.ui.ButtonOptions,
-          ...nodes: (macros.ui.EventNode | macros.ui.Text)[]
+          ...nodes: (macros.ui.Attribute | macros.ui.EventNode | macros.ui.Text)[]
         ): macros.ui.Button;
         container(...nodes: (macros.ui.Container | macros.ui.Node)[]): macros.ui.Container;
         container(
@@ -114,10 +116,12 @@ declare global {
           ...nodes: macros.ui.Node[]
         ): macros.ui.Container;
         handler(name: string, code: macros.ui.EventHandlerCode): macros.ui.EventHandler;
-        input(...nodes: (macros.ui.EventNode | macros.ui.Button)[]): macros.ui.Input;
+        input(
+          ...nodes: (macros.ui.Attribute | macros.ui.EventNode | macros.ui.Button)[]
+        ): macros.ui.Input;
         input(
           options: macros.ui.InputOptions,
-          ...nodes: (macros.ui.EventNode | macros.ui.Button)[]
+          ...nodes: (macros.ui.Attribute | macros.ui.EventNode | macros.ui.Button)[]
         ): macros.ui.Input;
         on(eventName: string, handlerName: string): macros.ui.Event;
         onHandle(eventName: string, code: macros.ui.EventHandlerCode): macros.ui.BoundEvent;
@@ -128,10 +132,10 @@ declare global {
         root(...nodes: (macros.ui.Container | macros.ui.Node)[]): macros.ui.Root;
         script(code: string): macros.ui.Script;
         text(text: string): macros.ui.Text;
-        textarea(...nodes: macros.ui.EventNode[]): macros.ui.Textarea;
+        textarea(...nodes: (macros.ui.Attribute | macros.ui.EventNode)[]): macros.ui.Textarea;
         textarea(
           options: macros.ui.TextareaOptions,
-          ...nodes: macros.ui.EventNode[]
+          ...nodes: (macros.ui.Attribute | macros.ui.EventNode)[]
         ): macros.ui.Textarea;
         tree(...children: macros.ui.EventNode[]): macros.ui.Tree;
         tree(options: macros.ui.TreeOptions, ...children: macros.ui.EventNode[]): macros.ui.Tree;
@@ -269,4 +273,4 @@ export declare namespace macros.ui {
   export type EventNode = BoundEvent | Event | EventHandler;
 }
 
-export { };
+export {};

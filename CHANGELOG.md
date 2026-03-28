@@ -2,6 +2,7 @@
 
 ## 0.7.5
 - UI DSL:
+ - `macros.window.ui.button` gains `fill` layout class.
  - `macros.window.ui.textarea` support `readonly: true`.
   - Fix: `macros.ui.TextareaOptions` declare `maxRow` and `minRow` instead of `maxRows` and `minRows` in `globals.d.ts`.
 

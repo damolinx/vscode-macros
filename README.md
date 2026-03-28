@@ -573,6 +573,10 @@ The use case for the DSL is the same as for the macros: quickly generate a tool 
   - `tabIndex?: number`
   - `toggle?: boolean`: When `true`, button is a toggle-button.
 
+  You can cusotmize layout via classes:
+    - `ui.attr('class', 'fill')` makes the button expand horizontally
+      (up to a bounded max width) and centered.
+
 - `macros.window.ui.text(string)`: creates a text node for inline content.
 
 - `macros.window.ui.textarea([options,] ...children)`: creates a multi‑line textarea. Buttons are not supported at this time.

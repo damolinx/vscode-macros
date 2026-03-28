@@ -73,6 +73,17 @@ class MacroButton extends HTMLElement {
           align-items: center;
         }
 
+        :host(.fill) {
+          flex: 1 1 auto;
+          justify-content: center;
+          min-width: 0;
+        }
+
+        :host(.fill) button {
+          width: 100%;
+          max-width: 300px;
+        }
+
         button {
           align-items: center;
           display: inline-flex;
