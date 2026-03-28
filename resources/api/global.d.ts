@@ -236,8 +236,8 @@ export declare namespace macros.ui {
   }
 
   export interface TextareaOptions extends NodeOptions {
-    readonly minRow?: number;
-    readonly maxRow?: number;
+    readonly minRows?: number;
+    readonly maxRows?: number;
     readonly placeholder?: string;
     readonly tabIndex?: number;
     readonly value?: string;
@@ -268,4 +268,4 @@ export declare namespace macros.ui {
   export type EventNode = BoundEvent | Event | EventHandler;
 }
 
-export {};
+export { };
