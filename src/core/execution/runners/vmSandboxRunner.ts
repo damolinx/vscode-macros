@@ -2,36 +2,36 @@ import * as vm from 'vm';
 import { initializeMacrosApi } from '../../../api/macroApiFactory';
 import { MacroContext } from '../../../api/macroContext';
 import { initializeContext, MacroContextInitParams } from '../macroRunContext';
-import { SandboxExecutionDescriptor } from '../sandboxExecutionDescriptor';
+import { SandboxExecution } from '../sandboxExecution';
 import { SandboxRunner } from './sandboxRunner';
 
 export class VmSandboxRunner extends SandboxRunner<vm.Context> {
   private sharedMacroContext?: MacroContext;
 
   protected override async executeInternal(
-    descriptor: SandboxExecutionDescriptor,
+    execution: SandboxExecution,
     context: vm.Context,
   ): Promise<any> {
     const options: vm.RunningScriptOptions = {
-      filename: this.getExecutionSourceName(descriptor),
+      filename: this.getExecutionSourceName(execution),
     };
 
-    const runPromise = descriptor.snapshot.options.persistent
-      ? this.executeInternalPersistent(descriptor, context, options)
-      : vm.runInNewContext(descriptor.code, context, options);
+    const runPromise = execution.snapshot.options.persistent
+      ? this.executeInternalPersistent(execution, context, options)
+      : vm.runInNewContext(execution.code, context, options);
 
     const result = await runPromise;
     return result;
   }
 
   private async executeInternalPersistent(
-    descriptor: SandboxExecutionDescriptor,
+    execution: SandboxExecution,
     context: vm.Context,
     options: vm.RunningScriptOptions,
   ): Promise<any> {
     const initialKeys = Object.keys(context).filter((k) => !k.startsWith('__'));
     try {
-      const result = await vm.runInContext(descriptor.code, context, options);
+      const result = await vm.runInContext(execution.code, context, options);
       return result;
     } finally {
       if (this.sharedMacroContext) {
@@ -49,13 +49,13 @@ export class VmSandboxRunner extends SandboxRunner<vm.Context> {
   }
 
   protected override getContext(
-    descriptor: SandboxExecutionDescriptor,
+    { snapshot }: SandboxExecution,
     params: MacroContextInitParams,
   ): vm.Context {
     let context: MacroContext;
     let name = `context-${params.executionId}`;
 
-    if (descriptor.snapshot.options.persistent) {
+    if (snapshot.options.persistent) {
       name += '(shared)';
       if (this.sharedMacroContext) {
         initializeMacrosApi(this.sharedMacroContext, params);

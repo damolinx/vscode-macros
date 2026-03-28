@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { SandboxExecutionDescriptor } from '../../core/execution/sandboxExecutionDescriptor';
+import { SandboxExecution } from '../../core/execution/sandboxExecution';
 import { getSandboxExecutionIdToken } from '../../core/execution/sandboxExecutionId';
 import { IconColor } from '../../ui/icons';
 import { formatStartTimestampLabel } from '../../utils/ui';
@@ -7,7 +7,7 @@ import { formatStartTimestampLabel } from '../../utils/ui';
 const RunInfoIcon = new vscode.ThemeIcon('circle-outline', IconColor);
 const StartupRunInfoIcon = new vscode.ThemeIcon('record-small', IconColor);
 
-export function createExecutionItem(descriptor: SandboxExecutionDescriptor): vscode.TreeItem {
+export function createExecutionItem(descriptor: SandboxExecution): vscode.TreeItem {
   const item = new vscode.TreeItem(
     getSandboxExecutionIdToken(descriptor.id),
     vscode.TreeItemCollapsibleState.None,
@@ -19,7 +19,7 @@ export function createExecutionItem(descriptor: SandboxExecutionDescriptor): vsc
   return item;
 }
 
-function getTooltip({ snapshot, startedOn }: SandboxExecutionDescriptor): string {
+function getTooltip({ snapshot, startedOn }: SandboxExecution): string {
   const enabledOptions = Object.entries(snapshot.options)
     .filter(([, enabled]) => enabled)
     .map(([key]) => key);

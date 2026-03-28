@@ -40,10 +40,10 @@ export async function runMacro(
   }
 
   const executor = await sandboxManager.ensureExecutor(uri);
-  const pareparedExecution = await executor.createDescriptor(options);
+  const pareparedExecution = await executor.createExecution(options);
 
   try {
-    await executor.executeDescriptor(pareparedExecution);
+    await executor.execute(pareparedExecution);
   } catch (error: any) {
     await showMacroErrorMessage(executor, pareparedExecution.snapshot, error ?? 'Unknown error');
   }

@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { SandboxExecutionDescriptor } from '../../core/execution/sandboxExecutionDescriptor';
+import { SandboxExecution } from '../../core/execution/sandboxExecution';
 import { StartupMacro } from '../../core/startupMacro';
 import { getMacroUriFromStartupMacroUri } from '../../core/startupMacroId';
 import { getIconFromUri } from '../../ui/icons';
@@ -12,7 +12,7 @@ import {
 
 export function createStartupItem(
   { macroUri, name, uri }: StartupMacro,
-  descriptor?: SandboxExecutionDescriptor,
+  descriptor?: SandboxExecution,
 ): vscode.TreeItem {
   const item = new vscode.TreeItem(uri, vscode.TreeItemCollapsibleState.None);
   item.command = {

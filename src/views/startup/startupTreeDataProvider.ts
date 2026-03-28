@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { SandboxExecutionDescriptor } from '../../core/execution/sandboxExecutionDescriptor';
+import { SandboxExecution } from '../../core/execution/sandboxExecution';
 import { StartupMacro } from '../../core/startupMacro';
 import { ExtensionContext } from '../../extensionContext';
 import { NaturalComparer } from '../../utils/ui';
@@ -14,7 +14,7 @@ export class StartupTreeDataProvider extends TreeDataProvider<StartupTreeElement
   constructor(context: ExtensionContext) {
     super(context);
 
-    const sandboxHandler = ({ startup }: SandboxExecutionDescriptor) =>
+    const sandboxHandler = ({ startup }: SandboxExecution) =>
       startup && this.onDidChangeTreeDataEmitter.fire();
     this.disposables.push(
       this.context.sandboxManager.onExecutionStart(sandboxHandler),

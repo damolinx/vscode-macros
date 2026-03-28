@@ -29,7 +29,7 @@ import {
 import { showRunCode } from './commands/showRunCode';
 import { showRunningMacros } from './commands/showRunningMacros';
 import { stopMacro } from './commands/stopMacro';
-import { SandboxExecutionDescriptor } from './core/execution/sandboxExecutionDescriptor';
+import { SandboxExecution } from './core/execution/sandboxExecution';
 import { MacroLibrary } from './core/library/macroLibrary';
 import { Macro } from './core/macro';
 import { StartupMacro } from './core/startupMacro';
@@ -123,7 +123,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.run.activeEditor', () => runActiveEditor(context)),
     cr('macros.run.mru', (...args: any[]) => runMacro(context, context.mruMacro, ...args)),
     cr('macros.run.show', () => showRunningMacros(context)),
-    cr('macros.runView', (descriptor: SandboxExecutionDescriptor) => showRunCode(descriptor)),
+    cr('macros.runView', (execution: SandboxExecution) => showRunCode(execution)),
     cr('macros.showMacroExplorer', () => revealTreeView('explorer')),
     cr('macros.showStartupMacros', () => revealTreeView('startup')),
     cr('macros.sourceDirectories.settings', () => openSourceDirectoriestSettings()),
@@ -132,7 +132,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.startup.settings', (sourceTarget?: SourceTarget) =>
       openStartupMacrosSettings(sourceTarget?.target),
     ),
-    cr('macros.stop', (locator: Macro | SandboxExecutionDescriptor | StartupMacro | vscode.Uri) =>
+    cr('macros.stop', (locator: Macro | SandboxExecution | StartupMacro | vscode.Uri) =>
       stopMacro(context, locator),
     ),
   );

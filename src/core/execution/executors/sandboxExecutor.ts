@@ -3,16 +3,16 @@ import { ExtensionContext } from '../../../extensionContext';
 import { Macro } from '../../macro';
 import { SandboxRunner } from '../runners/sandboxRunner';
 import { VmSandboxRunner } from '../runners/vmSandboxRunner';
-import { SandboxExecutionDescriptor } from '../sandboxExecutionDescriptor';
+import { SandboxExecution } from '../sandboxExecution';
 import { SandboxExecutionId } from '../sandboxExecutionId';
 
 export class SandboxExecutor implements vscode.Disposable {
   protected readonly context: ExtensionContext;
-  private readonly executionMap: Map<SandboxExecutionId, SandboxExecutionDescriptor>;
+  private readonly executionMap: Map<SandboxExecutionId, SandboxExecution>;
   private index: number;
   public readonly macro: Macro;
-  private readonly onExecutionEndEmitter: vscode.EventEmitter<SandboxExecutionDescriptor>;
-  private readonly onExecutionStartEmitter: vscode.EventEmitter<SandboxExecutionDescriptor>;
+  private readonly onExecutionEndEmitter: vscode.EventEmitter<SandboxExecution>;
+  private readonly onExecutionStartEmitter: vscode.EventEmitter<SandboxExecution>;
   protected readonly runner: SandboxRunner;
 
   constructor(context: ExtensionContext, macro: Macro) {
@@ -34,7 +34,7 @@ export class SandboxExecutor implements vscode.Disposable {
     this.onExecutionStartEmitter.dispose();
   }
 
-  public cancel(id?: SandboxExecutionId): SandboxExecutionDescriptor[] {
+  public cancel(id?: SandboxExecutionId): SandboxExecution[] {
     const canceledDescriptors = id
       ? this.executionMap.has(id)
         ? [this.executionMap.get(id)!]
@@ -51,22 +51,17 @@ export class SandboxExecutor implements vscode.Disposable {
     return this.executionMap.size;
   }
 
-  public async createDescriptor(params?: { startup?: true }): Promise<SandboxExecutionDescriptor> {
-    const execution = await SandboxExecutionDescriptor.create(this.context, this.macro, {
+  public async createExecution(params?: { startup?: true }): Promise<SandboxExecution> {
+    const execution = await SandboxExecution.create(this.context, this.macro, {
       index: ++this.index,
       startup: params?.startup,
     });
     return execution;
   }
 
-  public async execute(params?: { startup?: true }): Promise<void> {
-    const execution = await this.createDescriptor(params);
-    return this.executeDescriptor(execution);
-  }
-
-  public async executeDescriptor(descriptor: SandboxExecutionDescriptor): Promise<void> {
-    if (this.count > 0 && descriptor.snapshot.options.singleton) {
-      this.context.log.warn('Macro is already running (singleton), skipping —', descriptor.id);
+  public async execute(execution: SandboxExecution): Promise<void> {
+    if (this.count > 0 && execution.snapshot.options.singleton) {
+      this.context.log.warn('Macro is already running (singleton), skipping —', execution.id);
       vscode.window.setStatusBarMessage(
         `$(info) Singleton macro ${this.macro.name} is already running`,
         3000,
@@ -74,34 +69,34 @@ export class SandboxExecutor implements vscode.Disposable {
       return;
     }
 
-    this.executionMap.set(descriptor.id, descriptor);
-    this.onExecutionStartEmitter.fire(descriptor);
+    this.executionMap.set(execution.id, execution);
+    this.onExecutionStartEmitter.fire(execution);
     try {
-      this.context.log.info('Macro started —', descriptor.id);
-      descriptor.refreshStartedOn();
-      await this.runner.execute(descriptor);
-      this.context.log.info('Macro ended —', descriptor.id);
+      this.context.log.info('Macro started —', execution.id);
+      execution.refreshStartedOn();
+      await this.runner.execute(execution);
+      this.context.log.info('Macro ended —', execution.id);
     } catch (error: any) {
       this.context.log.error(
         'Macro failed —',
-        descriptor.id,
+        execution.id,
         this.macro.uri.toString(true),
         '\n',
         (error && (error.stack ?? error.message ?? error)) ?? 'Unknown error',
       );
       throw error;
     } finally {
-      this.executionMap.delete(descriptor.id);
-      this.onExecutionEndEmitter.fire(descriptor);
-      descriptor.dispose();
+      this.executionMap.delete(execution.id);
+      this.onExecutionEndEmitter.fire(execution);
+      execution.dispose();
     }
   }
 
-  public get executions(): SandboxExecutionDescriptor[] {
+  public get executions(): SandboxExecution[] {
     return Array.from(this.executionMap.values());
   }
 
-  public getExecution(id: SandboxExecutionId): SandboxExecutionDescriptor | undefined {
+  public getExecution(id: SandboxExecutionId): SandboxExecution | undefined {
     return this.executionMap.get(id);
   }
 
@@ -109,11 +104,11 @@ export class SandboxExecutor implements vscode.Disposable {
     return !!this.executionMap.size;
   }
 
-  public get onExecutionEnd(): vscode.Event<SandboxExecutionDescriptor> {
+  public get onExecutionEnd(): vscode.Event<SandboxExecution> {
     return this.onExecutionEndEmitter.event;
   }
 
-  public get onExecutionStart(): vscode.Event<SandboxExecutionDescriptor> {
+  public get onExecutionStart(): vscode.Event<SandboxExecution> {
     return this.onExecutionStartEmitter.event;
   }
 

@@ -4,14 +4,14 @@ import { Macro } from '../macro';
 import { MacroCode } from '../macroCode';
 import { getSandboxExecutionId, SandboxExecutionId } from './sandboxExecutionId';
 
-export class SandboxExecutionDescriptor implements vscode.Disposable {
+export class SandboxExecution implements vscode.Disposable {
   public static async create(
     context: ExtensionContext,
     macro: Macro,
     params: { code?: MacroCode; index: number; startup?: true },
-  ): Promise<SandboxExecutionDescriptor> {
+  ): Promise<SandboxExecution> {
     const code = params.code ?? (await macro.getCode());
-    return new SandboxExecutionDescriptor(context, macro, code, params.index, params.startup);
+    return new SandboxExecution(context, macro, code, params.index, params.startup);
   }
 
   private readonly context: ExtensionContext;

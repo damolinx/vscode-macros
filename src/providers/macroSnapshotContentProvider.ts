@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { SandboxExecutionDescriptor } from '../core/execution/sandboxExecutionDescriptor';
+import { SandboxExecution } from '../core/execution/sandboxExecution';
 import { ExtensionContext } from '../extensionContext';
 
 export function registerMacroSnapshotContentProvider(context: ExtensionContext): void {
@@ -21,7 +21,7 @@ export function registerMacroSnapshotContentProvider(context: ExtensionContext):
   );
 }
 
-export function createSnapshotUri({ id, macro: { uri } }: SandboxExecutionDescriptor): vscode.Uri {
+export function createSnapshotUri({ id, macro: { uri } }: SandboxExecution): vscode.Uri {
   return vscode.Uri.from({
     scheme: 'macro-snapshot',
     path: uri.toString(),

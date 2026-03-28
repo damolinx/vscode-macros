@@ -11,10 +11,10 @@ export class ExtensionContext {
   public mruMacro?: vscode.Uri;
   public readonly sandboxManager: SandboxManager;
   public readonly startupManager: StartupMacroLibrarySourceManager;
-  public readonly viewManagers: { tree: ViewManager; web: ViewManager };
+  public readonly viewManagers: Readonly<{ tree: ViewManager; web: ViewManager }>;
 
-  constructor(extensionContext: vscode.ExtensionContext) {
-    this.extensionContext = extensionContext;
+  constructor(context: vscode.ExtensionContext) {
+    this.extensionContext = context;
     this.log = vscode.window.createOutputChannel('Macros', { log: true });
     this.startupManager = new StartupMacroLibrarySourceManager();
     this.viewManagers = {
@@ -24,16 +24,9 @@ export class ExtensionContext {
 
     this.libraryManager = new MacroLibraryManager(this);
     this.sandboxManager = new SandboxManager(this);
-
-    this.disposables.push(this.libraryManager, this.log, this.sandboxManager);
+    this.disposables.push(this.libraryManager, this.log, this.sandboxManager, this.startupManager);
   }
 
-  /**
-   * An array to which disposables can be added. When this
-   * extension is deactivated the disposables will be disposed.
-   *
-   * *Note* that asynchronous dispose-functions aren't awaited.
-   */
   public get disposables(): vscode.Disposable[] {
     return this.extensionContext.subscriptions;
   }

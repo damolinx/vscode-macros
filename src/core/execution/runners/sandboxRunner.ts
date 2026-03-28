@@ -2,7 +2,7 @@ import { MacroLogOutputChannel } from '../../../api/macroLogOutputChannel';
 import { ExtensionContext } from '../../../extensionContext';
 import { parentUri, uriBasename } from '../../../utils/uri';
 import { MacroContextInitParams } from '../macroRunContext';
-import { SandboxExecutionDescriptor } from '../sandboxExecutionDescriptor';
+import { SandboxExecution } from '../sandboxExecution';
 import { getSandboxExecutionIdToken } from '../sandboxExecutionId';
 
 export abstract class SandboxRunner<TContext = unknown> {
@@ -12,50 +12,46 @@ export abstract class SandboxRunner<TContext = unknown> {
     this.context = context;
   }
 
-  public async execute(descriptor: SandboxExecutionDescriptor): Promise<any> {
-    const contextInitParams = this.getContextInitParams(descriptor);
-    const context = this.getContext(descriptor, contextInitParams);
-    const executePromise = this.executeInternal(descriptor, context);
+  public async execute(execution: SandboxExecution): Promise<any> {
+    const contextInitParams = this.getContextInitParams(execution);
+    const context = this.getContext(execution, contextInitParams);
+    const executePromise = this.executeInternal(execution, context);
 
-    const result = await (descriptor.snapshot.options.retained
+    const result = await (execution.snapshot.options.retained
       ? Promise.all([
           executePromise,
-          new Promise((resolve) => descriptor.cts.token.onCancellationRequested(resolve)),
+          new Promise((resolve) => execution.cts.token.onCancellationRequested(resolve)),
         ])
       : executePromise);
 
     return result;
   }
 
-  protected abstract executeInternal(
-    descriptor: SandboxExecutionDescriptor,
-    context: TContext,
-  ): Promise<any>;
+  protected abstract executeInternal(execution: SandboxExecution, context: TContext): Promise<any>;
 
   protected abstract getContext(
-    descriptor: SandboxExecutionDescriptor,
+    execution: SandboxExecution,
     params: MacroContextInitParams,
   ): TContext;
 
-  protected getContextInitParams(descriptor: SandboxExecutionDescriptor): MacroContextInitParams {
+  protected getContextInitParams(execution: SandboxExecution): MacroContextInitParams {
     return {
       context: this.context,
-      disposables: descriptor.macroDisposables,
-      log: new MacroLogOutputChannel(descriptor.id as any, this.context),
-      executionId: descriptor.id as any,
-      startup: descriptor.startup,
-      token: descriptor.cts.token,
-      uri: descriptor.macro.uri,
+      disposables: execution.macroDisposables,
+      log: new MacroLogOutputChannel(execution.id as any, this.context),
+      executionId: execution.id as any,
+      startup: execution.startup,
+      token: execution.cts.token,
+      uri: execution.macro.uri,
       viewManagers: this.context.viewManagers,
     };
   }
 
-  public getExecutionSourceName(descriptor: SandboxExecutionDescriptor): string {
-    const { uri } = descriptor.macro;
+  public getExecutionSourceName({ id, macro: { uri }, snapshot }: SandboxExecution): string {
     const parentName = uriBasename(parentUri(uri));
     const filename =
-      descriptor.snapshot.languageId === 'typescript'
-        ? `[${getSandboxExecutionIdToken(descriptor.id)}] ${parentName}/${uriBasename(uri, true)}.js`
+      snapshot.languageId === 'typescript'
+        ? `[${getSandboxExecutionIdToken(id)}] ${parentName}/${uriBasename(uri, true)}.js`
         : `${parentName}/${uriBasename(uri)}`;
     return filename;
   }

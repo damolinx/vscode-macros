@@ -1,24 +1,24 @@
 import * as vscode from 'vscode';
-import { SandboxExecutionDescriptor } from '../core/execution/sandboxExecutionDescriptor';
+import { SandboxExecution } from '../core/execution/sandboxExecution';
 import { Macro } from '../core/macro';
+import { getMacroId } from '../core/macroId';
 import { StartupMacro } from '../core/startupMacro';
-import { getMacroUriFromStartupMacroUri } from '../core/startupMacroId';
 import { ExtensionContext } from '../extensionContext';
 import { resolveUri } from '../utils/uri';
 
 export async function stopMacro(
   { log, sandboxManager }: ExtensionContext,
-  target: Macro | SandboxExecutionDescriptor | StartupMacro | vscode.Uri,
+  target: Macro | SandboxExecution | StartupMacro | vscode.Uri,
 ): Promise<void> {
-  let canceledDescriptors: SandboxExecutionDescriptor[];
+  let canceledExecutions: SandboxExecution[];
 
-  if (target instanceof SandboxExecutionDescriptor) {
+  if (target instanceof SandboxExecution) {
     target.cts.cancel();
-    canceledDescriptors = [target];
+    canceledExecutions = [target];
   } else {
-    const uri = getMacroUriFromStartupMacroUri(resolveUri(target));
-    canceledDescriptors = sandboxManager.cancel(uri);
+    const macroId = getMacroId(resolveUri(target));
+    canceledExecutions = sandboxManager.cancel(macroId);
   }
 
-  log.info('Cancellation requested —', ...canceledDescriptors.map(({ id }) => id));
+  log.info('Cancellation requested', ...canceledExecutions.map(({ id }) => id));
 }
