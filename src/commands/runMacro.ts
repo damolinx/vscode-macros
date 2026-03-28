@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
 import { resolveTokenizedPath } from '../core/pathTokenization';
 import { ExtensionContext } from '../extensionContext';
-import { showMacroErrorDialog, showMacroQuickPick } from '../ui/dialogs';
+import { showMacroQuickPick } from '../ui/dialogs';
+import { showMacroErrorMessage } from '../ui/errors';
 import { isUntitled, UriLocator, resolveUri } from '../utils/uri';
 import { activeMacroEditor } from './utils';
 
@@ -44,7 +45,7 @@ export async function runMacro(
   try {
     await executor.executeDescriptor(pareparedExecution);
   } catch (error: any) {
-    await showMacroErrorDialog(executor, pareparedExecution.snapshot, error ?? 'Unknown error');
+    await showMacroErrorMessage(executor, pareparedExecution.snapshot, error ?? 'Unknown error');
   }
 
   function hasDiagnosticErrors(uri: vscode.Uri) {
