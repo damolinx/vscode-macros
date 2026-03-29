@@ -11,6 +11,7 @@ export const SUPPORTED_RENDERERS: readonly string[] = [
   'button',
   'container',
   'input',
+  'link',
   'textarea',
   'tree',
 ];

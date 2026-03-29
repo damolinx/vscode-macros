@@ -1,12 +1,12 @@
 import * as vscode from 'vscode';
 import { SandboxExecution } from '../core/execution/sandboxExecution';
+import { SandboxExecutionId } from '../core/execution/sandboxExecutionId';
 import { Macro } from '../core/macro';
 import { StartupMacro } from '../core/startupMacro';
-import { ExtensionContext } from '../extensionContext';
-import { resolveUri } from '../utils/uri';
 import { getMacroUriFromStartupMacroUri } from '../core/startupMacroId';
-import { SandboxExecutionId } from '../core/execution/sandboxExecutionId';
+import { ExtensionContext } from '../extensionContext';
 import { formatDisplayUri } from '../utils/ui';
+import { resolveUri } from '../utils/uri';
 
 export async function stopMacro(
   { log, sandboxManager }: ExtensionContext,

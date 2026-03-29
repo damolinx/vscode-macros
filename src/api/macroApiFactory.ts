@@ -9,6 +9,7 @@ import { createText } from './window/content/text';
 import { createButton } from './window/elements/button';
 import { createContainer } from './window/elements/container';
 import { createInput } from './window/elements/input';
+import { createLink } from './window/elements/link';
 import { createTextarea } from './window/elements/textarea';
 import { createTree } from './window/elements/tree';
 import { handleLogMessage, LogMessage } from './window/helpers';
@@ -47,6 +48,7 @@ export function createMacroApi(params: MacroContextInitParams): MacrosApi {
           container: createContainer,
           handler: createEventHandler,
           input: createInput,
+          link: createLink,
           on: createEvent,
           onHandle: createBoundEvent,
           root: createRoot,

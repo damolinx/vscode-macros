@@ -123,6 +123,7 @@ declare global {
           options: macros.ui.InputOptions,
           ...nodes: (macros.ui.Attribute | macros.ui.EventNode | macros.ui.Button)[]
         ): macros.ui.Input;
+        link(options: macros.ui.LinkOptions): macros.ui.Link;
         on(eventName: string, handlerName: string): macros.ui.Event;
         onHandle(eventName: string, code: macros.ui.EventHandlerCode): macros.ui.BoundEvent;
         root(
@@ -219,6 +220,16 @@ export declare namespace macros.ui {
 
   export interface Input extends BaseNode {
     readonly kind: 'input';
+  }
+
+  export interface LinkOptions extends NodeOptions {
+    readonly href: string | _vscode.Uri;
+    readonly label?: string;
+    readonly tabIndex?: number;
+  }
+
+  export interface Link extends BaseNode {
+    readonly kind: 'link';
   }
 
   export interface RootOptions {

@@ -573,9 +573,16 @@ The use case for the DSL is the same as for the macros: quickly generate a tool 
   - `tabIndex?: number`
   - `toggle?: boolean`: When `true`, button is a toggle-button.
 
-  You can cusotmize layout via classes:
+  You can customize layout via classes:
     - `ui.attr('class', 'fill')` makes the button expand horizontally
       (up to a bounded max width) and centered.
+
+- `macros.window.ui.link(options)`: creates a clickable text link.
+
+  Options:
+  - `href: string | vscode.Uri`
+  - `label?: string` — Text shown for the link. If omitted, the `href` is used.
+  - `tabIndex?: number`
 
 - `macros.window.ui.text(string)`: creates a text node for inline content.
 
