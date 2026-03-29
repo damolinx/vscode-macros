@@ -4,11 +4,11 @@ import { UriLocator, uriBasename } from '../utils/uri';
 import { getUriOrTreeSelection } from './utils';
 
 export async function copyPath(
-  { log }: ExtensionContext,
+  { explorerTree, log }: ExtensionContext,
   locator?: UriLocator,
   nameOnly?: true,
 ): Promise<void> {
-  const uri = getUriOrTreeSelection(locator);
+  const uri = getUriOrTreeSelection(explorerTree, locator);
   if (!uri) {
     return;
   }

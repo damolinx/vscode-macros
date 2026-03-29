@@ -45,7 +45,6 @@ import { registerMacroSnapshotContentProvider } from './providers/macroSnapshotC
 import { exists } from './utils/fsEx';
 import { UriLocator, areUriEqual } from './utils/uri';
 import { SourceTarget } from './views/startup/sourceTarget';
-import { refreshTreeView, registerTreeViews, revealTreeView } from './views/treeViews';
 
 /**
  * Extension startup.
@@ -59,8 +58,6 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
 
   registerCreateMacroContentTool(context);
   registerMacroChatParticipant(context);
-
-  registerTreeViews(context);
 
   registerMacroSnapshotContentProvider(context);
   registerContextValueHandlers(context);
@@ -95,7 +92,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.downloadAsset', (assetUri: vscode.Uri, locator: UriLocator) =>
       downloadAsset(context, assetUri, locator),
     ),
-    cr('macros.explorer.refresh', () => refreshTreeView('explorer')),
+    cr('macros.explorer.refresh', () => context.explorerTree.refresh()),
     cr('macros.lmtools.createMacro', (args: CreateMacroContentArgs) =>
       createMacroContent(context, args),
     ),
@@ -117,18 +114,18 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.revealInFinder', (locator?: UriLocator) => revealInOS(context, locator)),
     cr('macros.revealInFiles', (locator?: UriLocator) => revealInOS(context, locator)),
     cr('macros.revealRelatedMacroInTree', (startupMacro: StartupMacro) =>
-      revealRelatedMacroInTree(startupMacro),
+      revealRelatedMacroInTree(context, startupMacro),
     ),
     cr('macros.run', (locator?: UriLocator, ...args: any[]) => runMacro(context, locator, ...args)),
     cr('macros.run.activeEditor', () => runActiveEditor(context)),
     cr('macros.run.mru', (...args: any[]) => runMacro(context, context.mruMacro, ...args)),
     cr('macros.run.show', () => showRunningMacros(context)),
     cr('macros.runView', (execution: SandboxExecution) => showRunCode(execution)),
-    cr('macros.showMacroExplorer', () => revealTreeView('explorer')),
-    cr('macros.showStartupMacros', () => revealTreeView('startup')),
+    cr('macros.showMacroExplorer', () => context.explorerTree.focus()),
+    cr('macros.showStartupMacros', () => context.startupTree.focus()),
     cr('macros.sourceDirectories.settings', () => openSourceDirectoriestSettings()),
     cr('macros.sourceDirectories.setup', (uri: vscode.Uri) => setupSourceDirectory(context, uri)),
-    cr('macros.startup.refresh', () => refreshTreeView('startup')),
+    cr('macros.startup.refresh', () => context.startupTree.refresh()),
     cr('macros.startup.settings', (sourceTarget?: SourceTarget) =>
       openStartupMacrosSettings(sourceTarget?.target),
     ),

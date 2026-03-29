@@ -7,8 +7,12 @@ import { exists } from '../utils/fsEx';
 import { isUntitled, parentUri, uriBasename, UriLocator } from '../utils/uri';
 import { getUriOrTreeSelection } from './utils';
 
-export async function renameMacro(_context: ExtensionContext, locator?: UriLocator): Promise<void> {
+export async function renameMacro(
+  { explorerTree }: ExtensionContext,
+  locator?: UriLocator,
+): Promise<void> {
   const uri = getUriOrTreeSelection(
+    explorerTree,
     locator,
     (uri, treeItem) => !isUntitled(uri) && (!treeItem || treeItem instanceof Macro),
   );

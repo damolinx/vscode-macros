@@ -2,8 +2,8 @@ import * as vscode from 'vscode';
 import { MacroFilter } from '../utils/ui';
 import { resolveUri, UriLocator } from '../utils/uri';
 import { saveTextEditor } from '../utils/vscodeEx';
+import { ExplorerTree } from '../views/explorer/explorerTree';
 import { TreeElement } from '../views/explorer/explorerTreeDataProvider';
-import { explorerTreeView } from '../views/treeViews';
 
 export async function activeMacroEditor(
   ensureSaved: boolean,
@@ -20,6 +20,7 @@ export async function activeMacroEditor(
 }
 
 export function getUriOrTreeSelection(
+  explorerTree: ExplorerTree,
   locator?: UriLocator,
   filter?: (uri: vscode.Uri, item?: TreeElement) => boolean,
 ): vscode.Uri | undefined {
@@ -28,7 +29,7 @@ export function getUriOrTreeSelection(
     return !filter || filter(uri) ? uri : undefined;
   }
 
-  const treeSelection = explorerTreeView?.selection[0];
+  const treeSelection = explorerTree.selection[0];
   if (
     treeSelection &&
     'uri' in treeSelection &&

@@ -149,7 +149,7 @@ export class ExplorerTreeDataProvider extends TreeDataProvider<TreeElement> {
     let treeItem: vscode.TreeItem;
 
     if (element instanceof Library) {
-      treeItem = createLibraryItem(element);
+      treeItem = createLibraryItem(element, this.context);
     } else if (element instanceof Macro) {
       treeItem = await createMacroItem(element, this.context);
     } else {

@@ -19,8 +19,12 @@ function setSource(uri?: vscode.Uri): void {
   savedUri = uri;
 }
 
-export async function copyFile({ log }: ExtensionContext, locator?: UriLocator): Promise<void> {
+export async function copyFile(
+  { explorerTree, log }: ExtensionContext,
+  locator?: UriLocator,
+): Promise<void> {
   const uri = getUriOrTreeSelection(
+    explorerTree,
     locator,
     (_, item) => item instanceof Macro && !isUntitled(item.uri),
   );
@@ -33,7 +37,10 @@ export async function copyFile({ log }: ExtensionContext, locator?: UriLocator):
   log.debug('Copy: Copied file', formatDisplayUri(uri));
 }
 
-export async function pasteFile({ log }: ExtensionContext, locator?: UriLocator): Promise<void> {
+export async function pasteFile(
+  { explorerTree, log }: ExtensionContext,
+  locator?: UriLocator,
+): Promise<void> {
   const source = getSource();
   if (!source) {
     log.info('Paste: Nothing to paste');
@@ -46,7 +53,7 @@ export async function pasteFile({ log }: ExtensionContext, locator?: UriLocator)
     return;
   }
 
-  let target = getUriOrTreeSelection(locator);
+  let target = getUriOrTreeSelection(explorerTree, locator);
   if (!target) {
     log.debug('Paste: No target');
     return;

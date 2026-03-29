@@ -5,8 +5,11 @@ import { formatDisplayUri } from '../utils/ui';
 import { UriLocator } from '../utils/uri';
 import { getUriOrTreeSelection } from './utils';
 
-export async function revealInOS({ log }: ExtensionContext, locator?: UriLocator): Promise<void> {
-  const uri = getUriOrTreeSelection(locator);
+export async function revealInOS(
+  { explorerTree, log }: ExtensionContext,
+  locator?: UriLocator,
+): Promise<void> {
+  const uri = getUriOrTreeSelection(explorerTree, locator);
   if (!uri) {
     return;
   }

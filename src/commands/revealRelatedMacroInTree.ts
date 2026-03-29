@@ -1,10 +1,13 @@
 import { Macro } from '../core/macro';
 import { StartupMacro } from '../core/startupMacro';
 import { getMacroUriFromStartupMacroUri } from '../core/startupMacroId';
-import { explorerTreeView } from '../views/treeViews';
+import { ExtensionContext } from '../extensionContext';
 
-export async function revealRelatedMacroInTree(startupMacro: StartupMacro): Promise<void> {
+export async function revealRelatedMacroInTree(
+  { explorerTree }: ExtensionContext,
+  startupMacro: StartupMacro,
+): Promise<void> {
   const macroUri = getMacroUriFromStartupMacroUri(startupMacro.uri);
   const macro = new Macro(macroUri);
-  explorerTreeView?.reveal(macro, { focus: true });
+  explorerTree.reveal(macro, { focus: true });
 }

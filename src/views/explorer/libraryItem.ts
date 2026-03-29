@@ -1,12 +1,12 @@
 import * as vscode from 'vscode';
 import { Library } from '../../core/library/library';
 import { MacroLibrary } from '../../core/library/macroLibrary';
+import { ExtensionContext } from '../../extensionContext';
 import {
   formatDisplayUri,
   formatHomeRelativePath,
   formatWorkspaceRelativePath,
 } from '../../utils/ui';
-import { explorerTreeViewExpansionState } from '../treeViews';
 
 const LibraryIcon = new vscode.ThemeIcon('file-directory');
 const UntitledLibraryIcon = new vscode.ThemeIcon('root-folder');
@@ -14,10 +14,13 @@ const UntitledLibraryTooltip = new vscode.MarkdownString(
   'This library includes all `untitled:` macro documents. They exist only in   \nmemory until saved, which limits IntelliSense and other tooling features.',
 );
 
-export function createLibraryItem(library: Library): vscode.TreeItem {
+export function createLibraryItem(
+  library: Library,
+  { explorerTree }: ExtensionContext,
+): vscode.TreeItem {
   const item = new vscode.TreeItem(
     library.uri,
-    explorerTreeViewExpansionState?.isExpanded(library.id)
+    explorerTree.expansionState.isExpanded(library.id)
       ? vscode.TreeItemCollapsibleState.Expanded
       : vscode.TreeItemCollapsibleState.Collapsed,
   );

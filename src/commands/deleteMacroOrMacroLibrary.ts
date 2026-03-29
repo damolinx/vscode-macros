@@ -4,14 +4,13 @@ import { Macro } from '../core/macro';
 import { ExtensionContext } from '../extensionContext';
 import { formatDisplayUri } from '../utils/ui';
 import { areUriEqual, isUntitled } from '../utils/uri';
-import { explorerTreeView } from '../views/treeViews';
 import { stopMacro } from './stopMacro';
 
 export async function deleteMacroOrMacroLibrary(
   context: ExtensionContext,
   macroOrLibrary?: Macro | MacroLibrary,
 ): Promise<void> {
-  const target = macroOrLibrary ?? explorerTreeView?.selection[0];
+  const target = macroOrLibrary ?? context.explorerTree.selection[0];
   if (!target || !('uri' in target)) {
     context.log.info('No macro or library selected for deletion.');
     return;

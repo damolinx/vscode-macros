@@ -3,14 +3,18 @@ import { SandboxManager } from './core/execution/sandboxManager';
 import { ViewManager } from './core/execution/views/viewManager';
 import { MacroLibraryManager } from './core/library/macroLibraryManager';
 import { StartupMacroLibrarySourceManager } from './core/library/startupMacroLibrarySourceManager';
+import { ExplorerTree } from './views/explorer/explorerTree';
+import { StartupTree } from './views/startup/startupTree';
 
 export class ExtensionContext {
+  public readonly explorerTree: ExplorerTree;
   public readonly extensionContext: vscode.ExtensionContext;
   public readonly libraryManager: MacroLibraryManager;
   public readonly log: vscode.LogOutputChannel;
   public mruMacro?: vscode.Uri;
   public readonly sandboxManager: SandboxManager;
   public readonly startupManager: StartupMacroLibrarySourceManager;
+  public readonly startupTree: StartupTree;
   public readonly viewManagers: Readonly<{ tree: ViewManager; web: ViewManager }>;
 
   constructor(context: vscode.ExtensionContext) {
@@ -24,7 +28,18 @@ export class ExtensionContext {
 
     this.libraryManager = new MacroLibraryManager(this);
     this.sandboxManager = new SandboxManager(this);
-    this.disposables.push(this.libraryManager, this.log, this.sandboxManager, this.startupManager);
+
+    this.explorerTree = new ExplorerTree(this);
+    this.startupTree = new StartupTree(this);
+
+    this.disposables.push(
+      this.explorerTree,
+      this.libraryManager,
+      this.log,
+      this.sandboxManager,
+      this.startupManager,
+      this.startupTree,
+    );
   }
 
   public get disposables(): vscode.Disposable[] {
