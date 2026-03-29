@@ -206,7 +206,7 @@ export declare namespace macros.ui {
 
   export interface EventHandler extends BaseNode {
     readonly kind: 'eventHandler';
-    readonly code: EventHandlerCode;
+    readonly code: string;
     readonly handlerName: string;
   }
 
