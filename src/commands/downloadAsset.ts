@@ -27,7 +27,7 @@ export async function downloadAsset(
       'Do you want to override existing file?',
       {
         modal: true,
-        detail: `Path: ${targetDownloadUri.scheme === 'file' ? targetDownloadUri.fsPath : targetDownloadUri.toString(true)}`,
+        detail: formatDisplayUri(targetDownloadUri),
       },
       YES_OPTION,
       NO_OPTION,
@@ -39,27 +39,32 @@ export async function downloadAsset(
   const targetAssetUri = convertGitHubUrlToDownload(assetUri);
   const content = await new Promise<Buffer | undefined>((resolve, reject) => {
     get(targetAssetUri.toString(), (res) => {
-      const data: any[] = [];
-      res.on('data', (chunk) => data.push(chunk)).on('end', () => resolve(Buffer.concat(data)));
+      const data: Buffer[] = [];
+      if (res.statusCode === 200) {
+        res.on('data', (chunk) => data.push(chunk)).on('end', () => resolve(Buffer.concat(data)));
+      } else {
+        const msg = `Failed to download asset - HTTP ${res.statusCode} ${res.statusMessage}`;
+        context.log.error(msg, "-", targetAssetUri.toString(true));
+        reject(new Error(msg));
+      }
     }).on('error', (err) => {
       context.log.error(err);
       reject(err);
     });
   });
   if (!content) {
-    vscode.window.showErrorMessage(`Failed to download asset from ${targetAssetUri}`);
+    vscode.window.showErrorMessage(`Failed to download asset: ${targetAssetUri.toString(true)}`);
     return;
   }
 
+  const uiTarget = formatDisplayUri(targetDownloadUri);
   await vscode.workspace.fs.writeFile(targetDownloadUri, content);
-  context.log.info('Downloaded .d.ts file', targetDownloadUri.toString(true));
-  vscode.window
-    .showInformationMessage(`Downloaded: ${formatDisplayUri(targetDownloadUri)}`, 'Reveal')
-    .then((option) => {
-      if (option === 'Reveal') {
-        revealInOS(context, targetDownloadUri);
-      }
-    });
+  context.log.info('Downloaded asset to', uiTarget);
+  vscode.window.showInformationMessage(`Downloaded: ${uiTarget}`, 'Reveal').then((option) => {
+    if (option === 'Reveal') {
+      revealInOS(context, targetDownloadUri);
+    }
+  });
   return targetDownloadUri;
 }
 
@@ -74,9 +79,8 @@ function convertGitHubUrlToDownload(uri: vscode.Uri): vscode.Uri {
   return updatedUri;
 }
 
-async function getDownloadLocation(locator: UriLocator): Promise<vscode.Uri | undefined> {
-  let macroUri: vscode.Uri | undefined = resolveUri(locator);
-
+async function getDownloadLocation(macroUri: vscode.Uri): Promise<vscode.Uri | undefined> {
+  let targetUri: vscode.Uri | undefined = macroUri;
   if (isUntitled(macroUri)) {
     const result = await vscode.window.showInformationMessage(
       'Would you like to save your macro?',
@@ -89,11 +93,11 @@ async function getDownloadLocation(locator: UriLocator): Promise<vscode.Uri | un
       const editor = await saveTextEditor(vscode.window.activeTextEditor!, {
         filters: MacroFilter,
       });
-      macroUri = editor?.document.uri;
+      targetUri = editor?.document.uri;
     } else {
-      macroUri = undefined;
+      targetUri = undefined;
     }
   }
 
-  return macroUri && parentUri(macroUri);
+  return targetUri && parentUri(targetUri);
 }
