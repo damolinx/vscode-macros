@@ -44,7 +44,7 @@ export async function downloadAsset(
         res.on('data', (chunk) => data.push(chunk)).on('end', () => resolve(Buffer.concat(data)));
       } else {
         const msg = `Failed to download asset - HTTP ${res.statusCode} ${res.statusMessage}`;
-        context.log.error(msg, "-", targetAssetUri.toString(true));
+        context.log.error(msg, '-', targetAssetUri.toString(true));
         reject(new Error(msg));
       }
     }).on('error', (err) => {

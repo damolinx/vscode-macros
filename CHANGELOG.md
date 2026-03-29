@@ -5,7 +5,8 @@
  - `macros.window.ui.button` gains `fill` layout class.
  - `macros.window.ui.textarea` support `readonly: true`.
   - Fix: `macros.ui.TextareaOptions` declare `maxRow` and `minRow` instead of `maxRows` and `minRows` in `globals.d.ts`.
-- **Download .d.ts file** action handles HTTP errors.
+- **Macro Explorer** view persists expansion state across sessions.
+- Fix: **Download .d.ts file** action handles HTTP errors avoiding saving them as file content.
 
 ## 0.7.4
 - **Download .d.ts file** action gains **Reveal** button and better URI formatting.

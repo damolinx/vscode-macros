@@ -44,10 +44,10 @@ export async function runMacro(
     const diagnostics = vscode.languages.getDiagnostics(uri);
     return isUntitled(uri)
       ? diagnostics.some(
-        (d) =>
-          d.severity === vscode.DiagnosticSeverity.Error &&
-          (d.source !== 'ts' || (d.code !== 2304 && d.code !== 2307)),
-      )
+          (d) =>
+            d.severity === vscode.DiagnosticSeverity.Error &&
+            (d.source !== 'ts' || (d.code !== 2304 && d.code !== 2307)),
+        )
       : diagnostics.some((d) => d.severity === vscode.DiagnosticSeverity.Error);
   }
 }

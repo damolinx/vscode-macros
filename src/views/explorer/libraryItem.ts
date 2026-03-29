@@ -6,6 +6,7 @@ import {
   formatHomeRelativePath,
   formatWorkspaceRelativePath,
 } from '../../utils/ui';
+import { explorerTreeViewExpansionState } from '../treeViews';
 
 const LibraryIcon = new vscode.ThemeIcon('file-directory');
 const UntitledLibraryIcon = new vscode.ThemeIcon('root-folder');
@@ -14,7 +15,12 @@ const UntitledLibraryTooltip = new vscode.MarkdownString(
 );
 
 export function createLibraryItem(library: Library): vscode.TreeItem {
-  const item = new vscode.TreeItem(library.uri, vscode.TreeItemCollapsibleState.Collapsed);
+  const item = new vscode.TreeItem(
+    library.uri,
+    explorerTreeViewExpansionState?.isExpanded(library.id)
+      ? vscode.TreeItemCollapsibleState.Expanded
+      : vscode.TreeItemCollapsibleState.Collapsed,
+  );
   switch (library.uri.scheme) {
     case 'untitled':
       updateUntitledLibraryItem(item);

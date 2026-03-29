@@ -3,8 +3,8 @@ import { tokenizeUri } from '../core/pathTokenization';
 import { StartupMacro } from '../core/startupMacro';
 import { getMacroUriFromStartupMacroUri } from '../core/startupMacroId';
 import { ExtensionContext } from '../extensionContext';
-import { resolveUri } from '../utils/uri';
 import { formatDisplayUri } from '../utils/ui';
+import { resolveUri } from '../utils/uri';
 
 export async function removeStartupMacro(
   context: ExtensionContext,

@@ -1,15 +1,19 @@
 import * as vscode from 'vscode';
+import { Library } from '../core/library/library';
+import { LibraryItemId } from '../core/library/libraryItem';
 import { Macro } from '../core/macro';
 import { ExtensionContext } from '../extensionContext';
 import { ExplorerTreeDataProvider, TreeElement } from './explorer/explorerTreeDataProvider';
 import { ExplorerTreeDragAndDropController } from './explorer/explorerTreeDragAndDropController';
 import { StartupTreeDataProvider } from './startup/startupTreeDataProvider';
 import { StartupTreeDragAndDropController } from './startup/startupTreeDragAndDropController';
+import { TreeViewState } from './treeViewState';
 
 export const MACRO_EXPLORER_VIEW_ID = 'macros.macroExplorer';
 export const STARTUP_MACROS_VIEW_ID = 'macros.startupMacros';
 
 export let explorerTreeView: vscode.TreeView<TreeElement> | undefined;
+export let explorerTreeViewExpansionState: TreeViewState<LibraryItemId> | undefined;
 
 let explorerTreeDataProvider: ExplorerTreeDataProvider | undefined;
 let startupTreeDataProvider: StartupTreeDataProvider | undefined;
@@ -35,6 +39,7 @@ export function registerTreeViews(context: ExtensionContext): void {
 
   function registerExplorerTreeview(context: ExtensionContext): void {
     explorerTreeDataProvider = new ExplorerTreeDataProvider(context);
+    explorerTreeViewExpansionState = new TreeViewState(context, 'macros.explorer.expanded');
     explorerTreeView = vscode.window.createTreeView(MACRO_EXPLORER_VIEW_ID, {
       dragAndDropController: new ExplorerTreeDragAndDropController(context),
       showCollapseAll: true,
@@ -53,6 +58,17 @@ export function registerTreeViews(context: ExtensionContext): void {
               : undefined;
         if (element) {
           await explorerTreeView?.reveal(element);
+        }
+        explorerTreeViewExpansionState?.prune(context.libraryManager.libraries.map(({ id }) => id));
+      }),
+      explorerTreeView.onDidCollapseElement(({ element }) => {
+        if (element instanceof Library) {
+          explorerTreeViewExpansionState?.onCollapse(element.id);
+        }
+      }),
+      explorerTreeView.onDidExpandElement(({ element }) => {
+        if (element instanceof Library) {
+          explorerTreeViewExpansionState?.onExpand(element.id);
         }
       }),
     );
