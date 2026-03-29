@@ -7,6 +7,7 @@
   - Fix: `macros.ui.TextareaOptions` declare `maxRow` and `minRow` instead of `maxRows` and `minRows` in `globals.d.ts`.
 - **Macro Explorer** view persists expansion state across sessions.
 - Fix: **Download .d.ts file** action handles HTTP errors avoiding saving them as file content.
+- Fix: **Reveal** commands missing on the context menu of Startup macros.
 
 ## 0.7.4
 - **Download .d.ts file** action gains **Reveal** button and better URI formatting.
