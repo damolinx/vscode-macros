@@ -10,7 +10,7 @@ export async function activeMacroEditor(
 ): Promise<vscode.TextEditor | undefined> {
   let editor = vscode.window.activeTextEditor;
   if (!editor) {
-    return editor; // No active editor.
+    return editor;
   }
 
   if (editor.document.isDirty && ensureSaved) {

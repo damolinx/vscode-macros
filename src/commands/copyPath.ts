@@ -10,7 +10,7 @@ export async function copyPath(
 ): Promise<void> {
   const uri = getUriOrTreeSelection(locator);
   if (!uri) {
-    return; // Nothing to run.
+    return;
   }
 
   let value: string;

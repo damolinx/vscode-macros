@@ -65,7 +65,7 @@ export async function setupSourceDirectory(
 ): Promise<void> {
   const uri = locator ? resolveUri(locator) : await selectSourceDirectory(context.libraryManager);
   if (!uri) {
-    return; // Nothing to run.
+    return;
   }
 
   context.log.debug('Verifying development files', vscode.workspace.asRelativePath(uri));
@@ -83,7 +83,7 @@ export async function setupSourceDirectory(
     if (!suppressNotifications) {
       vscode.window.showInformationMessage('All files are up-to-date.');
     }
-    return; // Nothing to update.
+    return;
   }
 
   const result = await vscode.workspace.applyEdit(edit);

@@ -12,7 +12,7 @@ export async function addStartupMacro(
     hideOpenPerItem: true,
   });
   if (!macro) {
-    return; // User canceled
+    return;
   }
 
   await setStartupMacro(context, macro, target);

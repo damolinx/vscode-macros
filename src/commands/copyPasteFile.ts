@@ -4,6 +4,7 @@ import { resolveMacroExt } from '../core/macroLanguages';
 import { ExtensionContext } from '../extensionContext';
 import { setContext } from '../extensionContextValues';
 import { exists, getFileType } from '../utils/fsEx';
+import { formatDisplayUri } from '../utils/ui';
 import { isUntitled, parentUri, uriBasename, UriLocator } from '../utils/uri';
 import { getUriOrTreeSelection } from './utils';
 
@@ -13,7 +14,7 @@ function getSource(): vscode.Uri | undefined {
   return savedUri;
 }
 
-function setSource(uri: vscode.Uri | undefined): void {
+function setSource(uri?: vscode.Uri): void {
   setContext('macros:canPaste', Boolean(uri));
   savedUri = uri;
 }
@@ -24,12 +25,12 @@ export async function copyFile({ log }: ExtensionContext, locator?: UriLocator):
     (_, item) => item instanceof Macro && !isUntitled(item.uri),
   );
   if (!uri) {
-    log.debug('Copy: Nothing to copy');
+    log.info('Copy: Nothing to copy');
     return;
   }
 
   setSource(uri);
-  log.debug('Copy: Copied file', uri.toString(true));
+  log.debug('Copy: Copied file', formatDisplayUri(uri));
 }
 
 export async function pasteFile({ log }: ExtensionContext, locator?: UriLocator): Promise<void> {
@@ -40,8 +41,8 @@ export async function pasteFile({ log }: ExtensionContext, locator?: UriLocator)
   }
 
   if (!(await exists(source, vscode.FileType.File))) {
-    log.warn('Paste: Source does not exist', source.toString(true));
-    setSource(undefined);
+    log.warn('Paste: File does not exist', formatDisplayUri(source));
+    setSource();
     return;
   }
 
@@ -53,16 +54,16 @@ export async function pasteFile({ log }: ExtensionContext, locator?: UriLocator)
 
   const type = await getFileType(target);
   if (type && type & vscode.FileType.Directory) {
-    log.debug('Paste: Target is a directory', target.toString(true));
+    log.debug('Paste: Target is a directory', formatDisplayUri(target));
   } else if (type && type & vscode.FileType.File) {
-    log.debug('Paste: Target is a file, using parent', target.toString(true));
+    log.debug('Paste: Target is a file, using parent', formatDisplayUri(target));
     target = parentUri(target);
   } else {
-    log.error('Paste: No valid target', target.toString(true));
+    log.error('Paste: No valid target', formatDisplayUri(target));
     return;
   }
 
-  log.info('Paste file (source, target)', source.toString(true), target.toString(true));
+  log.info('Paste file (source, target)', formatDisplayUri(source), formatDisplayUri(target));
   const targetFile = await safeTargetName(target, source);
   if (!targetFile) {
     throw new Error('Failed to resolve a unique target file name');
@@ -71,23 +72,20 @@ export async function pasteFile({ log }: ExtensionContext, locator?: UriLocator)
   await vscode.workspace.fs.copy(source, targetFile, { overwrite: false });
 }
 
-async function safeTargetName(parentUri: vscode.Uri, source: vscode.Uri, maxAttempts = 1000) {
-  let uri: vscode.Uri | undefined;
-
+async function safeTargetName(parent: vscode.Uri, source: vscode.Uri, maxAttempts = 1000) {
   const ext = resolveMacroExt(source);
   const nameWithoutExt = uriBasename(source, ext ?? true).replace(/(?:\s-)?\s[Cc]opy(\s\d+)?/, '');
 
   let candidateName = uriBasename(source);
-  for (let i = 1; !uri && i <= maxAttempts; i++) {
-    const candidate = vscode.Uri.joinPath(parentUri, candidateName);
+  for (let i = 1; i <= maxAttempts; i++) {
+    const candidate = vscode.Uri.joinPath(parent, candidateName);
     if (!(await exists(candidate, vscode.FileType.File))) {
-      uri = candidate;
-      break;
+      return candidate;
     }
 
     candidateName =
       i === 1 ? `${nameWithoutExt} - Copy${ext}` : `${nameWithoutExt} - Copy ${i}${ext}`;
   }
 
-  return uri;
+  return;
 }

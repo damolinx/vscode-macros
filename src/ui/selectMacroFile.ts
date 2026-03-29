@@ -10,7 +10,7 @@ export async function selectMacroFile(
   const macroFiles = await getFiles(manager);
   const targetUri = await pickMacroFile(macroFiles, options);
   if (!targetUri) {
-    return; // No macro selected.
+    return;
   }
 
   return targetUri;

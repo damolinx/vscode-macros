@@ -15,21 +15,17 @@ export async function debugMacro(
     ? resolveUri(locator)
     : await showMacroQuickPick(libraryManager, { selectUri: mruMacro });
   if (!uri) {
-    return; // Nothing to debug.
-  }
-
-  if (uri.scheme !== 'file') {
-    await vscode.window.showErrorMessage('Debugging of non-local macros is not supported.', {
-      modal: true,
-      detail: 'Save your macro to a local library for debugging',
-    });
     return;
   }
 
-  // Ensure the document is open, update URI
-  const { document } = await showTextDocument(uri);
+  if (uri.scheme !== 'file') {
+    await vscode.window.showErrorMessage(
+      'Debugging is only supported for local macros. Save this macro to a local file to enable debugging.',
+    );
+    return;
+  }
 
-  // Check for existing breakpoints in the document
+  const { document } = await showTextDocument(uri);
   if (vscode.workspace.getConfiguration().get('macros.debug.breakOnStart', true)) {
     const hasBreakpoints = vscode.debug.breakpoints
       .filter((bp) => bp instanceof vscode.SourceBreakpoint)
@@ -43,7 +39,6 @@ export async function debugMacro(
     }
   }
 
-  // Launch VS Code
   const debugConfig: vscode.DebugConfiguration = {
     name: `Debug Macro: ${uriBasename(document.uri)}`,
     type: 'extensionHost',

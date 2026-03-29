@@ -18,7 +18,7 @@ export async function setStartupMacros(
 ): Promise<void> {
   for (const uri of locators.map((loc) => getMacroUriFromStartupMacroUri(resolveUri(loc)))) {
     if (isUntitled(uri)) {
-      context.log.info('Cannot set an untitled macro as startup macro', uri.toString());
+      context.log.info('Cannot set an untitled macro as startup macro', uri.toString(true));
       continue;
     }
 

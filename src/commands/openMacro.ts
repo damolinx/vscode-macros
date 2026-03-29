@@ -12,7 +12,7 @@ export async function openMacro(
     ? resolveUri(locator)
     : await showMacroQuickPick(libraryManager, { hideOpenPerItem: true });
   if (!uri) {
-    return; // Nothing to open.
+    return;
   }
 
   const editor = await showTextDocument(uri);

@@ -19,9 +19,9 @@ export async function createMacroContent(
   if (document) {
     if (args.run) {
       runMacro(context, document); // DO NOT await
-      resultText = `Created and executed '${document.uri.toString(true)}' macro`;
+      resultText = `Created and executed '${document.uri.toString(true)}'`;
     } else {
-      resultText = `Created '${document.uri.toString(true)}' macro`;
+      resultText = `Created '${document.uri.toString(true)}'`;
     }
   } else {
     resultText = 'Failed to create macro';

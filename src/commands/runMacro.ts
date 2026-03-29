@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import { resolveTokenizedPath } from '../core/pathTokenization';
 import { ExtensionContext } from '../extensionContext';
 import { showMacroQuickPick } from '../ui/dialogs';
 import { showMacroErrorMessage } from '../ui/errors';
@@ -7,22 +6,15 @@ import { isUntitled, UriLocator, resolveUri } from '../utils/uri';
 import { activeMacroEditor } from './utils';
 
 export async function runMacro(
-  { libraryManager, mruMacro, sandboxManager }: ExtensionContext,
-  locatorOrTokenizedPath?: UriLocator | string,
+  context: ExtensionContext,
+  locator?: UriLocator,
   options?: { ignoreDiagnosticErrors?: true; startup?: true },
 ): Promise<void> {
-  let uri: vscode.Uri | undefined;
-  if (!locatorOrTokenizedPath) {
-    uri = await showMacroQuickPick(libraryManager, { selectUri: mruMacro });
-  } else if (typeof locatorOrTokenizedPath === 'string') {
-    const resolvedPath = resolveTokenizedPath(locatorOrTokenizedPath);
-    uri = vscode.Uri.file(resolvedPath[0]);
-  } else {
-    uri = resolveUri(locatorOrTokenizedPath);
-  }
-
+  const uri = locator
+    ? resolveUri(locator)
+    : await showMacroQuickPick(context.libraryManager, { selectUri: context.mruMacro });
   if (!uri) {
-    return; // Nothing to run.
+    return;
   }
 
   if (!options?.ignoreDiagnosticErrors && hasDiagnosticErrors(uri)) {
@@ -35,11 +27,11 @@ export async function runMacro(
         { title: 'Cancel', isCloseAffordance: true },
       )) !== yesOption
     ) {
-      return; // User canceled
+      return;
     }
   }
 
-  const executor = await sandboxManager.ensureExecutor(uri);
+  const executor = await context.sandboxManager.ensureExecutor(uri);
   const pareparedExecution = await executor.createExecution(options);
 
   try {
@@ -52,10 +44,10 @@ export async function runMacro(
     const diagnostics = vscode.languages.getDiagnostics(uri);
     return isUntitled(uri)
       ? diagnostics.some(
-          (d) =>
-            d.severity === vscode.DiagnosticSeverity.Error &&
-            (d.source !== 'ts' || (d.code !== 2304 && d.code !== 2307)),
-        )
+        (d) =>
+          d.severity === vscode.DiagnosticSeverity.Error &&
+          (d.source !== 'ts' || (d.code !== 2304 && d.code !== 2307)),
+      )
       : diagnostics.some((d) => d.severity === vscode.DiagnosticSeverity.Error);
   }
 }

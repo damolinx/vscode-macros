@@ -11,13 +11,14 @@ export async function revealInOS({ log }: ExtensionContext, locator?: UriLocator
     return;
   }
 
+  const formattedUri = formatDisplayUri(uri);
   if (!(await exists(uri))) {
-    log.warn('Cannot reveal path (not found)', uri.toString(true));
-    vscode.window.showWarningMessage(`Path not found: ${formatDisplayUri(uri)}`);
+    log.warn('Cannot reveal path (not found)', formattedUri);
+    vscode.window.showWarningMessage(`Path not found: ${formattedUri}`);
     return;
   }
 
-  log.info('Reveal path', uri.toString(true));
+  log.info('Reveal path', formattedUri);
   const cmd = vscode.env.remoteName === 'wsl' ? 'remote-wsl.revealInExplorer' : 'revealFileInOS';
   await vscode.commands.executeCommand(cmd, uri);
 }

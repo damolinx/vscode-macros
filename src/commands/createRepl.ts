@@ -10,7 +10,7 @@ export async function createRepl(
   preserveFocus?: boolean,
 ): Promise<vscode.Terminal> {
   const pty = new MacroPseudoterminal(context, 'macro-repl', replIndex++);
-  const terminal = await vscode.window.createTerminal({
+  const terminal = vscode.window.createTerminal({
     iconPath: {
       light: MacrosLightIconUri.get(context),
       dark: MacrosDarkIconUri.get(context),

@@ -76,7 +76,7 @@ export async function updateEditor(
       content = await getTemplateContent(context, languageId);
     }
   }
-  if (!content) {
+  if (content === undefined) {
     return;
   }
 

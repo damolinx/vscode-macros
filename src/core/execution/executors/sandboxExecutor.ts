@@ -54,7 +54,7 @@ export class SandboxExecutor implements vscode.Disposable {
   public async createExecution(params?: { startup?: true }): Promise<SandboxExecution> {
     const execution = await SandboxExecution.create(this.context, this.macro, {
       index: ++this.index,
-      startup: params?.startup,
+      ...params,
     });
     return execution;
   }

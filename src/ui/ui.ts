@@ -6,8 +6,8 @@ import { showTextDocument } from '../utils/vscodeEx';
 import { showMacroOpenDialog } from './dialogs';
 
 export interface OpenMacroOptions {
-  hideOpen?: boolean;
-  hideOpenPerItem?: boolean;
+  hideOpen?: true;
+  hideOpenPerItem?: true;
   selectUri?: vscode.Uri;
 }
 

@@ -77,7 +77,7 @@ export function resolveAsUri(pathOrUri: string): vscode.Uri {
 }
 
 /**
- * Resolve {@param locator} into a {@link vscode.Uri} instance.
+ * Resolve {@link locator} into a {@link vscode.Uri} instance.
  */
 export function resolveUri(locator: UriLocator): vscode.Uri {
   return locator instanceof vscode.Uri ? locator : locator.uri;

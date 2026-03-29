@@ -4,6 +4,7 @@ import { StartupMacro } from '../core/startupMacro';
 import { getMacroUriFromStartupMacroUri } from '../core/startupMacroId';
 import { ExtensionContext } from '../extensionContext';
 import { resolveUri } from '../utils/uri';
+import { formatDisplayUri } from '../utils/ui';
 
 export async function removeStartupMacro(
   context: ExtensionContext,
@@ -18,7 +19,7 @@ export async function removeStartupMacro(
   context.log.info(
     removed ? 'Removed startup macro' : 'Macro not registered for startup',
     target ? vscode.ConfigurationTarget[target] : '<all scopes>',
-    tokenizeUri(uri).tokenizedSource ?? uri.toString(true),
+    tokenizeUri(uri).tokenizedSource ?? formatDisplayUri(uri),
   );
 
   return removed;
