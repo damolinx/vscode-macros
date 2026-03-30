@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.7.5
+## 0.7.4
 - UI DSL:
  - Add `macros.window.ui.link` control.
  - `macros.window.ui.button` gains `fill` layout class.
@@ -10,13 +10,10 @@
 - Fix: **Download .d.ts file** action handles HTTP errors avoiding saving them as file content.
 - Fix: **Reveal** commands missing on the context menu of Startup macros.
 
-## 0.7.4
+## 0.7.3
 - **Download .d.ts file** action gains **Reveal** button and better URI formatting.
 - UI DSL:
  - Add `macros.window.ui.textarea` control.
-
-## 0.7.3
-- UI DSL:
  - Add `macros.window.handleLogMessage` extension-host side helper to write logs.
 
 ## 0.7.2
