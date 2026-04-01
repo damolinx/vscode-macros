@@ -19,7 +19,7 @@ export const LogRelayScript = `
             type: 'macro:log',
             level,
             message: String(message),
-            data: data ?? null,
+            data,
           });
         };
         return {

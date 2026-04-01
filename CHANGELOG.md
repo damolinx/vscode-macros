@@ -4,6 +4,7 @@
 - UI DSL:
   - Improved code‑body handling: static functions (`function () {...}`) are required for all executable code blocks. Arrow functions would incorrectly capture local context, which cannot be serialized into the Webview environment. As a compromise, arrow functions are now naively rewritten into static functions so they still execute in the Webview and surface any incorrect assumptions.
   - Fix: Functions were evaluated in the extension host to obtain a string representation, with incorrect results.
+  - Fix: `macros.window.handleLogMessage` logs unnecessary `null` value.
 
 ## 0.7.4
 - UI DSL:

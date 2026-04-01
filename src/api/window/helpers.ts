@@ -14,5 +14,9 @@ export function handleLogMessage({ log }: ExtensionContext, message: LogMessage)
     return;
   }
 
-  logFn(message.message, message.data);
+  if (message.data !== null && message.data !== undefined) {
+    logFn(message.message, message.data);
+  } else {
+    logFn(message.message);
+  }
 }
