@@ -485,13 +485,14 @@ class MacroTree extends HTMLElement {
         row.classList.add('selected');
       }
 
-      const hasChildren = Array.isArray(node.children) && node.children.length > 0;
+      const isParent = Array.isArray(node.children);
+      const hasVisibleChildren = isParent && node.children.length > 0;
       const isExpanded = this.expandedNodes.has(node.id);
 
       const toggle = document.createElement('span');
       toggle.className = 'toggle';
 
-      if (hasChildren) {
+      if (isParent) {
         toggle.textContent = '❯';
         toggle.style.transform = isExpanded ? 'rotate(90deg)' : 'rotate(0deg)';
       } else {
@@ -517,7 +518,7 @@ class MacroTree extends HTMLElement {
       row.addEventListener('click', () => {
         this.selectNode(node, true);
 
-        if (hasChildren) {
+        if (isParent) {
           if (this.expandedNodes.has(node.id)) {
             this.expandedNodes.delete(node.id);
           } else {
@@ -548,7 +549,7 @@ class MacroTree extends HTMLElement {
 
       this.treeElement?.appendChild(row);
 
-      if (hasChildren && isExpanded) {
+      if (isExpanded && hasVisibleChildren) {
         for (const child of node.children) {
           renderNode(child, depth + 1);
         }
