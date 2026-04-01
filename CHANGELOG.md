@@ -2,7 +2,9 @@
 
 ## 0.7.5
 - UI DSL:
-  - `macros.window.ui.tree` generates an `id` for nodes that do not define one.
+  - `macros.window.ui.tree`:
+    - Generate an `id` for nodes that did not define one
+    - Fix: Clicking a node to regain focus does not trigger expansion
   - Improved code‑body handling: static functions (`function () {...}`) are required for all executable code blocks. Arrow functions would incorrectly capture local context, which cannot be serialized into the Webview environment. As a compromise, arrow functions are now naively rewritten into static functions so they still execute in the Webview and surface any incorrect assumptions.
   - Fix: Functions were evaluated in the extension host to obtain a string representation, with incorrect results.
   - Fix: `macros.window.handleLogMessage` logs unnecessary `null` value.

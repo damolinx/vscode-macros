@@ -306,6 +306,11 @@ class MacroTree extends HTMLElement {
     this.tree.addEventListener('focus', () => {
       this.classList.add('active');
 
+      if (this._focusFromClick) {
+        this._focusFromClick = false;
+        return;
+      }
+
       if (this.selectedNode === null && this.visibleNodes.length > 0) {
         this.selectNode(this.visibleNodes[0], true);
       }
@@ -524,6 +529,9 @@ class MacroTree extends HTMLElement {
           }
           queueMicrotask(() => this.update());
         }
+      });
+      row.addEventListener('mousedown', () => {
+        this._focusFromClick = true;
       });
 
       row.appendChild(toggle);
