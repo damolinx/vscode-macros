@@ -2,6 +2,7 @@
 
 ## 0.7.5
 - UI DSL:
+  - `macros.window.ui.tree` generates an `id` for nodes that do not define one.
   - Improved code‑body handling: static functions (`function () {...}`) are required for all executable code blocks. Arrow functions would incorrectly capture local context, which cannot be serialized into the Webview environment. As a compromise, arrow functions are now naively rewritten into static functions so they still execute in the Webview and surface any incorrect assumptions.
   - Fix: Functions were evaluated in the extension host to obtain a string representation, with incorrect results.
   - Fix: `macros.window.handleLogMessage` logs unnecessary `null` value.
@@ -11,7 +12,7 @@
  - Add `macros.window.ui.link` control.
  - `macros.window.ui.button` gains `fill` layout class.
  - `macros.window.ui.textarea` support `readonly: true`.
-  - Fix: `macros.ui.TextareaOptions` declare `maxRow` and `minRow` instead of `maxRows` and `minRows` in `globals.d.ts`.
+  - Fix: `macros.window.ui.TextareaOptions` declare `maxRow` and `minRow` instead of `maxRows` and `minRows` in `globals.d.ts`.
 - **Macro Explorer** view persists expansion state across sessions.
 - Fix: **Download .d.ts file** action handles HTTP errors avoiding saving them as file content.
 - Fix: **Reveal** commands missing on the context menu of Startup macros.

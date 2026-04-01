@@ -9,6 +9,8 @@ class MacroTree extends HTMLElement {
     /** @type {ShadowRoot} */
     this.root = this.attachShadow({ mode: 'open' });
 
+    this._idCounter = 10000;
+
     /** @type {any[]} */
     this.items = [];
     /** @type {any[]} */
@@ -467,6 +469,10 @@ class MacroTree extends HTMLElement {
       /** @type {number} */
       depth,
     ) => {
+      if (!node.id) {
+        node.id = `__id${this._idCounter++}`;
+      }
+
       this.visibleNodes.push(node);
 
       const row = document.createElement('div');
