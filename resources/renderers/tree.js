@@ -465,13 +465,17 @@ class MacroTree extends HTMLElement {
     this.visibleNodes = [];
 
     const renderNode = (
-      /** @type {{ id: string | undefined; children: string | any[]; label: string | null; }} */
+      /** @type {{ id?: string; expanded?: boolean; children: string | any[]; label?: string | null; }} */
       node,
       /** @type {number} */
       depth,
     ) => {
       if (!node.id) {
         node.id = `__id${this._idCounter++}`;
+      }
+      if (node.expanded) {
+        this.expandedNodes.add(node.id);
+        node.expanded = false;
       }
 
       this.visibleNodes.push(node);
@@ -487,7 +491,7 @@ class MacroTree extends HTMLElement {
 
       const isParent = Array.isArray(node.children);
       const hasVisibleChildren = isParent && node.children.length > 0;
-      const isExpanded = this.expandedNodes.has(node.id);
+      let isExpanded = this.expandedNodes.has(node.id);
 
       const toggle = document.createElement('span');
       toggle.className = 'toggle';
@@ -513,7 +517,7 @@ class MacroTree extends HTMLElement {
 
       const label = document.createElement('span');
       label.className = 'label';
-      label.textContent = node.label;
+      label.textContent = node.label ?? null;
 
       row.addEventListener('click', () => {
         this.selectNode(node, true);
@@ -537,7 +541,7 @@ class MacroTree extends HTMLElement {
       if (this.enableRemove) {
         const actions = document.createElement('span');
         actions.className = 'actions';
-        label.textContent = node.label;
+        label.textContent = node.label ?? null;
 
         const remove = document.createElement('span');
         remove.className = 'remove';

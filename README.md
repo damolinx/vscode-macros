@@ -528,7 +528,7 @@ The use case for the DSL is the same as for the macros: quickly generate a tool 
 - `macros.window.ui.root([options,] ...children)`: creates the top-level container. Calling `.toHtml()` on the root returns the final HTML string.
 
   Options:
-    - `errorRelay?: false`: relays errors in the WebView as a `macro:error` message. This is **enabled** by default.
+    - `errorRelay?: false`: relays errors in the WebView as a `macro:error` message. This is **enabled** by default
 
       This gives your WebView's scripts access to:
       - `macro.error(err)`: explicitly sends an error to the macro running the extension host. The message contains following properties:
@@ -550,13 +550,13 @@ The use case for the DSL is the same as for the macros: quickly generate a tool 
       - `macro.progress.show()`:  shows the progress bar
       - `macro.progress.hide()`: hides the progress bar
 
-- `macros.window.ui.container([options,] ...children)`: creates a layout grouping, so you can fix a set of controls at the webview and have a scrollable section at the bottom.
+- `macros.window.ui.container([options,] ...children)`: creates a layout grouping, so you can fix a set of controls at the webview and have a scrollable section at the bottom
 
   Options:
     - `id?: string`
     - `mode: "fixed" | "scrollable"`
 
-- `macros.window.ui.input([options,] ...children)`: creates an input field with optional inline buttons and event bindings.
+- `macros.window.ui.input([options,] ...children)`: creates an input field with optional inline buttons and event bindings
 
   Options:
   - `id?: string`
@@ -565,28 +565,28 @@ The use case for the DSL is the same as for the macros: quickly generate a tool 
   - `type?: "text" | "password" | "number" | "email"`
   - `value?: string`: initial text content
 
-- `macros.window.ui.button([options,] ...children)`: creates a clickable button.
+- `macros.window.ui.button([options,] ...children)`: creates a clickable button
 
   Options:
   - `id?: string`
   - `label?: string`
   - `tabIndex?: number`
-  - `toggle?: boolean`: When `true`, button is a toggle-button.
+  - `toggle?: boolean`: When `true`, button is a toggle-button
 
   You can customize layout via classes:
     - `ui.attr('class', 'fill')` makes the button expand horizontally
-      (up to a bounded max width) and centered.
+      (up to a bounded max width) and centered
 
-- `macros.window.ui.link(options)`: creates a clickable text link.
+- `macros.window.ui.link(options)`: creates a clickable text link
 
   Options:
   - `href: string | vscode.Uri`
-  - `label?: string` — Text shown for the link. If omitted, the `href` is used.
+  - `label?: string` — Text shown for the link. If omitted, the `href` is used
   - `tabIndex?: number`
 
-- `macros.window.ui.text(string)`: creates a text node for inline content.
+- `macros.window.ui.text(string)`: creates a text node for inline content
 
-- `macros.window.ui.textarea([options,] ...children)`: creates a multi‑line textarea. Buttons are not supported at this time.
+- `macros.window.ui.textarea([options,] ...children)`: creates a multi‑line textarea. Inlay buttons are not supported at this time
 
   Options:
   - `id?: string`
@@ -597,7 +597,7 @@ The use case for the DSL is the same as for the macros: quickly generate a tool 
   - `tabIndex?: number`
   - `value?: string`: initial text content
 
-- `macros.window.ui.tree([options,] ...eventNodes)`: creates a hierarchical tree view.
+- `macros.window.ui.tree([options,] ...eventNodes)`: creates a hierarchical tree view
 
   Options:
   - `id?: string`
@@ -605,10 +605,11 @@ The use case for the DSL is the same as for the macros: quickly generate a tool 
   - `initialItems?: TreeNode[]`
 
   TreeNode:
-  - `id: string`
-  - `label: string`
-  - `children?: TreeNode[]`
+  - `label: string`: required displaye name
+  - `id?: string`: node id
   - `action?: { handlerName: string }`
+  - `children?: TreeNode[]`: whether the node has or can have children. Use `[]` to ensure node renders as parent
+  - `expanded?: true`: node starts in expanded state, if it is a parent
 
 [↑ Back to top](#table-of-contents)
 
