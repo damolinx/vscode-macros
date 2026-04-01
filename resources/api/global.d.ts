@@ -1,4 +1,4 @@
-import * as _vscode from 'vscode';
+import type * as _vscode from 'vscode';
 
 declare global {
   /**
@@ -115,7 +115,7 @@ declare global {
           options: macros.ui.ContainerOptions,
           ...nodes: macros.ui.Node[]
         ): macros.ui.Container;
-        handler(name: string, code: macros.ui.EventHandlerCode): macros.ui.EventHandler;
+        handler(name: string, code: macros.ui.CodeInput): macros.ui.EventHandler;
         input(
           ...nodes: (macros.ui.Attribute | macros.ui.EventNode | macros.ui.Button)[]
         ): macros.ui.Input;
@@ -125,13 +125,13 @@ declare global {
         ): macros.ui.Input;
         link(options: macros.ui.LinkOptions): macros.ui.Link;
         on(eventName: string, handlerName: string): macros.ui.Event;
-        onHandle(eventName: string, code: macros.ui.EventHandlerCode): macros.ui.BoundEvent;
+        onHandle(eventName: string, code: macros.ui.CodeInput): macros.ui.BoundEvent;
         root(
           options: macros.ui.RootOptions,
           ...nodes: (macros.ui.Container | macros.ui.Node)[]
         ): macros.ui.Root;
         root(...nodes: (macros.ui.Container | macros.ui.Node)[]): macros.ui.Root;
-        script(code: string): macros.ui.Script;
+        script(code: macros.ui.CodeInput): macros.ui.Script;
         text(text: string): macros.ui.Text;
         textarea(...nodes: (macros.ui.Attribute | macros.ui.EventNode)[]): macros.ui.Textarea;
         textarea(
@@ -146,6 +146,12 @@ declare global {
 }
 
 export declare namespace macros.ui {
+  export type StaticFunction = (
+    this: void,
+    ...args: any[]
+  ) => any & { readonly __static_function__: unique symbol };
+  export type CodeInput = string | StaticFunction;
+
   export interface NodeOptions {
     readonly id?: string;
   }
@@ -159,9 +165,6 @@ export declare namespace macros.ui {
   }
 
   export type AttributeValue = string | number | boolean | null | undefined;
-
-  export type EventHandlerCode = string | ((detail: EventDetail) => any);
-
   export interface Attribute extends BaseNode {
     readonly kind: 'attribute';
     readonly name: string;
@@ -188,7 +191,7 @@ export declare namespace macros.ui {
 
   export interface BoundEvent extends BaseNode {
     readonly kind: 'boundEvent';
-    readonly code: string;
+    readonly code: CodeInput;
     readonly event: string;
   }
 
@@ -198,16 +201,9 @@ export declare namespace macros.ui {
     readonly handlerName: string;
   }
 
-  export interface EventDetail {
-    eventName: string;
-    handlerName: string;
-    target: any;
-    [key: string]: any;
-  }
-
   export interface EventHandler extends BaseNode {
     readonly kind: 'eventHandler';
-    readonly code: string;
+    readonly code: CodeInput;
     readonly handlerName: string;
   }
 
@@ -243,7 +239,7 @@ export declare namespace macros.ui {
   }
 
   export interface Script extends BaseNode {
-    readonly code: string;
+    readonly code: CodeInput;
   }
 
   export interface Text extends BaseNode {

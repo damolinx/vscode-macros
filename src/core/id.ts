@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 
-export type Id<T extends string> = string & { __brand: T };
+export type Id<T extends string> = string & { readonly __brand: T };
 
 export function getId<T extends string>(uri: vscode.Uri): Id<T> {
   return normalizeUri(uri).toString(true) as Id<T>;

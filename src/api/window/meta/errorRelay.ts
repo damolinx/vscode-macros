@@ -1,4 +1,5 @@
 import { Node } from '../node';
+import { CodeStr } from '../scripts/code';
 import { Script } from '../scripts/script';
 import { MetaNode } from './metaNode';
 
@@ -7,12 +8,12 @@ export class ErrorRelayMeta implements MetaNode {
   public readonly role = 'meta';
 
   expand(): Node[] {
-    return [new Script(getErrorRelayScript())];
+    return [new Script(ErrorRelayScript, false)];
   }
 }
 
-function getErrorRelayScript(): string {
-  return `macro.error = (function() {
+export const ErrorRelayScript = `
+      macro.error = (function() {
         const sendError = (err) => {
           vscode.postMessage({
             type: 'macro:error',
@@ -25,5 +26,4 @@ function getErrorRelayScript(): string {
         window.addEventListener('error', (event) => sendError(event.error || event.message));
         window.addEventListener('unhandledrejection', (event) => sendError(event.reason));
         return sendError;
-      })();`;
-}
+      })();` as CodeStr;

@@ -644,32 +644,30 @@ The UI DSL initializes the VSCode API by default to support message passing usin
 </p>
 
 ```javascript
+// All console.log land in the `Developer Tools` console.
+// Explore `macro.log` object to send them back as a message.
 function createHtml() {
   const { ui } = macros.window;
-  const html = ui
+  const root = ui
     .root(
       { progress: true },
       ui.container(
         { mode: 'fixed' },
         ui.input(
           { id: 'search', placeholder: 'Search' },
-          ui.onHandle('input', ({ value }) => {
-            // This logs to the Developer Tools console
+          ui.onHandle('input', function({ value }) {
             console.log('Input changed:', value);
           }),
         ),
         ui.button(
           { id: 'searchButton', label: 'Search' },
-          ui.onHandle('click', () => {
-            // This logs to the Developer Tools console
+          ui.onHandle('click', function() {
             console.log('Search clicked');
-            // Show progress bar
             macro.progress.show();
           }),
         ),
       ),
-      ui.tree(
-        {
+      ui.tree({
           id: 'exampleTree',
           remove: true,
           initialItems: [
@@ -680,16 +678,15 @@ function createHtml() {
             },
           ],
         },
-        ui.onHandle('activate', ({ item }) => {
-          // This logs to the Developer Tools console
+        ui.onHandle('activate', function({ item }) {
           console.log('Node activated:', item);
         }),
       ),
-    )
-    .toHtml();
+    );
 
-  // You can log the generated HTML for reference
-  macros.log.info(html);
+  const html = root.toHtml();
+  // Logging the generated HTML for reference
+  macros.log.debug(html);
   macros.log.show();
   return html;
 }

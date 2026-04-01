@@ -1,7 +1,7 @@
 import { Code, normalizeCode } from './code';
 import { ScriptNode } from './scriptNode';
 
-export type EventHandlerName = string & { _brandedEventHander: never };
+export type EventHandlerName = string & { readonly __brand: unique symbol };
 
 export class EventHandler implements ScriptNode {
   public readonly kind = 'eventHandler';
@@ -18,6 +18,6 @@ export class EventHandler implements ScriptNode {
 }
 
 export function createEventHandler(handlerName: EventHandlerName, code: Code): EventHandler {
-  const normalizedCode = normalizeCode(code);
+  const { normalizedCode } = normalizeCode(code);
   return new EventHandler(handlerName, normalizedCode);
 }

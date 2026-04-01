@@ -1,6 +1,7 @@
 import { ElementNodeOptions } from '../elements/elementNode';
 import { Progress } from '../elements/progress';
 import { Node } from '../node';
+import { CodeStr } from '../scripts/code';
 import { Script } from '../scripts/script';
 import { Style } from '../style/style';
 import { ExpansionContext } from './expansionContext';
@@ -15,12 +16,11 @@ export class ProgressMeta implements MetaNode {
   public expand(context: ExpansionContext): Node[] {
     const id = this.options?.id ?? `__progress_${context.nextId(this.kind)}`;
 
-    return [new Progress({ id }), new Script(getScript(id)), new Style(getCss())];
+    return [new Progress({ id }), new Script(getScript(id), false), new Style(PROGRESS_CSS)];
   }
 }
 
-function getCss(): string {
-  return `
+export const PROGRESS_CSS = `
   .macro-progress {
     height: 2px;
     opacity: 0;
@@ -47,10 +47,9 @@ function getCss(): string {
     100% { transform: translateX(100%) scaleX(0.02); }
   }
 `;
-}
 
-function getScript(id: string): () => string {
-  return () => `
+function getScript(id: string): CodeStr {
+  return `
       (function() {
         const el = document.getElementById("${id}");
         if (!el) { return; }
@@ -67,5 +66,5 @@ function getScript(id: string): () => string {
             el.classList.remove("indeterminate");
           }
         };
-      })();`;
+      })();` as CodeStr;
 }

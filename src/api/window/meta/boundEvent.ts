@@ -1,6 +1,6 @@
 import { Event } from '../attributes/event';
 import { Node } from '../node';
-import { Code, normalizeCode } from '../scripts/code';
+import { Code, CodeStr, normalizeCode } from '../scripts/code';
 import { EventHandler, EventHandlerName } from '../scripts/eventHandler';
 import { ExpansionContext } from './expansionContext';
 import { MetaNode } from './metaNode';
@@ -11,7 +11,7 @@ export class BoundEvent implements MetaNode {
 
   constructor(
     public readonly event: string,
-    public readonly code: string,
+    public readonly code: CodeStr,
   ) {}
 
   public expand(context: ExpansionContext): Node[] {
@@ -23,6 +23,6 @@ export class BoundEvent implements MetaNode {
 }
 
 export function createBoundEvent(eventName: string, code: Code): BoundEvent {
-  const normalizedCode = normalizeCode(code);
+  const { normalizedCode } = normalizeCode(code, eventName);
   return new BoundEvent(eventName, normalizedCode);
 }

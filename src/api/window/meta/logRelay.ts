@@ -1,4 +1,5 @@
 import { Node } from '../node';
+import { CodeStr } from '../scripts/code';
 import { Script } from '../scripts/script';
 import { MetaNode } from './metaNode';
 
@@ -7,12 +8,12 @@ export class LogRelayMeta implements MetaNode {
   public readonly role = 'meta';
 
   expand(): Node[] {
-    return [new Script(getLogRelayScript())];
+    return [new Script(LogRelayScript, false)];
   }
 }
 
-function getLogRelayScript(): string {
-  return `macro.log = (function() {
+export const LogRelayScript = `
+      macro.log = (function() {
         const sendLog = (level, message, data) => {
           vscode.postMessage({
             type: 'macro:log',
@@ -28,5 +29,4 @@ function getLogRelayScript(): string {
           debug: (msg, data) => sendLog("debug", msg, data),
           trace: (msg, data) => sendLog("trace", msg, data),
         };
-      })();`;
-}
+      })();` as CodeStr;

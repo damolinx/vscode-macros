@@ -1,8 +1,8 @@
-import * as ts from 'typescript';
 import { ExtensionContext } from '../../extensionContext';
 import { readFile } from '../../utils/resources';
-import { ElementNode, isElement } from './elements/elementNode';
+import { isElement } from './elements/elementNode';
 import { RenderableNode } from './node';
+import { normalizeCode } from './scripts/code';
 import { Script } from './scripts/script';
 import { ScriptNode } from './scripts/scriptNode';
 
@@ -19,21 +19,13 @@ export const SUPPORTED_RENDERERS: readonly string[] = [
 export const RendererScripts = new Map<string, Script>();
 
 export async function loadRenderers({ extensionContext, log }: ExtensionContext): Promise<void> {
-  const printer = ts.createPrinter({ removeComments: true });
   const start = Date.now();
   await Promise.all(
     SUPPORTED_RENDERERS.map(async (kind) => {
       const path = `${MACRO_RENDERERS_DIR_RESOURCE}/${kind}.js`;
       const code = await readFile(extensionContext, path);
-      const source = ts.createSourceFile(
-        path,
-        code,
-        ts.ScriptTarget.Latest,
-        false,
-        ts.ScriptKind.JS,
-      );
-      const minifiedCode = printer.printFile(source);
-      RendererScripts.set(kind, new Script(minifiedCode));
+      const { normalizedCode } = normalizeCode(code);
+      RendererScripts.set(kind, new Script(normalizedCode, false));
     }),
   );
   log.debug(`Loaded UI component renderers in ${Date.now() - start}ms`);
@@ -59,17 +51,13 @@ export function resolveRenderers(renderableNodes: RenderableNode[]): ScriptNode[
       const entry = renderers.get(node.kind);
       if (entry && !entry.required) {
         entry.required = true;
-        if (--remaining == 0) {
+        if (--remaining === 0) {
           return;
         }
       }
 
-      if (node.role === 'element') {
-        const elementNode = node as ElementNode;
-        const children = elementNode.children.filter(isElement);
-        if (children.length) {
-          recurse(children);
-        }
+      if (isElement(node)) {
+        recurse(node.children.filter(isElement));
       }
     }
   }
