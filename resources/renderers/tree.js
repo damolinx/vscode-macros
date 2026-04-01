@@ -191,13 +191,14 @@ class MacroTree extends HTMLElement {
 
           width: 12px;
 
+          font-family: var(--vscode-font-family, system-ui), sans-serif;
           font-size: 12px;
           line-height: 1;
 
           cursor: pointer;
 
           transform-origin: center;
-          transition: transform 0.1s ease-out;
+          transition: transform 0.2s ease-out;
         }
 
         .label {
@@ -422,16 +423,12 @@ class MacroTree extends HTMLElement {
    * @param {string} id
    */
   expandNode(id, select = false) {
-    // Expand the node itself
     this.expandedNodes.add(id);
-
-    // Optionally select it
     if (select) {
       this.selectedNode = this.findNode(id);
       this.tree?.focus();
     }
 
-    // Expand all ancestors
     const expandParents = (
       /** @type {any[]} */ nodes,
       /** @type {string} */ targetId,
@@ -441,7 +438,6 @@ class MacroTree extends HTMLElement {
         const newPath = [...path, node.id];
 
         if (node.id === targetId) {
-          // Expand every ancestor in the path
           for (const ancestorId of path) {
             this.expandedNodes.add(ancestorId);
           }
