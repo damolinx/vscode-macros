@@ -262,7 +262,7 @@ export declare namespace macros.ui {
   export interface TreeNode {
     readonly action?: { handlerName: string };
     readonly children?: TreeNode[];
-    readonly descripton?: string;
+    readonly description?: string;
     readonly expanded?: true;
     readonly id?: string;
     readonly label: string;
