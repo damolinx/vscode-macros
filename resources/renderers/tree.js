@@ -177,7 +177,7 @@ class MacroTree extends HTMLElement {
           margin-left: auto;
 
           display: none;
-          pointer-events: none;
+          pointer-events: auto;
         }
 
         .remove {
@@ -384,7 +384,7 @@ class MacroTree extends HTMLElement {
     }
   }
 
-  // TREE API 
+  // TREE API
 
   /**
    * @param {string} parentId
@@ -508,10 +508,10 @@ class MacroTree extends HTMLElement {
   }
 
   /**
- * @param {TreeNode|string} nodeOrId
- * @param {boolean} activate
- * @returns {boolean}
- */
+   * @param {TreeNode|string} nodeOrId
+   * @param {boolean} activate
+   * @returns {boolean}
+   */
   selectNode(nodeOrId, activate = false) {
     const node = typeof nodeOrId === 'string' ? this.findNode(nodeOrId) : nodeOrId;
     if (!node) {
@@ -583,7 +583,7 @@ class MacroTree extends HTMLElement {
     tree.innerHTML = '';
     this.visibleNodes = [];
 
-    const renderNode = (/** @type {TreeNode} */ node, /** @type {number} */ depth,) => {
+    const renderNode = (/** @type {TreeNode} */ node, /** @type {number} */ depth) => {
       if (!node.id) {
         node.id = `__id${this.idCounter++}`;
       }
@@ -612,8 +612,8 @@ class MacroTree extends HTMLElement {
       toggle.textContent = canExpand ? '❯' : ' ';
       if (canExpand) {
         toggle.style.transform = isExpanded ? 'rotate(90deg)' : 'rotate(0deg)';
-        toggle.addEventListener('click', (event) => {
-          event.stopPropagation();
+        toggle.addEventListener('click', (e) => {
+          e.stopPropagation();
           if (this.expandedNodes.has(node)) {
             this.expandedNodes.delete(node);
           } else {
@@ -643,20 +643,21 @@ class MacroTree extends HTMLElement {
         text.append(description);
       }
 
-      if (canExpand) {
-        row.addEventListener('click', () => {
-          this.selectNode(node, true);
-          if (this.expandedNodes.has(node)) {
-            this.expandedNodes.delete(node);
-          } else {
-            this.expandedNodes.add(node);
-          }
-          queueMicrotask(() => this.#update());
-        });
-        row.addEventListener('mousedown', () => {
-          this._focusFromClick = true;
-        });
-      }
+      row.addEventListener('click', () => {
+        this.selectNode(node, true);
+        if (!canExpand) {
+          return;
+        }
+        if (this.expandedNodes.has(node)) {
+          this.expandedNodes.delete(node);
+        } else {
+          this.expandedNodes.add(node);
+        }
+        queueMicrotask(() => this.#update());
+      });
+      row.addEventListener('mousedown', (e) => {
+        this._focusFromClick = true;
+      });
 
       // Remove button
       if (this.enableRemove) {
