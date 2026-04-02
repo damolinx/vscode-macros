@@ -262,7 +262,9 @@ export declare namespace macros.ui {
   export interface TreeNode {
     readonly action?: { handlerName: string };
     readonly children?: TreeNode[];
-    readonly id: string;
+    readonly descripton?: string;
+    readonly expanded?: true;
+    readonly id?: string;
     readonly label: string;
   }
 
@@ -280,4 +282,4 @@ export declare namespace macros.ui {
   export type EventNode = BoundEvent | Event | EventHandler;
 }
 
-export {};
+export { };

@@ -606,10 +606,11 @@ The use case for the DSL is the same as for the macros: quickly generate a tool 
 
   TreeNode:
   - `label: string`: required displaye name
-  - `id?: string`: node id
   - `action?: { handlerName: string }`
   - `children?: TreeNode[]`: whether the node has or can have children. Use `[]` to ensure node renders as parent
+  - `description?: string`: inline description
   - `expanded?: true`: node starts in expanded state, if it is a parent
+  - `id?: string`: node id
 
 [↑ Back to top](#table-of-contents)
 

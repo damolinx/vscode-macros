@@ -1,28 +1,35 @@
 // @ts-check
+
 class MacroTree extends HTMLElement {
-  static get observedAttributes() {
-    return ['data-initial', 'enable-remove', 'data-on-remove'];
-  }
+  // static get observedAttributes() { return []; }
+
+  /**
+   * @typedef {Object} TreeNode
+   * @property {string} [id]
+   * @property {string} label
+   * @property {string} [description]
+   * @property {TreeNode[]} [children]
+   * @property {{ handlerName: string }} [action]
+   */
 
   constructor() {
     super();
     /** @type {ShadowRoot} */
     this.root = this.attachShadow({ mode: 'open' });
-
-    this._idCounter = 10000;
-
-    /** @type {any[]} */
-    this.items = [];
-    /** @type {any[]} */
+    /** @type {number} */
+    this.idCounter = 10000;
+    /** @type {TreeNode[]} */
+    this.nodes = [];
+    /** @type {TreeNode[]} */
     this.visibleNodes = [];
-
+    /** @type {Set<TreeNode>} */
     this.expandedNodes = new Set();
+    /** @type {TreeNode | null} */
     this.selectedNode = null;
+    /** @type {boolean} */
     this.enableRemove = false;
-
     /** @type {string | null} */
     this.onRemoveHandlerName = null;
-
     /** @type {((e: Event) => void) | null} */
     this.removeHandler = null;
   }
@@ -42,13 +49,15 @@ class MacroTree extends HTMLElement {
 
     const initial = this.getAttribute('data-initial');
     if (initial) {
-      try {
-        const parsed = JSON.parse(initial);
-        this.items = parsed.items ?? [];
-        this.update();
-      } catch {
-        console.error('Invalid data-initial JSON for <macro-tree>');
-      }
+      const parsed = JSON.parse(initial);
+      this.nodes = parsed.items ?? [];
+      this.#update();
+    }
+
+    this.enableRemove = this.hasAttribute('enable-remove');
+    if (this.enableRemove) {
+      this.onRemoveHandlerName = this.getAttribute('data-on-remove');
+      this.connectRemoveHandler();
     }
   }
 
@@ -58,29 +67,27 @@ class MacroTree extends HTMLElement {
     }
 
     this.removeHandler = (e) => {
-      const target = /** @type {HTMLElement} */ (e.target);
-      if (!target.hasAttribute('data-remove')) {
+      const target = /** @type {HTMLElement | null} */ (e.target);
+      if (!target?.hasAttribute('data-remove')) {
         return;
       }
 
       e.stopPropagation();
 
-      /** @type {HTMLElement | null} */
-      const nodeElement = target.closest('.node');
+      const nodeElement = /** @type {HTMLElement | null} */ (target.closest('.node'));
       if (!nodeElement) {
         return;
       }
 
       const id = nodeElement.dataset.id;
-      const node = id && this.removeNode(id);
-      if (!node) {
+      const removedNode = id && this.removeNodes([id]);
+      if (!removedNode) {
         return;
       }
 
       if (!this.onRemoveHandlerName) {
         return;
       }
-
       this.dispatchEvent(
         new CustomEvent('macro-event', {
           bubbles: true,
@@ -88,59 +95,13 @@ class MacroTree extends HTMLElement {
             eventName: 'remove',
             handlerName: this.onRemoveHandlerName,
             target: this,
-            item: node,
+            node: removedNode,
           },
         }),
       );
     };
 
     this.root.addEventListener('click', this.removeHandler);
-  }
-
-  disconnectRemoveHandler() {
-    if (this.removeHandler) {
-      this.root.removeEventListener('click', this.removeHandler);
-      this.removeHandler = null;
-    }
-  }
-
-  /**
-   * @param {string} name
-   * @param {string | null} _oldValue
-   * @param {string | null} newValue
-   */
-  attributeChangedCallback(name, _oldValue, newValue) {
-    switch (name) {
-      case 'data-initial': {
-        if (newValue) {
-          try {
-            const parsed = JSON.parse(newValue);
-            this.items = parsed.items ?? [];
-          } catch {
-            console.error('Invalid data-initial JSON for <macro-tree>');
-          }
-        } else {
-          this.items = [];
-        }
-        this.update();
-        break;
-      }
-
-      case 'enable-remove': {
-        this.enableRemove = newValue !== null;
-        if (this.enableRemove) {
-          this.connectRemoveHandler();
-        } else {
-          this.disconnectRemoveHandler();
-        }
-        break;
-      }
-
-      case 'data-on-remove': {
-        this.onRemoveHandlerName = newValue;
-        break;
-      }
-    }
   }
 
   render() {
@@ -164,11 +125,11 @@ class MacroTree extends HTMLElement {
           display: flex;
           align-items: center;
 
-          padding: 2px 4px;
-
           min-width: 0;
+          padding: 2px 4px;
           white-space: nowrap;
 
+          cursor: pointer;
           position: relative;
         }
 
@@ -184,38 +145,43 @@ class MacroTree extends HTMLElement {
 
         .toggle {
           display: inline-flex;
-          align-items: center;
           justify-content: center;
 
+          flex: 0 0 12px;
           margin-right: 4px;
 
-          width: 12px;
-
-          font-family: var(--vscode-font-family, system-ui), sans-serif;
+          font-family: var(--vscode-font-family);
           font-size: 12px;
           line-height: 1;
-
-          cursor: pointer;
 
           transform-origin: center;
           transition: transform 0.2s ease-out;
         }
 
-        .label {
-          flex: 1 1 auto;
+        .label-container {
+          display: flex;
           min-width: 0;
+        }
+
+        .label {
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .description {
+          flex: 1 0 0;
+          margin-left: 6px;
+
+          color: var(--vscode-descriptionForeground);
+          font-size: 0.9em;
 
           overflow: hidden;
           text-overflow: ellipsis;
-          white-space: nowrap;
-
-          cursor: pointer;
         }
 
         .actions {
           display: flex;
           align-items: center;
-          gap: 2px;
 
           margin-left: auto;
 
@@ -230,14 +196,11 @@ class MacroTree extends HTMLElement {
 
           height: 18px;
           min-width: 16px;
-          padding: 0 4px;
+          padding: 0 2px;
 
           border-radius: 2px;
 
           color: var(--vscode-foreground);
-          opacity: 0.7;
-
-          cursor: pointer;
         }
 
         :host(.active) .node.selected {
@@ -290,20 +253,14 @@ class MacroTree extends HTMLElement {
         }
       </style>
 
-      <div class="tree" tabindex="0"></div>
-    `;
+      <div class="tree" tabindex="0"></div>`;
 
     if (!this.tree) {
       return;
     }
 
-    if (!this.handleKeyBound) {
-      /** @param {KeyboardEvent} e */
-      this.handleKeyBound = (e) => this.handleKey(e);
-    }
-
-    this.tree.addEventListener('keydown', this.handleKeyBound);
-
+    this.tree.addEventListener('blur', () => this.classList.remove('active'));
+    this.tree.addEventListener('keydown', (/** @type {KeyboardEvent} e */ e) => this.handleKey(e));
     this.tree.addEventListener('focus', () => {
       this.classList.add('active');
 
@@ -312,27 +269,175 @@ class MacroTree extends HTMLElement {
         return;
       }
 
-      if (this.selectedNode === null && this.visibleNodes.length > 0) {
+      if (!this.selectedNode && this.visibleNodes.length > 0) {
         this.selectNode(this.visibleNodes[0], true);
       }
     });
-
-    this.tree.addEventListener('blur', () => {
-      this.classList.remove('active');
-    });
   }
 
-  /** @param {any[]} items */
-  setItems(items = []) {
-    this.items = items;
-    this.update();
+  /**
+   * @param {KeyboardEvent} e
+   */
+  handleKey(e) {
+    const selectedNode = this.selectedNode;
+    const selectedIndex = selectedNode ? this.visibleNodes.indexOf(selectedNode) : -1;
+    const hasSelection = selectedNode && selectedIndex !== -1;
+    const key = e.key;
+
+    if (key === 'ArrowDown') {
+      e.preventDefault();
+      if (hasSelection) {
+        const nextIndex = selectedIndex + 1;
+        if (nextIndex < this.visibleNodes.length) {
+          this.selectNode(this.visibleNodes[nextIndex]);
+        }
+      }
+      return;
+    }
+
+    if (key === 'ArrowUp') {
+      e.preventDefault();
+      if (hasSelection && selectedIndex > 0) {
+        this.selectNode(this.visibleNodes[selectedIndex - 1]);
+      }
+      return;
+    }
+
+    if (key === 'ArrowRight') {
+      e.preventDefault();
+      if (!hasSelection) {
+        return;
+      }
+
+      const canExpand = Array.isArray(selectedNode.children);
+      if (!canExpand) {
+        return;
+      }
+
+      const isExpanded = this.expandedNodes.has(selectedNode);
+      if (isExpanded) {
+        if (selectedNode.children?.length) {
+          this.selectNode(selectedNode.children[0]);
+        }
+      } else {
+        this.expandedNodes.add(selectedNode);
+        this.selectNode(selectedNode);
+      }
+
+      return;
+    }
+
+    if (key === 'ArrowLeft') {
+      e.preventDefault();
+      if (!hasSelection || !selectedNode) {
+        return;
+      }
+
+      const isExpanded = this.expandedNodes.has(selectedNode);
+      if (isExpanded) {
+        this.expandedNodes.delete(selectedNode);
+        this.#update();
+        return;
+      }
+
+      const parent = this.findParent(selectedNode);
+      if (parent) {
+        this.selectNode(parent);
+      }
+      return;
+    }
+
+    if (key === 'Enter' || key === ' ') {
+      e.preventDefault();
+      if (!hasSelection) {
+        return;
+      }
+
+      const canExpand = Array.isArray(selectedNode.children);
+      if (canExpand) {
+        if (this.expandedNodes.has(selectedNode)) {
+          this.expandedNodes.delete(selectedNode);
+        } else {
+          this.expandedNodes.add(selectedNode);
+        }
+        this.#update();
+      } else {
+        this.selectNode(selectedNode, true);
+      }
+      return;
+    }
+
+    if (key === 'Home') {
+      e.preventDefault();
+      if (this.visibleNodes.length) {
+        this.selectNode(this.visibleNodes[0]);
+      }
+      return;
+    }
+
+    if (key === 'End') {
+      e.preventDefault();
+      if (this.visibleNodes.length) {
+        this.selectNode(this.visibleNodes[this.visibleNodes.length - 1]);
+      }
+      return;
+    }
+  }
+
+  // TREE API 
+
+  /**
+   * @param {string} parentId
+   * @param {TreeNode[]} newNodes
+   * @returns {boolean}
+   */
+  addNodes(parentId, newNodes) {
+    const parent = this.findNode(parentId, this.nodes);
+    if (!parent) {
+      return false;
+    }
+
+    if (parent.children) {
+      parent.children.push(...newNodes);
+    } else {
+      parent.children = newNodes;
+    }
+
+    this.#update();
+    return true;
   }
 
   /**
    * @param {string} id
-   * @returns {any | null}
+   * @param {boolean} [select]
    */
-  findNode(id, nodes = this.items) {
+  expandNode(id, select = false) {
+    const node = this.findNode(id);
+    if (!node) {
+      return false;
+    }
+
+    this.expandedNodes.add(node);
+    let parent = this.findParent(node);
+    while (parent) {
+      this.expandedNodes.add(parent);
+      parent = this.findParent(parent);
+    }
+
+    if (select) {
+      this.selectedNode = node;
+      this.tree?.focus();
+    }
+
+    this.#update();
+    return true;
+  }
+
+  /**
+   * @param {string} id
+   * @returns {TreeNode | null}
+   */
+  findNode(id, nodes = this.nodes) {
     for (const node of nodes) {
       if (node.id === id) {
         return node;
@@ -348,234 +453,78 @@ class MacroTree extends HTMLElement {
   }
 
   /**
-   * @param {string} parentId
-   * @param {any} newNode
+   * @param {TreeNode | string} nodeOrId
+   * @param {TreeNode[]} [nodes]
+   * @param {TreeNode | null} [parent]
+   * @returns {TreeNode | null}
    */
-  addNode(parentId, newNode) {
-    const items = structuredClone(this.items);
-    const parent = this.findNode(parentId, items);
+  findParent(nodeOrId, nodes = this.nodes, parent = null) {
+    const isId = typeof nodeOrId === 'string';
+    for (const node of nodes) {
+      const match = isId ? node.id === nodeOrId : node === nodeOrId;
+      if (match) {
+        return parent;
+      }
 
-    if (parent) {
-      parent.children ??= [];
-      parent.children.push(newNode);
-      this.setItems(items);
+      if (node.children) {
+        const found = this.findParent(nodeOrId, node.children, node);
+        if (found) {
+          return found;
+        }
+      }
     }
+
+    return null;
   }
 
   /**
-   * @param {string} id
-   * @param {any[]} nodes
+   * @param {string[]} ids
+   * @param {TreeNode[]} [nodes]
+   * @returns {TreeNode[]}
    */
-  removeNode(id, nodes = this.items) {
-    const items = structuredClone(nodes);
-    let nodeRemoved;
+  removeNodes(ids, nodes = this.nodes) {
+    const removed = /** @type {TreeNode[]} */ ([]);
 
-    const walk = (/** @type {any[]} */ arr) => {
-      const idx = arr.findIndex((n) => n.id === id);
-      if (idx !== -1) {
-        nodeRemoved = arr.splice(idx, 1)[0];
-        return true;
-      }
-      for (const n of arr) {
-        if (n.children && walk(n.children)) {
-          return true;
+    const walk = (/** @type {TreeNode[]} */ arr) => {
+      for (let i = arr.length - 1; i >= 0; i--) {
+        const node = arr[i];
+        if (node.id && ids.includes(node.id)) {
+          removed.push(...arr.splice(i, 1));
+          continue;
+        }
+
+        if (node.children) {
+          walk(node.children);
         }
       }
+    };
+
+    walk(nodes);
+
+    if (removed.length > 0) {
+      this.#update();
+    }
+    return removed;
+  }
+
+  /**
+ * @param {TreeNode|string} nodeOrId
+ * @param {boolean} activate
+ * @returns {boolean}
+ */
+  selectNode(nodeOrId, activate = false) {
+    const node = typeof nodeOrId === 'string' ? this.findNode(nodeOrId) : nodeOrId;
+    if (!node) {
       return false;
-    };
-
-    if (walk(items)) {
-      this.setItems(items);
     }
 
-    return nodeRemoved;
-  }
-
-  /**
-   * @param {string} id
-   * @param {any} patch
-   */
-  updateNode(id, patch) {
-    const items = structuredClone(this.items);
-    const node = this.findNode(id, items);
-
-    if (node) {
-      Object.assign(node, patch);
-      this.setItems(items);
-    }
-  }
-
-  /**
-   * @param {string} parentId
-   * @param {any} newChildren
-   */
-  replaceChildren(parentId, newChildren) {
-    const items = structuredClone(this.items);
-    const parent = this.findNode(parentId, items);
-
-    if (parent) {
-      parent.children = newChildren;
-      this.setItems(items);
-    }
-  }
-
-  /**
-   * @param {string} id
-   */
-  expandNode(id, select = false) {
-    this.expandedNodes.add(id);
-    if (select) {
-      this.selectedNode = this.findNode(id);
-      this.tree?.focus();
-    }
-
-    const expandParents = (
-      /** @type {any[]} */ nodes,
-      /** @type {string} */ targetId,
-      /** @type {any[]} */ path = [],
-    ) => {
-      for (const node of nodes) {
-        const newPath = [...path, node.id];
-
-        if (node.id === targetId) {
-          for (const ancestorId of path) {
-            this.expandedNodes.add(ancestorId);
-          }
-          return true;
-        }
-
-        if (node.children && expandParents(node.children, targetId, newPath)) {
-          return true;
-        }
-      }
-      return false;
-    };
-
-    expandParents(this.items, id);
-
-    this.update();
-  }
-
-  update() {
-    if (!this.treeElement) {
-      return;
-    }
-
-    this.treeElement.innerHTML = '';
-    this.visibleNodes = [];
-
-    const renderNode = (
-      /** @type {{ id?: string; expanded?: boolean; children: string | any[]; label?: string | null; }} */
-      node,
-      /** @type {number} */
-      depth,
-    ) => {
-      if (!node.id) {
-        node.id = `__id${this._idCounter++}`;
-      }
-      if (node.expanded) {
-        this.expandedNodes.add(node.id);
-        node.expanded = false;
-      }
-
-      this.visibleNodes.push(node);
-
-      const row = document.createElement('div');
-      row.className = 'node';
-      row.style.paddingLeft = String(depth * 12) + 'px';
-      row.dataset.id = node.id;
-
-      if (this.selectedNode?.id === node.id) {
-        row.classList.add('selected');
-      }
-
-      const isParent = Array.isArray(node.children);
-      const hasVisibleChildren = isParent && node.children.length > 0;
-      let isExpanded = this.expandedNodes.has(node.id);
-
-      const toggle = document.createElement('span');
-      toggle.className = 'toggle';
-
-      if (isParent) {
-        toggle.textContent = '❯';
-        toggle.style.transform = isExpanded ? 'rotate(90deg)' : 'rotate(0deg)';
-      } else {
-        toggle.textContent = ' ';
-      }
-
-      toggle.addEventListener('click', (event) => {
-        event.stopPropagation();
-
-        if (this.expandedNodes.has(node.id)) {
-          this.expandedNodes.delete(node.id);
-        } else {
-          this.expandedNodes.add(node.id);
-        }
-
-        this.update();
-      });
-
-      const label = document.createElement('span');
-      label.className = 'label';
-      label.textContent = node.label ?? null;
-
-      row.addEventListener('click', () => {
-        this.selectNode(node, true);
-
-        if (isParent) {
-          if (this.expandedNodes.has(node.id)) {
-            this.expandedNodes.delete(node.id);
-          } else {
-            this.expandedNodes.add(node.id);
-          }
-          queueMicrotask(() => this.update());
-        }
-      });
-      row.addEventListener('mousedown', () => {
-        this._focusFromClick = true;
-      });
-
-      row.appendChild(toggle);
-      row.appendChild(label);
-
-      if (this.enableRemove) {
-        const actions = document.createElement('span');
-        actions.className = 'actions';
-        label.textContent = node.label ?? null;
-
-        const remove = document.createElement('span');
-        remove.className = 'remove';
-        remove.dataset.remove = '';
-        remove.textContent = '✕';
-        actions.append(remove);
-        row.appendChild(actions);
-      }
-
-      this.treeElement?.appendChild(row);
-
-      if (isExpanded && hasVisibleChildren) {
-        for (const child of node.children) {
-          renderNode(child, depth + 1);
-        }
-      }
-    };
-
-    for (const item of this.items) {
-      renderNode(item, 0);
-    }
-  }
-
-  /**
-   * @param {any} node
-   */
-  selectNode(node, activate = false) {
     this.selectedNode = node;
-    this.update();
+    this.#update();
 
     const eventName = activate ? 'activate' : 'select';
     const handlerName = this.getAttribute('data-on-' + eventName);
     if (!handlerName) {
-      return;
+      return true;
     }
 
     this.dispatchEvent(
@@ -585,150 +534,153 @@ class MacroTree extends HTMLElement {
           eventName,
           handlerName,
           target: this,
-          item: node,
+          node,
         },
       }),
     );
+
+    return true;
   }
 
   /**
-   * @param {KeyboardEvent} event
+   * @param {string} parentId
+   * @param {TreeNode[]} newChildren
+   * @returns {boolean}
    */
-  handleKey(event) {
-    const key = event.key;
-    const index = this.visibleNodes.findIndex((n) => n.id === this.selectedNode?.id);
-    const hasSelection = index !== -1;
-
-    if (key === 'ArrowDown') {
-      event.preventDefault();
-      if (hasSelection && index < this.visibleNodes.length - 1) {
-        this.selectNode(this.visibleNodes[index + 1]);
-      }
-      return;
+  setChildren(parentId, newChildren) {
+    const parent = this.findNode(parentId, this.nodes);
+    if (!parent) {
+      return false;
     }
 
-    if (key === 'ArrowUp') {
-      event.preventDefault();
-      if (hasSelection && index > 0) {
-        this.selectNode(this.visibleNodes[index - 1]);
-      }
-      return;
-    }
-
-    if (key === 'ArrowRight') {
-      event.preventDefault();
-      const node = this.visibleNodes[index];
-      if (!node) {
-        return;
-      }
-
-      const hasChildren = Array.isArray(node.children) && node.children.length > 0;
-      const isExpanded = this.expandedNodes.has(node.id);
-
-      if (hasChildren && !isExpanded) {
-        this.expandedNodes.add(node.id);
-        this.selectNode(node);
-        return;
-      }
-
-      if (hasChildren && isExpanded) {
-        this.selectNode(node.children[0]);
-        return;
-      }
-
-      return;
-    }
-
-    if (key === 'ArrowLeft') {
-      event.preventDefault();
-      const node = this.visibleNodes[index];
-      if (!node) {
-        return;
-      }
-
-      const isExpanded = this.expandedNodes.has(node.id);
-
-      if (isExpanded) {
-        this.expandedNodes.delete(node.id);
-        this.update();
-        return;
-      }
-
-      const parent = this.findParent(node.id, this.items);
-      if (parent) {
-        this.selectNode(parent);
-      }
-
-      return;
-    }
-
-    if (key === ' ') {
-      event.preventDefault();
-
-      if (!hasSelection) {
-        return;
-      }
-
-      const node = this.visibleNodes[index];
-      const hasChildren = Array.isArray(node.children) && node.children.length > 0;
-
-      if (hasChildren) {
-        if (this.expandedNodes.has(node.id)) {
-          this.expandedNodes.delete(node.id);
-        } else {
-          this.expandedNodes.add(node.id);
-        }
-        this.update();
-        return;
-      }
-
-      this.selectNode(node);
-      return;
-    }
-
-    if (key === 'Enter' || key == 'Space') {
-      event.preventDefault();
-      if (hasSelection) {
-        this.selectNode(this.selectedNode, true);
-      }
-      return;
-    }
-
-    if (key === 'Home') {
-      event.preventDefault();
-      if (this.visibleNodes.length > 0) {
-        this.selectNode(this.visibleNodes[0]);
-      }
-      return;
-    }
-
-    if (key === 'End') {
-      event.preventDefault();
-      if (this.visibleNodes.length > 0) {
-        this.selectNode(this.visibleNodes[this.visibleNodes.length - 1]);
-      }
-      return;
-    }
+    parent.children = newChildren;
+    this.#update();
+    return true;
   }
 
   /**
-   * @param {any} id
-   * @param {any[]} nodes
-   * @returns {null|any}
+   * @param {string} id
+   * @param {object} patch
+   * @returns {boolean}
    */
-  findParent(id, nodes, parent = null) {
-    for (const node of nodes) {
-      if (node.id === id) {
-        return parent;
+  updateNode(id, patch) {
+    const node = this.findNode(id, this.nodes);
+    if (!node) {
+      return false;
+    }
+
+    Object.assign(node, patch);
+    this.#update();
+    return true;
+  }
+
+  #update() {
+    const tree = this.tree;
+    if (!tree) {
+      return;
+    }
+
+    tree.innerHTML = '';
+    this.visibleNodes = [];
+
+    const renderNode = (/** @type {TreeNode} */ node, /** @type {number} */ depth,) => {
+      if (!node.id) {
+        node.id = `__id${this.idCounter++}`;
       }
-      if (Array.isArray(node.children)) {
-        const found = this.findParent(id, node.children, node);
-        if (found) {
-          return found;
+
+      this.visibleNodes.push(node);
+
+      const row = document.createElement('div');
+      row.className = 'node';
+      row.style.paddingLeft = `${depth * 12}px`;
+      row.dataset.id = node.id;
+
+      if (this.selectedNode && (this.selectedNode === node || this.selectedNode.id === node.id)) {
+        row.classList.add('selected');
+      }
+
+      const canExpand = Array.isArray(node.children);
+      const isExpanded = canExpand && this.expandedNodes.has(node);
+
+      // Toggle
+      const toggle = document.createElement('span');
+      toggle.className = 'toggle';
+      toggle.textContent = canExpand ? '❯' : ' ';
+      if (canExpand) {
+        toggle.style.transform = isExpanded ? 'rotate(90deg)' : 'rotate(0deg)';
+        toggle.addEventListener('click', (event) => {
+          event.stopPropagation();
+          if (isExpanded) {
+            this.expandedNodes.delete(node);
+          } else {
+            this.expandedNodes.add(node);
+          }
+          this.#update();
+        });
+      }
+      row.append(toggle);
+
+      // Label
+      const label = document.createElement('span');
+      label.className = 'label';
+      label.textContent = node.label ?? node.id;
+
+      row.addEventListener('click', () => {
+        this.selectNode(node, true);
+        if (canExpand) {
+          if (isExpanded) {
+            this.expandedNodes.delete(node);
+          } else {
+            this.expandedNodes.add(node);
+          }
+          queueMicrotask(() => this.#update());
+        }
+      });
+      row.addEventListener('mousedown', () => {
+        this._focusFromClick = true;
+      });
+
+      const text = document.createElement('div');
+      text.className = 'label-container';
+      text.append(label);
+      row.append(text);
+
+      // Description
+      if (node.description) {
+        const description = document.createElement('span');
+        description.className = 'description';
+        description.textContent = node.description;
+
+        text.append(description);
+      }
+
+      // Remove button
+      if (this.enableRemove) {
+        const remove = document.createElement('span');
+        remove.className = 'remove';
+        remove.dataset.remove = '';
+        remove.textContent = '✕';
+
+        const actions = document.createElement('span');
+        actions.className = 'actions';
+        actions.append(remove);
+
+        row.append(actions);
+      }
+
+      tree.appendChild(row);
+
+      // Render children if expanded
+      if (isExpanded && node.children) {
+        for (const child of node.children) {
+          renderNode(child, depth + 1);
         }
       }
+    };
+
+    for (const root of this.nodes) {
+      renderNode(root, 0);
     }
-    return null;
   }
 }
 
