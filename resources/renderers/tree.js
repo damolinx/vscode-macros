@@ -5,6 +5,7 @@ class MacroTree extends HTMLElement {
 
   /**
    * @typedef {Object} TreeNode
+   * * @property {boolean} [expanded]
    * @property {string} [id]
    * @property {string} label
    * @property {string} [description]
@@ -47,17 +48,17 @@ class MacroTree extends HTMLElement {
       this.render();
     }
 
+    this.enableRemove = this.hasAttribute('enable-remove');
+    if (this.enableRemove) {
+      this.onRemoveHandlerName = this.getAttribute('data-on-remove');
+      this.connectRemoveHandler();
+    }
+
     const initial = this.getAttribute('data-initial');
     if (initial) {
       const parsed = JSON.parse(initial);
       this.nodes = parsed.items ?? [];
       this.#update();
-    }
-
-    this.enableRemove = this.hasAttribute('enable-remove');
-    if (this.enableRemove) {
-      this.onRemoveHandlerName = this.getAttribute('data-on-remove');
-      this.connectRemoveHandler();
     }
   }
 
@@ -133,16 +134,6 @@ class MacroTree extends HTMLElement {
           position: relative;
         }
 
-        .node:hover {
-          background: var(--vscode-list-hoverBackground);
-        }
-
-        .node:hover .actions,
-        .node.selected .actions {
-          opacity: 1;
-          pointer-events: auto;
-        }
-
         .toggle {
           display: inline-flex;
           justify-content: center;
@@ -185,7 +176,7 @@ class MacroTree extends HTMLElement {
 
           margin-left: auto;
 
-          opacity: 0;
+          display: none;
           pointer-events: none;
         }
 
@@ -194,8 +185,8 @@ class MacroTree extends HTMLElement {
           align-items: center;
           justify-content: center;
 
-          height: 18px;
-          min-width: 16px;
+          height: 16px;
+          width: 16px;
           padding: 0 2px;
 
           border-radius: 2px;
@@ -222,7 +213,16 @@ class MacroTree extends HTMLElement {
 
         .node.selected .remove {
           color: var(--vscode-list-inactiveSelectionIconForeground);
-          opacity: 1;
+        }
+
+        .node:hover {
+          background: var(--vscode-list-hoverBackground);
+        }
+
+        .node:hover .actions,
+        .node.selected .actions {
+          display: block;
+          pointer-events: auto;
         }
 
         .node:hover .remove:hover {
@@ -587,6 +587,10 @@ class MacroTree extends HTMLElement {
       if (!node.id) {
         node.id = `__id${this.idCounter++}`;
       }
+      if (node.expanded) {
+        this.expandedNodes.add(node);
+        delete node.expanded;
+      }
 
       this.visibleNodes.push(node);
 
@@ -610,7 +614,7 @@ class MacroTree extends HTMLElement {
         toggle.style.transform = isExpanded ? 'rotate(90deg)' : 'rotate(0deg)';
         toggle.addEventListener('click', (event) => {
           event.stopPropagation();
-          if (isExpanded) {
+          if (this.expandedNodes.has(node)) {
             this.expandedNodes.delete(node);
           } else {
             this.expandedNodes.add(node);
@@ -625,21 +629,6 @@ class MacroTree extends HTMLElement {
       label.className = 'label';
       label.textContent = node.label ?? node.id;
 
-      row.addEventListener('click', () => {
-        this.selectNode(node, true);
-        if (canExpand) {
-          if (isExpanded) {
-            this.expandedNodes.delete(node);
-          } else {
-            this.expandedNodes.add(node);
-          }
-          queueMicrotask(() => this.#update());
-        }
-      });
-      row.addEventListener('mousedown', () => {
-        this._focusFromClick = true;
-      });
-
       const text = document.createElement('div');
       text.className = 'label-container';
       text.append(label);
@@ -652,6 +641,21 @@ class MacroTree extends HTMLElement {
         description.textContent = node.description;
 
         text.append(description);
+      }
+
+      if (canExpand) {
+        row.addEventListener('click', () => {
+          this.selectNode(node, true);
+          if (this.expandedNodes.has(node)) {
+            this.expandedNodes.delete(node);
+          } else {
+            this.expandedNodes.add(node);
+          }
+          queueMicrotask(() => this.#update());
+        });
+        row.addEventListener('mousedown', () => {
+          this._focusFromClick = true;
+        });
       }
 
       // Remove button
@@ -670,7 +674,6 @@ class MacroTree extends HTMLElement {
 
       tree.appendChild(row);
 
-      // Render children if expanded
       if (isExpanded && node.children) {
         for (const child of node.children) {
           renderNode(child, depth + 1);
