@@ -3,7 +3,7 @@
 ## 0.7.6
 - UI DSL:
   - `macros.window.ui.tree`: 
-    - Nodes gain `description`.
+    - Nodes gain `description`
     - Events carry a target `node` vs `item`
     - Improve component API
 
