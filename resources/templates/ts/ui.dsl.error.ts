@@ -26,7 +26,7 @@ function createHtml(): string {
     .toHtml();
 }
 
-function createWebviewViewProvider(viewId: string): vscode.WebviewViewProvider {
+function createWebviewViewProvider(): vscode.WebviewViewProvider {
   return {
     resolveWebviewView: (webviewView) => {
       webviewView.webview.onDidReceiveMessage((message) => {
@@ -60,7 +60,7 @@ new Promise<void>((resolve) => {
 
   __cancellationToken.onCancellationRequested(resolve);
   __disposables.push(
-    vscode.window.registerWebviewViewProvider(viewId, createWebviewViewProvider(viewId)),
+    vscode.window.registerWebviewViewProvider(viewId, createWebviewViewProvider()),
     { dispose: () => vscode.commands.executeCommand('setContext', `${viewId}.show`, false) },
   );
 

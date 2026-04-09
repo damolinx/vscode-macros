@@ -26,11 +26,9 @@ function createHtml() {
 }
 
 /**
- * @param {string} viewId - The ID of the view to create.
- * @param {(value: any) => void} resolve - Promise resolver.
  * @returns {import('vscode').WebviewViewProvider }
  */
-function createWebviewViewProvider(viewId, resolve) {
+function createWebviewViewProvider() {
   return {
     resolveWebviewView: (webviewView) => {
       webviewView.webview.onDidReceiveMessage((message) => {
@@ -62,7 +60,7 @@ new Promise((resolve) => {
 
   __cancellationToken.onCancellationRequested(resolve);
   __disposables.push(
-    vscode.window.registerWebviewViewProvider(viewId, createWebviewViewProvider(viewId, resolve)),
+    vscode.window.registerWebviewViewProvider(viewId, createWebviewViewProvider()),
     { dispose: () => vscode.commands.executeCommand('setContext', `${viewId}.show`, false) },
   );
 

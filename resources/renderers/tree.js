@@ -663,7 +663,7 @@ class MacroTree extends HTMLElement {
         }
         queueMicrotask(() => this.#update());
       });
-      row.addEventListener('mousedown', (e) => {
+      row.addEventListener('mousedown', () => {
         this._focusFromClick = true;
       });
 

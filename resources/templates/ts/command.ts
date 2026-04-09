@@ -1,5 +1,4 @@
 // @ts-nocheck
-import * as vscode from 'vscode';
 import { userInfo } from 'os';
 
 // Insert a TODO comment at current cursor line.
