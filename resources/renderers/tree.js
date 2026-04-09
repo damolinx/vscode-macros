@@ -110,7 +110,6 @@ class MacroTree extends HTMLElement {
       <style>
         :host {
           display: block;
-
           color: var(--vscode-foreground);
           font-family: var(--vscode-font-family);
         }
@@ -125,11 +124,9 @@ class MacroTree extends HTMLElement {
         .node {
           display: flex;
           align-items: center;
-
           min-width: 0;
           padding: 2px 4px;
           white-space: nowrap;
-
           cursor: pointer;
           position: relative;
         }
@@ -137,14 +134,11 @@ class MacroTree extends HTMLElement {
         .toggle {
           display: inline-flex;
           justify-content: center;
-
           flex: 0 0 12px;
           margin-right: 4px;
-
           font-family: var(--vscode-font-family);
           font-size: 12px;
           line-height: 1;
-
           transform-origin: center;
           transition: transform 0.2s ease-out;
         }
@@ -162,44 +156,35 @@ class MacroTree extends HTMLElement {
         .description {
           flex: 1 0 0;
           margin-left: 6px;
-
           color: var(--vscode-descriptionForeground);
           font-size: 0.9em;
-
           overflow: hidden;
           text-overflow: ellipsis;
         }
 
         .actions {
           display: flex;
+          opacity: 0;
           align-items: center;
-
           margin-left: auto;
-
-          display: none;
-          pointer-events: auto;
+          pointer-events: none;
         }
 
         .remove {
           display: inline-flex;
           align-items: center;
           justify-content: center;
-
           height: 16px;
           width: 16px;
           padding: 0 2px;
-
           border-radius: 2px;
-
           color: var(--vscode-foreground);
         }
 
         :host(.active) .node.selected {
           background: var(--vscode-list-activeSelectionBackground);
           color: var(--vscode-list-activeSelectionForeground);
-
           outline: 1px solid var(--vscode-list-focusOutline);
-          outline-offset: -1px;
         }
 
         :host(.active) .node.selected .remove {
@@ -221,7 +206,7 @@ class MacroTree extends HTMLElement {
 
         .node:hover .actions,
         .node.selected .actions {
-          display: block;
+          opacity: 1;
           pointer-events: auto;
         }
 
@@ -604,7 +589,7 @@ class MacroTree extends HTMLElement {
 
       const row = document.createElement('div');
       row.className = 'node';
-      row.style.paddingLeft = `${depth * 12}px`;
+      row.style.paddingLeft = `${depth * 8}px`;
       row.dataset.id = node.id;
 
       if (this.selectedNode && (this.selectedNode === node || this.selectedNode.id === node.id)) {

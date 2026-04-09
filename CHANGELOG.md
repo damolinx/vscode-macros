@@ -7,6 +7,7 @@
     - New `setRootNodes` so no initial-nodes are needed.
     - Rename `setChildren` to `setNodes`.
     - Nodes gain `removable` option to allow disabling the remove-node button.
+    - Fix: text on hovered rows move in MacOS whenever remove-button is enabled.
 
 ## 0.7.6
 - UI DSL:
