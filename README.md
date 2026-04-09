@@ -601,7 +601,7 @@ The use case for the DSL is the same as for the macros: quickly generate a tool 
 
   Options:
   - `id?: string`
-  - `remove?: boolean`
+  - `remove?: true`: add a remove-node button
   - `initialItems?: TreeNode[]`
 
   TreeNode:
@@ -611,6 +611,7 @@ The use case for the DSL is the same as for the macros: quickly generate a tool 
   - `description?: string`: inline description
   - `expanded?: true`: node starts in expanded state, if it is a parent
   - `id?: string`: node id
+  - `removable?: false`: when set to `false`, this node will not show a remove button even if the tree options include `remove: true`
 
   Tree API: The following API is available from the tree element in the Webview side:
     - `addNodes(id: string, nodes: TreeNode[]): boolean`: Add nodes under `id` node.

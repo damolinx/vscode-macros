@@ -6,13 +6,14 @@
     - Improve API docs.
     - New `setRootNodes` so no initial-nodes are needed.
     - Rename `setChildren` to `setNodes`.
+    - Nodes gain `removable` option to allow disabling the remove-node button.
 
 ## 0.7.6
 - UI DSL:
   - `macros.window.ui.tree`:
-    - Nodes gain `description`
-    - Events carry a target `node` vs `item`
-    - Improve component API
+    - Nodes gain `description`.
+    - Events carry a target `node` vs `item`.
+    - Improve component API.
 
 ## 0.7.5
 - UI DSL:

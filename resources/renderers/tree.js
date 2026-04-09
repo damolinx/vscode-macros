@@ -5,12 +5,13 @@ class MacroTree extends HTMLElement {
 
   /**
    * @typedef {Object} TreeNode
-   * * @property {boolean} [expanded]
+   * @property {{ handlerName: string }} [action]
+   * @property {TreeNode[]} [children]
+   * @property {string} [description]
+   * @property {boolean} [expanded]
    * @property {string} [id]
    * @property {string} label
-   * @property {string} [description]
-   * @property {TreeNode[]} [children]
-   * @property {{ handlerName: string }} [action]
+   * @property {boolean} [removable]
    */
 
   constructor() {
@@ -667,7 +668,7 @@ class MacroTree extends HTMLElement {
       });
 
       // Remove button
-      if (this.enableRemove) {
+      if (this.enableRemove && node.removable !== false) {
         const remove = document.createElement('span');
         remove.className = 'remove';
         remove.dataset.remove = '';
