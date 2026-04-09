@@ -613,14 +613,15 @@ The use case for the DSL is the same as for the macros: quickly generate a tool 
   - `id?: string`: node id
 
   Tree API: The following API is available from the tree element in the Webview side:
-    - `addNodes(parentId, ...newNodes): boolean`: Append one or more nodes under the node with `parentId`.  
-    - `expandNode(id, select = false): boolean`: Expand the node and all its ancestors. 
-    - `findNode(id): TreeNode | null`: Search for a node by `id`.
-    - `findParent(nodeOrId): TreeNode | null`: Return the parent of a node, given either the node instance or its `id`.
-    - `removeNodes(ids: string[]): TreeNode[]`: Remove all nodes by `id` 
-    - `selectNode(nodeOrId, activate = false): boolean`: Select a node and re-render.
-    - `setChildren(parentId, newChildren): boolean`: Replace `parentId`'s `children`.
-    - `updateNode(id, patch): boolean`: Shallow‑merge `patch` into the `id` node.  
+    - `addNodes(id: string, nodes: TreeNode[]): boolean`: Add nodes under `id` node.
+    - `expandNode(id: string, select = false): boolean`: Expand the node and all its ancestors.
+    - `findNode(id: string): TreeNode | null`: Search for a node by `id`.
+    - `findParent(nodeOrId: TreeNode | string): TreeNode | null`: Return the parent of a node, given either the node instance or its `id`.
+    - `removeNodes(ids: string[]): TreeNode[]`: Remove nodes by `id`
+    - `selectNode(nodeOrId: TreeNode | string, activate = false): boolean`: Select a node.
+    - `setNodes(id: string, nodes: TreeNode[]): boolean`: Replace `id`'s `children` nodes.
+    - `setRootNodes(nodes: TreeNode[]): void`: Set tree's root nodes.
+    - `updateNode(id: string, patch: object): boolean`: Shallow‑merge `patch` into the `id` node.
 
 [↑ Back to top](#table-of-contents)
 

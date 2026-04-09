@@ -57,8 +57,7 @@ class MacroTree extends HTMLElement {
     const initial = this.getAttribute('data-initial');
     if (initial) {
       const parsed = JSON.parse(initial);
-      this.nodes = parsed.items ?? [];
-      this.#update();
+      this.setRootNodes(parsed.items);
     }
   }
 
@@ -387,20 +386,20 @@ class MacroTree extends HTMLElement {
   // TREE API
 
   /**
-   * @param {string} parentId
-   * @param {TreeNode[]} newNodes
+   * @param {string} id
+   * @param {TreeNode[]} nodes
    * @returns {boolean}
    */
-  addNodes(parentId, newNodes) {
-    const parent = this.findNode(parentId, this.nodes);
-    if (!parent) {
+  addNodes(id, nodes) {
+    const node = this.findNode(id, this.nodes);
+    if (!node) {
       return false;
     }
 
-    if (parent.children) {
-      parent.children.push(...newNodes);
+    if (node.children) {
+      node.children.push(...nodes);
     } else {
-      parent.children = newNodes;
+      node.children = nodes;
     }
 
     this.#update();
@@ -543,19 +542,27 @@ class MacroTree extends HTMLElement {
   }
 
   /**
-   * @param {string} parentId
-   * @param {TreeNode[]} newChildren
+   * @param {string} id
+   * @param {TreeNode[]} nodes
    * @returns {boolean}
    */
-  setChildren(parentId, newChildren) {
-    const parent = this.findNode(parentId, this.nodes);
-    if (!parent) {
+  setNodes(id, nodes) {
+    const node = this.findNode(id, this.nodes);
+    if (!node) {
       return false;
     }
 
-    parent.children = newChildren;
+    node.children = nodes;
     this.#update();
     return true;
+  }
+
+  /**
+   * @param {TreeNode[]} nodes
+   */
+  setRootNodes(nodes) {
+    this.nodes = Array.isArray(nodes) ? nodes : [];
+    this.#update();
   }
 
   /**
