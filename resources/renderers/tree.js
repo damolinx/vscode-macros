@@ -345,10 +345,11 @@ class MacroTree extends HTMLElement {
         } else {
           this.expandedNodes.add(selectedNode);
         }
-        this.#update();
       } else {
         this.selectNode(selectedNode, true);
       }
+
+      this.#update();
       return;
     }
 
@@ -494,7 +495,7 @@ class MacroTree extends HTMLElement {
 
   /**
    * @param {TreeNode|string} nodeOrId
-   * @param {boolean} activate
+   * @param {boolean} [activate]
    * @returns {boolean}
    */
   selectNode(nodeOrId, activate = false) {
@@ -507,7 +508,7 @@ class MacroTree extends HTMLElement {
     this.#update();
 
     const eventName = activate ? 'activate' : 'select';
-    const handlerName = this.getAttribute('data-on-' + eventName);
+    const handlerName = this.getAttribute(`data-on-${eventName}`);
     if (!handlerName) {
       return true;
     }
@@ -637,17 +638,17 @@ class MacroTree extends HTMLElement {
       }
 
       row.addEventListener('click', () => {
+        const canExpand = Array.isArray(node.children);
+        if (canExpand) {
+          if (this.expandedNodes.has(node)) {
+            this.expandedNodes.delete(node);
+          } else {
+            this.expandedNodes.add(node);
+          }
+        }
         this.selectNode(node, true);
-        if (!canExpand) {
-          return;
-        }
-        if (this.expandedNodes.has(node)) {
-          this.expandedNodes.delete(node);
-        } else {
-          this.expandedNodes.add(node);
-        }
-        queueMicrotask(() => this.#update());
       });
+
       row.addEventListener('mousedown', () => {
         this._focusFromClick = true;
       });
