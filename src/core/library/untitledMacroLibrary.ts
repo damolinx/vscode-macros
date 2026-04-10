@@ -46,10 +46,13 @@ export class UntitledMacroLibrary extends Library<MacroId> {
         }
       }),
     );
-    const editor = vscode.window.activeTextEditor;
-    if (editor && this.ownsDocument(editor.document)) {
-      this.addItems(getMacroItem(editor.document.uri));
-    }
+    this.addItems(...this.getUntitledMacroDocuments());
+  }
+
+  private getUntitledMacroDocuments() {
+    return vscode.workspace.textDocuments
+      .filter((document) => this.ownsDocument(document))
+      .map(({ uri }) => getMacroItem(uri));
   }
 
   public override owns(uri: vscode.Uri): boolean {
@@ -62,5 +65,6 @@ export class UntitledMacroLibrary extends Library<MacroId> {
 
   public override reset(): void {
     this.reportChangedItems(...this.items.keys());
+    this.addItems(...this.getUntitledMacroDocuments());
   }
 }
