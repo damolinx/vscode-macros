@@ -15,6 +15,7 @@ import { deleteMacroOrMacroLibrary } from './commands/deleteMacroOrMacroLibrary'
 import { downloadAsset } from './commands/downloadAsset';
 import { openMacro } from './commands/openMacro';
 import { openSourceDirectoriestSettings, openStartupMacrosSettings } from './commands/openSettings';
+import { refreshExplorer } from './commands/refreshExplorer';
 import { removeStartupMacro } from './commands/removeStartupMacro';
 import { renameMacro } from './commands/renameMacro';
 import { resetSharedContext } from './commands/resetContext';
@@ -92,7 +93,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.downloadAsset', (assetUri: vscode.Uri, locator: UriLocator) =>
       downloadAsset(context, assetUri, locator),
     ),
-    cr('macros.explorer.refresh', () => context.explorerTree.refresh()),
+    cr('macros.explorer.refresh', () => refreshExplorer(context)),
     cr('macros.lmtools.createMacro', (args: CreateMacroContentArgs) =>
       createMacroContent(context, args),
     ),

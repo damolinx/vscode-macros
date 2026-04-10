@@ -96,4 +96,10 @@ export abstract class Library<
       this.onDidChangeFilesEmitter.fire(changed);
     }
   }
+
+  public reset(): void {
+    if (this.items.size) {
+      this.removeItems(...this.items.keys());
+    }
+  }
 }

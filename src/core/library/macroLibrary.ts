@@ -57,6 +57,13 @@ export class MacroLibrary extends Library<MacroId> {
     return isParent(this.uri, uri, { mustBeImmediate: true });
   }
 
+  public override reset(): void {
+    if (this.initialized) {
+      super.reset();
+      this.initialized = false;
+    }
+  }
+
   private static buildMacroGlobPattern(base: vscode.Uri): vscode.RelativePattern {
     const extensions = AllLanguages.flatMap((language) =>
       language.extensions.map((ext) => ext.substring(1)),

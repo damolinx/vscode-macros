@@ -59,4 +59,8 @@ export class UntitledMacroLibrary extends Library<MacroId> {
   private ownsDocument({ languageId, uri }: vscode.TextDocument): boolean {
     return this.owns(uri) && isMacroLanguage(languageId);
   }
+
+  public override reset(): void {
+    this.reportChangedItems(...this.items.keys());
+  }
 }

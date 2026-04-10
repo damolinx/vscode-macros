@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.7.8
+- Fix: **Refresh Macro Explorer** reloads libraries from source rather that simply refreshing the treeview to address issues around unrealiable FS watches in some scenarios. 
+
 ## 0.7.7
 - UI DSL:
   - `macros.window.ui.tree`:
