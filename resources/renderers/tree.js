@@ -185,6 +185,7 @@ class MacroTree extends HTMLElement {
           background: var(--vscode-list-activeSelectionBackground);
           color: var(--vscode-list-activeSelectionForeground);
           outline: 1px solid var(--vscode-list-focusOutline);
+          z-index: 2;
         }
 
         :host(.active) .node.selected .remove {
@@ -194,6 +195,7 @@ class MacroTree extends HTMLElement {
         :host(:not(.active)) .node.selected {
           background: var(--vscode-list-inactiveSelectionBackground);
           color: var(--vscode-list-inactiveSelectionForeground);
+           z-index: 1;
         }
 
         .node.selected .remove {
