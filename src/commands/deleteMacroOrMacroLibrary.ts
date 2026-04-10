@@ -28,11 +28,10 @@ export async function deleteMacroOrMacroLibrary(
   }
 }
 
-async function deleteLibrary(
-  { libraryManager }: ExtensionContext,
-  { uri }: MacroLibrary,
-): Promise<void> {
-  const library = libraryManager.sourcesManager.sources.find((s) => areUriEqual(s.uri, uri));
+async function deleteLibrary(context: ExtensionContext, { uri }: MacroLibrary): Promise<void> {
+  const library = context.libraryManager.sourcesManager.sources.find((s) =>
+    areUriEqual(s.uri, uri),
+  );
   if (!library) {
     return;
   }
@@ -60,9 +59,9 @@ async function deleteLibrary(
   }
 
   if (result === deleteItem) {
-    await vscode.workspace.fs.delete(uri, { recursive: true, useTrash: true });
+    await vscode.workspace.fs.delete(uri, { recursive: true, useTrash: !context.isRemote });
   }
-  await libraryManager.sourcesManager.removeSourceFor(uri, result.target);
+  await context.libraryManager.sourcesManager.removeSourceFor(uri, result.target);
 }
 
 async function deleteMacro(context: ExtensionContext, { uri }: Macro): Promise<void> {
@@ -94,7 +93,7 @@ async function deleteMacro(context: ExtensionContext, { uri }: Macro): Promise<v
   }
 
   try {
-    await vscode.workspace.fs.delete(uri, { useTrash: true });
+    await vscode.workspace.fs.delete(uri, { useTrash: !context.isRemote });
   } catch (err) {
     vscode.window.showErrorMessage(
       `Could not delete macro: ${err instanceof Error ? err.message : String(err)}`,

@@ -1,9 +1,10 @@
 # Changelog
 
 ## 0.7.8
-- Fix: **Refresh Macro Explorer** reloads libraries from source rather that simply refreshing the treeview to address issues around unrealiable FS watches in some scenarios. 
+- Fix: **Refresh Macro Explorer** reloads libraries from source rather that simply refreshing the treeview to address issues around unrealiable FS watches in some scenarios.
+- Fix: **Delete** a macro fails on remote with error mentioning `useTrash` is not supported.
 
-## 0.7.7
+.## 0.7.7
 - UI DSL:
   - `macros.window.ui.tree`:
     - Improve API docs.
