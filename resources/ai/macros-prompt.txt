@@ -79,44 +79,167 @@ Supported directives:
 - Only one instance of the macro may run at a time.
 - Use when duplicate instances would conflict (e.g., registering a view).
 
-# 5. View IDs (TreeView & Webview)
+# 5. Webviews in Macros
 
-The extension pre-registers a **limited number** of view IDs internally.
-You must **always** claim IDs dynamically:
+The extension supports **three** different Webview systems.
+They are **not interchangeable** and macros must use the correct one.
+
+- **TreeViews** (dynamic IDs)
+- **Sidebar Webviews** (dynamic IDs)
+- **Webview Panels** (no IDs, macro‑friendly)
+- **Custom Editors** (static, cannot be created inside macros)
+
+Macros must understand which system they are using.
+
+
+# 5.1 TreeView & Sidebar Webview IDs (Dynamic)
+
+The extension pre‑registers a **limited number** of dynamic view IDs.
+
+Use these **only** for:
+- TreeViews
+- Sidebar Webviews (`WebviewViewProvider`)
+
+Claim IDs dynamically:
 
 - `macros.window.getTreeViewId()`
 - `macros.window.getWebviewId()`
 
 Rules:
 - **Always** use dynamic ID allocation.
-- **Never** hardcode IDs unless the user explicitly requests a specific ID.
-- If no ID is available, show a message and exit gracefully.
-- IDs are automatically released when the macro completes.
-- You may call:
+- **Never** hardcode IDs unless the user explicitly requests it.
+- If no ID is available, show an error and exit gracefully.
+- IDs auto‑release when the macro completes.
+- Manual release (rare):
   - `macros.window.releaseTreeViewId(id)`
   - `macros.window.releaseWebviewId(id)`
-  but this is rarely needed.
 
-Views are hidden by default. After registering the provider:
+Sidebar Webviews must be shown via context keys:
 
+```
 vscode.commands.executeCommand('setContext', `${id}.show`, true)
+```
 
-Then optionally:
+Optional focus:
 
+```
 vscode.commands.executeCommand(`${id}.focus`)
+```
+
+
+# 5.2 Webview Types — DO NOT MIX THEM
+
+There are **three** Webview systems relevant to macros:
+
+1. **Sidebar Webviews** (dynamic IDs)
+2. **Webview Panels** (macro‑friendly, no IDs)
+3. **Custom Editors** (static, cannot be created inside macros)
+
+Each has different rules.
+
+
+## A. Sidebar Webviews (`WebviewViewProvider`)
+
+Use this system for:
+- UI panels
+- Trees
+- Interactive tools
+- Anything **not tied to a file**
+
+Characteristics:
+- Requires **dynamic IDs**
+- Uses context keys
+- Registered with:
+
+```
+vscode.window.registerWebviewViewProvider(viewId, provider)
+```
+
+**Do NOT use Sidebar Webviews for file viewers/editors.**
+
+
+## B. Webview Panels (`vscode.window.createWebviewPanel`) — Macro‑Friendly
+
+This is the **correct system for macros that need a standalone viewer**,
+including CSV viewers, JSON viewers, previews, etc.
+
+Characteristics:
+- **No dynamic IDs**
+- **No context keys**
+- **No package.json contributions**
+- **Can be created inside macros**
+- **Macro stays alive until panel closes**
+
+Pattern:
+
+```js
+const panel = vscode.window.createWebviewPanel(
+  "some.id",
+  "Title",
+  vscode.ViewColumn.Active,
+  { enableScripts: true }
+);
+
+panel.webview.html = "...";
+panel.onDidDispose(resolve);
+```
+
+Use Webview Panels for:
+- CSV viewers
+- JSON viewers
+- Markdown previews
+- Any standalone UI not tied to a file type
+
+
+## C. Custom Editors (`registerCustomEditorProvider`) — NOT Macro‑Creatable
+
+Custom Editors require:
+- package.json contributions
+- activation‑time registration
+- static viewTypes
+
+Macros **must not** call:
+- `registerCustomEditorProvider`
+- `registerCustomTextEditorProvider`
+- `vscode.openWith` (unless the editor already exists)
+
+Macros may **open** an existing Custom Editor,
+but may **not register** one.
+
+
+# 5.3 Passing Data Into Webviews (Critical)
+
+`ui.script(() => {})` is serialized and executed **inside the Webview**.
+
+Inside `ui.script` you can access:
+- DOM
+- `acquireVsCodeApi()`
+- Webview‑side `macro.*` helpers
+
+You **cannot** access:
+- `macro.state`
+- extension APIs
+- Node APIs
+
+### Correct pattern for embedding data:
+
+```js
+ui.script(() => {
+  const rows = __ROWS__;
+  // use rows...
+})
+```
+
+Then replace `__ROWS__` with JSON **before** sending HTML to the Webview.
+
+This is the only supported way to pass data into Webview Panels.
 
 # 6. Declarative UI DSL (macros.window.ui)
 
-The UI DSL provides a declarative way to build Webview UI. It generates HTML
-automatically via `.toHtml()` on the root node.
+The UI DSL generates HTML automatically via `.toHtml()`.
 
 **Use the DSL by default.**
-Only generate raw HTML when:
-1. The user explicitly opts out of the DSL, OR
-2. The DSL cannot represent the requested UI (e.g., tables, video tags, custom
-   HTML structures).
-
-**Never invent DSL controls.**
+Only generate raw HTML when the DSL cannot represent the requested UI.
 
 ### Available UI factories
 - `root([options], ...children)`
@@ -133,14 +256,15 @@ Only generate raw HTML when:
 - `onHandle(eventName, code)`
 
 ### Important behaviors
-- `root({ progress, errorRelay, logRelay })` enables progress bar and relays.
-- `script(code)` injects Webview-side JS.
-- Handlers (`onHandle`, `handler`) run **inside the Webview**, not the macro.
-- Webview-side JS has:
+- `script(code)` injects Webview‑side JS.
+- Handlers run **inside the Webview**.
+- Webview JS has:
   - `const vscode = acquireVsCodeApi();`
   - `macro.error(...)`
   - `macro.progress.show()/hide()`
   - `macro.log.*`
+
+**Never invent DSL controls.**
 
 # 7. Tree Control (UI DSL)
 
@@ -246,8 +370,3 @@ When generating macros:
 - Never require('vscode').
 - Never use top-level await.
 - Never export anything.
-
-# 10. Example Macros
-
-(Include the two canonical examples: the static tree example and the dynamic
-tree + message passing example.)

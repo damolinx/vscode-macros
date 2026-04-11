@@ -6,7 +6,10 @@
   - Updated to the latest UI DSL API.
   - Extracted into standalone resources to simplify local overrides and future expansion.
   - **Create Cursor Rules** command does not require a workspace to be enabled
-- New **Find References** template demonstrates a full-featured UI DSL sidebar.
+- Templates:
+  - New **Find References** template demonstrates a full-featured UI DSL sidebar.
+  - New **CSV Viewer** template, demonstrating partial UI-DSL usage with an unsupported control rendered via DOM, fully generated using the updated AI prompt to validate correctness.
+  - Unify `Error Relay` and `Log Relay` templates.
 - UI DSL:
   - Every element has a `class` option for CSS.
   - `macros.window.ui.tree`:
