@@ -1,6 +1,11 @@
 # Changelog
 
 ## 0.7.9
+- New AI prompts:
+  - Prompts rewritten and verified using Copilot — the @macros agent should behave more accurately.
+  - Updated to the latest UI DSL API.
+  - Extracted into standalone resources to simplify local overrides and future expansion.
+  - **Create Cursor Rules** command does not require a workspace to be enabled
 - New **Find References** template demonstrates a full-featured UI DSL sidebar.
 - UI DSL:
   - Every element has a `class` option for CSS.

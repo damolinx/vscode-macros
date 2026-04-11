@@ -79,7 +79,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.copy.file', (locator: UriLocator) => copyFile(context, locator)),
     cr('macros.copy.name', (locator: UriLocator) => copyPath(context, locator, true)),
     cr('macros.copy.path', (locator?: UriLocator) => copyPath(context, locator)),
-    cr('macros.createCursorRules', () => createCursorRules()),
+    cr('macros.createCursorRules', () => createCursorRules(context)),
     cr('macros.debug', (locator?: UriLocator) => debugMacro(context, locator)),
     cr('macros.debug.activeEditor', () => debugActiveEditor(context)),
     cr('macros.delete.macroOrMacroLibrary', (macroOrLibrary?: Macro | MacroLibrary) =>

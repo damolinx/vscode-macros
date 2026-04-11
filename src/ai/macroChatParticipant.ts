@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { ExtensionContext } from '../extensionContext';
-import { MACRO_PROMPT } from './macroChatPrompt';
+import { MacrosPrompt } from './macroChatPrompt';
 
 export const MACROS_CHAT_PARTICIPANT_ID = 'macros.chatParticipant';
 export const MACRO_TOOL_TAG = 'macro';
@@ -23,10 +23,10 @@ export class MacroChatParticipant {
     this.context = context;
   }
 
-  private getMessages(
+  private async getMessages(
     { prompt }: vscode.ChatRequest,
     { history }: vscode.ChatContext,
-  ): vscode.LanguageModelChatMessage[] {
+  ): Promise<vscode.LanguageModelChatMessage[]> {
     const messages = history.reduce((turnAcc, turn) => {
       if (turn instanceof vscode.ChatRequestTurn) {
         turnAcc.push(vscode.LanguageModelChatMessage.User(turn.prompt));
@@ -42,7 +42,8 @@ export class MacroChatParticipant {
     }, [] as vscode.LanguageModelChatMessage[]);
 
     if (messages.length === 0) {
-      messages.push(vscode.LanguageModelChatMessage.Assistant(MACRO_PROMPT));
+      const prompt = await MacrosPrompt.get(this.context);
+      messages.push(vscode.LanguageModelChatMessage.Assistant(prompt));
     }
 
     messages.push(vscode.LanguageModelChatMessage.User(prompt));
@@ -67,7 +68,7 @@ export class MacroChatParticipant {
       default:
         for await (const part of (
           await request.model.sendRequest(
-            this.getMessages(request, context),
+            await this.getMessages(request, context),
             { tools: this.tools },
             token,
           )

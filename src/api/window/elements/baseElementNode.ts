@@ -11,7 +11,7 @@ export abstract class BaseElementNode<
     public readonly kind: string,
     private readonly _options?: TOptions,
     public readonly children: Node[] = [],
-  ) { }
+  ) {}
 
   public get options(): TOptions | undefined {
     return this._options;
