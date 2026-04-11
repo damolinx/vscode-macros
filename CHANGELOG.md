@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.7.9
+- **Macro Explorer** reveals the active item when the editor changes, respects `explorer.autoReveal`.
 - New AI prompts:
   - Prompts rewritten and verified using Copilot — the @macros agent should behave more accurately.
   - Updated to the latest UI DSL API.

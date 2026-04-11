@@ -47,6 +47,6 @@ export class MacroLibraryManager implements vscode.Disposable {
   }
 
   public libraryFor(uri: vscode.Uri): Library | undefined {
-    return this.libraries.find((lib) => lib.owns(uri));
+    return this.libraries.find((library) => library.owns(uri));
   }
 }

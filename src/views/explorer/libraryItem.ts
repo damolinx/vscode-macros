@@ -24,6 +24,8 @@ export function createLibraryItem(
       ? vscode.TreeItemCollapsibleState.Expanded
       : vscode.TreeItemCollapsibleState.Collapsed,
   );
+  item.id = library.id;
+
   switch (library.uri.scheme) {
     case 'untitled':
       updateUntitledLibraryItem(item);

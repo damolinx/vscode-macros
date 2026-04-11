@@ -16,6 +16,7 @@ export async function createMacroItem(
   item.contextValue = 'macroFile';
   item.command = { arguments: [macro.uri], command: 'vscode.open', title: 'Open' };
   item.description = resolveMacroExt(macro.uri)?.slice(1);
+  item.id = macro.id;
   item.label = macro.name;
   item.tooltip = formatDisplayUri(macro.uri);
 
