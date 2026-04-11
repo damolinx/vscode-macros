@@ -12,6 +12,7 @@ class MacroTree extends HTMLElement {
    * @property {string} [id]
    * @property {string} label
    * @property {boolean} [removable]
+   * @property {boolean} [selectable]
    */
 
   constructor() {
@@ -202,8 +203,13 @@ class MacroTree extends HTMLElement {
           color: var(--vscode-list-inactiveSelectionIconForeground);
         }
 
-        .node:hover {
+        .node[data-selectable="true"]:hover {
           background: var(--vscode-list-hoverBackground);
+        }
+
+        .node[data-selectable="false"] {
+          opacity: 0.7;
+          cursor: default;
         }
 
         .node:hover .actions,
@@ -256,10 +262,37 @@ class MacroTree extends HTMLElement {
         return;
       }
 
-      if (!this.selectedNode && this.visibleNodes.length > 0) {
-        this.selectNode(this.visibleNodes[0], true);
+      if (!this.selectedNode) {
+        const first = this.visibleNodes.find((n) => n.selectable !== false);
+        if (first) {
+          this.selectNode(first);
+        }
       }
     });
+  }
+
+  /**
+   * @param {number} index
+   */
+  getNextSelectable(index) {
+    for (let i = index + 1; i < this.visibleNodes.length; i++) {
+      if (this.visibleNodes[i].selectable !== false) {
+        return this.visibleNodes[i];
+      }
+    }
+    return null;
+  }
+
+  /**
+   * @param {number} index
+   */
+  getPrevSelectable(index) {
+    for (let i = index - 1; i >= 0; i--) {
+      if (this.visibleNodes[i].selectable !== false) {
+        return this.visibleNodes[i];
+      }
+    }
+    return null;
   }
 
   /**
@@ -274,9 +307,9 @@ class MacroTree extends HTMLElement {
     if (key === 'ArrowDown') {
       e.preventDefault();
       if (hasSelection) {
-        const nextIndex = selectedIndex + 1;
-        if (nextIndex < this.visibleNodes.length) {
-          this.selectNode(this.visibleNodes[nextIndex]);
+        const next = this.getNextSelectable(selectedIndex);
+        if (next) {
+          this.selectNode(next);
         }
       }
       return;
@@ -284,8 +317,9 @@ class MacroTree extends HTMLElement {
 
     if (key === 'ArrowUp') {
       e.preventDefault();
-      if (hasSelection && selectedIndex > 0) {
-        this.selectNode(this.visibleNodes[selectedIndex - 1]);
+      const prev = this.getPrevSelectable(selectedIndex);
+      if (prev) {
+        this.selectNode(prev);
       }
       return;
     }
@@ -357,16 +391,18 @@ class MacroTree extends HTMLElement {
 
     if (key === 'Home') {
       e.preventDefault();
-      if (this.visibleNodes.length) {
-        this.selectNode(this.visibleNodes[0]);
+      const first = this.visibleNodes.find((n) => n.selectable !== false);
+      if (first) {
+        this.selectNode(first);
       }
       return;
     }
 
     if (key === 'End') {
       e.preventDefault();
-      if (this.visibleNodes.length) {
-        this.selectNode(this.visibleNodes[this.visibleNodes.length - 1]);
+      const last = this.visibleNodes.findLast((n) => n.selectable !== false);
+      if (last) {
+        this.selectNode(last);
       }
       return;
     }
@@ -502,7 +538,7 @@ class MacroTree extends HTMLElement {
    */
   selectNode(nodeOrId, activate = false) {
     const node = typeof nodeOrId === 'string' ? this.findNode(nodeOrId) : nodeOrId;
-    if (!node) {
+    if (!node || node.selectable === false) {
       return false;
     }
 
@@ -594,6 +630,7 @@ class MacroTree extends HTMLElement {
       row.className = 'node';
       row.style.paddingLeft = `${depth * 8}px`;
       row.dataset.id = node.id;
+      row.dataset.selectable = node.selectable === false ? 'false' : 'true';
 
       if (this.selectedNode && (this.selectedNode === node || this.selectedNode.id === node.id)) {
         row.classList.add('selected');
@@ -640,6 +677,9 @@ class MacroTree extends HTMLElement {
       }
 
       row.addEventListener('click', () => {
+        if (node.selectable === false) {
+          return;
+        }
         const canExpand = Array.isArray(node.children);
         if (canExpand) {
           if (this.expandedNodes.has(node)) {

@@ -528,7 +528,7 @@ The use case for the DSL is the same as for the macros: quickly generate a tool 
 - `macros.window.ui.root([options,] ...children)`: creates the top-level container. Calling `.toHtml()` on the root returns the final HTML string.
 
   Options:
-    - `errorRelay?: false`: relays errors in the WebView as a `macro:error` message. This is **enabled** by default
+    - `errorRelay?: false`: relays errors in the WebView as a `macro:error`-type message. This is **enabled** by default
 
       This gives your WebView's scripts access to:
       - `macro.error(err)`: explicitly sends an error to the macro running the extension host. The message contains following properties:
@@ -539,7 +539,7 @@ The use case for the DSL is the same as for the macros: quickly generate a tool 
       - uncaught exceptions (`window.onerror`)
       - unhandled promise rejections (`window.onunhandledrejection`)
 
-    - `logRelay?: true`: relays logs from the WebView as a `macro:log` message. This is **disabled** by default.
+    - `logRelay?: true`: relays logs from the WebView as a `macro:log`-type message. This is **disabled** by default.
       This gives your WebView's scripts access to:
       - `macro.log.{debug|error|info|trace|warn}(message, data)`: sends a log message to the macro running the extension host. The message contains following properties:
          - `level`: log level
@@ -614,25 +614,26 @@ The use case for the DSL is the same as for the macros: quickly generate a tool 
   - `expanded?: true`: node starts in expanded state, if it is a parent
   - `id?: string`: node id
   - `removable?: false`: when set to `false`, this node will not show a remove button even if the tree options include `remove: true`
+  - `selectable?: false`: when set to `false`, this node cannot be selected or activated, and is skipped by keyboard navigation.
 
   Tree API: The following API is available from the tree element in the Webview side:
-    - `addNodes(id: string, nodes: TreeNode[]): boolean`: Add nodes under `id` node.
-    - `expandNode(id: string, select = false): boolean`: Expand the node and all its ancestors.
-    - `findNode(id: string): TreeNode | null`: Search for a node by `id`.
-    - `findParent(nodeOrId: TreeNode | string): TreeNode | null`: Return the parent of a node, given either the node instance or its `id`.
+    - `addNodes(id: string, nodes: TreeNode[]): boolean`: Add nodes under `id` node
+    - `expandNode(id: string, select = false): boolean`: Expand the node and all its ancestors
+    - `findNode(id: string): TreeNode | null`: Search for a node by `id`
+    - `findParent(nodeOrId: TreeNode | string): TreeNode | null`: Return the parent of a node, given either the node instance or its `id`
     - `removeNodes(ids: string[]): TreeNode[]`: Remove nodes by `id`
-    - `selectNode(nodeOrId: TreeNode | string, activate = false): boolean`: Select a node.
-    - `setNodes(id: string, nodes: TreeNode[]): boolean`: Replace `id`'s `children` nodes.
-    - `setRootNodes(nodes: TreeNode[]): void`: Set tree's root nodes.
-    - `updateNode(id: string, patch: object): boolean`: Shallow‑merge `patch` into the `id` node.
+    - `selectNode(nodeOrId: TreeNode | string, activate = false): boolean`: Select a node
+    - `setNodes(id: string, nodes: TreeNode[]): boolean`: Replace `id`'s `children` nodes
+    - `setRootNodes(nodes: TreeNode[]): void`: Set tree's root nodes
+    - `updateNode(id: string, patch: object): boolean`: Shallow‑merge `patch` into the `id` node
 
 [↑ Back to top](#table-of-contents)
 
 ### Event Binding
 
-- `macros.window.ui.on(eventName, handlerName)`: binds an event to a named handler.
-- `macros.window.ui.handler(handlerName, code)`: registers a named handler referenced by `macros.window.ui.on`.
-- `macros.window.ui.onHandle(eventName, code)`: attaches an inline handler function.
+- `macros.window.ui.on(eventName, handlerName)`: binds an event to a named handler
+- `macros.window.ui.handler(handlerName, code)`: registers a named handler referenced by `macros.window.ui.on`
+- `macros.window.ui.onHandle(eventName, code)`: attaches an inline handler function
 
 Handler code runs inside the WebView's context. See [Scripts: Execution Context](#execution-context) for details.
 
@@ -648,10 +649,10 @@ Your macro must enable script execution in the WebView by using `enableScripts: 
 The UI DSL initializes the VSCode API by default to support message passing using `const vscode = acquireVsCodeApi();`.  Additionally, the [`macro`](#macro-api) const gives you access to macro-specific WebView-side APIs.
 
 #### `macro` API
-- `macro.error(error)`: posts a `macro:error` message back to the extension.
+- `macro.error(error)`: posts a `macro:error` message back to the extension
 - `macro.progress`: available when the root document is created with `root({ progress: true }, [...])`.
-  - `macro.progress.show()`: shows the progress bar.
-  - `macro.progress.hide()`: hides the progress bar.
+  - `macro.progress.show()`: shows the progress bar
+  - `macro.progress.hide()`: hides the progress bar
 
 ### Example: Search-like sidebar
 

@@ -267,6 +267,8 @@ export declare namespace macros.ui {
     readonly expanded?: true;
     readonly id?: string;
     readonly label: string;
+    readonly removable?: false;
+    readonly selectable?: false;
   }
 
   export interface TreeOptions extends NodeOptions {
@@ -283,4 +285,4 @@ export declare namespace macros.ui {
   export type EventNode = BoundEvent | Event | EventHandler;
 }
 
-export { };
+export {};

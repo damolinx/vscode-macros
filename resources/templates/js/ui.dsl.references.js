@@ -47,7 +47,9 @@ function createWebviewHtml() {
                 })),
               );
             } else {
-              tree.setRootNodes([{ label: 'No references found', removable: false }]);
+              tree.setRootNodes([
+                { label: 'No references found', removable: false, selectable: false },
+              ]);
             }
             macro.progress.hide();
           }

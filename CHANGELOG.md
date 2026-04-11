@@ -4,6 +4,8 @@
 - New **Find References** template demonstrates a full-featured UI DSL sidebar.
 - UI DSL:
   - Every element has a `class` option for CSS.
+  - `macros.window.ui.tree`:
+    - Nodes gain `selectable` option to disallow selection.
 
 ## 0.7.8
 - Fix: **Refresh Macro Explorer** reloads libraries from source rather that simply refreshing the treeview to address issues around unrealiable FS watches in some scenarios.
