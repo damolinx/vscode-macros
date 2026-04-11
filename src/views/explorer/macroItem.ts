@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { Macro } from '../../core/macro';
+import { resolveMacroExt } from '../../core/macroLanguages';
 import { ExtensionContext } from '../../extensionContext';
 import { getIcon, getIconFromUri } from '../../ui/icons';
 import { formatDisplayUri } from '../../utils/ui';
@@ -14,9 +15,7 @@ export async function createMacroItem(
   const item = new vscode.TreeItem(macro.uri, vscode.TreeItemCollapsibleState.None);
   item.contextValue = 'macroFile';
   item.command = { arguments: [macro.uri], command: 'vscode.open', title: 'Open' };
-  item.description = context.libraryManager.libraryFor(
-    isUntitledMacro ? macro.uri.with({ scheme: 'file' }) : macro.uri,
-  )?.name;
+  item.description = resolveMacroExt(macro.uri)?.slice(1);
   item.label = macro.name;
   item.tooltip = formatDisplayUri(macro.uri);
 
