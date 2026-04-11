@@ -20,8 +20,7 @@ function createWebviewHtml(): string {
         { mode: 'fixed' },
         ui.text('Find references for the symbol at the cursor'),
         ui.button(
-          { label: 'Find References' },
-          ui.attr('class', 'fill'),
+          { label: 'Find References', class: 'fill' },
           ui.onHandle('click', () => {
             macro.progress.show();
             vscode.postMessage({ type: 'find' });

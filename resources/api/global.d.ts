@@ -153,6 +153,7 @@ export declare namespace macros.ui {
   export type CodeInput = string | StaticFunction;
 
   export interface NodeOptions {
+    readonly class?: string;
     readonly id?: string;
   }
 
@@ -282,4 +283,4 @@ export declare namespace macros.ui {
   export type EventNode = BoundEvent | Event | EventHandler;
 }
 
-export {};
+export { };

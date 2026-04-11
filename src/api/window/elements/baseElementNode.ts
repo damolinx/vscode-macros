@@ -11,7 +11,7 @@ export abstract class BaseElementNode<
     public readonly kind: string,
     private readonly _options?: TOptions,
     public readonly children: Node[] = [],
-  ) {}
+  ) { }
 
   public get options(): TOptions | undefined {
     return this._options;
@@ -23,6 +23,11 @@ export abstract class BaseElementNode<
     if (this.options?.id) {
       attrs.push(new Attribute('id', this.options.id));
     }
+
+    if (this.options?.class) {
+      attrs.push(new Attribute('class', this.options.class));
+    }
+
     return attrs;
   }
 

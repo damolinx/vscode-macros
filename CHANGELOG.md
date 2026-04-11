@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.9
+- New **Find References** template demonstrates a full-featured UI DSL sidebar.
+- UI DSL:
+  - Every element has a `class` option for CSS.
+
 ## 0.7.8
 - Fix: **Refresh Macro Explorer** reloads libraries from source rather that simply refreshing the treeview to address issues around unrealiable FS watches in some scenarios.
 - Fix: **Delete** a macro fails on remote with error mentioning `useTrash` is not supported.

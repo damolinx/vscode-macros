@@ -3,6 +3,7 @@ import { MarkupNode, Node } from '../node';
 export type ElementRole = 'container' | 'decoration';
 
 export interface ElementNodeOptions {
+  readonly class?: string;
   readonly id?: string;
 }
 

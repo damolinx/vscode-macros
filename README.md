@@ -553,12 +553,14 @@ The use case for the DSL is the same as for the macros: quickly generate a tool 
 - `macros.window.ui.container([options,] ...children)`: creates a layout grouping, so you can fix a set of controls at the webview and have a scrollable section at the bottom
 
   Options:
+    - `class?: string`: set CSS class
     - `id?: string`
     - `mode: "fixed" | "scrollable"`
 
 - `macros.window.ui.input([options,] ...children)`: creates an input field with optional inline buttons and event bindings
 
   Options:
+  - `class?: string`: set CSS class
   - `id?: string`
   - `placeholder?: string`
   - `tabIndex?: number`
@@ -568,14 +570,12 @@ The use case for the DSL is the same as for the macros: quickly generate a tool 
 - `macros.window.ui.button([options,] ...children)`: creates a clickable button
 
   Options:
+  - `class?: string`: set CSS class. 
+    - 'fill': makes the button expand horizontally (up to a bounded max width) and centered
   - `id?: string`
   - `label?: string`
   - `tabIndex?: number`
   - `toggle?: boolean`: When `true`, button is a toggle-button
-
-  You can customize layout via classes:
-    - `ui.attr('class', 'fill')` makes the button expand horizontally
-      (up to a bounded max width) and centered
 
 - `macros.window.ui.link(options)`: creates a clickable text link
 
@@ -589,6 +589,7 @@ The use case for the DSL is the same as for the macros: quickly generate a tool 
 - `macros.window.ui.textarea([options,] ...children)`: creates a multi‑line textarea. Inlay buttons are not supported at this time
 
   Options:
+  - `class?: string`: set CSS class
   - `id?: string`
   - `maxRows?: number`: maximum number of visible rows (`undefined` means not limited). When `readonly`, this is ignored
   - `minRows?: number`: minimum number of visible rows (default: 1). When `readonly`, this is the fixed height
@@ -600,6 +601,7 @@ The use case for the DSL is the same as for the macros: quickly generate a tool 
 - `macros.window.ui.tree([options,] ...eventNodes)`: creates a hierarchical tree view
 
   Options:
+  - `class?: string`: set CSS class
   - `id?: string`
   - `remove?: true`: add a remove-node button
   - `initialItems?: TreeNode[]`
