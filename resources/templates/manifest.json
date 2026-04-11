@@ -148,6 +148,15 @@
       "alternates": {
         "typescript": "ts/ui.dsl.log.ts"
       }
+    },
+    {
+      "category": "UI DSL",
+      "label": "Find References",
+      "description": "Creates a sidebar view allowing to search for references for the symbol at the current cursor position.",
+      "path": "js/ui.dsl.references.js",
+      "alternates": {
+        "typescript": "ts/ui.dsl.references.ts"
+      }
     }
   ]
 }

@@ -21,9 +21,9 @@ async function main(): Promise<void> {
 
   await vscode.window.showInformationMessage(
     `Repository: ${basename(repo.rootUri.toString())}` +
-    `\nBranch: ${repo.state.HEAD.name}` +
-    `\nStaged changes: ${repo.state.indexChanges.length}` +
-    `\nUnstaged changes: ${repo.state.workingTreeChanges.length}`,
+      `\nBranch: ${repo.state.HEAD.name}` +
+      `\nStaged changes: ${repo.state.indexChanges.length}` +
+      `\nUnstaged changes: ${repo.state.workingTreeChanges.length}`,
     { modal: true },
   );
 }
