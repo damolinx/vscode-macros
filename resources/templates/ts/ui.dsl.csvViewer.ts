@@ -78,7 +78,7 @@ new Promise((resolve) => {
     'macros.csvViewer',
     'CSV Viewer',
     vscode.ViewColumn.Active,
-    { enableScripts: true },
+    { enableFindWidget: true, enableScripts: true },
   );
 
   const rows = parseCsv(editor.document.getText());
