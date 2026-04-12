@@ -2,7 +2,7 @@
 
 A **macro** is a JavaScript or TypeScript script executed within the context of an extension, with full access to [VS Code extensibility APIs](https://code.visualstudio.com/api/references/vscode-api). Macros let you automate tasks, customize your development workflow, and prototype extension behavior, all without the overhead of building and maintaining a full extension.
 
-Macros run inside Node.js [VM sanbdoxes](https://nodejs.org/api/vm.html#class-vmscript), giving each macro its own isolated data context. This design comes with one practical limitation: macros cannot be forcefully terminated. Instead, they must support cancellation-token semantics, and by extension, use asynchronous workloads, to enable cooperative multitasking.
+Macros run inside Node.js [VM sandboxes](https://nodejs.org/api/vm.html#class-vmscript), giving each macro its own isolated data context. This design comes with one practical limitation: macros cannot be forcefully terminated. Instead, they must support cancellation-token semantics, and by extension, use asynchronous workloads, to enable cooperative multitasking.
 
 <p align=center>
   <img width="800" alt="VS Code with Macro Explorer and Startup Macros views, as well as a macro editor open" src="https://github.com/user-attachments/assets/f075d80b-a21f-4201-b7c7-1ce3b2bf7707" />
@@ -102,7 +102,7 @@ macros.commands.executeCommands(
   'cursorEnd',
 );
 ```
-To support these particular flow, the extension provides command-ID autocomplete on `executeCommand` and `executeCommands` methods. However, argument details are not available through the VS Code API, so you will need to consult the documentation for each command. The [Built-in Commands](https://code.visualstudio.com/api/references/commands) page covers all VS Code commands while commands contributed by extensions _should be_ documented in their respective extension pages.
+To support this particular flow, the extension provides command-ID autocomplete on `executeCommand` and `executeCommands` methods. However, argument details are not available through the VS Code API, so you will need to consult the documentation for each command. The [Built-in Commands](https://code.visualstudio.com/api/references/commands) page covers all VS Code commands while commands contributed by extensions _should be_ documented in their respective extension pages.
 
 <p align=center>
 <img width="500" alt="Command-Id autocomplete" src="https://github.com/user-attachments/assets/7029063f-25f9-42b1-a421-3f952bf0a262" />
@@ -189,7 +189,7 @@ A *library* is a folder path registered in the `macros.sourceDirectories` settin
 
 The extension adds specific files (e.g. `jsconfig.json`, `global.d.ts`) to library folders to support development. These files are automatically updated when new versions are available. If you want to customize or control when updates happen, disable the `macros.sourceDirectoriesVerification` setting, and use the **Setup Folder for Development** command to run the update on demand.
 
-The virtual **Temporary** library is used to manage all *untitled* documents. Macro documents that have not been saved to the file-system, and that do not belong to a library, will have some features automatically disabled for them.
+The virtual **Temporary** library is used to manage all *untitled* documents. Macro documents that have not been saved to the filesystem, and that do not belong to a library, will have some features automatically disabled for them.
 
 [↑ Back to top](#table-of-contents)
 
@@ -222,7 +222,7 @@ The **Macro Explorer** [view](https://code.visualstudio.com/docs/getstarted/user
 
 * **Macro Library Folders**: configure folders, browse their contents, and add, delete, or move macro files around using drag-and-drop.
 
-* **Macros**: edit, run, or debug macros with a single  click.
+* **Macros**: edit, run, or debug macros with a single click.
 
 * **Macro Run Instances**: see active runs and stop existing ones from the view.
 
@@ -280,7 +280,7 @@ Macro development can be assisted by AI in two different ways, depending on whet
 
 ### Chat Participant (VS Code)
 
-In VS Code, the extension provides the `@macros` [chat particpant](https://code.visualstudio.com/api/extension-guides/ai/chat). This assistant is a domain expert in macro development and understands the constraints of the macro runtime, such as avoiding export, not using top‑level await, selecting the correct language, and respecting macro directives.
+In VS Code, the extension provides the `@macros` [chat participant](https://code.visualstudio.com/api/extension-guides/ai/chat). This assistant is a domain expert in macro development and understands the constraints of the macro runtime, such as avoiding export, not using top‑level await, selecting the correct language, and respecting macro directives.
 
 The chat participant can also save and execute macros directly from a prompt, enabling end‑to‑end workflows. Results vary by model size: larger models like *Claude Sonnet 4.5* and *GPT‑5* perform reliably, while lighter models may struggle with generation.
 
@@ -333,9 +333,9 @@ The rules file encodes the macro specification, constraints, and behavioral guid
 
 ## IntelliSense
 
-JavaScript and TypeScript macro files get [IntelliSense](https://code.visualstudio.com/docs/editing/intellisense) support, if they have been saved to a [macro library](#macro-libraries). The features requires the library to be fully set up for development which means a `global.d.ts` and `jsconfig.json` have been added to it. The extension verifies these files the first time a file from a library is opened in a session and updates them whenever newer versions are available. This update-logic means it is currently not recommended to customize them.
+JavaScript and TypeScript macro files get [IntelliSense](https://code.visualstudio.com/docs/editing/intellisense) support, if they have been saved to a [macro library](#macro-libraries). The feature requires the library to be fully set up for development which means a `global.d.ts` and `jsconfig.json` have been added to it. The extension verifies these files the first time a file from a library is opened in a session and updates them whenever newer versions are available. This update-logic means it is currently not recommended to customize them.
 
-> ⚠️ Untitled documents will not show proper IntelliSense until saved to disk, because a `global.d.ts` file is needed to describe the global context. This is particular visible in TypeScript editors, which will incorrectly report several missing references.
+> ⚠️ Untitled documents will not show proper IntelliSense until saved to disk, because a `global.d.ts` file is needed to describe the global context. This is visible in TypeScript editors, which will incorrectly report several missing references.
 
 There is custom autocomplete for command IDs provided to `vscode.commands.executeCommand`, as well as for `@macros` [options](#macro-options).
 
@@ -364,7 +364,7 @@ The following references are available from the global context of your macro:
 
 * `commands`: Namespace providing command APIs.
 
-  * `executeCommands(...cmds: (string | [id: string, ...args: any[]])[]): Promise<void>`:  Executes one or more commands in sequence, defined as the command ID or a command ID and args tuple. Returns a promise that resolves after all commands have completed.
+  * `executeCommands(...cmds: (string | [id: string, ...args: any[]])[]): Promise<void>`:  Executes one or more commands in sequence, defined as the command ID or a command ID and args tuple. Returns a promise that is resolved after all commands have completed.
 
 * `window`: Namespace providing window and UI APIs.
 
@@ -372,13 +372,13 @@ The following references are available from the global context of your macro:
 
   * `getWebviewId(id: string): string | undefined`: Claims an available webview ID for the given macro run. Returns `undefined` if none are available.
 
-  * `handleLogMessage(message): void`: Helper to process a `macro:log` message sent from the WebView when using the [UI DSL](#ui-dsl). It translates the message into the expected `macros.log.` call.
+  * `handleLogMessage(message): void`: Helper to process a `macro:log` message sent from the WebView when using the [UI DSL](#ui-dsl). It translates the message into the expected `macros.log.*` call.
 
   * `releaseTreeViewId(id: string): boolean`: Releases a previously claimed tree view ID. Returns `true` if successful.
 
   * `releaseWebviewId(id: string): boolean`: Releases a previously claimed webview ID. Returns `true` if successful.
 
-* `window.ui`: defines an **experimental** DSL to define Webviews. Refer to [UI DSL](#ui-dsl) documentaion below.
+* `window.ui`: defines an **experimental** DSL to define Webviews. Refer to [UI DSL](#ui-dsl) documentation below.
 
 [↑ Back to top](#table-of-contents)
 
@@ -488,7 +488,7 @@ GitHub URLs containing matching `*/blob/*` are automatically converted to their 
 ## Debugging a Macro
 
 ### Debugger
-This follows the [debugging workflow for extensions](https://code.visualstudio.com/api/get-started/your-first-extension#debugging-the-extension): the VS Code instance to debug from launches a second **Extension Development Host** instance, it is on the latter where you run the macro is run, but it is on the former where the debugging happens. The **Macros: Debug Macro** command sets up this workflow.
+This follows the [debugging workflow for extensions](https://code.visualstudio.com/api/get-started/your-first-extension#debugging-the-extension): the VS Code instance to debug from launches a second **Extension Development Host** instance, it is on the latter where your run the macro but on the former where the debugger exists. The **Macros: Debug Macro** command sets up this workflow.
 
 There are a few things to keep in mind:
 
@@ -525,6 +525,51 @@ The use case for the DSL is the same as for the macros: quickly generate a tool 
 
 ### Node Types
 
+- `macros.window.ui.button([options,] ...children)`: creates a clickable button
+
+  Options:
+  - `class?: string`: set CSS class.
+    - 'fill': makes the button expand horizontally (up to a bounded max width) and centered
+  - `id?: string`
+  - `label?: string`
+  - `tabIndex?: number`
+  - `toggle?: boolean`: When `true`, button is a toggle-button
+
+  Events:
+  - `click`: button has been clicked.
+    - For a `toggle: true` button, event carries a `toggled` property
+
+- `macros.window.ui.container([options,] ...children)`: creates a layout grouping, so you can fix a set of controls at the webview and have a scrollable section at the bottom
+
+  Options:
+    - `class?: string`: set CSS class
+    - `id?: string`
+    - `mode: "fixed" | "scrollable"`
+
+- `macros.window.ui.input([options,] ...children)`: creates an input field with optional inline buttons and event bindings
+
+  Options:
+  - `class?: string`: set CSS class
+  - `id?: string`
+  - `placeholder?: string`
+  - `tabIndex?: number`
+  - `type?: "text" | "password" | "number" | "email"`
+  - `value?: string`: initial text content
+
+  Events:
+  - `input`: input contents have changed.
+    - Event carries a `value` property with new content
+
+- `macros.window.ui.link(options)`: creates a clickable text link
+
+  Options:
+  - `href: string | vscode.Uri`
+  - `label?: string` — Text shown for the link. If omitted, the `href` is used
+  - `tabIndex?: number`
+
+  Events:
+    None, as link is handled by VS Code.
+
 - `macros.window.ui.root([options,] ...children)`: creates the top-level container. Calling `.toHtml()` on the root returns the final HTML string.
 
   Options:
@@ -550,43 +595,9 @@ The use case for the DSL is the same as for the macros: quickly generate a tool 
       - `macro.progress.show()`:  shows the progress bar
       - `macro.progress.hide()`: hides the progress bar
 
-- `macros.window.ui.container([options,] ...children)`: creates a layout grouping, so you can fix a set of controls at the webview and have a scrollable section at the bottom
-
-  Options:
-    - `class?: string`: set CSS class
-    - `id?: string`
-    - `mode: "fixed" | "scrollable"`
-
-- `macros.window.ui.input([options,] ...children)`: creates an input field with optional inline buttons and event bindings
-
-  Options:
-  - `class?: string`: set CSS class
-  - `id?: string`
-  - `placeholder?: string`
-  - `tabIndex?: number`
-  - `type?: "text" | "password" | "number" | "email"`
-  - `value?: string`: initial text content
-
-- `macros.window.ui.button([options,] ...children)`: creates a clickable button
-
-  Options:
-  - `class?: string`: set CSS class.
-    - 'fill': makes the button expand horizontally (up to a bounded max width) and centered
-  - `id?: string`
-  - `label?: string`
-  - `tabIndex?: number`
-  - `toggle?: boolean`: When `true`, button is a toggle-button
-
-- `macros.window.ui.link(options)`: creates a clickable text link
-
-  Options:
-  - `href: string | vscode.Uri`
-  - `label?: string` — Text shown for the link. If omitted, the `href` is used
-  - `tabIndex?: number`
-
 - `macros.window.ui.text(string)`: creates a text node for inline content
 
-- `macros.window.ui.textarea([options,] ...children)`: creates a multi‑line textarea. Inlay buttons are not supported at this time
+- `macros.window.ui.textarea([options,] ...children)`: creates a multi‑line textarea. Inlay buttons are not currently supported
 
   Options:
   - `class?: string`: set CSS class
@@ -594,9 +605,13 @@ The use case for the DSL is the same as for the macros: quickly generate a tool 
   - `maxRows?: number`: maximum number of visible rows (`undefined` means not limited). When `readonly`, this is ignored
   - `minRows?: number`: minimum number of visible rows (default: 1). When `readonly`, this is the fixed height
   - `placeholder?: string`
-  - `readonly?: true`: control is readonly, `minRows` fixed‑height. Disables autosizing and input events
+  - `readonly?: true`: control is readonly, `minRows` fixed‑height. Disables auto-sizing and input events
   - `tabIndex?: number`
   - `value?: string`: initial text content
+
+    Events:
+  - `input`: input contents have changed.
+    - Event carries a `value` property with new content
 
 - `macros.window.ui.tree([options,] ...eventNodes)`: creates a hierarchical tree view
 
@@ -604,17 +619,22 @@ The use case for the DSL is the same as for the macros: quickly generate a tool 
   - `class?: string`: set CSS class
   - `id?: string`
   - `remove?: true`: add a remove-node button
-  - `initialItems?: TreeNode[]`
+  - `initialItems?: TreeNode[]`: initial nodes (prefer to add them dynamically)
+
+  Events: all events carry a `node` property with the relevant node.
+  - `activate`: node has been activated, i.e. selection via Enter or mouse click, instead of just navigated to
+  - `remove`: node has been removed
+  - `select`: node has been selected
 
   TreeNode:
-  - `label: string`: required displaye name
+  - `label: string`: required display name
   - `action?: { handlerName: string }`
   - `children?: TreeNode[]`: whether the node has or can have children. Use `[]` to ensure node renders as parent
   - `description?: string`: inline description
   - `expanded?: true`: node starts in expanded state, if it is a parent
   - `id?: string`: node id
   - `removable?: false`: when set to `false`, this node will not show a remove button even if the tree options include `remove: true`
-  - `selectable?: false`: when set to `false`, this node cannot be selected or activated, and is skipped by keyboard navigation.
+  - `selectable?: false`: when set to `false`, this node cannot be selected or activated, and is skipped by keyboard navigation
 
   Tree API: The following API is available from the tree element in the Webview side:
     - `addNodes(id: string, nodes: TreeNode[]): boolean`: Add nodes under `id` node
@@ -705,8 +725,8 @@ function createHtml() {
             },
           ],
         },
-        ui.onHandle('activate', function({ item }) {
-          console.log('Node activated:', item);
+        ui.onHandle('activate', function({ node }) {
+          console.log('Node activated:', node);
         }),
       ),
     );
