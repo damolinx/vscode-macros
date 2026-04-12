@@ -15,7 +15,6 @@ export async function createMacroItem(
   const item = new vscode.TreeItem(macro.uri, vscode.TreeItemCollapsibleState.None);
   item.contextValue = 'macroFile';
   item.command = { arguments: [macro.uri], command: 'vscode.open', title: 'Open' };
-  item.description = resolveMacroExt(macro.uri);
   item.id = macro.id;
   item.label = macro.name;
   item.tooltip = formatDisplayUri(macro.uri);
@@ -38,6 +37,8 @@ export async function createMacroItem(
     if (code?.options.singleton) {
       item.contextValue += ' restartOnly';
     }
+  } else {
+    item.description = resolveMacroExt(macro.uri);
   }
   return item;
 }
