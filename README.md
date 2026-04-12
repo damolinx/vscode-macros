@@ -570,7 +570,7 @@ The use case for the DSL is the same as for the macros: quickly generate a tool 
 - `macros.window.ui.button([options,] ...children)`: creates a clickable button
 
   Options:
-  - `class?: string`: set CSS class. 
+  - `class?: string`: set CSS class.
     - 'fill': makes the button expand horizontally (up to a bounded max width) and centered
   - `id?: string`
   - `label?: string`
@@ -649,10 +649,20 @@ Your macro must enable script execution in the WebView by using `enableScripts: 
 The UI DSL initializes the VSCode API by default to support message passing using `const vscode = acquireVsCodeApi();`.  Additionally, the [`macro`](#macro-api) const gives you access to macro-specific WebView-side APIs.
 
 #### `macro` API
-- `macro.error(error)`: posts a `macro:error` message back to the extension
+
+A `macro.window.ui`-created Webview, receives the following custom APIs:
+
+- `macro.error(error)`: posts a `macro:error` message back to your macro
+- `macro.log.[error|info|trace|warn](message)`: posts a `macro:log` message back to your macro, which can properly log using the `macros.window.handleLogMessage` utility.
 - `macro.progress`: available when the root document is created with `root({ progress: true }, [...])`.
   - `macro.progress.show()`: shows the progress bar
   - `macro.progress.hide()`: hides the progress bar
+
+#### Debugging Webview scripts
+VS Code's execution model for a Webview means you must use the **Developer Tools** to debug its scripts. Enable them via the `Developer: Toggle Developer Tools` command to inspect errors and view any `console.log` output.
+
+UI DSL webviews automatically catch script errors and send them as a `macro:error` message, which your macro can surface (e.g., via a dialog or log entry). You can also enable `logRelay` so `macro.log.*` calls emit a
+`macro:log` message that your macro can record or display as needed.
 
 ### Example: Search-like sidebar
 
