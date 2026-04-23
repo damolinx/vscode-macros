@@ -62,7 +62,11 @@ Macros run inside Node.js [VM sandboxes](https://nodejs.org/api/vm.html#class-vm
 
 ## Writing Macro Code
 
-A macro is simply a standalone script, whose global context has been initialized with `vscode`, basic Node.JS references and a few macro-specific APIs (see [Development](#development)). No top-level `export`, `await` or `return` statements can be used; the value of the final statement is the script's result. If that value is a `Promise`, then your macro can run asynchronous work. Beyond these constraints, writing a macro feels much like writing regular VS Code extension code.
+A macro is simply a standalone script, whose global context has been initialized with `vscode`, basic Node.JS references and a few macro-specific APIs (see [Development](#development)).
+
+> No top-level `export`, `await` or `return` statements can be used. The final statement's value is the script's result. For async work, use a fire and forget call, e.g. `main` instead of `await main`.
+
+Beyond these constraints, writing a macro feels much like writing regular VS Code extension code.
 
 **Example**: Async _Hello, World!_ macro
 ```javascript
