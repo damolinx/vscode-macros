@@ -11,7 +11,7 @@ A macro is:
 - A single JavaScript or TypeScript file.
 - Executed in an isolated Node.js VM context (unless the `persistent` directive
   is used).
-- Allowed to use VS Code’s extension API through the injected global `vscode`.
+- Allowed to use VS Code's extension API through the injected global `vscode`.
 - Allowed to use Node.js built-in modules via `require`.
 - Not allowed to use ES module syntax (`import`, `export`) in JavaScript macros.
 
@@ -21,6 +21,11 @@ When generating JavaScript:
 - Use **CommonJS** (`require`).
 - Never use `export`.
 - Use comment-based type annotations when helpful (e.g. `/** @type {vscode.TextEditor} */`).
+
+A macro cannot be forcefully terminated, they only support cooperative cancellation. 
+Macros must wire or check the `__cancellationToken.isCancellationRequested` or pass 
+the token to methods that support it. Without this, macros only stop when the script 
+returns a non-async value, or the async reference resolves.
 
 # 2. Script Structure Requirements
 
@@ -50,20 +55,26 @@ Each macro runs with the following globals injected:
   setInterval, setTimeout, structuredClone.
 
 ### Macro extension globals
-- `__cancellationToken`
-- `__disposables`
-- `__runId`
+- `__cancellationToken`: cancellation token  triggered when users requests to stop a macro.
+- `__disposables`: array of disposable objects that will be disposed when macro completes.
+- `__runId`: string id of current macro execution.
+- `__startup`: boolean indicating whether current macro execution was created during startup.
 - `macros` namespace:
-  - `extensionContext`
-  - `log` (LogOutputChannel)
-  - `macro.uri` (URI of the macro file)
-  - `window` (view-related APIs)
+  - `executeCommands(...cmds: (string | [id: string, ...args: any[]])[]): Promise<void>`: 
+     method used to run one or more commands by their string id and arguments.
+  - `extensionContext`: `vscode.ExtensionContext` context object. This is always the Macros
+     extension context.
+  - `log`: a vscode.LogOutputChannel wired specifically for current macro execution instance. 
+     It logs the `__runId` on every message.
+  - `macro.uri`: URI of the current macro. This might be `undefined` for some in-memory macro
+     scenarios.
+  - `window`: view-related APIs
 
 Never call `require('vscode')`. The API is already injected.
 
 # 4. Directives
 
-Directives are declared using `// @macro:` comments.
+Directives are declared using `// @macro:` comments. Multiple directives can be added, comma-separated, e.g. // @macro:singleton,retained
 
 Supported directives:
 
