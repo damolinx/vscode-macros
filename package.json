@@ -98,6 +98,11 @@
         "enablement": "env.appHost == cursor"
       },
       {
+        "command": "macros.createMacroPrompt",
+        "title": "Create Macro Prompt File",
+        "category": "Macros"
+      },
+      {
         "command": "macros.debug",
         "title": "Debug Macro",
         "category": "Macros",

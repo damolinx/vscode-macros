@@ -23,15 +23,16 @@ Macros run inside Node.js [VM sandboxes](https://nodejs.org/api/vm.html#class-vm
   * [Macro Explorer View](#macro-explorer-view)
   * [Startup Macros View](#startup-macros-view)
   * [Macro REPL](#macro-repl)
-  * [AI Assistance](#ai-assistance)
-    * [Chat Participant (VS Code)](#chat-participant-vs-code)
-    * [Cursor Rules (Cursor)](#cursor-rules-cursor)
   * [Commands](#commands)
     * [Debugging](#debugging)
     * [Development](#development)
     * [Manage Macros](#manage-macros)
     * [Run Macros](#run-macros)
   * [IntelliSense](#intellisense)
+* [AI Assistance](#ai-assistance)
+  * [Chat Participant (VS Code)](#chat-participant-vs-code)
+  * [Claude Code](#claude-code)
+  * [Cursor Rules (Cursor)](#cursor-rules-cursor)
 * [Development](#development-1)
   * [Available Code References](#available-code-references)
   * [`macros` API](#macros-api)
@@ -278,30 +279,14 @@ Some useful commands:
 
 [↑ Back to top](#table-of-contents)
 
-## AI Assistance
-
-Macro development can be assisted by AI in two different ways, depending on whether you are using VS Code or Cursor. Each environment exposes a different AI surface, so the extension provides different experiences.
-
-### Chat Participant (VS Code)
-
-In VS Code, the extension provides the `@macros` [chat participant](https://code.visualstudio.com/api/extension-guides/ai/chat). This assistant is a domain expert in macro development and understands the constraints of the macro runtime, such as avoiding export, not using top‑level await, selecting the correct language, and respecting macro directives.
-
-The chat participant can also save and execute macros directly from a prompt, enabling end‑to‑end workflows. Results vary by model size: larger models like *Claude Sonnet 4.5* and *GPT‑5* perform reliably, while lighter models may struggle with generation.
-
-**Example**: Ask `@macros` to dump all diagnostics for further analysis.
-<p align=center>
-<img width="700" height="327" alt="@macros created a macro to dump diagnostics and ran it" src="https://github.com/user-attachments/assets/3a5f202d-c37c-4b9b-b32e-d2d7183041e1" />
-</p>
-
-### Cursor Rules (Cursor)
-
-Cursor does not support chat participants. Instead, Cursor's agent is configured through rule files stored under the `.cursor/` directory. The extension provides a **Macros: Create Cursor Rules** command which generates a Markdown rules file that you can save as: `.cursor/rules/macro-rules.md`.
-
-The rules file encodes the macro specification, constraints, and behavioral guidelines that Cursor's agent should follow when generating or refining macro code.
-
-[↑ Back to top](#table-of-contents)
-
 ## Commands
+
+### AI
+
+| Command | Description |
+|--------|-------------|
+| **Create Cursor Rules** | Generates a Cursor‑compatible rules file containing the macro specification and behavioral guidelines. Save it under `.cursor/rules/`. |
+| **Create Macro Prompt File** | Exports a compact, self‑contained AI prompt describing the macro system. This file can be provided to Claude or other models to teach them how to generate valid macros. |
 
 ### Debugging
 
@@ -342,6 +327,46 @@ JavaScript and TypeScript macro files get [IntelliSense](https://code.visualstud
 > ⚠️ Untitled documents will not show proper IntelliSense until saved to disk, because a `global.d.ts` file is needed to describe the global context. This is visible in TypeScript editors, which will incorrectly report several missing references.
 
 There is custom autocomplete for command IDs provided to `vscode.commands.executeCommand`, as well as for `@macros` [options](#macro-options).
+
+[↑ Back to top](#table-of-contents)
+
+# AI Assistance
+
+Macro development can be assisted by AI in several ways, depending on the editor and AI environment you use. Each environment exposes a different AI surface, so the extension provides different integration points.
+
+## Chat Participant (VS Code)
+
+In VS Code, the extension provides the `@macros` [chat participant](https://code.visualstudio.com/api/extension-guides/ai/chat). This assistant is a domain expert in macro development and understands the constraints of the macro runtime, such as avoiding exports, not using top‑level `await`, selecting the correct language, and respecting macro directives.
+
+The chat participant can also save and execute macros directly from a prompt, enabling end‑to‑end workflows. Results vary by model size: larger models like *Claude Sonnet 4.6* and *GPT‑5* perform reliably, while lighter models may struggle with generation.
+
+**Example**: Ask `@macros` to dump all diagnostics for further analysis.
+<p align="center">
+<img width="700" height="327" alt="@macros created a macro to dump diagnostics and ran it" src="https://github.com/user-attachments/assets/3a5f202d-c37c-4b9b-b32e-d2d7183041e1" />
+</p>
+
+## Claude Code
+
+Claude Code can learn how to use your macros in multiple ways:
+
+- Ask Claude to learn about the "Macros for VS Code" extension on its own (optionally give it the extension ID if it gets lost: `damolinx.damolinx-macros`). Claude will search the VS Code Marketplace, find the extension, follow the link to the GitHub repository, and read key files such as `package.json`, the `README.md`, and other relevant sources.
+
+- Provide Claude with the macro prompt file generated by the extension.
+  - Use the **Macros: Create Macro Prompt File** command to produce a compact, self‑contained specification of the macro system. Supplying this file directly to Claude gives it everything it needs to generate valid macros.
+  - Alternatively, ask Claude to process the canonical prompt file directly:  
+    https://github.com/damolinx/vscode-macros/blob/main/resources/ai/macros-prompt.txt
+
+Using the command‑generated prompt file is the most deterministic approach because it gives Claude the exact macro specification matching your current version of the extension.
+
+## Cursor Rules (Cursor)
+
+Cursor does not support chat participants. Instead, Cursor's agent is configured through rule files stored under the `.cursor/` directory. The extension provides a **Macros: Create Cursor Rules** command which generates a Markdown rules file that you can save as:
+
+```
+.cursor/rules/macro-rules.md
+```
+
+The rules file encodes the macro specification, constraints, and behavioral guidelines that Cursor's agent should follow when generating or refining macro code.
 
 [↑ Back to top](#table-of-contents)
 

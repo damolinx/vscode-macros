@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.7.10
+- Add **Create Macro Prompt File** command to export a macro prompt file for Claude and other AI assistants.
+
 ## 0.7.9
 - **Macro Explorer** reveals the active item when the editor changes, respects `explorer.autoReveal`.
 - New AI prompts:

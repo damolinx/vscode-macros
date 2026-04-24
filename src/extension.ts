@@ -4,12 +4,13 @@ import { registerMacroChatParticipant } from './ai/macroChatParticipant';
 import { loadRenderers } from './api/window/renderers';
 import { addLibrary } from './commands/addLibrary';
 import { addStartupMacro } from './commands/addStartupMacro';
+import { createCursorRules } from './commands/ai/createCursorRules';
+import { createMacroPrompt } from './commands/ai/createMacroPrompt';
 import { copyFile, pasteFile } from './commands/copyPasteFile';
 import { copyPath } from './commands/copyPath';
 import { createMacro, updateEditor } from './commands/createMacro';
 import { createMacroContent, CreateMacroContentArgs } from './commands/createMacroContent';
 import { createRepl } from './commands/createRepl';
-import { createCursorRules } from './commands/cursor/createCursorRules';
 import { debugActiveEditor, debugMacro } from './commands/debugMacro';
 import { deleteMacroOrMacroLibrary } from './commands/deleteMacroOrMacroLibrary';
 import { downloadAsset } from './commands/downloadAsset';
@@ -80,6 +81,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.copy.name', (locator: UriLocator) => copyPath(context, locator, true)),
     cr('macros.copy.path', (locator?: UriLocator) => copyPath(context, locator)),
     cr('macros.createCursorRules', () => createCursorRules(context)),
+    cr('macros.createMacroPrompt', () => createMacroPrompt(context)),
     cr('macros.debug', (locator?: UriLocator) => debugMacro(context, locator)),
     cr('macros.debug.activeEditor', () => debugActiveEditor(context)),
     cr('macros.delete.macroOrMacroLibrary', (macroOrLibrary?: Macro | MacroLibrary) =>
