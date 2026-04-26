@@ -784,7 +784,7 @@
     "typescript": "^5.9.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.30.0",
+    "@eslint/js": "^10.0.1",
     "@stylistic/eslint-plugin": "^5.2.0",
     "@types/mocha": "^10.0.0",
     "@types/node": "^22.0.0",
