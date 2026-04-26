@@ -5,13 +5,14 @@
 const CommandId = 'macro.helloWorld';
 
 // Ensures all registered components are disposed when the macro instance ends
+// after using the `Request to Stop` command from the Macro Explorer.
 __disposables.push(
-  // Register a simple command that shows a message
+  // Register a command that shows a message
   vscode.commands.registerCommand(CommandId, () =>
     vscode.window.showInformationMessage('Hello World!'),
   ),
 
-  // Add a CodeLens that triggers the command at the top of JavaScript files
+  // Add a CodeLens to JavaScript files to run the command
   vscode.languages.registerCodeLensProvider(
     { scheme: 'file', language: 'javascript' },
     {

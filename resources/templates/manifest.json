@@ -15,10 +15,7 @@
       "category": "UI",
       "label": "CodeLens",
       "description": "Add a CodeLens to editors of a given language",
-      "path": "js/codeLens.js",
-      "alternates": {
-        "typescript": "ts/codeLens.ts"
-      }
+      "path": "js/codeLens.js"
     },
     {
       "category": "Basics",
