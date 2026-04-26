@@ -63,27 +63,43 @@ Macros run inside Node.js [VM sandboxes](https://nodejs.org/api/vm.html#class-vm
 
 ## Writing Macro Code
 
-A macro is simply a standalone script, whose global context has been initialized with `vscode`, basic Node.JS references and a few macro-specific APIs (see [Development](#development)).
+A macro is a standalone script whose global context is pre‑initialized with the VS Code API (available as `vscode`), basic Node.js globals, and a few macro‑specific APIs (see [Development](#development)). Because macros run as single scripts, keep the following in mind:
 
-> No top-level `export`, `await` or `return` statements can be used. The final statement's value is the script's result. For async work, use a fire and forget call, e.g. `main` instead of `await main`.
+- Top‑level `export`, `await`, and `return` statements are not allowed. 
 
-Beyond these constraints, writing a macro feels much like writing regular VS Code extension code.
+  > The one exception is defining a global empty `export {}` in JavaScript files to prevent the TypeScript Language Server from assuming all macro file are in the same global scope. This does not create a real module.
+
+- The value of the script's final expression becomes the macro's result. This is mainly useful for async work: if you need to run asynchronous code, return the `Promise` rather than `await` it so the macro engine can execute it.
+- Macros cannot be forcefully terminated. Long‑running or asynchronous tasks should respect cancellation requests via the global `__cancellationToken` instance, a `vscode.CancellationToken`. This cancellation request is normally triggered by the [**Request To Stop** action](#macro-explorer-view).
+
+Aside from these constraints, writing a macro is very similar to writing VS Code extension code.
 
 **Example**: Async _Hello, World!_ macro
 ```javascript
 // @macro:singleton
 
 async function main() {
-  const yes = { title: 'Yes' };
-  const no = { title: 'No', isCloseAffordance: true };
+  const again = { title: 'Show Again' };
+  const stop = { title: 'Stop', isCloseAffordance: true };
 
-  let answer;
+  let choice;
   do {
-    answer = await vscode.window.showInformationMessage(
-      'Hello, World! Close this dialog?', { modal: true }, yes, no);
-  } while (answer !== yes && !__cancellationToken.isCancellationRequested);
+    choice = await vscode.window.showInformationMessage(
+      'Hello from your macro!',
+      { modal: true },
+      again,
+      stop
+    );
+
+    // Respect cancellation
+    if (__cancellation.isCancellationRequested) {
+      return;
+    }
+
+  } while (choice === again);
 }
 
+// No await — return the Promise so the macro engine can run it
 main()
 ```
 
