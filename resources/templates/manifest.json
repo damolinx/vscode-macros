@@ -81,10 +81,7 @@
       "category": "Options",
       "label": "Retained Mode",
       "description": "Create long-lived listeners and providers",
-      "path": "js/retained.js",
-      "alternates": {
-        "typescript": "ts/retained.ts"
-      }
+      "path": "js/retained.js"
     },
     {
       "category": "UI",
