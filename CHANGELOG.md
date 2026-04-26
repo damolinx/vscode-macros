@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.7.11
+- Update **Cancellation** template and related documentation.
+
 ## 0.7.10
 - Add **Create Macro Prompt File** command to export a macro prompt file for Claude and other AI assistants.
 
