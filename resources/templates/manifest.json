@@ -9,10 +9,7 @@
       "category": "Basics",
       "label": "Cancellation",
       "description": "Stop execution via cancellation token",
-      "path": "js/cancellation.js",
-      "alternates": {
-        "typescript": "ts/cancellation.ts"
-      }
+      "path": "js/cancellation.js"
     },
     {
       "category": "UI",

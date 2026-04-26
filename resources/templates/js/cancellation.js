@@ -6,20 +6,13 @@ vscode.window.withProgress(
   },
   (progress, token) =>
     new Promise((resolve) => {
+      // React to Cancel button from progress notification
       token.onCancellationRequested(resolve);
 
-      __cancellationToken.onCancellationRequested(() => {
-        let countdown = 3;
+      // React to stop-request for the macro
+      __cancellationToken.onCancellationRequested(resolve);
 
-        const interval = setInterval(() => {
-          progress.report({ message: `canceling in ${countdown}s …` });
-          countdown--;
-
-          if (countdown < 0) {
-            clearInterval(interval);
-            resolve(undefined);
-          }
-        }, 1000);
-      });
+      // Wait for either cancellation to dismiss notification
+      progress.report({ message: 'Waiting …' });
     }),
 );
