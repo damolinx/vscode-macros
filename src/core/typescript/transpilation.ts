@@ -13,9 +13,9 @@ export function transpile(input: string, uri?: vscode.Uri): TranspileResult {
   const { diagnostics, outputText } = ts.transpileModule(input, {
     compilerOptions: {
       inlineSourceMap: true,
-      module: ts.ModuleKind.None,
+      module: ts.ModuleKind.CommonJS,
       removeComments: true,
-      target: ts.ScriptTarget.ES2024,
+      target: ts.ScriptTarget.ES2025,
     },
     fileName: uri && uriBasename(uri),
     reportDiagnostics: true,
