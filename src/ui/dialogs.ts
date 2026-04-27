@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { MacroLibraryManager } from '../core/library/macroLibraryManager';
 import { MacroFilter } from '../utils/ui';
 import { selectMacroFile } from './selectMacroFile';
-import { OpenMacroOptions } from './ui';
+import { MacroQuickPickOptions } from './ui';
 
 export async function showMacroOpenDialog(
   options?: vscode.OpenDialogOptions,
@@ -17,7 +17,7 @@ export async function showMacroOpenDialog(
 
 export async function showMacroQuickPick(
   manager: MacroLibraryManager,
-  options?: OpenMacroOptions,
+  options?: MacroQuickPickOptions,
 ): Promise<vscode.Uri | undefined> {
   return selectMacroFile(manager, options);
 }

@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
 import { MacroLibraryManager } from '../core/library/macroLibraryManager';
 import { NaturalComparer } from '../utils/ui';
-import { OpenMacroOptions, pickMacroFile, UriQuickPickItem } from './ui';
+import { MacroQuickPickOptions, pickMacroFile, UriQuickPickItem } from './ui';
 
 export async function selectMacroFile(
   manager: MacroLibraryManager,
-  options?: OpenMacroOptions,
+  options?: MacroQuickPickOptions,
 ): Promise<vscode.Uri | undefined> {
   const macroFiles = await getFiles(manager);
   const targetUri = await pickMacroFile(macroFiles, options);
@@ -40,7 +40,7 @@ export async function selectSourceDirectory(
       }))
       .sort((t1, t2) => NaturalComparer.compare(t1.label, t2.label)),
     {
-      placeHolder: 'Select a source directory …',
+      placeHolder: 'Select a source directory',
     },
   );
 

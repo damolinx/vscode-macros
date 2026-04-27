@@ -69,7 +69,7 @@
     "commands": [
       {
         "command": "macros.add.startupMacro",
-        "title": "Add Macro…",
+        "title": "Add Startup Macro…",
         "category": "Macros",
         "icon": "$(new-file)"
       },

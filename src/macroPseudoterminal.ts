@@ -158,6 +158,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
       action: async () => {
         const file = await showMacroQuickPick(this.context.libraryManager, {
           hideOpenPerItem: true,
+          placeHolder: 'Select a macro to load',
         });
         if (file) {
           originalLoad?.action.call(replServer, file.fsPath);

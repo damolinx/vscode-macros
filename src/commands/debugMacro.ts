@@ -13,7 +13,10 @@ export async function debugMacro(
 ): Promise<boolean | undefined> {
   const uri = locator
     ? resolveUri(locator)
-    : await showMacroQuickPick(libraryManager, { selectUri: mruMacro });
+    : await showMacroQuickPick(libraryManager, {
+        activeUri: mruMacro,
+        placeHolder: 'Select a macro to debug',
+      });
   if (!uri) {
     return;
   }

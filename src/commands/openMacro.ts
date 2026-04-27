@@ -10,7 +10,10 @@ export async function openMacro(
 ): Promise<vscode.TextEditor | undefined> {
   const uri = locator
     ? resolveUri(locator)
-    : await showMacroQuickPick(libraryManager, { hideOpenPerItem: true });
+    : await showMacroQuickPick(libraryManager, {
+        hideOpenPerItem: true,
+        placeHolder: 'Select a macro to open',
+      });
   if (!uri) {
     return;
   }

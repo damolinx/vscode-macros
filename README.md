@@ -133,7 +133,7 @@ To support this particular flow, the extension provides command-ID autocomplete 
 
 ## Running a Macro
 
-* **Option 1**: From the [Command Palette](https://code.visualstudio.com/docs/getstarted/userinterface#_command-palette), use the **Macros: Run Active Editor as Macro** or **Macros: Run Macro…** commands.
+* **Option 1**: From the [Command Palette](https://code.visualstudio.com/docs/getstarted/userinterface#_command-palette), use the **Macros: Run Active Editor as Macro** or **Macros: Run Macro** commands.
 
 * **Option 2**: On supported editors, i.e. those matching `*.macro.*` or saved in a [macro library](#macro-libraries), use the **Run Active Editor as Macro** button in the editor title bar.
 
@@ -259,7 +259,7 @@ The **Macros: Show Macro Explorer** command opens the view and brings it into fo
 
 ## Startup Macros View
 
-The **Startup Macros** [view](https://code.visualstudio.com/docs/getstarted/userinterface#_views) gives you a dedicated place to manage [startup macros](#running-a-macro-on-startup). It exposes all configuration locations where startup macros may be defined, making it easy to understand why a macro is being executed. You can add or remove items directly from each location using context actions or by simply dragging and dropping them into the desired section.
+The **Startup Macros** [view](https://code.visualstudio.com/docs/getstarted/userinterface#_views) gives you a dedicated place to manage [startup macros](#running-a-macro-on-startup). It exposes all configuration locations where startup macros may be defined, making it easy to understand why a macro is being executed. You can add or remove items directly from each location using context actions or by simply dragging and dropping a macro file into the desired section.
 
 The **Macros: Show Startup Macros** command can be used to bring it into view.
 
@@ -323,6 +323,7 @@ Some useful commands:
 | Command | Description |
 |--------|-------------|
 | **Fill File with Template** | Initialize an existing file with example macro content. |
+| **Open Macro…** | Open a macro file by selecting from a dropdown. |
 | **New Macro** | Create a new file pre-filled with example macro content. |
 | **Show Running Macros** | View and manage currently running macros. |
 
@@ -332,7 +333,7 @@ Some useful commands:
 |--------|-------------|
 | **Run Active File as Macro** | Run the current editor as a macro (the document will be saved before running). |
 | **Rerun Last Macro** | Execute the most recently run macro. |
-| **Run Macro…** | Select a macro to run. Provides access to macros in configured `macros.sourceDirectories`. |
+| **Run Macro** | Select a macro to run. Provides access to macros in configured `macros.sourceDirectories`. |
 
 [↑ Back to top](#table-of-contents)
 
@@ -479,7 +480,7 @@ Once a macro is finished using a view, it can release the ID explicitly using th
   macros.window.releaseWebviewId(id: string): boolean
   ```
 
-Claimed IDs are automatically released when the macro completes **only** for non‑persistent and non‑retained macros. Persistent or retained macros must explicitly call the appropriate `release…Id` method.
+Claimed IDs are automatically released when the macro completes **only** for non‑persistent and non‑retained macros. Persistent or retained macros must explicitly call the appropriate `releaseTreeViewId` or `releaseWebviewId` method.
 
 [↑ Back to top](#table-of-contents)
 
@@ -507,7 +508,7 @@ Be sure to reset the context when the macro finishes, there is no automatic trac
 
 ## `@macro` Options
 
-A `@macro` option defines runtime behaviors for your macro. It is added to macro file as a comment using this `//@macro:«option»[,…«option»]` syntax.
+A `@macro` option defines runtime behaviors for your macro. It is added to macro file as a comment using this `//@macro:option[,option…]` syntax.
 
 The following options are available:
 * `persistent`: All invocations of the macro use the same [execution context](https://nodejs.org/api/vm.html#scriptrunincontextcontextifiedobject-options) so global variables persist across runs. Use the **Reset Context** CodeLens to reinitialize context.

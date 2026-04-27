@@ -1,10 +1,10 @@
 import * as vscode from 'vscode';
+import { SingletonMacroAlreadyRunningError } from '../core/execution/executors/errors';
 import { ExtensionContext } from '../extensionContext';
 import { showMacroQuickPick } from '../ui/dialogs';
 import { showMacroErrorMessage } from '../ui/errors';
 import { isUntitled, UriLocator, resolveUri } from '../utils/uri';
 import { activeMacroEditor } from './utils';
-import { SingletonMacroAlreadyRunningError } from '../core/execution/executors/errors';
 
 export async function runMacro(
   context: ExtensionContext,
@@ -13,7 +13,10 @@ export async function runMacro(
 ): Promise<void> {
   const uri = locator
     ? resolveUri(locator)
-    : await showMacroQuickPick(context.libraryManager, { selectUri: context.mruMacro });
+    : await showMacroQuickPick(context.libraryManager, {
+        activeUri: context.mruMacro,
+        placeHolder: 'Select a macro to run',
+      });
   if (!uri) {
     return;
   }
