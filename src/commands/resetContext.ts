@@ -13,5 +13,5 @@ export function resetSharedContext(
     return;
   }
 
-  executor.resetSharedContext();
+  executor.resetPersistentContext();
 }

@@ -120,7 +120,7 @@ async function showErrorMessage(
         },
   ];
 
-  if (!macroCode.options.singleton || executor.count === 0) {
+  if (!macroCode.options.singleton || executor.executionCount === 0) {
     actions.push({
       title: 'Retry',
       execute: () =>
@@ -133,7 +133,7 @@ async function showErrorMessage(
   if (macroCode.options.persistent) {
     actions.push({
       title: 'Reset Context',
-      execute: () => executor.resetSharedContext(),
+      execute: () => executor.resetPersistentContext(),
     });
   }
 

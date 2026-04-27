@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { MacroBase } from './macro';
+import { MacroBase } from './macroBase';
 import {
   getMacroUriFromStartupMacroUri,
   getStartupMacroId,
@@ -8,13 +8,14 @@ import {
 } from './startupMacroId';
 
 export class StartupMacro extends MacroBase<StartupMacroId> {
-  public _macroUri?: vscode.Uri;
-  public target: vscode.ConfigurationTarget;
+  private _macroUri?: vscode.Uri;
 
-  constructor(uri: vscode.Uri, target: vscode.ConfigurationTarget) {
+  constructor(
+    uri: vscode.Uri,
+    public readonly target: vscode.ConfigurationTarget,
+  ) {
     const startupUri = getStartupMacroUri(uri);
-    super(startupUri, getStartupMacroId(startupUri));
-    this.target = target;
+    super(getStartupMacroId(startupUri), startupUri);
   }
 
   /**

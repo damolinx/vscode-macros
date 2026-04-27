@@ -73,6 +73,11 @@ export class SandboxManager implements vscode.Disposable {
     return;
   }
 
+  public getExecutionCount(target: Macro | MacroId | vscode.Uri): number {
+    const executor = this.getExecutor(target as any);
+    return executor?.executionCount ?? 0;
+  }
+
   public getExecutor(macro: Macro): SandboxExecutor | undefined;
   public getExecutor(macroId: MacroId): SandboxExecutor | undefined;
   public getExecutor(uri: vscode.Uri): SandboxExecutor | undefined;
@@ -87,11 +92,6 @@ export class SandboxManager implements vscode.Disposable {
     }
 
     return this.executorMap.get(macroId);
-  }
-
-  public isRunning(target: Macro | MacroId | vscode.Uri): boolean {
-    const executor = this.getExecutor(target as any);
-    return !!executor?.isRunning();
   }
 
   public get onExecutionEnd(): vscode.Event<SandboxExecution> {

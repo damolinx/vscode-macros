@@ -20,7 +20,8 @@ export async function createMacroItem(
   item.tooltip = formatDisplayUri(macro.uri);
 
   const executor = context.sandboxManager.getExecutor(macro.uri);
-  const code = isUntitledMacro || executor?.isRunning() ? await macro.getCode() : undefined;
+  const executionCount = executor?.executionCount ?? 0;
+  const code = isUntitledMacro || executionCount ? await macro.getCode() : undefined;
 
   item.iconPath = code ? getIcon(code.languageId) : getIconFromUri(macro.uri);
 
@@ -30,10 +31,10 @@ export async function createMacroItem(
     item.contextValue += ' startupMacro';
   }
 
-  if (executor?.isRunning()) {
+  if (executionCount) {
     item.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
     item.contextValue += ' running';
-    item.description = `(${executor.count})`;
+    item.description = `(${executionCount})`;
     if (code?.options.singleton) {
       item.contextValue += ' restartOnly';
     }

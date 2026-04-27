@@ -4,6 +4,7 @@ import { showMacroQuickPick } from '../ui/dialogs';
 import { showMacroErrorMessage } from '../ui/errors';
 import { isUntitled, UriLocator, resolveUri } from '../utils/uri';
 import { activeMacroEditor } from './utils';
+import { SingletonMacroAlreadyRunningError } from '../core/execution/executors/errors';
 
 export async function runMacro(
   context: ExtensionContext,
@@ -32,9 +33,20 @@ export async function runMacro(
   }
 
   const executor = await context.sandboxManager.ensureExecutor(uri);
-  await executor.execute(options, (error, info) =>
-    showMacroErrorMessage(executor, info.macroCode, error),
-  );
+  try {
+    await executor.execute(options, (error, info) =>
+      showMacroErrorMessage(executor, info.macroCode, error),
+    );
+  } catch (error) {
+    if (error instanceof SingletonMacroAlreadyRunningError) {
+      vscode.window.setStatusBarMessage(
+        `$(warning) Singleton macro '${error.macroName}' is already running`,
+        5000,
+      );
+      return;
+    }
+    throw error;
+  }
 }
 
 function hasDiagnosticErrors(uri: vscode.Uri) {
