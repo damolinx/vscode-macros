@@ -32,24 +32,23 @@ export async function runMacro(
   }
 
   const executor = await context.sandboxManager.ensureExecutor(uri);
-  const pareparedExecution = await executor.createExecution(options);
+  await executor.execute(options, (error, info) =>
+    showMacroErrorMessage(executor, info.macroCode, error),
+  );
+}
 
-  try {
-    await executor.execute(pareparedExecution);
-  } catch (error: any) {
-    await showMacroErrorMessage(executor, pareparedExecution.snapshot, error ?? 'Unknown error');
+function hasDiagnosticErrors(uri: vscode.Uri) {
+  const diagnostics = vscode.languages.getDiagnostics(uri);
+
+  if (isUntitled(uri)) {
+    return diagnostics.some(
+      (d) =>
+        d.severity === vscode.DiagnosticSeverity.Error &&
+        (d.source !== 'ts' || (d.code !== 2304 && d.code !== 2307)),
+    );
   }
 
-  function hasDiagnosticErrors(uri: vscode.Uri) {
-    const diagnostics = vscode.languages.getDiagnostics(uri);
-    return isUntitled(uri)
-      ? diagnostics.some(
-          (d) =>
-            d.severity === vscode.DiagnosticSeverity.Error &&
-            (d.source !== 'ts' || (d.code !== 2304 && d.code !== 2307)),
-        )
-      : diagnostics.some((d) => d.severity === vscode.DiagnosticSeverity.Error);
-  }
+  return diagnostics.some(({ severity }) => severity === vscode.DiagnosticSeverity.Error);
 }
 
 export async function runActiveEditor(context: ExtensionContext) {

@@ -8,9 +8,9 @@ export class SandboxExecution implements vscode.Disposable {
   public static async create(
     context: ExtensionContext,
     macro: Macro,
-    params: { code?: MacroCode; index: number; startup?: true },
+    params: { index: number; startup?: true },
   ): Promise<SandboxExecution> {
-    const code = params.code ?? (await macro.getCode());
+    const code = await macro.getCode();
     return new SandboxExecution(context, macro, code, params.index, params.startup);
   }
 

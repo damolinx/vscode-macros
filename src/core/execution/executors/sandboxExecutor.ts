@@ -1,10 +1,19 @@
 import * as vscode from 'vscode';
 import { ExtensionContext } from '../../../extensionContext';
 import { Macro } from '../../macro';
+import { MacroCode } from '../../macroCode';
 import { SandboxRunner } from '../runners/sandboxRunner';
 import { VmSandboxRunner } from '../runners/vmSandboxRunner';
 import { SandboxExecution } from '../sandboxExecution';
 import { SandboxExecutionId } from '../sandboxExecutionId';
+
+type ExecuteErrorHandler = (
+  error: Error,
+  info: {
+    executionId: SandboxExecutionId;
+    macroCode: MacroCode;
+  },
+) => Promise<void> | void;
 
 export class SandboxExecutor implements vscode.Disposable {
   protected readonly context: ExtensionContext;
@@ -51,17 +60,15 @@ export class SandboxExecutor implements vscode.Disposable {
     return this.executionMap.size;
   }
 
-  public async createExecution(params?: { startup?: true }): Promise<SandboxExecution> {
-    const execution = await SandboxExecution.create(this.context, this.macro, {
-      index: ++this.index,
-      ...params,
-    });
-    return execution;
-  }
-
-  public async execute(execution: SandboxExecution): Promise<void> {
-    if (this.count > 0 && execution.snapshot.options.singleton) {
-      this.context.log.warn('Macro is already running (singleton), skipping —', execution.id);
+  public async execute(
+    params?: { startup?: true },
+    errorHandler?: ExecuteErrorHandler,
+  ): Promise<void> {
+    if (this.count > 0 && (await this.macro.getCode()).options.singleton) {
+      this.context.log.warn(
+        'Singleton macro is already running, ignoring run-request —',
+        this.macro.id,
+      );
       vscode.window.setStatusBarMessage(
         `$(info) Singleton macro ${this.macro.name} is already running`,
         3000,
@@ -69,7 +76,28 @@ export class SandboxExecutor implements vscode.Disposable {
       return;
     }
 
+    const execution = await SandboxExecution.create(this.context, this.macro, {
+      index: ++this.index,
+      ...params,
+    });
+    if (this.executionMap.has(execution.id)) {
+      throw new Error(`Duplicate execution id: ${execution.id}`);
+    }
     this.executionMap.set(execution.id, execution);
+
+    try {
+      await this.invokeExecution(execution);
+    } catch (error: any) {
+      if (!errorHandler) {
+        throw error;
+      }
+      await errorHandler(error, { executionId: execution.id, macroCode: execution.snapshot });
+    } finally {
+      execution.dispose();
+    }
+  }
+
+  protected async invokeExecution(execution: SandboxExecution): Promise<void> {
     this.onExecutionStartEmitter.fire(execution);
     try {
       this.context.log.info('Macro started —', execution.id);
@@ -88,7 +116,6 @@ export class SandboxExecutor implements vscode.Disposable {
     } finally {
       this.executionMap.delete(execution.id);
       this.onExecutionEndEmitter.fire(execution);
-      execution.dispose();
     }
   }
 
