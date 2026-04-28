@@ -2,16 +2,13 @@ import * as vm from 'vm';
 import { initializeMacrosApi } from '../../../api/macroApiFactory';
 import { MacroContext } from '../../../api/macroContext';
 import { Execution } from '../execution';
-import { initializeContext, MacroContextInitParams } from '../macroContext';
+import { initializeContext, MacroContextParams } from '../macroContext';
 import { Runner } from './runner';
 
 export class SandboxRunner extends Runner<vm.Context> {
   private sharedMacroContext?: MacroContext;
 
-  protected override async executeInternal(
-    execution: Execution,
-    context: vm.Context,
-  ): Promise<any> {
+  protected override async runInContext(execution: Execution, context: vm.Context): Promise<any> {
     const options: vm.RunningScriptOptions = {
       filename: this.getExecutionSourceName(execution),
     };
@@ -48,9 +45,9 @@ export class SandboxRunner extends Runner<vm.Context> {
     }
   }
 
-  protected override getContext(
+  protected override createMacroContext(
     { snapshot }: Execution,
-    params: MacroContextInitParams,
+    params: MacroContextParams,
   ): vm.Context {
     let context: MacroContext;
     let name = `context-${params.executionId}`;

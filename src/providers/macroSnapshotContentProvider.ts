@@ -7,7 +7,7 @@ export function registerMacroSnapshotContentProvider(context: ExtensionContext):
     vscode.workspace.registerTextDocumentContentProvider('macro-snapshot', {
       provideTextDocumentContent(snapshotUri: vscode.Uri) {
         const uri = vscode.Uri.parse(snapshotUri.path, true);
-        const executor = context.sandboxManager.getExecutor(uri);
+        const executor = context.executorManager.getExecutor(uri);
         if (executor?.executionCount) {
           for (const instance of executor.executions) {
             if (instance.id === snapshotUri.fragment) {

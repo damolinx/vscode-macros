@@ -35,7 +35,7 @@ export async function runMacro(
     }
   }
 
-  const executor = await context.sandboxManager.ensureExecutor(uri);
+  const executor = await context.executorManager.ensureExecutor(uri);
   try {
     await executor.execute(options, (error, { macroCode }) =>
       showMacroErrorMessage(executor, macroCode, error),

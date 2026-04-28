@@ -14,11 +14,11 @@ export class StartupTreeDataProvider extends TreeDataProvider<StartupTreeElement
   constructor(context: ExtensionContext) {
     super(context);
 
-    const sandboxHandler = ({ startup }: Execution) =>
+    const executionHandler = ({ startup }: Execution) =>
       startup && this.onDidChangeTreeDataEmitter.fire();
     this.disposables.push(
-      this.context.sandboxManager.onExecutionStart(sandboxHandler),
-      this.context.sandboxManager.onExecutionEnd(sandboxHandler),
+      this.context.executorManager.onExecutionStart(executionHandler),
+      this.context.executorManager.onExecutionEnd(executionHandler),
       this.context.startupManager.onDidChangeSources(() => this.onDidChangeTreeDataEmitter.fire()),
     );
   }
@@ -60,7 +60,7 @@ export class StartupTreeDataProvider extends TreeDataProvider<StartupTreeElement
 
     return createStartupItem(
       element,
-      this.context.sandboxManager.getExecutor(element.macroUri)?.executions.find((i) => i.startup),
+      this.context.executorManager.getExecutor(element.macroUri)?.executions.find((i) => i.startup),
     );
   }
 }

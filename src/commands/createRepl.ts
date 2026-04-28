@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { getExecutionId } from '../core/execution/executionId';
 import { ExtensionContext } from '../extensionContext';
 import { MacroPseudoterminal } from '../macroPseudoterminal';
 import { MacrosDarkIconUri, MacrosLightIconUri } from '../ui/icons';
@@ -9,7 +10,7 @@ export async function createRepl(
   context: ExtensionContext,
   preserveFocus?: boolean,
 ): Promise<vscode.Terminal> {
-  const pty = new MacroPseudoterminal(context, 'macro-repl', replIndex++);
+  const pty = new MacroPseudoterminal(context, getExecutionId('macro-repl', replIndex++));
   const terminal = vscode.window.createTerminal({
     iconPath: {
       light: MacrosLightIconUri.get(context),

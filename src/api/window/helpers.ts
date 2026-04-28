@@ -1,4 +1,4 @@
-import { ExtensionContext } from '../../extensionContext';
+import * as vscode from 'vscode';
 
 export interface LogMessage {
   message: string;
@@ -6,9 +6,8 @@ export interface LogMessage {
   data?: any;
 }
 
-export function handleLogMessage({ log }: ExtensionContext, message: LogMessage): void {
+export function handleLogMessage(log: vscode.LogOutputChannel, message: LogMessage): void {
   const logFn = log[message.level];
-
   if (typeof logFn !== 'function') {
     log.error('Unknown log level', message.level, message);
     return;

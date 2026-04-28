@@ -17,7 +17,7 @@ export class UntitledMacroLibrary extends Library<MacroId> {
     return this._instance;
   }
 
-  private constructor({ sandboxManager }: ExtensionContext) {
+  private constructor({ executorManager }: ExtensionContext) {
     super(vscode.Uri.from({ scheme: 'untitled', path: UNTITLED_MACRO_LIBRARY_NAME }));
     this.disposables.push(
       vscode.workspace.onDidOpenTextDocument((document) => {
@@ -32,7 +32,7 @@ export class UntitledMacroLibrary extends Library<MacroId> {
       }),
       vscode.workspace.onDidCloseTextDocument(({ uri }) => {
         if (this.owns(uri)) {
-          const executor = sandboxManager.getExecutor(uri);
+          const executor = executorManager.getExecutor(uri);
           if (executor?.executionCount) {
             const disposable = executor.onExecutionEnd(() => {
               if (executor.executionCount === 0) {

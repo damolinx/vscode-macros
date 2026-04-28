@@ -3,10 +3,9 @@ import { Recoverable, REPLServer, start as startREPL } from 'repl';
 import { PassThrough } from 'stream';
 import { inspect, types } from 'util';
 import * as vm from 'vm';
-import { MacroLogOutputChannel } from './api/macroLogOutputChannel';
 import { createMacro } from './commands/createMacro';
-import { getExecutionId } from './core/execution/executionId';
-import { initializeContext, MacroContextInitParams } from './core/execution/macroContext';
+import { ExecutionId } from './core/execution/executionId';
+import { initializeContext, MacroContextParams } from './core/execution/macroContext';
 import { transpileOrThrow, TranspilationError } from './core/typescript/transpilation';
 import { ExtensionContext } from './extensionContext';
 import { showMacroQuickPick } from './ui/dialogs';
@@ -20,7 +19,7 @@ type REPLServerWithHistory = REPLServer & { history?: string[] };
 
 export class MacroPseudoterminal implements vscode.Pseudoterminal {
   private readonly cts: vscode.CancellationTokenSource;
-  private readonly macroInitParams: MacroContextInitParams;
+  private readonly disposables: vscode.Disposable[];
   private readonly onDidCloseEmitter: vscode.EventEmitter<void>;
   private readonly onDidWriteEmitter: vscode.EventEmitter<string>;
   private repl?: {
@@ -33,35 +32,23 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
 
   constructor(
     private readonly context: ExtensionContext,
-    name: string,
-    index: number,
+    private readonly executionId: ExecutionId,
   ) {
-    const executionId = getExecutionId(name, index);
-
-    this.cts = new vscode.CancellationTokenSource();
-    this.onDidCloseEmitter = new vscode.EventEmitter();
-    this.onDidWriteEmitter = new vscode.EventEmitter();
-    this.uri = vscode.Uri.from({ scheme: '', path: executionId });
+    this.uri = vscode.Uri.from({ scheme: '', path: this.executionId });
     this.useTs = false;
 
-    this.macroInitParams = {
-      context: this.context,
-      disposables: [],
-      log: new MacroLogOutputChannel(executionId, context),
-      executionId,
-      token: this.cts.token,
-      viewManagers: this.context.viewManagers,
-    };
+    this.disposables = [
+      (this.cts = new vscode.CancellationTokenSource()),
+      (this.onDidCloseEmitter = new vscode.EventEmitter()),
+      (this.onDidWriteEmitter = new vscode.EventEmitter()),
+      { dispose: () => this.repl?.dispose() },
+    ];
   }
 
   public close(): void {
-    this.context.viewManagers.tree.releaseOwnedIds(this.macroInitParams.executionId);
-    this.context.viewManagers.web.releaseOwnedIds(this.macroInitParams.executionId);
-    vscode.Disposable.from(...this.macroInitParams.disposables).dispose();
-    this.cts.dispose();
-    this.onDidCloseEmitter.dispose();
-    this.onDidWriteEmitter.dispose();
-    this.repl?.dispose();
+    this.context.viewManagers.tree.releaseOwnedIds(this.executionId);
+    this.context.viewManagers.web.releaseOwnedIds(this.executionId);
+    vscode.Disposable.from(...this.disposables).dispose();
   }
 
   async evaluate(
@@ -253,6 +240,13 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
     // REPL's context contains additional values that would not normally be
     // available to a macro and could cause confusion, so resetting first.
     Object.keys(context).forEach((k) => delete context[k]);
-    initializeContext(context, this.macroInitParams);
+
+    const contextInitParams = {
+      context: this.context,
+      disposables: this.disposables,
+      executionId: this.executionId,
+      token: this.cts.token,
+    } as MacroContextParams;
+    initializeContext(context, contextInitParams);
   }
 }

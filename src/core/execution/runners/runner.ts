@@ -1,44 +1,40 @@
-import { MacroLogOutputChannel } from '../../../api/macroLogOutputChannel';
 import { ExtensionContext } from '../../../extensionContext';
 import { parentUri, uriBasename } from '../../../utils/uri';
 import { Execution } from '../execution';
 import { getExecutionIdToken } from '../executionId';
-import { MacroContextInitParams } from '../macroContext';
+import { MacroContextParams } from '../macroContext';
 
 export abstract class Runner<TContext = unknown> {
   constructor(private readonly context: ExtensionContext) {}
 
-  public async execute(execution: Execution): Promise<any> {
-    const contextInitParams = this.getContextInitParams(execution);
-    const context = this.getContext(execution, contextInitParams);
-    const executePromise = this.executeInternal(execution, context);
+  protected abstract createMacroContext(execution: Execution, params: MacroContextParams): TContext;
 
-    const result = await (execution.snapshot.options.retained
-      ? Promise.all([
-          executePromise,
-          new Promise((resolve) => execution.cancellationToken.onCancellationRequested(resolve)),
-        ])
-      : executePromise);
-
-    return result;
-  }
-
-  protected abstract executeInternal(execution: Execution, context: TContext): Promise<any>;
-
-  protected abstract getContext(execution: Execution, params: MacroContextInitParams): TContext;
-
-  protected getContextInitParams(execution: Execution): MacroContextInitParams {
-    return {
+  public async run(execution: Execution): Promise<any> {
+    const contextInitParams = {
       context: this.context,
       disposables: execution.macroDisposables,
-      log: new MacroLogOutputChannel(execution.id as any, this.context),
-      executionId: execution.id as any,
+      executionId: execution.id,
       startup: execution.startup,
       token: execution.cancellationToken,
       uri: execution.macro.uri,
-      viewManagers: this.context.viewManagers,
-    };
+    } as MacroContextParams;
+
+    const context = this.createMacroContext(execution, contextInitParams);
+    const runPromise = this.runInContext(execution, context);
+    if (execution.snapshot.options.retained) {
+      await Promise.all([
+        runPromise,
+        new Promise<never>((resolve) =>
+          execution.cancellationToken.onCancellationRequested(resolve),
+        ),
+      ]);
+    }
+
+    const result = await runPromise;
+    return result;
   }
+
+  protected abstract runInContext(execution: Execution, context: TContext): Promise<any>;
 
   public getExecutionSourceName({ id, macro: { uri }, snapshot }: Execution): string {
     const parentName = uriBasename(parentUri(uri));

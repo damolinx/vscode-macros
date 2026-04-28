@@ -83,9 +83,14 @@ export class Executor implements vscode.Disposable {
     try {
       this.context.log.info('Macro started —', execution.id);
       execution.refreshStartedOn();
-      await this.runner.execute(execution);
+      await this.runner.run(execution);
       this.context.log.info('Macro ended —', execution.id);
     } catch (error: any) {
+      if (error instanceof vscode.CancellationError) {
+        this.context.log.warn('Macro canceled —', execution.id, this.macro.id);
+        return;
+      }
+
       this.context.log.error(
         'Macro failed —',
         execution.id,

@@ -3,11 +3,11 @@ import { formatDisplayUri } from '../utils/ui';
 import { UriLocator, resolveUri } from '../utils/uri';
 
 export function resetSharedContext(
-  { log, sandboxManager }: ExtensionContext,
+  { executorManager, log }: ExtensionContext,
   locator: UriLocator,
 ): void {
   const uri = resolveUri(locator);
-  const executor = sandboxManager.getExecutor(uri);
+  const executor = executorManager.getExecutor(uri);
   if (!executor) {
     log.debug('No context to reset', formatDisplayUri(uri));
     return;

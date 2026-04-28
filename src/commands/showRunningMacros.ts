@@ -9,7 +9,7 @@ import { stopMacro } from './stopMacro';
 
 export async function showRunningMacros(context: ExtensionContext): Promise<void> {
   const {
-    sandboxManager: { executions },
+    executorManager: { executions },
   } = context;
   if (executions.length === 0) {
     vscode.window.showInformationMessage('No running macros');

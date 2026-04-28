@@ -65,7 +65,7 @@ async function deleteLibrary(context: ExtensionContext, { uri }: MacroLibrary): 
 }
 
 async function deleteMacro(context: ExtensionContext, { uri }: Macro): Promise<void> {
-  if (context.sandboxManager.getExecutionCount(uri) > 0) {
+  if (context.executorManager.getExecutionCount(uri) > 0) {
     const stopOption: vscode.MessageItem = { title: 'Stop and Delete' };
     const result = await vscode.window.showInformationMessage(
       'Stop running instances before deleting this macro?',

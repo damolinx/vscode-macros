@@ -35,10 +35,10 @@ export class ExplorerTreeDataProvider extends TreeDataProvider<TreeElement> {
         this.disposeMonitoredLibraries();
         this.onDidChangeTreeDataEmitter.fire(undefined);
       }),
-      this.context.sandboxManager.onExecutionStart(({ macro }) =>
+      this.context.executorManager.onExecutionStart(({ macro }) =>
         this.fireOnDidChangeTreeData(macro),
       ),
-      this.context.sandboxManager.onExecutionEnd(({ macro }) =>
+      this.context.executorManager.onExecutionEnd(({ macro }) =>
         this.fireOnDidChangeTreeData(macro),
       ),
       {
@@ -126,7 +126,7 @@ export class ExplorerTreeDataProvider extends TreeDataProvider<TreeElement> {
       const entry = this.ensureLibraryIsMonitored(element);
       entry.files = new Set((children as Macro[]).map((macro) => macro.id));
     } else if (element instanceof Macro) {
-      const executor = this.context.sandboxManager.getExecutor(element);
+      const executor = this.context.executorManager.getExecutor(element);
       if (executor) {
         children = executor.executions.sort((a, b) => NaturalComparer.compare(a.id, b.id));
       }

@@ -9,7 +9,7 @@ import { formatDisplayUri } from '../utils/ui';
 import { resolveUri } from '../utils/uri';
 
 export async function stopMacro(
-  { log, sandboxManager }: ExtensionContext,
+  { log, executorManager }: ExtensionContext,
   target: Macro | Execution | StartupMacro | vscode.Uri,
 ): Promise<void> {
   let canceledExecutionIds: ExecutionId[];
@@ -24,7 +24,7 @@ export async function stopMacro(
     logLocator = formatDisplayUri(resolvedUri);
 
     const uri = getMacroUriFromStartupMacroUri(resolvedUri);
-    canceledExecutionIds = sandboxManager.cancel(uri).map(({ id }) => id);
+    canceledExecutionIds = executorManager.cancel(uri).map(({ id }) => id);
   }
 
   if (canceledExecutionIds.length === 0) {

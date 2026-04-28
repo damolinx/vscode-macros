@@ -4,26 +4,17 @@ import { createMacroApi } from '../../api/macroApiFactory';
 import { MacroContext } from '../../api/macroContext';
 import { ExtensionContext } from '../../extensionContext';
 import { ExecutionId } from './executionId';
-import { ViewManager } from './views/viewManager';
 
-export interface MacroContextInitParams {
+export interface MacroContextParams {
   context: ExtensionContext;
   disposables: vscode.Disposable[];
   executionId: ExecutionId;
-  log: vscode.LogOutputChannel;
   startup?: true;
   token: vscode.CancellationToken;
   uri?: vscode.Uri;
-  viewManagers: {
-    tree: ViewManager;
-    web: ViewManager;
-  };
 }
 
-export function initializeContext(
-  context: vm.Context,
-  params: MacroContextInitParams,
-): MacroContext {
+export function initializeContext(context: vm.Context, params: MacroContextParams): MacroContext {
   const updatedContext = Object.assign(
     context,
     {

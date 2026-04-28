@@ -19,7 +19,7 @@ export async function createMacroItem(
   item.label = macro.name;
   item.tooltip = formatDisplayUri(macro.uri);
 
-  const executor = context.sandboxManager.getExecutor(macro.uri);
+  const executor = context.executorManager.getExecutor(macro.uri);
   const executionCount = executor?.executionCount ?? 0;
   const code = isUntitledMacro || executionCount ? await macro.getCode() : undefined;
 

@@ -24,7 +24,7 @@ function registerMruSet(context: ExtensionContext): void {
   const contextKey = 'macros:mruSet';
 
   context.disposables.push(
-    context.sandboxManager.onExecutionStart(({ macro: { uri } }) => {
+    context.executorManager.onExecutionStart(({ macro: { uri } }) => {
       context.mruMacro = uri;
       setContext(contextKey, true);
     }),

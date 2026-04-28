@@ -5,7 +5,7 @@ import { Lazy } from '../../utils/lazy';
 import { getExecutionId } from '../execution/executionId';
 import { Runner } from '../execution/runners/runner';
 
-const smsSupport = new Lazy(({ sandboxManager }: ExtensionContext, runner: Runner) =>
+const smsSupport = new Lazy(({ executorManager }: ExtensionContext, runner: Runner) =>
   sms.install({
     environment: 'node',
     retrieveSourceMap: (source: string) => {
@@ -15,7 +15,7 @@ const smsSupport = new Lazy(({ sandboxManager }: ExtensionContext, runner: Runne
       }
 
       const executionId = getExecutionId(`${match.name}.ts`, match.index);
-      const execution = sandboxManager.getExecution(executionId);
+      const execution = executorManager.getExecution(executionId);
       if (!execution) {
         return null;
       }
