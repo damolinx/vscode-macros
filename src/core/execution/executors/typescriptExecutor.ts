@@ -1,11 +1,11 @@
 import { ExtensionContext } from '../../../extensionContext';
 import { Macro } from '../../macro';
 import { ensureSourceMapSupport } from '../../typescript/sourceMap';
-import { SandboxExecutor } from './sandboxExecutor';
+import { Executor } from './executor';
 
-export class TypeScriptSandboxExecutor extends SandboxExecutor {
+export class TypeScriptExecutor extends Executor {
   constructor(context: ExtensionContext, macro: Macro) {
     super(context, macro);
-    ensureSourceMapSupport(context, this.runner);
+    ensureSourceMapSupport(this.context, this.runner);
   }
 }

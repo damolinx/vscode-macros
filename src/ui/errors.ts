@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { SandboxExecutor } from '../core/execution/executors/sandboxExecutor';
+import { Executor } from '../core/execution/executors/executor';
 import { MacroCode } from '../core/macroCode';
 import { TranspilationError } from '../core/typescript/transpilationError';
 import { cleanError } from '../utils/errors';
@@ -7,7 +7,7 @@ import { uriBasename } from '../utils/uri';
 import { showTextDocument } from '../utils/vscodeEx';
 
 export function showMacroErrorMessage(
-  executor: SandboxExecutor,
+  executor: Executor,
   macroCode: MacroCode,
   error: Error | string,
 ): Promise<void> {
@@ -98,7 +98,7 @@ export function showMacroErrorMessage(
 }
 
 async function showErrorMessage(
-  executor: SandboxExecutor,
+  executor: Executor,
   macroCode: MacroCode,
   message: string,
   stack?: string,

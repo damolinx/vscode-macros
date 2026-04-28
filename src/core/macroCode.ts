@@ -1,21 +1,22 @@
 import * as vscode from 'vscode';
-import { getMacroId, MacroId } from './macroId';
+import { getMacroId } from './macroId';
 import { MacroOptions, parseOptions } from './macroOptions';
 import { TranspilationError, transpileOrThrow } from './typescript/transpilation';
 
 export class MacroCode {
   private _options?: MacroOptions;
   public readonly languageId: string;
-  public readonly macroId: MacroId;
   public readonly rawCode: string;
   private runnableCode?: string;
   private transpilationError?: TranspilationError;
   private readonly uri: vscode.Uri;
   public readonly version: number;
 
-  constructor(document: vscode.TextDocument, macroId = getMacroId(document.uri)) {
+  constructor(
+    document: vscode.TextDocument,
+    public readonly macroId = getMacroId(document.uri),
+  ) {
     this.languageId = document.languageId;
-    this.macroId = macroId;
     this.rawCode = document.getText();
     this.uri = document.uri;
     this.version = document.version;

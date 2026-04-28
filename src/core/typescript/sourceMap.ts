@@ -2,10 +2,10 @@ import * as sm from 'source-map';
 import * as sms from 'source-map-support';
 import { ExtensionContext } from '../../extensionContext';
 import { Lazy } from '../../utils/lazy';
-import { SandboxRunner } from '../execution/runners/sandboxRunner';
+import { Runner } from '../execution/runners/runner';
 import { getSandboxExecutionId } from '../execution/sandboxExecutionId';
 
-const smsSupport = new Lazy(({ sandboxManager }: ExtensionContext, runner: SandboxRunner) =>
+const smsSupport = new Lazy(({ sandboxManager }: ExtensionContext, runner: Runner) =>
   sms.install({
     environment: 'node',
     retrieveSourceMap: (source) => {
@@ -30,7 +30,7 @@ const smsSupport = new Lazy(({ sandboxManager }: ExtensionContext, runner: Sandb
   }),
 );
 
-export function ensureSourceMapSupport(context: ExtensionContext, runner: SandboxRunner): void {
+export function ensureSourceMapSupport(context: ExtensionContext, runner: Runner): void {
   smsSupport.initialize(context, runner);
 }
 

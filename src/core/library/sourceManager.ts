@@ -6,12 +6,10 @@ import { ConfigurationSource, Source } from './source';
 
 export abstract class SourceManager implements vscode.Disposable {
   protected readonly _sources: Lazy<readonly Source[]>;
-  protected readonly configKey: string;
   protected readonly disposables: vscode.Disposable[];
 
-  constructor(configKey: string) {
+  constructor(protected readonly configKey: string) {
     this._sources = new Lazy(() => this.loadSources());
-    this.configKey = configKey;
     this.disposables = [];
   }
 

@@ -2,14 +2,14 @@ import * as vscode from 'vscode';
 import { ExtensionContext } from '../../extensionContext';
 import { Macro } from '../macro';
 import { getMacroId, MacroId } from '../macroId';
-import { SandboxExecutor } from './executors/sandboxExecutor';
-import { SandboxExecutorFactory } from './executors/sandboxExecutorFactory';
+import { Executor } from './executors/executor';
+import { ExecutorFactory } from './executors/executorFactory';
 import { SandboxExecution } from './sandboxExecution';
 import { SandboxExecutionId } from './sandboxExecutionId';
 
 export class SandboxManager implements vscode.Disposable {
   private readonly context: ExtensionContext;
-  private readonly executorMap: Map<MacroId, SandboxExecutor>;
+  private readonly executorMap: Map<MacroId, Executor>;
   private readonly onExecutionEndEmitter: vscode.EventEmitter<SandboxExecution>;
   private readonly onExecutionStartEmitter: vscode.EventEmitter<SandboxExecution>;
 
@@ -36,14 +36,14 @@ export class SandboxManager implements vscode.Disposable {
     return executor.cancel();
   }
 
-  public ensureExecutor(macro: Macro): Promise<SandboxExecutor>;
-  public ensureExecutor(uri: vscode.Uri): Promise<SandboxExecutor>;
-  public async ensureExecutor(target: vscode.Uri | Macro): Promise<SandboxExecutor> {
+  public ensureExecutor(macro: Macro): Promise<Executor>;
+  public ensureExecutor(uri: vscode.Uri): Promise<Executor>;
+  public async ensureExecutor(target: vscode.Uri | Macro): Promise<Executor> {
     let macro: Macro | undefined;
     const macroId = target instanceof Macro ? (macro = target).id : getMacroId(target);
     let executor = this.executorMap.get(macroId);
     if (!executor) {
-      executor = await SandboxExecutorFactory.create(
+      executor = await ExecutorFactory.create(
         this.context,
         macro ?? new Macro(target as vscode.Uri, macroId),
       );
@@ -58,7 +58,7 @@ export class SandboxManager implements vscode.Disposable {
     return [...this.executorMap.values()].flatMap((runner) => [...runner.executions]);
   }
 
-  public get executors(): SandboxExecutor[] {
+  public get executors(): Executor[] {
     return Array.from(this.executorMap.values());
   }
 
@@ -78,10 +78,10 @@ export class SandboxManager implements vscode.Disposable {
     return executor?.executionCount ?? 0;
   }
 
-  public getExecutor(macro: Macro): SandboxExecutor | undefined;
-  public getExecutor(macroId: MacroId): SandboxExecutor | undefined;
-  public getExecutor(uri: vscode.Uri): SandboxExecutor | undefined;
-  public getExecutor(target: Macro | MacroId | vscode.Uri): SandboxExecutor | undefined {
+  public getExecutor(macro: Macro): Executor | undefined;
+  public getExecutor(macroId: MacroId): Executor | undefined;
+  public getExecutor(uri: vscode.Uri): Executor | undefined;
+  public getExecutor(target: Macro | MacroId | vscode.Uri): Executor | undefined {
     let macroId: MacroId;
     if (target instanceof Macro) {
       macroId = target.id;
@@ -102,9 +102,9 @@ export class SandboxManager implements vscode.Disposable {
     return this.onExecutionStartEmitter.event;
   }
 
-  public removeExecutor(macro: Macro): SandboxExecutor | undefined;
-  public removeExecutor(uri: vscode.Uri): SandboxExecutor | undefined;
-  public removeExecutor(target: vscode.Uri | Macro): SandboxExecutor | undefined {
+  public removeExecutor(macro: Macro): Executor | undefined;
+  public removeExecutor(uri: vscode.Uri): Executor | undefined;
+  public removeExecutor(target: vscode.Uri | Macro): Executor | undefined {
     const macroId = target instanceof Macro ? target.id : getMacroId(target);
     const executor = this.executorMap.get(macroId);
     if (executor) {

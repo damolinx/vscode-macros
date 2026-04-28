@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { uriBasename } from '../../utils/uri';
-import { getLibraryId, LibraryId } from './libraryId';
+import { getLibraryId } from './libraryId';
 import { LibraryItem, LibraryItemId } from './libraryItem';
 
 export abstract class Library<
@@ -10,21 +10,20 @@ export abstract class Library<
   implements vscode.Disposable
 {
   protected readonly disposables: vscode.Disposable[];
-  public readonly id: LibraryId;
   protected readonly items: Map<TItemId, TItem>;
   public readonly name: string;
   private readonly onDidAddFilesEmitter: vscode.EventEmitter<TItem[]>;
   private readonly onDidChangeFilesEmitter: vscode.EventEmitter<TItem[]>;
   private readonly onDidRemoveFilesEmitter: vscode.EventEmitter<TItem[]>;
   public sorting: number;
-  public readonly uri: vscode.Uri;
 
-  constructor(uri: vscode.Uri, id = getLibraryId(uri)) {
-    this.id = id;
+  constructor(
+    public readonly uri: vscode.Uri,
+    public readonly id = getLibraryId(uri),
+  ) {
     this.items = new Map();
     this.name = uriBasename(uri);
     this.sorting = 100;
-    this.uri = uri;
     this.disposables = [
       (this.onDidAddFilesEmitter = new vscode.EventEmitter()),
       (this.onDidChangeFilesEmitter = new vscode.EventEmitter()),

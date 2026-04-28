@@ -2,8 +2,8 @@ import * as vscode from 'vscode';
 import { ExtensionContext } from '../../../extensionContext';
 import { Macro } from '../../macro';
 import { MacroCode } from '../../macroCode';
-import { SandboxRunner } from '../runners/sandboxRunner';
-import { VmSandboxRunner } from '../runners/vmSandboxRunner';
+import { Runner } from '../runners/runner';
+import { RunnerFactory } from '../runners/runnerFactory';
 import { SandboxExecution } from '../sandboxExecution';
 import { SandboxExecutionId } from '../sandboxExecutionId';
 import { SingletonMacroAlreadyRunningError } from './errors';
@@ -16,12 +16,12 @@ type ExecuteErrorHandler = (
   },
 ) => Promise<void> | void;
 
-export class SandboxExecutor implements vscode.Disposable {
+export class Executor implements vscode.Disposable {
   private readonly executionMap: Map<SandboxExecutionId, SandboxExecution>;
   private index: number;
   private readonly onExecutionEndEmitter: vscode.EventEmitter<SandboxExecution>;
   private readonly onExecutionStartEmitter: vscode.EventEmitter<SandboxExecution>;
-  protected readonly runner: SandboxRunner;
+  protected readonly runner: Runner;
 
   constructor(
     protected readonly context: ExtensionContext,
@@ -31,7 +31,7 @@ export class SandboxExecutor implements vscode.Disposable {
     this.index = 0;
     this.onExecutionEndEmitter = new vscode.EventEmitter();
     this.onExecutionStartEmitter = new vscode.EventEmitter();
-    this.runner = new VmSandboxRunner(this.context);
+    this.runner = RunnerFactory.create(this.context);
   }
 
   dispose() {

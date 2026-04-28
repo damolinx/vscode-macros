@@ -14,29 +14,21 @@ export class SandboxExecution implements vscode.Disposable {
     return new SandboxExecution(context, macro, code, params.index, params.startup);
   }
 
-  private readonly context: ExtensionContext;
   public readonly cts: vscode.CancellationTokenSource;
   public readonly id: SandboxExecutionId;
-  public readonly macro: Macro;
   public readonly macroDisposables: vscode.Disposable[];
-  public readonly snapshot: MacroCode;
-  public readonly startup?: true;
   private ts: number;
 
   private constructor(
-    context: ExtensionContext,
-    macro: Macro,
-    code: MacroCode,
+    private readonly context: ExtensionContext,
+    public readonly macro: Macro,
+    public readonly snapshot: MacroCode,
     index: number,
-    startup?: true,
+    public readonly startup?: true,
   ) {
-    this.context = context;
     this.cts = new vscode.CancellationTokenSource();
     this.id = getSandboxExecutionId(macro.uri.path.split('/').slice(-2).join('/'), index, startup);
-    this.macro = macro;
     this.macroDisposables = [];
-    this.snapshot = code;
-    this.startup = startup;
     this.ts = Date.now();
   }
 

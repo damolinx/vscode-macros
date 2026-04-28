@@ -1,66 +1,77 @@
-import { MacroLogOutputChannel } from '../../../api/macroLogOutputChannel';
-import { ExtensionContext } from '../../../extensionContext';
-import { parentUri, uriBasename } from '../../../utils/uri';
-import { MacroContextInitParams } from '../macroRunContext';
+import * as vm from 'vm';
+import { initializeMacrosApi } from '../../../api/macroApiFactory';
+import { MacroContext } from '../../../api/macroContext';
+import { initializeContext, MacroContextInitParams } from '../macroRunContext';
 import { SandboxExecution } from '../sandboxExecution';
-import { getSandboxExecutionIdToken } from '../sandboxExecutionId';
+import { Runner } from './runner';
 
-export abstract class SandboxRunner<TContext = unknown> {
-  private readonly context: ExtensionContext;
+export class SandboxRunner extends Runner<vm.Context> {
+  private sharedMacroContext?: MacroContext;
 
-  constructor(context: ExtensionContext) {
-    this.context = context;
-  }
+  protected override async executeInternal(
+    execution: SandboxExecution,
+    context: vm.Context,
+  ): Promise<any> {
+    const options: vm.RunningScriptOptions = {
+      filename: this.getExecutionSourceName(execution),
+    };
 
-  public async execute(execution: SandboxExecution): Promise<any> {
-    const contextInitParams = this.getContextInitParams(execution);
-    const context = this.getContext(execution, contextInitParams);
-    const executePromise = this.executeInternal(execution, context);
+    const runPromise = execution.snapshot.options.persistent
+      ? this.executeInternalPersistent(execution, context, options)
+      : vm.runInNewContext(execution.code, context, options);
 
-    const result = await (execution.snapshot.options.retained
-      ? Promise.all([
-          executePromise,
-          new Promise((resolve) => execution.cts.token.onCancellationRequested(resolve)),
-        ])
-      : executePromise);
-
+    const result = await runPromise;
     return result;
   }
 
-  protected abstract executeInternal(execution: SandboxExecution, context: TContext): Promise<any>;
-
-  protected abstract getContext(
+  private async executeInternalPersistent(
     execution: SandboxExecution,
+    context: vm.Context,
+    options: vm.RunningScriptOptions,
+  ): Promise<any> {
+    const initialKeys = Object.keys(context).filter((k) => !k.startsWith('__'));
+    try {
+      const result = await vm.runInContext(execution.code, context, options);
+      return result;
+    } finally {
+      if (this.sharedMacroContext) {
+        const currentKeys = Object.keys(context).filter((k) => !k.startsWith('__'));
+        for (const key of currentKeys) {
+          this.sharedMacroContext[key] = context[key];
+        }
+
+        const removedKeys = [...initialKeys].filter((key) => !currentKeys.includes(key));
+        for (const key of removedKeys) {
+          delete this.sharedMacroContext[key];
+        }
+      }
+    }
+  }
+
+  protected override getContext(
+    { snapshot }: SandboxExecution,
     params: MacroContextInitParams,
-  ): TContext;
+  ): vm.Context {
+    let context: MacroContext;
+    let name = `context-${params.executionId}`;
 
-  protected getContextInitParams(execution: SandboxExecution): MacroContextInitParams {
-    return {
-      context: this.context,
-      disposables: execution.macroDisposables,
-      log: new MacroLogOutputChannel(execution.id as any, this.context),
-      executionId: execution.id as any,
-      startup: execution.startup,
-      token: execution.cts.token,
-      uri: execution.macro.uri,
-      viewManagers: this.context.viewManagers,
-    };
+    if (snapshot.options.persistent) {
+      name += '(shared)';
+      if (this.sharedMacroContext) {
+        initializeMacrosApi(this.sharedMacroContext, params);
+      } else {
+        this.sharedMacroContext = initializeContext({}, params);
+      }
+      context = this.sharedMacroContext;
+    } else {
+      delete this.sharedMacroContext;
+      context = initializeContext({}, params);
+    }
+
+    return vm.createContext(context, { name });
   }
 
-  public getExecutionSourceName({ id, macro: { uri }, snapshot }: SandboxExecution): string {
-    const parentName = uriBasename(parentUri(uri));
-    const filename =
-      snapshot.languageId === 'typescript'
-        ? `[${getSandboxExecutionIdToken(id)}] ${parentName}/${uriBasename(uri, true)}.js`
-        : `${parentName}/${uriBasename(uri)}`;
-    return filename;
+  public override resetSharedContext(): void {
+    this.sharedMacroContext = undefined;
   }
-
-  public matchTypeScriptSourceName(str: string): { name: string; index: string } | undefined {
-    // This should match `getExecutionSourceName` format.
-    const match = str.match(/^\[@(startup|\d+)\]\s(.+?)\.js$/);
-    return match ? { name: match[2], index: match[1] } : undefined;
-  }
-
-  public abstract resetSharedContext(): void;
 }

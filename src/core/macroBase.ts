@@ -8,10 +8,7 @@ export abstract class MacroBase<TId extends string> {
   protected constructor(
     public readonly id: TId,
     public readonly uri: vscode.Uri,
-  ) {
-    this.id = id;
-    this.uri = uri;
-  }
+  ) {}
 
   /**
    * Display name.

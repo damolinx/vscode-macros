@@ -9,13 +9,14 @@ import { getMacroItem } from './macroLibraryItem';
 import { Source } from './source';
 
 export class MacroLibrary extends Library<MacroId> {
-  public readonly configSource?: Source;
   private initialized: boolean;
   private readonly watcher?: vscode.FileSystemWatcher;
 
-  constructor(uri: vscode.Uri, configSource: Source) {
+  constructor(
+    uri: vscode.Uri,
+    public readonly configSource?: Source,
+  ) {
     super(uri);
-    this.configSource = configSource;
     this.initialized = false;
     this.sorting = 0;
 
