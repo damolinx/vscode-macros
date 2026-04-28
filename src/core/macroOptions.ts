@@ -22,13 +22,9 @@ export function parseOptions(code: string): MacroOptions {
     for (const option of optionsText.split(/\s*,\s*/)) {
       switch (option) {
         case 'persistent':
-          options.persistent = true;
-          break;
         case 'retained':
-          options.retained = true;
-          break;
         case 'singleton':
-          options.singleton = true;
+          options[option] = true;
           break;
       }
     }

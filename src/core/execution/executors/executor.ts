@@ -2,25 +2,25 @@ import * as vscode from 'vscode';
 import { ExtensionContext } from '../../../extensionContext';
 import { Macro } from '../../macro';
 import { MacroCode } from '../../macroCode';
+import { Execution } from '../execution';
+import { ExecutionId } from '../executionId';
 import { Runner } from '../runners/runner';
 import { RunnerFactory } from '../runners/runnerFactory';
-import { SandboxExecution } from '../sandboxExecution';
-import { SandboxExecutionId } from '../sandboxExecutionId';
 import { SingletonMacroAlreadyRunningError } from './errors';
 
 type ExecuteErrorHandler = (
   error: Error,
   info: {
-    executionId: SandboxExecutionId;
+    executionId: ExecutionId;
     macroCode: MacroCode;
   },
 ) => Promise<void> | void;
 
 export class Executor implements vscode.Disposable {
-  private readonly executionMap: Map<SandboxExecutionId, SandboxExecution>;
+  private readonly executionMap: Map<ExecutionId, Execution>;
   private index: number;
-  private readonly onExecutionEndEmitter: vscode.EventEmitter<SandboxExecution>;
-  private readonly onExecutionStartEmitter: vscode.EventEmitter<SandboxExecution>;
+  private readonly onExecutionEndEmitter: vscode.EventEmitter<Execution>;
+  private readonly onExecutionStartEmitter: vscode.EventEmitter<Execution>;
   protected readonly runner: Runner;
 
   constructor(
@@ -43,17 +43,10 @@ export class Executor implements vscode.Disposable {
     this.onExecutionStartEmitter.dispose();
   }
 
-  public cancel(id?: SandboxExecutionId): SandboxExecution[] {
-    const canceledDescriptors = id
-      ? this.executionMap.has(id)
-        ? [this.executionMap.get(id)!]
-        : []
-      : this.executions;
-
-    for (const descriptor of canceledDescriptors) {
-      descriptor.cts.cancel();
-    }
-    return canceledDescriptors;
+  public cancelAll(): Execution[] {
+    const executions = this.executions;
+    executions.forEach((execution) => execution.cancel());
+    return executions;
   }
 
   public async execute(
@@ -64,7 +57,7 @@ export class Executor implements vscode.Disposable {
       throw new SingletonMacroAlreadyRunningError(this.macro.id, this.macro.name);
     }
 
-    const execution = await SandboxExecution.create(this.context, this.macro, {
+    const execution = await Execution.create(this.context, this.macro, {
       index: ++this.index,
       ...params,
     });
@@ -85,7 +78,7 @@ export class Executor implements vscode.Disposable {
     }
   }
 
-  protected async invokeExecution(execution: SandboxExecution): Promise<void> {
+  protected async invokeExecution(execution: Execution): Promise<void> {
     this.onExecutionStartEmitter.fire(execution);
     try {
       this.context.log.info('Macro started —', execution.id);
@@ -107,7 +100,7 @@ export class Executor implements vscode.Disposable {
     }
   }
 
-  public get executions(): SandboxExecution[] {
+  public get executions(): Execution[] {
     return Array.from(this.executionMap.values());
   }
 
@@ -115,15 +108,15 @@ export class Executor implements vscode.Disposable {
     return this.executionMap.size;
   }
 
-  public getExecution(id: SandboxExecutionId): SandboxExecution | undefined {
+  public getExecution(id: ExecutionId): Execution | undefined {
     return this.executionMap.get(id);
   }
 
-  public get onExecutionEnd(): vscode.Event<SandboxExecution> {
+  public get onExecutionEnd(): vscode.Event<Execution> {
     return this.onExecutionEndEmitter.event;
   }
 
-  public get onExecutionStart(): vscode.Event<SandboxExecution> {
+  public get onExecutionStart(): vscode.Event<Execution> {
     return this.onExecutionStartEmitter.event;
   }
 

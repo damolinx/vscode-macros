@@ -2,30 +2,30 @@ import * as sm from 'source-map';
 import * as sms from 'source-map-support';
 import { ExtensionContext } from '../../extensionContext';
 import { Lazy } from '../../utils/lazy';
+import { getExecutionId } from '../execution/executionId';
 import { Runner } from '../execution/runners/runner';
-import { getSandboxExecutionId } from '../execution/sandboxExecutionId';
 
 const smsSupport = new Lazy(({ sandboxManager }: ExtensionContext, runner: Runner) =>
   sms.install({
     environment: 'node',
-    retrieveSourceMap: (source) => {
+    retrieveSourceMap: (source: string) => {
       const match = runner.matchTypeScriptSourceName(source);
       if (!match) {
         return null;
       }
 
-      const runId = getSandboxExecutionId(`${match.name}.ts`, match.index);
-      const runDescriptor = sandboxManager.getExecution(runId);
-      if (!runDescriptor) {
+      const executionId = getExecutionId(`${match.name}.ts`, match.index);
+      const execution = sandboxManager.getExecution(executionId);
+      if (!execution) {
         return null;
       }
 
-      const map = extractInlineSourceMap(runDescriptor.code);
+      const map = extractInlineSourceMap(execution.code);
       if (!map) {
         return null;
       }
 
-      return { url: runDescriptor.macro.uri.fsPath, map } as sms.UrlAndMap;
+      return { url: execution.macro.uri.fsPath, map } as sms.UrlAndMap;
     },
   }),
 );
@@ -38,7 +38,7 @@ export function extractInlineSourceMap(code: string): sm.RawSourceMap | undefine
   const regex = /\/\/# sourceMappingURL=data:application\/json;base64,([^\n]+)/;
   const match = code.match(regex);
   if (!match) {
-    return undefined;
+    return;
   }
 
   const base64 = match[1];

@@ -3,14 +3,14 @@ import * as vm from 'vm';
 import { createMacroApi } from '../../api/macroApiFactory';
 import { MacroContext } from '../../api/macroContext';
 import { ExtensionContext } from '../../extensionContext';
-import { SandboxExecutionId } from './sandboxExecutionId';
+import { ExecutionId } from './executionId';
 import { ViewManager } from './views/viewManager';
 
 export interface MacroContextInitParams {
   context: ExtensionContext;
   disposables: vscode.Disposable[];
   log: vscode.LogOutputChannel;
-  executionId: SandboxExecutionId;
+  executionId: ExecutionId;
   startup?: true;
   token: vscode.CancellationToken;
   uri?: vscode.Uri;

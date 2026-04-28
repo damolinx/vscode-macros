@@ -5,8 +5,8 @@ import { inspect, types } from 'util';
 import * as vm from 'vm';
 import { MacroLogOutputChannel } from './api/macroLogOutputChannel';
 import { createMacro } from './commands/createMacro';
+import { getExecutionId } from './core/execution/executionId';
 import { initializeContext, MacroContextInitParams } from './core/execution/macroRunContext';
-import { getSandboxExecutionId } from './core/execution/sandboxExecutionId';
 import { transpileOrThrow, TranspilationError } from './core/typescript/transpilation';
 import { ExtensionContext } from './extensionContext';
 import { showMacroQuickPick } from './ui/dialogs';
@@ -19,7 +19,6 @@ export const PROMPT_TS = '\x1b[96mts\x1b[0m\x1b[90m » \x1b[0m';
 type REPLServerWithHistory = REPLServer & { history?: string[] };
 
 export class MacroPseudoterminal implements vscode.Pseudoterminal {
-  private readonly context: ExtensionContext;
   private readonly cts: vscode.CancellationTokenSource;
   private readonly macroInitParams: MacroContextInitParams;
   private readonly onDidCloseEmitter: vscode.EventEmitter<void>;
@@ -32,21 +31,24 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
   private readonly uri: vscode.Uri;
   private useTs: boolean;
 
-  constructor(context: ExtensionContext, name: string, index: number) {
-    const runId = getSandboxExecutionId(name, index);
+  constructor(
+    private readonly context: ExtensionContext,
+    name: string,
+    index: number,
+  ) {
+    const executionId = getExecutionId(name, index);
 
-    this.context = context;
     this.cts = new vscode.CancellationTokenSource();
     this.onDidCloseEmitter = new vscode.EventEmitter();
     this.onDidWriteEmitter = new vscode.EventEmitter();
-    this.uri = vscode.Uri.from({ scheme: '', path: runId });
+    this.uri = vscode.Uri.from({ scheme: '', path: executionId });
     this.useTs = false;
 
     this.macroInitParams = {
-      disposables: [],
       context: this.context,
-      log: new MacroLogOutputChannel(runId, context),
-      executionId: runId,
+      disposables: [],
+      log: new MacroLogOutputChannel(executionId, context),
+      executionId,
       token: this.cts.token,
       viewManagers: this.context.viewManagers,
     };

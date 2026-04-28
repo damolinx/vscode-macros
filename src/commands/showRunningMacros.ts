@@ -1,9 +1,6 @@
 import * as vscode from 'vscode';
-import { SandboxExecution } from '../core/execution/sandboxExecution';
-import {
-  getSandboxExecutionIdName,
-  getSandboxExecutionIdToken,
-} from '../core/execution/sandboxExecutionId';
+import { Execution } from '../core/execution/execution';
+import { getExecutionIdName, getExecutionIdToken } from '../core/execution/executionId';
 import { ExtensionContext } from '../extensionContext';
 import { createGroupedQuickPickItems } from '../ui/ui';
 import { formatStartTimestampLabel } from '../utils/ui';
@@ -22,9 +19,7 @@ export async function showRunningMacros(context: ExtensionContext): Promise<void
   return new Promise<void>((resolve) => {
     const quickPick = createMacroQuickPick();
     quickPick.onDidAccept(() => {
-      quickPick.selectedItems.forEach(({ execution: descriptor }) =>
-        stopMacro(context, descriptor!),
-      );
+      quickPick.selectedItems.forEach(({ execution }) => stopMacro(context, execution!));
       quickPick.hide();
       resolve();
     });
@@ -42,17 +37,17 @@ export async function showRunningMacros(context: ExtensionContext): Promise<void
     };
     const buttons = [openButton];
     const quickPick = vscode.window.createQuickPick<
-      vscode.QuickPickItem & { execution?: SandboxExecution }
+      vscode.QuickPickItem & { execution?: Execution }
     >();
     quickPick.canSelectMany = true;
     quickPick.items = createGroupedQuickPickItems(executions, {
-      groupBy: (execution) => getSandboxExecutionIdName(execution.id),
+      groupBy: (execution) => getExecutionIdName(execution.id),
       itemBuilder: (execution) =>
         ({
           buttons,
           description: `version: ${execution.snapshot.version}`,
           detail: `started: ${formatStartTimestampLabel(execution.startedOn)}`,
-          label: getSandboxExecutionIdToken(execution.id),
+          label: getExecutionIdToken(execution.id),
           execution,
         }) as vscode.QuickPickItem,
     });

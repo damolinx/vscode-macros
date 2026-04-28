@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
-import { SandboxExecution } from '../core/execution/sandboxExecution';
+import { Execution } from '../core/execution/execution';
 import { createSnapshotUri } from '../providers/macroSnapshotContentProvider';
 import { showTextDocument } from '../utils/vscodeEx';
 
-export async function showRunCode(execution: SandboxExecution): Promise<void> {
+export async function showRunCode(execution: Execution): Promise<void> {
   const macroDocument = await vscode.workspace.openTextDocument(execution.macro.uri);
   if (macroDocument.version === execution.snapshot.version) {
     await showTextDocument(macroDocument.uri);

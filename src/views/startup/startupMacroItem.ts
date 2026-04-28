@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { SandboxExecution } from '../../core/execution/sandboxExecution';
+import { Execution } from '../../core/execution/execution';
 import { StartupMacro } from '../../core/startupMacro';
 import { getMacroUriFromStartupMacroUri } from '../../core/startupMacroId';
 import { getIconFromUri } from '../../ui/icons';
@@ -12,7 +12,7 @@ import {
 
 export function createStartupItem(
   { macroUri, name, uri }: StartupMacro,
-  descriptor?: SandboxExecution,
+  execution?: Execution,
 ): vscode.TreeItem {
   const item = new vscode.TreeItem(uri, vscode.TreeItemCollapsibleState.None);
   item.command = {
@@ -25,9 +25,9 @@ export function createStartupItem(
   item.label = name;
   item.tooltip = formatDisplayUri(getMacroUriFromStartupMacroUri(uri));
 
-  if (descriptor) {
+  if (execution) {
     item.contextValue = 'startupMacro running';
-    item.tooltip += `\nStarted: ${formatStartTimestampLabel(descriptor.startedOn)} • Version: ${descriptor.snapshot.version}`;
+    item.tooltip += `\nStarted: ${formatStartTimestampLabel(execution.startedOn)} • Version: ${execution.snapshot.version}`;
   } else {
     item.contextValue = 'startupMacro';
     item.tooltip += '\nNot running';

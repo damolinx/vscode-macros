@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { SandboxExecution } from '../../core/execution/sandboxExecution';
+import { Execution } from '../../core/execution/execution';
 import { Library } from '../../core/library/library';
 import { LibraryId } from '../../core/library/libraryId';
 import { LibraryItem } from '../../core/library/libraryItem';
@@ -12,7 +12,7 @@ import { createExecutionItem } from './executionItem';
 import { createLibraryItem } from './libraryItem';
 import { createMacroItem } from './macroItem';
 
-export type TreeElement = Library | Macro | SandboxExecution;
+export type TreeElement = Library | Macro | Execution;
 
 interface MonitoredLibraryData {
   disposable: vscode.Disposable;
@@ -139,7 +139,7 @@ export class ExplorerTreeDataProvider extends TreeDataProvider<TreeElement> {
     let parent: TreeElement | undefined;
     if (element instanceof Macro) {
       parent = this.context.libraryManager.libraryFor(element.uri);
-    } else if (element instanceof SandboxExecution) {
+    } else if (element instanceof Execution) {
       parent = element.macro;
     }
     return parent;

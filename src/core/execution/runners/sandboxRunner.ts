@@ -1,15 +1,15 @@
 import * as vm from 'vm';
 import { initializeMacrosApi } from '../../../api/macroApiFactory';
 import { MacroContext } from '../../../api/macroContext';
+import { Execution } from '../execution';
 import { initializeContext, MacroContextInitParams } from '../macroRunContext';
-import { SandboxExecution } from '../sandboxExecution';
 import { Runner } from './runner';
 
 export class SandboxRunner extends Runner<vm.Context> {
   private sharedMacroContext?: MacroContext;
 
   protected override async executeInternal(
-    execution: SandboxExecution,
+    execution: Execution,
     context: vm.Context,
   ): Promise<any> {
     const options: vm.RunningScriptOptions = {
@@ -25,7 +25,7 @@ export class SandboxRunner extends Runner<vm.Context> {
   }
 
   private async executeInternalPersistent(
-    execution: SandboxExecution,
+    execution: Execution,
     context: vm.Context,
     options: vm.RunningScriptOptions,
   ): Promise<any> {
@@ -49,7 +49,7 @@ export class SandboxRunner extends Runner<vm.Context> {
   }
 
   protected override getContext(
-    { snapshot }: SandboxExecution,
+    { snapshot }: Execution,
     params: MacroContextInitParams,
   ): vm.Context {
     let context: MacroContext;

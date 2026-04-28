@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { SandboxExecution } from '../core/execution/sandboxExecution';
-import { SandboxExecutionId } from '../core/execution/sandboxExecutionId';
+import { Execution } from '../core/execution/execution';
+import { ExecutionId } from '../core/execution/executionId';
 import { Macro } from '../core/macro';
 import { StartupMacro } from '../core/startupMacro';
 import { getMacroUriFromStartupMacroUri } from '../core/startupMacroId';
@@ -10,13 +10,13 @@ import { resolveUri } from '../utils/uri';
 
 export async function stopMacro(
   { log, sandboxManager }: ExtensionContext,
-  target: Macro | SandboxExecution | StartupMacro | vscode.Uri,
+  target: Macro | Execution | StartupMacro | vscode.Uri,
 ): Promise<void> {
-  let canceledExecutionIds: SandboxExecutionId[];
+  let canceledExecutionIds: ExecutionId[];
   let logLocator: string;
 
-  if (target instanceof SandboxExecution) {
-    target.cts.cancel();
+  if (target instanceof Execution) {
+    target.cancel();
     canceledExecutionIds = [target.id];
     logLocator = target.id;
   } else {
