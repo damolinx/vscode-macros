@@ -30,6 +30,6 @@ export async function stopMacro(
   if (canceledExecutionIds.length === 0) {
     log.info('No executions to cancel', logLocator);
   } else {
-    log.info('Cancellation requested', ...canceledExecutionIds);
+    log.info('Cancellation requested —', ...canceledExecutionIds);
   }
 }
