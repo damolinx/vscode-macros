@@ -6,7 +6,7 @@ import * as vm from 'vm';
 import { MacroLogOutputChannel } from './api/macroLogOutputChannel';
 import { createMacro } from './commands/createMacro';
 import { getExecutionId } from './core/execution/executionId';
-import { initializeContext, MacroContextInitParams } from './core/execution/macroRunContext';
+import { initializeContext, MacroContextInitParams } from './core/execution/macroContext';
 import { transpileOrThrow, TranspilationError } from './core/typescript/transpilation';
 import { ExtensionContext } from './extensionContext';
 import { showMacroQuickPick } from './ui/dialogs';

@@ -3,7 +3,7 @@ import { ExtensionContext } from '../../../extensionContext';
 import { parentUri, uriBasename } from '../../../utils/uri';
 import { Execution } from '../execution';
 import { getExecutionIdToken } from '../executionId';
-import { MacroContextInitParams } from '../macroRunContext';
+import { MacroContextInitParams } from '../macroContext';
 
 export abstract class Runner<TContext = unknown> {
   constructor(private readonly context: ExtensionContext) {}

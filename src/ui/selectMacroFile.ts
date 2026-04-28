@@ -21,12 +21,11 @@ export async function selectSourceDirectory(
 ): Promise<vscode.Uri | undefined> {
   const libraries = manager.libraries;
   if (libraries.length === 0) {
-    const OptionConfigure = 'Configure';
     const option = await vscode.window.showInformationMessage(
       'No configured source directories',
-      OptionConfigure,
+      'Configure',
     );
-    if (option === OptionConfigure) {
+    if (option === 'Configure') {
       await vscode.commands.executeCommand('macros.sourceDirectories.settings');
       return;
     }

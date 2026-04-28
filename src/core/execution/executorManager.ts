@@ -7,14 +7,12 @@ import { ExecutionId } from './executionId';
 import { Executor } from './executors/executor';
 import { ExecutorFactory } from './executors/executorFactory';
 
-export class SandboxManager implements vscode.Disposable {
-  private readonly context: ExtensionContext;
+export class ExecutorManager implements vscode.Disposable {
   private readonly executorMap: Map<MacroId, Executor>;
   private readonly onExecutionEndEmitter: vscode.EventEmitter<Execution>;
   private readonly onExecutionStartEmitter: vscode.EventEmitter<Execution>;
 
-  constructor(context: ExtensionContext) {
-    this.context = context;
+  constructor(private readonly context: ExtensionContext) {
     this.executorMap = new Map();
     this.onExecutionEndEmitter = new vscode.EventEmitter();
     this.onExecutionStartEmitter = new vscode.EventEmitter();

@@ -9,8 +9,8 @@ import { ViewManager } from './views/viewManager';
 export interface MacroContextInitParams {
   context: ExtensionContext;
   disposables: vscode.Disposable[];
-  log: vscode.LogOutputChannel;
   executionId: ExecutionId;
+  log: vscode.LogOutputChannel;
   startup?: true;
   token: vscode.CancellationToken;
   uri?: vscode.Uri;

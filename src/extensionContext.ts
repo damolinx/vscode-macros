@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { SandboxManager } from './core/execution/sandboxManager';
+import { ExecutorManager } from './core/execution/executorManager';
 import { ViewManager } from './core/execution/views/viewManager';
 import { MacroLibraryManager } from './core/library/macroLibraryManager';
 import { StartupMacroLibrarySourceManager } from './core/library/startupMacroLibrarySourceManager';
@@ -12,7 +12,7 @@ export class ExtensionContext {
   public readonly libraryManager: MacroLibraryManager;
   public readonly log: vscode.LogOutputChannel;
   public mruMacro?: vscode.Uri;
-  public readonly sandboxManager: SandboxManager;
+  public readonly sandboxManager: ExecutorManager;
   public readonly startupManager: StartupMacroLibrarySourceManager;
   public readonly startupTree: StartupTree;
   public readonly viewManagers: Readonly<{ tree: ViewManager; web: ViewManager }>;
@@ -27,7 +27,7 @@ export class ExtensionContext {
     };
 
     this.libraryManager = new MacroLibraryManager(this);
-    this.sandboxManager = new SandboxManager(this);
+    this.sandboxManager = new ExecutorManager(this);
 
     this.explorerTree = new ExplorerTree(this);
     this.startupTree = new StartupTree(this);

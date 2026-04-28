@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
-import { SandboxManager } from './core/execution/sandboxManager';
+import { ExecutorManager } from './core/execution/executorManager';
 import { ExtensionContext } from './extensionContext';
 
 export class MacroStatusBarItem implements vscode.Disposable {
   private readonly disposables: vscode.Disposable[];
   private readonly item: vscode.StatusBarItem;
-  private readonly sandboxManager: SandboxManager;
+  private readonly sandboxManager: ExecutorManager;
 
   constructor({ sandboxManager }: ExtensionContext) {
     this.item = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000);

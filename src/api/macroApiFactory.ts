@@ -1,4 +1,4 @@
-import { MacroContextInitParams } from '../core/execution/macroRunContext';
+import { MacroContextInitParams } from '../core/execution/macroContext';
 import { ViewId } from '../core/execution/views/viewId';
 import { executeCommands } from './executeCommands';
 import { MacroContext } from './macroContext';

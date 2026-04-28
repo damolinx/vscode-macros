@@ -17,8 +17,8 @@ type ExecuteErrorHandler = (
 ) => Promise<void> | void;
 
 export class Executor implements vscode.Disposable {
+  private executionIndex: number;
   private readonly executionMap: Map<ExecutionId, Execution>;
-  private index: number;
   private readonly onExecutionEndEmitter: vscode.EventEmitter<Execution>;
   private readonly onExecutionStartEmitter: vscode.EventEmitter<Execution>;
   protected readonly runner: Runner;
@@ -28,7 +28,7 @@ export class Executor implements vscode.Disposable {
     public readonly macro: Macro,
   ) {
     this.executionMap = new Map();
-    this.index = 0;
+    this.executionIndex = 0;
     this.onExecutionEndEmitter = new vscode.EventEmitter();
     this.onExecutionStartEmitter = new vscode.EventEmitter();
     this.runner = RunnerFactory.create(this.context);
@@ -58,7 +58,7 @@ export class Executor implements vscode.Disposable {
     }
 
     const execution = await Execution.create(this.context, this.macro, {
-      index: ++this.index,
+      index: ++this.executionIndex,
       ...params,
     });
     if (this.executionMap.has(execution.id)) {

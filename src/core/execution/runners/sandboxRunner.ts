@@ -2,7 +2,7 @@ import * as vm from 'vm';
 import { initializeMacrosApi } from '../../../api/macroApiFactory';
 import { MacroContext } from '../../../api/macroContext';
 import { Execution } from '../execution';
-import { initializeContext, MacroContextInitParams } from '../macroRunContext';
+import { initializeContext, MacroContextInitParams } from '../macroContext';
 import { Runner } from './runner';
 
 export class SandboxRunner extends Runner<vm.Context> {
