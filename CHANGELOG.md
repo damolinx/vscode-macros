@@ -2,6 +2,7 @@
 
 ## 0.7.12
 - Externalize `typescript` dependency to reduce main `extension.js` from 1.1MB to 133KB.
+- Fix: TypeScript code unexpectedly returns `use strict` instead of `undefined` after move to TypeScript 6.
 
 ## 0.7.11
 - Update **Cancellation** template and related documentation.

@@ -21,13 +21,15 @@ export function transpile(input: string, uri?: vscode.Uri): TranspileResult {
     reportDiagnostics: true,
   });
 
-  return diagnostics?.length ? { diagnostics } : { code: stripModuleDefine(outputText) };
+  return diagnostics?.length ? { diagnostics } : { code: stripTranspilerPrologue(outputText) };
 
-  function stripModuleDefine(outputText: string): string {
-    return outputText.replace(
-      /Object\.defineProperty\s*\(\s*exports\s*,\s*"__esModule"\s*,\s*{\s*value:\s*true\s*}\s*\);?/g,
-      '',
-    );
+  function stripTranspilerPrologue(outputText: string): string {
+    return outputText
+      .replace(/^"use strict";\s*/, '')
+      .replace(
+        /Object\.defineProperty\s*\(\s*exports\s*,\s*"__esModule"\s*,\s*{\s*value:\s*true\s*}\s*\);?/g,
+        '',
+      );
   }
 }
 
