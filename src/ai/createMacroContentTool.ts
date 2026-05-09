@@ -10,11 +10,7 @@ export function registerCreateMacroContentTool(context: ExtensionContext): void 
 }
 
 export class CreateMacroContentTool implements vscode.LanguageModelTool<CreateMacroContentArgs> {
-  private readonly context: ExtensionContext;
-
-  constructor(context: ExtensionContext) {
-    this.context = context;
-  }
+  constructor(private readonly context: ExtensionContext) {}
 
   public async invoke(
     options: vscode.LanguageModelToolInvocationOptions<CreateMacroContentArgs>,

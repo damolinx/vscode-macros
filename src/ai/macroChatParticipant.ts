@@ -17,11 +17,7 @@ export function registerMacroChatParticipant(context: ExtensionContext): void {
 }
 
 export class MacroChatParticipant {
-  private readonly context: ExtensionContext;
-
-  constructor(context: ExtensionContext) {
-    this.context = context;
-  }
+  constructor(private readonly context: ExtensionContext) {}
 
   private async getMessages(
     { prompt }: vscode.ChatRequest,
