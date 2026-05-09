@@ -780,8 +780,8 @@
     "watch": "npm run ts:watch"
   },
   "dependencies": {
-    "source-map-support": "^0.5.21",
-    "typescript": "^6.0.3"
+    "source-map-support": "^0.5",
+    "typescript": "^6"
   },
   "devDependencies": {
     "@eslint/js": "^9",

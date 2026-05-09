@@ -10,12 +10,13 @@ async function main() {
 
   await esbuild.build({
     entryPoints: ['./src/extension.ts'],
-    external: ['vscode'],
+    external: ['vscode', 'typescript'],
     outfile: './out/extension.js',
     platform: 'node',
 
     bundle: true,
     minify: production,
+    keepNames: true,
     sourcemap: !production,
     sourcesContent: false,
   });
