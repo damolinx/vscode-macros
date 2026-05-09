@@ -1,8 +1,8 @@
 {
   "name": "damolinx-macros",
   "displayName": "Macros for VS Code",
-  "description": "Automate tasks and prototype extension features with JS/TS macros — written manually or generated through the extension's AI integration",
-  "version": "0.7.11",
+  "description": "Build and run JS/TS macros to automate tasks and prototype extension features — user‑written or AI‑generated.",
+  "version": "0.7.12",
   "publisher": "damolinx",
   "icon": "resources/images/icon.png",
   "repository": {

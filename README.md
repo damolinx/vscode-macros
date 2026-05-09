@@ -1,8 +1,10 @@
 # Macros for VS Code
 
-A **macro** is a JavaScript or TypeScript script executed within the context of an extension, with full access to [VS Code extensibility APIs](https://code.visualstudio.com/api/references/vscode-api). Macros let you automate tasks, customize your development workflow, and prototype extension behavior, all without the overhead of building and maintaining a full extension.
+A **macro** is a JavaScript or TypeScript script executed within the context of an extension, with full access to [VS Code extensibility APIs](https://code.visualstudio.com/api/references/vscode-api). 
 
-Macros run inside Node.js [VM sandboxes](https://nodejs.org/api/vm.html#class-vmscript), giving each macro its own isolated data context. This design comes with one practical limitation: macros cannot be forcefully terminated. Instead, they must support cancellation-token semantics, and by extension, use asynchronous workloads, to enable cooperative multitasking.
+Macros let you automate tasks, customize your environment, and prototype extension features, all without the overhead of building and maintaining a full extension. You can also experiment interactively using the [Macro REPL](#macro-repl), a full JS/TS REPL that runs in the same sandboxed environment as your macros.
+
+Macros run inside Node.js [VM sandboxes](https://nodejs.org/api/vm.html#class-vmscript), giving each macro its own isolated data context. The design comes with one limitation: macros cannot be forcefully terminated. Instead, they must support cancellation-token semantics, and by extension, use asynchronous workloads to enable cooperative multitasking.
 
 <p align=center>
   <img width="800" alt="VS Code with Macro Explorer and Startup Macros views, as well as a macro editor open" src="https://github.com/user-attachments/assets/f075d80b-a21f-4201-b7c7-1ce3b2bf7707" />
@@ -267,7 +269,7 @@ The **Macros: Show Startup Macros** command can be used to bring it into view.
 
 ## Macro REPL
 
-The REPL is one of the more powerful out-of-box tools offered by the extension. It lets you evaluate JavaScript or TypeScript code interactively, in a context set up just like any macro, without resorting to disconnected experiences like the **Developer Tools** console.
+The REPL is one of the more powerful tools offered by the extension. It lets you evaluate JavaScript or TypeScript code interactively, in a context set up just like any macro, without resorting to disconnected experiences like the **Developer Tools** console.
 
 * **Debug**: Easily inspect the current context, evaluate any statement, or `.load` any macro into context.
 
