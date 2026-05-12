@@ -113,7 +113,7 @@
         "command": "macros.debug.activeEditor",
         "title": "Debug Active Editor as Macro",
         "category": "Macros",
-        "enablement": "!inDebugMode && !macros:inDebugMode && resourceScheme == file && macros:supportedFeatureExt",
+        "enablement": "!inDebugMode && !macros:inDebugMode && resourceScheme != untitled && macros:supportedFeatureExt",
         "icon": "$(debug-alt)"
       },
       {
@@ -216,7 +216,7 @@
         "command": "macros.run.activeEditor",
         "title": "Run Active File as Macro",
         "category": "Macros",
-        "enablement": "macros:supportedEditorLangId && (resourceScheme == untitled || macros:supportedEditorLangId)",
+        "enablement": "macros:supportedEditorLangId && (resourceScheme == untitled || macros:supportedFeatureExt)",
         "icon": "$(run-all)"
       },
       {
