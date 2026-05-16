@@ -20,6 +20,7 @@ import { refreshExplorer } from './commands/refreshExplorer';
 import { removeStartupMacro } from './commands/removeStartupMacro';
 import { renameMacro } from './commands/renameMacro';
 import { resetSharedContext } from './commands/resetContext';
+import { restartMacro } from './commands/restartMacro';
 import { revealInOS } from './commands/revealInOS';
 import { revealRelatedMacroInTree } from './commands/revealRelatedMacroInTree';
 import { runActiveEditor, runMacro } from './commands/runMacro';
@@ -108,11 +109,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.paste.file', (locator: UriLocator) => pasteFile(context, locator)),
     cr('macros.rename.macro', (locator?: UriLocator) => renameMacro(context, locator)),
     cr('macros.resetContext', (locator: UriLocator) => resetSharedContext(context, locator)),
-    cr('macros.restart', (locator: Macro | StartupMacro) =>
-      stopMacro(context, locator).then(() =>
-        runMacro(context, locator, { ignoreDiagnosticErrors: true }),
-      ),
-    ),
+    cr('macros.restart', (locator: Macro | StartupMacro) => restartMacro(context, locator)),
     cr('macros.revealInExplorer', (locator?: UriLocator) => revealInOS(context, locator)),
     cr('macros.revealInFinder', (locator?: UriLocator) => revealInOS(context, locator)),
     cr('macros.revealInFiles', (locator?: UriLocator) => revealInOS(context, locator)),

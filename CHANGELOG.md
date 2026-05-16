@@ -1,7 +1,8 @@
 # Changelog
 
 ## 0.7.13
-- Fix: `Debug Actve Editor as Macro` command enablement is incorrect.
+- Fix: **Restart Macro** stops but does not start macro.
+- Fix: **Debug Actve Editor as Macro** command enablement is incorrect.
 
 ## 0.7.12
 - Externalize `typescript` dependency to reduce `extension.js` from 1.1MB to 133KB.
