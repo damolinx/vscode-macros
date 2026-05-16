@@ -75,12 +75,8 @@ export class Root extends BaseElementNode<RootOptions> {
     }
 
     if (!this.#metaExpanded) {
-      if (this.enableErrorRelay) {
-        this.children.unshift(new ErrorRelayMeta());
-      }
-      if (this.enableLogRelay) {
-        this.children.unshift(new LogRelayMeta());
-      }
+      this.children.unshift(new ErrorRelayMeta(this.enableErrorRelay));
+      this.children.unshift(new LogRelayMeta(this.enableLogRelay));
       if (this.options?.progress) {
         this.children.unshift(new ProgressMeta());
       }
@@ -141,16 +137,13 @@ export class Root extends BaseElementNode<RootOptions> {
         '  if (!handler) { return; }',
       );
 
-      if (this.enableErrorRelay) {
-        scriptLines.push(
-          '  try {',
-          '    const result = handler(detail);',
-          '    result?.catch?.((err) => { macro.error(err); console.error(err); });',
-          '  } catch(err) { macro.error(err); console.error(err); }',
-        );
-      } else {
-        scriptLines.push('  handler(detail);');
-      }
+      scriptLines.push(
+        '  try {',
+        '    const result = handler(detail);',
+        '    result?.catch?.((err) => macro.error(err));',
+        '  } catch(err) { macro.error(err); }',
+      );
+
       scriptLines.push('});');
       scriptLines.push(
         ...eventHandlers

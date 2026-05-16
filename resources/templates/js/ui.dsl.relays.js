@@ -17,9 +17,13 @@ function createHtml() {
           const input = /** @type {HTMLElement & { value: string } | null} */ (
             document.getElementById('errorMessage')
           );
-          const message = input?.value;
-          macro.error(message || 'Did you forget to type an error message?');
-          macro.log.info('Error message:', message);
+          const message = input?.value?.trim();
+          macro.error(message);
+          if (message) {
+            macro.log.info(`Error message: ${message}`);
+          } else {
+            macro.log.warn('No error message');
+          }
         }),
       ),
     )
@@ -37,10 +41,13 @@ function createWebviewViewProvider() {
       webviewView.webview.onDidReceiveMessage((message) => {
         switch (message.type) {
           case 'macro:error':
-            vscode.window.showErrorMessage(message.error?.message || 'Missing error message', {
-              modal: true,
-              detail: 'This a message posted on error from the WebView!',
-            });
+            vscode.window.showErrorMessage(
+              message.error?.message || 'Did you forget to type an error message?',
+              {
+                modal: true,
+                detail: 'This a message posted on error from the WebView!',
+              },
+            );
             break;
           case 'macro:log':
             macros.log.show();

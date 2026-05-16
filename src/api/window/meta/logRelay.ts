@@ -7,20 +7,18 @@ export class LogRelayMeta implements MetaNode {
   public readonly kind = 'logRelay';
   public readonly role = 'meta';
 
+  constructor(public readonly enabled: boolean = false) { }
+
   expand(): Node[] {
-    return [new Script(LogRelayScript, false)];
+    return [new Script(this.enabled ? LogRelayScript : LogConsoleScript, false)];
   }
 }
 
 export const LogRelayScript = `
       macro.log = (function() {
-        const sendLog = (level, message, data) => {
-          vscode.postMessage({
-            type: 'macro:log',
-            level,
-            message: String(message),
-            data,
-          });
+        const sendLog = (level, msg, data) => {
+          console[level]?.(msg, data);
+          vscode.postMessage({ type: 'macro:log', level, message: String(msg), data });
         };
         return {
           error: (msg, data) => sendLog("error", msg, data),
@@ -30,3 +28,6 @@ export const LogRelayScript = `
           trace: (msg, data) => sendLog("trace", msg, data),
         };
       })();` as CodeStr;
+
+export const LogConsoleScript = `
+      macro.log = console;` as CodeStr;

@@ -621,24 +621,9 @@ The use case for the DSL is the same as for the macros: quickly generate a tool 
 - `macros.window.ui.root([options,] ...children)`: creates the top-level container. Calling `.toHtml()` on the root returns the final HTML string.
 
   Options:
-    - `errorRelay?: false`: relays errors in the WebView as a `macro:error`-type message. This is **enabled** by default
-
-      This gives your WebView's scripts access to:
-      - `macro.error(err)`: explicitly sends an error to the macro running the extension host. The message contains following properties:
-         - `message`: error
-         - `stack`: error stack
-
-      The relay automatically forwards:
-      - uncaught exceptions (`window.onerror`)
-      - unhandled promise rejections (`window.onunhandledrejection`)
-
-    - `logRelay?: true`: relays logs from the WebView as a `macro:log`-type message. This is **disabled** by default.
-      This gives your WebView's scripts access to:
-      - `macro.log.{debug|error|info|trace|warn}(message, data)`: sends a log message to the macro running the extension host. The message contains following properties:
-         - `level`: log level
-         - `message`: log message
-         - `data`: additional data
-
+    - `errorRelay?: false`: enables the relay of errors written using the `macro.error(err)` method from the WebView to the macro running in the extension host using a `macro:error`-type message. This is **enabled** by default.
+      - This is wired to automatically capture uncaught exceptions (`window.onerror`) and unhandled promise rejections (`window.onunhandledrejection`).
+    - `logRelay?: true`: enables the relay of logs written using the `macro.log.{debug|error|info|trace|warn}(message, data)` methods from the WebView to the macro running in the extension host using a `macro:log`-type message. This is **disabled** by default.
     - `progress?: true`: adds an indeterminate progress bar to the UI (hidden by default). This gives your WebView's scripts access to:
       - `macro.progress.show()`:  shows the progress bar
       - `macro.progress.hide()`: hides the progress bar
@@ -721,10 +706,23 @@ The UI DSL initializes the VSCode API by default to support message passing usin
 
 A `macro.window.ui`-created Webview, receives the following custom APIs:
 
-- `macro.error(error)`: posts a `macro:error` message back to your macro
+- `macro.error(error)`: posts a `macro:error` message back to your macro. 
+  - All errors are written to `console` and are visible from the **Developer Tools** window.
+  - This API is always available, and it is recommended to use over `console.error` as `macros.window.ui.errorRelay` can be used to easily relay error messages when needed.
+  - The message sent contains the following properties:
+      - `message`: error message
+      - `stack`: error stack
+
 - `macro.log.[error|info|trace|warn](message)`: posts a `macro:log` message back to your macro, which can properly log using the `macros.window.handleLogMessage` utility.
+  - All logs are written to `console` and visible from the **Developer Tools** window.
+  - This API is always available, and it is recommended to use over `console.[error|info|trace|warn]` as `macros.window.ui.logRelay` can be used to easily relay log messages when needed.
+  - The message contains following properties:
+    - `level`: log level
+    - `message`: log message
+    - `data`: additional data
+
 - `macro.progress`: available when the root document is created with `root({ progress: true }, [...])`.
-  - `macro.progress.show()`: shows the progress bar
+  - `macro.progress.show()`: shows an indeterminate progress bar 
   - `macro.progress.hide()`: hides the progress bar
 
 #### Debugging Webview scripts
