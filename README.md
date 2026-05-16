@@ -713,7 +713,7 @@ A `macro.window.ui`-created Webview, receives the following custom APIs:
       - `message`: error message
       - `stack`: error stack
 
-- `macro.log.[error|info|trace|warn](message)`: posts a `macro:log` message back to your macro, which can properly log using the `macros.window.handleLogMessage` utility.
+- `macro.log.[error|info|trace|warn](message)`: posts a `macro:log` message back to your macro, which can then easily be logged to the **Macros** [log](#logs) using the `macros.window.handleLogMessage(message)` utility.
   - All logs are written to `console` and visible from the **Developer Tools** window.
   - This API is always available, and it is recommended to use over `console.[error|info|trace|warn]` as `macros.window.ui.logRelay` can be used to easily relay log messages when needed.
   - The message contains following properties:
