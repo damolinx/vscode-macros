@@ -681,6 +681,7 @@ The use case for the DSL is the same as for the macros: quickly generate a tool 
   - `description?: string`: inline description
   - `expanded?: true`: node starts in expanded state, if it is a parent
   - `id?: string`: node id
+  - `activatable?: false`: when set to `false`, this node will not fire an activation event when selected.
   - `removable?: false`: when set to `false`, this node will not show a remove button even if the tree options include `remove: true`
   - `selectable?: false`: when set to `false`, this node cannot be selected or activated, and is skipped by keyboard navigation
 

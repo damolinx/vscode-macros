@@ -1,6 +1,9 @@
 # Changelog
 
 ## 0.7.13
+- UI DSL:
+  - `macros.window.ui.tree`:
+    - Nodes gain `activatable` option to disable activation events on selection.
 - Fix: **Restart Macro** stops but does not start macro.
 - Fix: **Debug Actve Editor as Macro** command enablement is incorrect.
 

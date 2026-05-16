@@ -11,6 +11,7 @@ class MacroTree extends HTMLElement {
    * @property {boolean} [expanded]
    * @property {string} [id]
    * @property {string} label
+   * @property {boolean} [activatable]
    * @property {boolean} [removable]
    * @property {boolean} [selectable]
    */
@@ -382,7 +383,7 @@ class MacroTree extends HTMLElement {
           this.expandedNodes.add(selectedNode);
         }
       } else {
-        this.selectNode(selectedNode, true);
+        this.selectNode(selectedNode, selectedNode.activatable !== false);
       }
 
       this.#update();
@@ -545,7 +546,7 @@ class MacroTree extends HTMLElement {
     this.selectedNode = node;
     this.#update();
 
-    const eventName = activate ? 'activate' : 'select';
+    const eventName = activate && node.activatable !== false ? 'activate' : 'select';
     const handlerName = this.getAttribute(`data-on-${eventName}`);
     if (!handlerName) {
       return true;
@@ -688,7 +689,7 @@ class MacroTree extends HTMLElement {
             this.expandedNodes.add(node);
           }
         }
-        this.selectNode(node, true);
+        this.selectNode(node, node.activatable !== false);
       });
 
       row.addEventListener('mousedown', () => {

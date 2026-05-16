@@ -267,6 +267,7 @@ export declare namespace macros.ui {
     readonly expanded?: true;
     readonly id?: string;
     readonly label: string;
+    readonly activatable?: false;
     readonly removable?: false;
     readonly selectable?: false;
   }
