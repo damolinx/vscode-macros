@@ -21,10 +21,10 @@
 ## 0.7.9
 - **Macro Explorer** reveals the active item when the editor changes, respects `explorer.autoReveal`.
 - New AI prompts:
-  - Prompts rewritten and verified using Copilot — the @macros agent should behave more accurately.
+  - Prompts rewritten and verified using Copilot so @macros agent behaves more accurately.
   - Updated to the latest UI DSL API.
   - Extracted into standalone resources to simplify local overrides and future expansion.
-  - **Create Cursor Rules** command does not require a workspace to be enabled
+  - **Create Cursor Rules** command does not require a workspace to be enabled.
 - Templates:
   - New **Find References** template demonstrates a full-featured UI DSL sidebar.
   - New **CSV Viewer** template, demonstrating partial UI-DSL usage with an unsupported control rendered via DOM, fully generated using the updated AI prompt to validate correctness.
@@ -115,7 +115,7 @@
 - Re‑publish 0.6.4 with updated NPM dependencies after a VS Code Marketplace-side publishing failure (the service offers no retry).
 
 ## 0.6.4
-- Upgrade minimum VS Code version to 1.105 (Cursor upgraded extensibility compat back in November 2025).
+- Upgrade minimum VS Code version to 1.105 (Cursor upgraded extensibility compat. back in November 2025).
 
 ## 0.6.3
 - CommandId completion provider improvements:
@@ -295,7 +295,7 @@
 - Fix: Missed `replace` to `replaceAll` conversation when removing regex.
 
 ## 0.5.2
-- Tokenized library paths are now cross-platform—e.g. `${userHome}/macros` resolves correctly on both Windows and Linux when using WSL.
+- Tokenized library paths are now cross-platform, e.g. `${userHome}/macros` resolves correctly on both Windows and Linux when using WSL.
 - **Macro Explorer** view:
   - Add **Refresh Macro Explorer** action to workaround so edge cases on FS events.
   - Macro nodes support **Rename…** action.
@@ -303,10 +303,10 @@
   - Run nodes support **View** action.
 - REPL:
   - New terminal icon.
-  - New evaluation logic matches macro "top-level" evaluation
+  - New evaluation logic matches macro "top-level" evaluation:
     - Promises are evaluated directly; top-level `await` is redundant and unsupported.
     - Fix: Avoids cases leading to  REPL freezing.
-  - `.ts` / `.js` enable TypeScript / JavaScript evaluation.
+  - `.ts` / `.js` enable TypeScript / JavaScript evaluation:
     - `.tsv` is deprecated.
   - Improved error reporting and handling.
 
@@ -332,7 +332,7 @@
   - Icon theming consistent with `vs-seti`.
   - Improve descriptions for libraries located in the user directory in Windows.
 - **Source Directories Verification** setting:
-  - Changes apply immediately—no restart needed anymore.
+  - Changes apply immediately, no restart needed.
   - Verification now occurs once per file or library on editor change (previously triggered on every `TextDocument` save, which was unnecessarily noisy).
   - Accessible via context menus for libraries.
 - Error reporting omits internal stack frames and noisy messages for cleaner diagnostics.
