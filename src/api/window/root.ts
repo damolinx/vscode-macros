@@ -145,10 +145,8 @@ export class Root extends BaseElementNode<RootOptions> {
         scriptLines.push(
           '  try {',
           '    const result = handler(detail);',
-          '    result?.catch?.((err) => macro.error(err));',
-          '  } catch(err) {',
-          '    macro.error(err);',
-          '  }',
+          '    result?.catch?.((err) => { macro.error(err); console.error(err); });',
+          '  } catch(err) { macro.error(err); console.error(err); }',
         );
       } else {
         scriptLines.push('  handler(detail);');

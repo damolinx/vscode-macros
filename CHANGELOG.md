@@ -4,6 +4,7 @@
 - UI DSL:
   - `macros.window.ui.tree`:
     - Nodes gain `activatable` option to disable activation events on selection.
+  - Log errors to console even when error relay is setup.
 - Fix: **Restart Macro** stops but does not start macro.
 - Fix: **Debug Actve Editor as Macro** command enablement is incorrect.
 
