@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.7.14
+- Upgrade minimum VS Code version to 1.125.
+
 ## 0.7.13
 - UI DSL:
   - `macros.window.ui.tree`:

@@ -2,7 +2,7 @@
   "name": "damolinx-macros",
   "displayName": "Macros for VS Code",
   "description": "Build and run JS/TS macros to automate tasks and prototype extension features — user‑written or AI‑generated.",
-  "version": "0.7.13",
+  "version": "0.7.14",
   "publisher": "damolinx",
   "icon": "resources/images/icon.png",
   "repository": {
@@ -13,7 +13,7 @@
     "url": "https://github.com/damolinx/vscode-macros/issues"
   },
   "engines": {
-    "vscode": "^1.105.0"
+    "vscode": "^1.125.0"
   },
   "categories": [
     "Other"
@@ -789,7 +789,7 @@
     "@types/mocha": "^10",
     "@types/node": "^22",
     "@types/source-map-support": "^0.5",
-    "@types/vscode": "~1.105.0",
+    "@types/vscode": "~1.125.0",
     "@typescript-eslint/eslint-plugin": "^8",
     "@typescript-eslint/parser": "^8",
     "@vscode/test-electron": "^2.5",
