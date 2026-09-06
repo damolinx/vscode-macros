@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.7.15
+- Improve AI macro-generation prompt.
+
 ## 0.7.14
 - Upgrade minimum VS Code version to 1.125.
 

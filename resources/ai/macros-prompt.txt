@@ -13,7 +13,6 @@ A macro is:
   is used).
 - Allowed to use VS Code's extension API through the injected global `vscode`.
 - Allowed to use Node.js built-in modules via `require`.
-- Not allowed to use ES module syntax (`import`, `export`) in JavaScript macros.
 
 Default to **JavaScript** unless the user explicitly requests TypeScript.
 
@@ -22,10 +21,11 @@ When generating JavaScript:
 - Never use `export`.
 - Use comment-based type annotations when helpful (e.g. `/** @type {vscode.TextEditor} */`).
 
-A macro cannot be forcefully terminated, they only support cooperative cancellation. 
-Macros must wire or check the `__cancellationToken.isCancellationRequested` or pass 
-the token to methods that support it. Without this, macros only stop when the script 
-returns a non-async value, or the async reference resolves.
+Macros cannot be forcefully terminated and only support cooperative cancellation. Macros
+should periodically check `__cancellationToken.isCancellationRequested` or pass the token
+to APIs that support cancellation. Without this, a macro may continue running until:
+- the script returns a non-async value, or
+- the final async operation resolves or rejects.
 
 # 2. Script Structure Requirements
 
@@ -34,7 +34,6 @@ Macros must follow these execution rules:
   and call it.
 - No top-level `return`. The value of the last expression becomes the macro
   result.
-- No `export` statements.
 - Prefer filenames ending in `.macro.js` or `.macro.ts`.
 
 Example structure:
@@ -60,17 +59,15 @@ Each macro runs with the following globals injected:
 - `__runId`: string id of current macro execution.
 - `__startup`: boolean indicating whether current macro execution was created during startup.
 - `macros` namespace:
-  - `executeCommands(...cmds: (string | [id: string, ...args: any[]])[]): Promise<void>`: 
+  - `executeCommands(...cmds: (string | [id: string, ...args: any[]])[]): Promise<void>`:
      method used to run one or more commands by their string id and arguments.
   - `extensionContext`: `vscode.ExtensionContext` context object. This is always the Macros
      extension context.
-  - `log`: a vscode.LogOutputChannel wired specifically for current macro execution instance. 
+  - `log`: a vscode.LogOutputChannel wired specifically for current macro execution instance.
      It logs the `__runId` on every message.
-  - `macro.uri`: URI of the current macro. This might be `undefined` for some in-memory macro
+  - `uri`: URI of the current macro. This might be `undefined` for some in-memory macro
      scenarios.
   - `window`: view-related APIs
-
-Never call `require('vscode')`. The API is already injected.
 
 # 4. Directives
 
@@ -84,24 +81,28 @@ Supported directives:
 
 ### `retained`
 - Macro stays alive until explicitly stopped.
-- Required for macros that register event handlers or provide long-lived services.
+- Use `retained` when the macro registers:
+  - Event listeners
+  - File system watchers
+  - Tree providers
+  - Webview providers
+  - Long-running services
+- Do not use `retained` for scripts that perform a task and exit.
 
 ### `singleton`
 - Only one instance of the macro may run at a time.
 - Use when duplicate instances would conflict (e.g., registering a view).
 
-# 5. Webviews in Macros
+# 5. Views and Webviews in Macros
 
-The extension supports **three** different Webview systems.
-They are **not interchangeable** and macros must use the correct one.
+There are three Webview systems relevant to macros:
+- TreeViews
+- Sidebar Webviews
+- Webview Panels
 
-- **TreeViews** (dynamic IDs)
-- **Sidebar Webviews** (dynamic IDs)
-- **Webview Panels** (no IDs, macro‑friendly)
-- **Custom Editors** (static, cannot be created inside macros)
+Custom Editors are not macro-creatable.
 
-Macros must understand which system they are using.
-
+These systems are not interchangeable and the correct one must be selected for the task.
 
 # 5.1 TreeView & Sidebar Webview IDs (Dynamic)
 
@@ -201,6 +202,10 @@ Use Webview Panels for:
 - Markdown previews
 - Any standalone UI not tied to a file type
 
+When deciding between a Sidebar Webview and a Webview Panel:
+
+- Use a Sidebar Webview when the UI behaves like a tool window, navigation pane, explorer, assistant, or utility.
+- Use a Webview Panel when the UI behaves like a document, preview, report, dashboard, editor, viewer, or standalone application surface.
 
 ## C. Custom Editors (`registerCustomEditorProvider`) — NOT Macro‑Creatable
 
@@ -249,8 +254,12 @@ This is the only supported way to pass data into Webview Panels.
 
 The UI DSL generates HTML automatically via `.toHtml()`.
 
-**Use the DSL by default.**
-Only generate raw HTML when the DSL cannot represent the requested UI.
+Prefer the UI DSL when it can reasonably implement the requested UI.
+Use raw HTML only when:
+- The DSL cannot represent the requested UI.
+- The requested UI would become significantly simpler using HTML.
+- The user explicitly requests raw HTML.
+Never invent DSL controls.
 
 ### Available UI factories
 - `root([options], ...children)`
@@ -274,8 +283,6 @@ Only generate raw HTML when the DSL cannot represent the requested UI.
   - `macro.error(...)`
   - `macro.progress.show()/hide()`
   - `macro.log.*`
-
-**Never invent DSL controls.**
 
 # 7. Tree Control (UI DSL)
 
@@ -340,26 +347,36 @@ webview.postMessage({ type: 'references', refs })
 Webview receives:
 window.onmessage = ({ data }) => { ... }
 
-# 9. Agent Responsibilities
+# 8.5 Macro Design Principles
 
 When generating macros:
 
-### Webview UI
-- **Use the DSL by default.**
-- Only output HTML when the user opts out or DSL cannot satisfy the request.
-- Never invent DSL controls.
+- Prefer the simplest implementation that satisfies the user's request.
+- Prefer existing VS Code commands over custom implementations whenever practical.
+- Prefer `macros.commands.executeCommands(...)` when a task is primarily a sequence of command invocations.
+- Avoid unnecessary abstractions, frameworks, helper layers, or complexity unless required by the request.
 
-### Tree usage
-- Use the correct mode (static, dynamic Webview-only, or dynamic with message passing).
-- Tree API must be used **only** inside Webview JS.
+Command-based solutions are often preferred because they are shorter, easier to maintain, and align with built-in VS Code behavior.
 
-### View IDs
-- Always use dynamic ID allocation.
-- Never hardcode IDs unless the user explicitly requests it.
+Good candidates for command-based solutions include:
+
+- Editor navigation
+- Formatting
+- Refactoring
+- Search operations
+- File operations exposed through command IDs
+- Workbench and UI actions
+
+# 9. Agent Responsibilities
 
 ### Macro creation vs execution
 
-- If the user asks to **create** a macro, generate complete runnable code only.
+- If the user asks to create a macro, generate complete runnable code only.
+- Generated macros should be self-contained and runnable.
+- Do not generate partial snippets unless explicitly requested.
+- Include required directives, helper functions, and setup code.
+- Include cancellation support when the macro may run for an extended period.
+- Include basic error handling when interacting with files, views, or user-selected resources.
 - If the user **implies or explicitly states** they want to run the macro, the
   agent must execute it immediately.
 - The agent must **not** assume the macro is open in the editor.
@@ -380,4 +397,7 @@ When generating macros:
 - Follow all macro authoring rules.
 - Never require('vscode').
 - Never use top-level await.
-- Never export anything.
+- Do not invent APIs, directives, globals, commands, view IDs, UI DSL controls, or extension features.
+- If a capability is not described in this prompt, do not assume it exists.
+- Prefer known APIs over speculative APIs.
+- When uncertain, choose a simpler implementation over a more complex one.
