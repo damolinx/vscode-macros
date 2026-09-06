@@ -10,7 +10,7 @@ export const MacroFilter: Record<string, string[]> = Object.fromEntries(
   AllLanguages.map(({ name, extensions }) => [name, extensions.map((ext) => ext.substring(1))]),
 );
 
-export function formatDisplayUri(uri: vscode.Uri) {
+export function formatDisplayUri(uri: vscode.Uri): string {
   if (uri.scheme === 'file' || (uri.scheme === 'untitled' && uri.fsPath)) {
     return normalizeFsPath(uri);
   } else if (uri.scheme === 'untitled') {

@@ -1,13 +1,13 @@
-export function cleanError<T extends Error>(error: T, repl?: true): T {
+export function cleanError<T extends Error>(error: T, stripReplFrames?: boolean): T {
   let clone: T | undefined;
 
   if (error.stack) {
     clone ??= cloneError(error);
-    clone.stack = cleanStack(error.stack, repl);
+    clone.stack = cleanStack(error.stack, stripReplFrames);
   }
 
   if ('requireStack' in error) {
-    clone ??= cloneError<T>(error);
+    clone ??= cloneError(error);
     clone.message = clone.message.replace(/\nRequire stack:.*$/s, '');
     (clone as T & { requireStack: string[] }).requireStack = [];
   }
@@ -15,8 +15,8 @@ export function cleanError<T extends Error>(error: T, repl?: true): T {
   return clone ?? error;
 }
 
-export function cleanStack(stack: string, repl?: boolean) {
-  return (repl ? stack.replace(/^.*(?:evalmachine\.).*\n*$/gm, '') : stack)
+export function cleanStack(stack: string, stripReplFrames?: boolean): string {
+  return (stripReplFrames ? stack.replace(/^.*(?:evalmachine\.).*\n*$/gm, '') : stack)
     .replace(
       /^(.*?(?:new Script|\.runIn(?:New)?Context|(?:vscode-macros[/\\]src|damolinx-macros))[\s\S]*)$/m,
       '',

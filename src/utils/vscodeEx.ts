@@ -36,8 +36,8 @@ export async function showTextDocument(
   );
 
   const editor = await vscode.window.showTextDocument(uri, {
-    viewColumn: alreadyOpenEditor && alreadyOpenEditor.viewColumn,
     preview: false,
+    viewColumn: alreadyOpenEditor?.viewColumn,
     ...options,
   });
 

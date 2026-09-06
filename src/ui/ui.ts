@@ -61,8 +61,9 @@ export async function pickMacroFile(
     } else if (selection === QuickPickConfigureSourceDirectories) {
       await vscode.commands.executeCommand('macros.sourceDirectories.settings');
     } else {
-      uri = (selection as UriQuickPickItem).uri;
+      uri = selection.uri;
     }
+
     if (uri) {
       lastSelection = uri;
     }

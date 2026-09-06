@@ -9,12 +9,14 @@ export type UriLocator = vscode.Uri | { uri: vscode.Uri };
  * Checks if two URIs should be considered equal.
  */
 export function areUriEqual(locatorA: UriLocator, locatorB: UriLocator): boolean {
-  const a = locatorA instanceof vscode.Uri ? locatorA : locatorA.uri;
-  const b = locatorB instanceof vscode.Uri ? locatorB : locatorB.uri;
+  const a = resolveUri(locatorA);
+  const b = resolveUri(locatorB);
   return (
     a.scheme === b.scheme &&
     a.authority === b.authority &&
-    (a.scheme === 'file' ? normalizePath(a.fsPath) === normalizePath(b.fsPath) : a.path === b.path)
+    (a.scheme === 'file'
+      ? normalizePathCase(a.fsPath) === normalizePathCase(b.fsPath)
+      : a.path === b.path)
   );
 }
 
@@ -30,10 +32,13 @@ export function isParent(
     return false;
   }
 
-  let normalizedParent, normalizedCandidateParent, sep: string;
+  let normalizedParent: string;
+  let normalizedCandidateParent: string;
+  let sep: string;
+
   if (parent.scheme === 'file') {
-    normalizedParent = normalizePath(parent.fsPath);
-    normalizedCandidateParent = normalizePath(path.dirname(candidate.fsPath));
+    normalizedParent = normalizePathCase(parent.fsPath);
+    normalizedCandidateParent = normalizePathCase(path.dirname(candidate.fsPath));
     sep = path.sep;
   } else {
     normalizedParent = parent.path;
@@ -54,7 +59,7 @@ export function isUntitled(locator: UriLocator): boolean {
   return resolveUri(locator).scheme === 'untitled';
 }
 
-function normalizePath(path: string): string {
+function normalizePathCase(path: string): string {
   return process.platform === 'win32' ? path.toLowerCase() : path;
 }
 
