@@ -53,7 +53,8 @@ export class Executor implements vscode.Disposable {
     params?: { startup?: true },
     errorHandler?: ExecuteErrorHandler,
   ): Promise<void> {
-    if (this.executionCount > 0 && (await this.macro.getCode()).options.singleton) {
+    const code = await this.macro.getCode();
+    if (code.options.singleton && this.executionCount > 0) {
       throw new SingletonMacroAlreadyRunningError(this.macro.id, this.macro.name);
     }
 
