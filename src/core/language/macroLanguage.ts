@@ -4,9 +4,9 @@ import { PathLike } from '../../utils/uri';
 export type MacroLanguageId = 'javascript' | 'typescript';
 
 type MacroLanguageParams = {
-  [K in keyof MacroLanguage as MacroLanguage[K] extends (...args: any[]) => any
-    ? never
-    : K]: MacroLanguage[K];
+  [
+    K in keyof MacroLanguage as MacroLanguage[K] extends (...args: any[]) => any ? never : K
+  ]: MacroLanguage[K];
 };
 
 export class MacroLanguage {

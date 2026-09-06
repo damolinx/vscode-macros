@@ -34,7 +34,7 @@ export class Executor implements vscode.Disposable {
     this.runner = RunnerFactory.create(this.context);
   }
 
-  dispose() {
+  dispose(): void {
     for (const execution of this.executionMap.values()) {
       execution.dispose();
     }

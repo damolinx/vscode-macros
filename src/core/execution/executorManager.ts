@@ -18,7 +18,7 @@ export class ExecutorManager implements vscode.Disposable {
     this.onExecutionStartEmitter = new vscode.EventEmitter();
   }
 
-  dispose() {
+  dispose(): void {
     vscode.Disposable.from(...this.executorMap.values()).dispose();
     this.executorMap.clear();
 

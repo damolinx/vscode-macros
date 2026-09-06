@@ -31,7 +31,7 @@ export abstract class Library<
     ];
   }
 
-  dispose() {
+  dispose(): void {
     vscode.Disposable.from(...this.disposables).dispose();
   }
 

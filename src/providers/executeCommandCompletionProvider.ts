@@ -35,7 +35,7 @@ export class ExecuteCommandCompletionProvider
     this.disposables = [vscode.extensions.onDidChange(() => this.commandMetadata.reset())];
   }
 
-  dispose() {
+  dispose(): void {
     vscode.Disposable.from(...this.disposables).dispose();
   }
 

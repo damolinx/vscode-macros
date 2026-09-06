@@ -13,7 +13,7 @@ export abstract class TreeDataProvider<T> implements vscode.TreeDataProvider<T>,
     this.disposables = [this.onDidChangeTreeDataEmitter];
   }
 
-  dispose() {
+  dispose(): void {
     vscode.Disposable.from(...this.disposables).dispose();
   }
 

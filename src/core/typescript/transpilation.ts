@@ -6,8 +6,7 @@ import { TranspilationError } from './transpilationError';
 export { TranspilationError } from './transpilationError';
 
 export type TranspileResult =
-  | { code: string; diagnostics?: never }
-  | { code?: never; diagnostics: ts.Diagnostic[] };
+  { code: string; diagnostics?: never } | { code?: never; diagnostics: ts.Diagnostic[] };
 
 export function transpile(input: string, uri?: vscode.Uri): TranspileResult {
   const { diagnostics, outputText } = ts.transpileModule(input, {

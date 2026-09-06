@@ -13,7 +13,7 @@ export abstract class SourceManager implements vscode.Disposable {
     this.disposables = [];
   }
 
-  dispose() {
+  dispose(): void {
     vscode.Disposable.from(...this.disposables).dispose();
   }
 
@@ -99,9 +99,10 @@ export abstract class SourceManager implements vscode.Disposable {
     // De-duplicate evaluated values
     const expandedToSource = new Map<string, Source>();
     for (const [rawValue, scopes] of rawValueToScopes) {
-      const sources = [...scopes].map(
-        (scope): ConfigurationSource => ({ target: scope, value: rawValue }),
-      );
+      const sources = [...scopes].map((scope): ConfigurationSource => ({
+        target: scope,
+        value: rawValue,
+      }));
       for (const expandedValue of resolveTokenizedPath(rawValue)) {
         const entry = expandedToSource.get(expandedValue);
         if (entry) {

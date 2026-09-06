@@ -7,7 +7,7 @@ export class ErrorRelayMeta implements MetaNode {
   public readonly kind = 'errorRelay';
   public readonly role = 'meta';
 
-  constructor(public readonly enabled: boolean = false) { }
+  constructor(public readonly enabled = false) {}
 
   expand(): Node[] {
     return [new Script(this.enabled ? ErrorRelayScript : ErrorConsoleScript, false)];

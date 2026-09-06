@@ -7,7 +7,7 @@ export class LogRelayMeta implements MetaNode {
   public readonly kind = 'logRelay';
   public readonly role = 'meta';
 
-  constructor(public readonly enabled: boolean = false) { }
+  constructor(public readonly enabled = false) {}
 
   expand(): Node[] {
     return [new Script(this.enabled ? LogRelayScript : LogConsoleScript, false)];

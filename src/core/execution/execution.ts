@@ -32,7 +32,7 @@ export class Execution implements vscode.Disposable {
     this.ts = Date.now();
   }
 
-  dispose() {
+  dispose(): void {
     this.cts.dispose();
     vscode.Disposable.from(...this.macroDisposables).dispose();
     if (!this.snapshot.options.persistent && !this.snapshot.options.retained) {

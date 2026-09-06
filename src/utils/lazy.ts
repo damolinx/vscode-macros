@@ -42,7 +42,7 @@ export class LazyDisposable<
   extends Lazy<T, TArgs>
   implements vscode.Disposable
 {
-  dispose() {
+  dispose(): void {
     this.reset();
   }
 

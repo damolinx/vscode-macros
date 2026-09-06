@@ -28,7 +28,7 @@ export class MacroStatusBarItem implements vscode.Disposable {
     ];
   }
 
-  dispose() {
+  dispose(): void {
     vscode.Disposable.from(...this.disposables).dispose();
   }
 }
