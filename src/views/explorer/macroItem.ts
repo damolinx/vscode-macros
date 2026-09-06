@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { Macro } from '../../core/macro';
-import { resolveMacroExt } from '../../core/macroLanguages';
+import { resolveMacroInfo } from '../../core/macroLanguages';
 import { ExtensionContext } from '../../extensionContext';
 import { getIcon, getIconFromUri } from '../../ui/icons';
 import { formatDisplayUri } from '../../utils/ui';
@@ -39,7 +39,7 @@ export async function createMacroItem(
       item.contextValue += ' restartOnly';
     }
   } else {
-    item.description = resolveMacroExt(macro.uri);
+    item.description = resolveMacroInfo(macro.uri)?.extension;
   }
   return item;
 }

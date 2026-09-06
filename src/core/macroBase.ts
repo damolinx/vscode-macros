@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { uriBasename } from '../utils/uri';
-import { resolveMacroExt } from './macroLanguages';
+import { resolveMacroInfo } from './macroLanguages';
 
 export abstract class MacroBase<TId extends string> {
   private _name?: string;
@@ -14,7 +14,7 @@ export abstract class MacroBase<TId extends string> {
    * Display name.
    */
   public get name(): string {
-    this._name ??= uriBasename(this.uri, resolveMacroExt(this.uri) ?? true);
+    this._name ??= uriBasename(this.uri, resolveMacroInfo(this.uri)?.extension ?? true);
     return this._name;
   }
 }

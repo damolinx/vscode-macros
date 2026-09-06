@@ -28,28 +28,32 @@ export const FeatureEnabledSelector = buildDocumentSelector(AllLanguages, true);
 export const PreferredLanguage = JavaScript;
 
 export function isFeatureMacro(pathOrUri: PathLike): boolean {
-  return Boolean(resolveMacroExt(pathOrUri)?.toLowerCase().startsWith('.macro.'));
+  return resolveMacroInfo(pathOrUri)?.isFeatureMacro === true;
 }
 
 export function isMacro(pathOrUri: PathLike): boolean {
-  return Boolean(resolveMacroLanguageFromUri(pathOrUri));
+  return resolveMacroInfo(pathOrUri) !== undefined;
 }
 
 export function isMacroLanguage(languageId: string): languageId is MacroLanguageId {
   return AllLanguages.some(({ id }) => id === languageId);
 }
 
-export function resolveMacroExt(pathOrUri: PathLike): string | undefined;
-export function resolveMacroExt(pathOrUri: PathLike, defaultValue: string): string;
-export function resolveMacroExt(pathOrUri: PathLike, defaultValue?: string): string | undefined {
+export function resolveMacroInfo(
+  pathOrUri: PathLike,
+): { language: MacroLanguage; extension: string; isFeatureMacro: boolean } | undefined {
   const path = pathOrUri instanceof vscode.Uri ? pathOrUri.path : pathOrUri;
   for (const language of AllLanguages) {
-    const matched = language.matchExtension(path);
-    if (matched) {
-      return matched;
+    const extension = language.matchExtension(path);
+    if (extension) {
+      return {
+        extension,
+        isFeatureMacro: extension.startsWith('.macro.'),
+        language,
+      };
     }
   }
-  return defaultValue;
+  return;
 }
 
 export function resolveMacroLanguage(languageId: MacroLanguageId): MacroLanguage;
@@ -63,17 +67,4 @@ export function resolveMacroLanguage(
   defaultValue?: MacroLanguage,
 ): MacroLanguage | undefined {
   return AllLanguages.find(({ id }) => languageId === id) ?? defaultValue;
-}
-
-export function resolveMacroLanguageFromUri(pathOrUri: PathLike): MacroLanguage | undefined;
-export function resolveMacroLanguageFromUri(
-  pathOrUri: PathLike,
-  defaultValue: MacroLanguage,
-): MacroLanguage;
-export function resolveMacroLanguageFromUri(
-  pathOrUri: PathLike,
-  defaultValue?: MacroLanguage,
-): MacroLanguage | undefined {
-  const path = pathOrUri instanceof vscode.Uri ? pathOrUri.path : pathOrUri;
-  return AllLanguages.find((language) => language.accepts(path)) ?? defaultValue;
 }

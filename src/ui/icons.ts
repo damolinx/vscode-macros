@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { resolveMacroLanguageFromUri } from '../core/macroLanguages';
+import { resolveMacroInfo } from '../core/macroLanguages';
 import { ExtensionContext } from '../extensionContext';
 import { Lazy } from '../utils/lazy';
 
@@ -37,6 +37,6 @@ export function getIcon(languageId?: string): vscode.ThemeIcon {
 }
 
 export function getIconFromUri(uri: vscode.Uri): vscode.ThemeIcon {
-  const language = resolveMacroLanguageFromUri(uri);
-  return getIcon(language?.id);
+  const macroInfo = resolveMacroInfo(uri);
+  return getIcon(macroInfo?.language.id);
 }
