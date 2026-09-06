@@ -2,6 +2,7 @@
 
 ## 0.7.15
 - Improve AI macro-generation prompt.
+- Startup nodes include **Reveal in [Explorer|Finder|Files]** in their context menu.
 - Fix: Paste/Rename files not enabling when expected in the **Macro Explorer**.
 - Fix: DnD files onto **Startup Macros** does not work. 
 
