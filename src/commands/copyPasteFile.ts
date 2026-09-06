@@ -5,8 +5,8 @@ import { ExtensionContext } from '../extensionContext';
 import { setContext } from '../extensionContextValues';
 import { exists, getFileType } from '../utils/fsEx';
 import { formatDisplayUri } from '../utils/ui';
-import { isUntitled, parentUri, uriBasename, UriLocator } from '../utils/uri';
-import { getUriOrTreeSelection } from './utils';
+import { isUntitled, parentUri, resolveUri, uriBasename, UriLocator } from '../utils/uri';
+import { getTreeSelection } from './utils';
 
 let savedUri: vscode.Uri | undefined;
 
@@ -23,11 +23,9 @@ export async function copyFile(
   { explorerTree, log }: ExtensionContext,
   locator?: UriLocator,
 ): Promise<void> {
-  const uri = getUriOrTreeSelection(
-    explorerTree,
-    locator,
-    (_, item) => item instanceof Macro && !isUntitled(item.uri),
-  );
+  const uri = locator
+    ? resolveUri(locator)
+    : getTreeSelection(explorerTree, (item) => item instanceof Macro && !isUntitled(item.uri));
   if (!uri) {
     log.info('Copy: Nothing to copy');
     return;
@@ -53,25 +51,27 @@ export async function pasteFile(
     return;
   }
 
-  let target = getUriOrTreeSelection(explorerTree, locator);
-  if (!target) {
-    log.debug('Paste: No target');
+  let uri = locator
+    ? resolveUri(locator)
+    : getTreeSelection(explorerTree, (item) => item instanceof Macro && !isUntitled(item.uri));
+  if (!uri) {
+    log.info('Paste: No target');
     return;
   }
 
-  const type = await getFileType(target);
+  const type = await getFileType(uri);
   if (type && type & vscode.FileType.Directory) {
-    log.debug('Paste: Target is a directory', formatDisplayUri(target));
+    log.debug('Paste: Target is a directory', formatDisplayUri(uri));
   } else if (type && type & vscode.FileType.File) {
-    log.debug('Paste: Target is a file, using parent', formatDisplayUri(target));
-    target = parentUri(target);
+    log.debug('Paste: Target is a file, using parent', formatDisplayUri(uri));
+    uri = parentUri(uri);
   } else {
-    log.error('Paste: No valid target', formatDisplayUri(target));
+    log.error('Paste: No valid target', formatDisplayUri(uri));
     return;
   }
 
-  log.info('Paste file (source, target)', formatDisplayUri(source), formatDisplayUri(target));
-  const targetFile = await safeTargetName(target, source);
+  log.info('Paste: Paste file (source, target)', formatDisplayUri(source), formatDisplayUri(uri));
+  const targetFile = await safeTargetName(uri, source);
   if (!targetFile) {
     throw new Error('Failed to resolve a unique target file name');
   }

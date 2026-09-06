@@ -34,10 +34,7 @@ export abstract class TreeDragAndDropController<
       return;
     }
 
-    const uriList = source
-      .filter((src): src is T & { uri: vscode.Uri } => !!src.uri)
-      .map(({ uri }) => uri.toString())
-      .join(FILELIST_SEP);
+    const uriList = source.map(({ uri }) => uri.toString()).join(FILELIST_SEP);
 
     const uriListItem = new vscode.DataTransferItem(uriList);
 
@@ -62,14 +59,12 @@ export abstract class TreeDragAndDropController<
   ): Promise<vscode.Uri[] | undefined> {
     const typedItems = dataTransfer.get(this.treeMimeType);
     if (typedItems) {
-      return (typedItems.value as T[])
-        .filter((item): item is T & { uri: vscode.Uri } => !!item.uri)
-        .map(({ uri }) => uri);
+      return (typedItems.value as T[]).map(({ uri }) => uri);
     }
 
     const item =
-      (this.dragMimeTypes.includes(FILELIST_MIMETYPE) && dataTransfer.get(FILELIST_MIMETYPE)) ||
-      (this.dragMimeTypes.includes(MACROLIST_MIMETYPE) && dataTransfer.get(MACROLIST_MIMETYPE));
+      (this.dropMimeTypes.includes(FILELIST_MIMETYPE) && dataTransfer.get(FILELIST_MIMETYPE)) ||
+      (this.dropMimeTypes.includes(MACROLIST_MIMETYPE) && dataTransfer.get(MACROLIST_MIMETYPE));
     if (!item) {
       return undefined;
     }

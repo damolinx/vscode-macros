@@ -4,19 +4,18 @@ import { Macro } from '../core/macro';
 import { isMacro } from '../core/macroLanguages';
 import { ExtensionContext } from '../extensionContext';
 import { exists } from '../utils/fsEx';
-import { isUntitled, parentUri, uriBasename, UriLocator } from '../utils/uri';
-import { getUriOrTreeSelection } from './utils';
+import { isUntitled, parentUri, resolveUri, uriBasename, UriLocator } from '../utils/uri';
+import { getTreeSelection } from './utils';
 
 export async function renameMacro(
-  { explorerTree }: ExtensionContext,
+  { explorerTree, log }: ExtensionContext,
   locator?: UriLocator,
 ): Promise<void> {
-  const uri = getUriOrTreeSelection(
-    explorerTree,
-    locator,
-    (uri, treeItem) => !isUntitled(uri) && (!treeItem || treeItem instanceof Macro),
-  );
+  const uri = locator
+    ? resolveUri(locator)
+    : getTreeSelection(explorerTree, (item) => item instanceof Macro && !isUntitled(item.uri));
   if (!uri) {
+    log.info('RenameMacro: Nothing to rename');
     return;
   }
 

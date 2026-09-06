@@ -1,15 +1,16 @@
 import * as vscode from 'vscode';
 import { ExtensionContext } from '../extensionContext';
-import { UriLocator, uriBasename } from '../utils/uri';
-import { getUriOrTreeSelection } from './utils';
+import { UriLocator, resolveUri, uriBasename } from '../utils/uri';
+import { getTreeSelection } from './utils';
 
 export async function copyPath(
   { explorerTree, log }: ExtensionContext,
   locator?: UriLocator,
   nameOnly?: true,
 ): Promise<void> {
-  const uri = getUriOrTreeSelection(explorerTree, locator);
+  const uri = locator ? resolveUri(locator) : getTreeSelection(explorerTree);
   if (!uri) {
+    log.info('CopyPath: Nothing to copy');
     return;
   }
 
@@ -22,6 +23,6 @@ export async function copyPath(
     value = uri.toString();
   }
 
-  log.trace('Copy value to clipboard', value);
+  log.info('Copy value to clipboard', value);
   await vscode.env.clipboard.writeText(value);
 }
