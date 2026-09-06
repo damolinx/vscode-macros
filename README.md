@@ -1,10 +1,17 @@
 # Macros for VS Code
 
-A **macro** is a JavaScript or TypeScript script executed within the context of an extension, with full access to [VS Code extensibility APIs](https://code.visualstudio.com/api/references/vscode-api). 
+This extension lets you automate and extend VS Code using JavaScript or TypeScript without building a full extension.
 
-Macros let you automate tasks, customize your environment, and prototype extension features, all without the overhead of building and maintaining a full extension. You can also experiment interactively using the [Macro REPL](#macro-repl), a full JS/TS REPL that runs in the same sandboxed environment as your macros.
+A **macro** is a script that runs within the extension host, with access to the [VS Code extensibility APIs](https://code.visualstudio.com/api/references/vscode-api) and selected Node.js APIs. Macros can automate repetitive tasks, customize your workspace, prototype extension ideas, integrate existing commands, and even build lightweight tooling with custom views and webviews.
 
-Macros run inside Node.js [VM sandboxes](https://nodejs.org/api/vm.html#class-vmscript), giving each macro its own isolated data context. The design comes with one limitation: macros cannot be forcefully terminated. Instead, they must support cancellation-token semantics, and by extension, use asynchronous workloads to enable cooperative multitasking.
+Macros are intentionally lightweight. Instead of creating an extension project, configuring a build pipeline, and maintaining a published package, you can write and run a single script directly from VS Code.
+
+The extension also includes tools designed for interactive development:
+
+- [Macro Explorer](#macro-explorer-view) for organizing, running, and debugging macros.
+- [Startup Macros](#startup-macros-view) for workspace-specific automation.
+- [Macro REPL](#macro-repl) for experimenting with code in the same environment used by running macros.
+- [AI integrations](#ai-assistance) for generating and refining macros with tools such as VS Code Chat, Claude Code, and Cursor.
 
 <p align=center>
   <img width="800" alt="VS Code with Macro Explorer and Startup Macros views, as well as a macro editor open" src="https://github.com/user-attachments/assets/f075d80b-a21f-4201-b7c7-1ce3b2bf7707" />
@@ -36,6 +43,7 @@ Macros run inside Node.js [VM sandboxes](https://nodejs.org/api/vm.html#class-vm
   * [Claude Code](#claude-code)
   * [Cursor Rules (Cursor)](#cursor-rules-cursor)
 * [Development](#development-1)
+  * [Execution Model](#execution-model)
   * [Available Code References](#available-code-references)
   * [`macros` API](#macros-api)
     * [Special Variables](#special-variables)
@@ -51,7 +59,7 @@ Macros run inside Node.js [VM sandboxes](https://nodejs.org/api/vm.html#class-vm
 
 * **Option 1**: From the [Command Palette](https://code.visualstudio.com/docs/getstarted/userinterface#_command-palette), use the **Macros: New Macro** command.
   * Choose a template from the dropdown, or start from scratch.
-  * By default, templates targets JavaScript, but you can change this via the **Macros: Template Default Language** setting.
+  * By default, templates target JavaScript, but you can change this via the **Macros: Template Default Language** setting.
 
 * **Option 2**: From the [Macro Explorer](#macro-explorer-view) view, use the **New Macro** action available on every library.
 
@@ -69,12 +77,13 @@ A macro is a standalone script whose global context is pre‑initialized with th
 
 - Top‑level `export`, `await`, and `return` statements are not allowed. 
 
-  > The one exception is defining a global empty `export {}` in JavaScript files to prevent the TypeScript Language Server from assuming all macro file are in the same global scope. This does not create a real module.
+  > The one exception is defining a global empty `export {}` in JavaScript files to prevent the TypeScript Language Server from assuming all macro files are in the same global scope. This does not create a real module.
 
-- The value of the script's final expression becomes the macro's result. This is mainly useful for async work: if you need to run asynchronous code, return the `Promise` rather than `await` it so the macro engine can execute it.
-- Macros cannot be forcefully terminated. Long‑running or asynchronous tasks should respect cancellation requests via the global `__cancellationToken` instance, a `vscode.CancellationToken`. This cancellation request is normally triggered by the [**Request To Stop** action](#macro-explorer-view).
+- The value of the script's final expression is treated as the macro's result. This is mainly useful for async work: if you need to run asynchronous code, return the `Promise` rather than `await` it so the macro engine can execute it.
 
-Aside from these constraints, writing a macro is very similar to writing VS Code extension code.
+- Macros cannot be forcefully terminated and should respect cancellation requests via the provided [`__cancellationToken`](#special-variables).
+
+Otherwise, writing a macro is very similar to writing VS Code extension code.
 
 **Example**: Async _Hello, World!_ macro
 ```javascript
@@ -94,7 +103,7 @@ async function main() {
     );
 
     // Respect cancellation
-    if (__cancellation.isCancellationRequested) {
+    if (__cancellationToken.isCancellationRequested) {
       return;
     }
 
@@ -206,9 +215,11 @@ To bind a macro to a keyboard shortcut, you create bindings for the `macros.run`
 
 [↑ Back to top](#table-of-contents)
 
+
+
 # Macro Libraries
 
-A *library* is a folder path registered in the `macros.sourceDirectories` setting. Any JavaScript or TypeScript file **directly** under these folders (no recursive discovery) is considered a macro. Macro libraries are the core of managing your macros, and the [Macro Explorer](#macro-explorer-view) view itself.
+A *library* is a folder path registered in the `macros.sourceDirectories` setting. Any JavaScript or TypeScript file **directly** under these folders is considered a macro. Subdirectories are not scanned. Macro libraries are the core of managing your macros, and the [Macro Explorer](#macro-explorer-view) view itself.
 
 The extension adds specific files (e.g. `jsconfig.json`, `global.d.ts`) to library folders to support development. These files are automatically updated when new versions are available. If you want to customize or control when updates happen, disable the `macros.sourceDirectoriesVerification` setting, and use the **Setup Folder for Development** command to run the update on demand.
 
@@ -391,6 +402,20 @@ The rules file encodes the macro specification, constraints, and behavioral guid
 
 # Development
 
+## Execution Model
+
+Macros run inside isolated Node.js [VM contexts](https://nodejs.org/api/vm.html#class-vmscript). Each running macro receives its own execution environment and data context.
+
+Macros are designed to be lightweight and script-oriented. However, a limitation of the Node.js VM API is that executing code cannot be forcefully terminated. As a result, macros must cooperate with cancellation requests and exit gracefully when asked to stop.
+
+Long-running macros should therefore:
+
+* Prefer asynchronous operations over CPU-bound loops.
+* Monitor `__cancellationToken` and stop work when cancellation is requested.
+* Avoid blocking the event loop for extended periods.
+
+[Macro lifecycle options](#macro-options) such as `@macro:persistent`, `@macro:retained`, and `@macro:singleton` build on this execution model.
+
 ## Available Code References
 
 The following references are available from the global context of your macro:
@@ -491,7 +516,7 @@ Claimed IDs are automatically released when the macro completes **only** for non
 Views are disabled by default. After claiming an ID, you must enable the corresponding view using a context key (notice the ID is suffixed with `.show`):
 
   **Example**: Showing a view
-  ```
+  ```javascript
   const viewId = macros.window.getTreeViewId();
   ...
   vscode.commands.executeCommand('setContext', `${viewId}.show`, true);
@@ -500,7 +525,7 @@ Views are disabled by default. After claiming an ID, you must enable the corresp
 Be sure to reset the context when the macro finishes, there is no automatic tracking and any leftover context values will be effective until the IDE is restarted.
 
   **Example**: Hiding a view
-  ```
+  ```javascript
   const viewId = macros.window.getWebviewId();
   ...
   vscode.commands.executeCommand('setContext', `${viewId}.show`, false);
