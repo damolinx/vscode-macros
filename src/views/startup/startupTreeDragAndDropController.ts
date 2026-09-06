@@ -12,7 +12,7 @@ import { SourceTarget } from './sourceTarget';
 
 export class StartupTreeDragAndDropController extends TreeDragAndDropController<StartupMacro> {
   constructor(context: ExtensionContext) {
-    super(context, [FILELIST_MIMETYPE], [MACROLIST_MIMETYPE]);
+    super(context, [FILELIST_MIMETYPE], [FILELIST_MIMETYPE, MACROLIST_MIMETYPE]);
   }
 
   protected override get treeMimeType(): string {
@@ -20,7 +20,7 @@ export class StartupTreeDragAndDropController extends TreeDragAndDropController<
   }
 
   public override async handleDrop(
-    target: StartupMacro | undefined,
+    target: SourceTarget | undefined,
     dataTransfer: vscode.DataTransfer,
     _token: vscode.CancellationToken,
   ): Promise<void> {

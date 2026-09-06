@@ -3,6 +3,7 @@
 ## 0.7.15
 - Improve AI macro-generation prompt.
 - Fix: Paste/Rename files not enabling when expected in the **Macro Explorer**.
+- Fix: DnD files onto **Startup Macros** does not work. 
 
 ## 0.7.14
 - Upgrade minimum VS Code version to 1.125.
