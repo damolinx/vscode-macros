@@ -7,12 +7,8 @@ export async function selectMacroFile(
   manager: MacroLibraryManager,
   options?: MacroQuickPickOptions,
 ): Promise<vscode.Uri | undefined> {
-  const macroFiles = await getFiles(manager);
+  const macroFiles = await getMacroFiles(manager);
   const targetUri = await pickMacroFile(macroFiles, options);
-  if (!targetUri) {
-    return;
-  }
-
   return targetUri;
 }
 
@@ -27,8 +23,8 @@ export async function selectSourceDirectory(
     );
     if (option === 'Configure') {
       await vscode.commands.executeCommand('macros.sourceDirectories.settings');
-      return;
     }
+    return;
   }
 
   const selectedItem = await vscode.window.showQuickPick<UriQuickPickItem>(
@@ -46,14 +42,14 @@ export async function selectSourceDirectory(
   return selectedItem?.uri;
 }
 
-async function getFiles(manager: MacroLibraryManager): Promise<Record<string, vscode.Uri[]>> {
+async function getMacroFiles(manager: MacroLibraryManager): Promise<Record<string, vscode.Uri[]>> {
   const entries: [string, vscode.Uri[]][] = await Promise.all(
-    manager.libraries.map(async (lib) => {
-      const items = await lib.getFiles();
+    manager.libraries.map(async (library) => {
+      const items = await library.getFiles();
       const uris = items.map(({ uri }) => uri);
-      return [lib.uri.fsPath, uris];
+      return [library.uri.fsPath, uris];
     }),
   );
 
-  return Object.fromEntries(entries.filter(([_, uris]) => uris.length > 0));
+  return Object.fromEntries(entries.filter(([, uris]) => uris.length > 0));
 }

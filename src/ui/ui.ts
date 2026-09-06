@@ -31,7 +31,7 @@ export async function pickMacroFile(
   macroFiles: vscode.Uri[] | Record<string, vscode.Uri[]>,
   options?: MacroQuickPickOptions,
 ): Promise<vscode.Uri | undefined> {
-  const selection = await new Promise((resolve) => {
+  const selection = await new Promise<UriQuickPickItem | undefined>((resolve) => {
     const quickPick = createMacroQuickPick(macroFiles, options);
     const selectUri = options?.activeUri || lastSelection;
     if (selectUri) {
@@ -59,7 +59,7 @@ export async function pickMacroFile(
     if (selection === QuickPickOpenFile) {
       uri = await showMacroOpenDialog();
     } else if (selection === QuickPickConfigureSourceDirectories) {
-      uri = await vscode.commands.executeCommand('macros.sourceDirectories.settings');
+      await vscode.commands.executeCommand('macros.sourceDirectories.settings');
     } else {
       uri = (selection as UriQuickPickItem).uri;
     }

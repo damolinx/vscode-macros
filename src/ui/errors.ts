@@ -6,18 +6,18 @@ import { cleanError } from '../utils/errors';
 import { uriBasename } from '../utils/uri';
 import { showTextDocument } from '../utils/vscodeEx';
 
+interface ErrorLocation {
+  uri: vscode.Uri;
+  range?: vscode.Range;
+}
+
 export function showMacroErrorMessage(
   executor: Executor,
   macroCode: MacroCode,
   error: Error | string,
 ): Promise<void> {
   let message: string;
-  let errorLocation:
-    | {
-        uri: vscode.Uri;
-        range?: vscode.Range;
-      }
-    | undefined;
+  let errorLocation: ErrorLocation | undefined;
   let filteredStack: string | undefined;
 
   if (typeof error === 'string') {
@@ -25,13 +25,13 @@ export function showMacroErrorMessage(
   } else {
     if (error instanceof TranspilationError) {
       message = error.message;
-      errorLocation = findTranspilationErrorPos(error);
+      errorLocation = findTranspilationErrorLocation(executor, error);
     } else {
       const displayError = cleanError(error);
       message = displayError.message;
       if (displayError.stack) {
         filteredStack = displayError.stack;
-        errorLocation = findErrorLocation(filteredStack, macroCode.languageId);
+        errorLocation = findErrorLocation(executor, filteredStack, macroCode.languageId);
       }
     }
   }
@@ -43,58 +43,60 @@ export function showMacroErrorMessage(
     filteredStack,
     errorLocation,
   );
+}
 
-  function findTranspilationErrorPos(
-    error: TranspilationError,
-  ): { uri: vscode.Uri; range?: vscode.Range } | undefined {
-    const first = error.diagnostics[0];
+function findTranspilationErrorLocation(
+  executor: Executor,
+  error: TranspilationError,
+): ErrorLocation | undefined {
+  const location: ErrorLocation = {
+    uri: executor.macro.uri,
+  };
 
-    const location: { uri: vscode.Uri; range?: vscode.Range } = {
-      uri: executor.macro.uri,
-    };
-    if (first?.file && first.start !== undefined) {
-      const { line, character } = first.file.getLineAndCharacterOfPosition(first.start);
-      location.range = new vscode.Range(line, character, line, character);
-    }
-
-    return location;
+  const first = error.diagnostics[0];
+  if (first?.file && first.start !== undefined) {
+    const { line, character } = first.file.getLineAndCharacterOfPosition(first.start);
+    location.range = new vscode.Range(line, character, line, character);
   }
 
-  function findErrorLocation(
-    stack: string,
-    languageId: string,
-  ): { uri: vscode.Uri; range?: vscode.Range } | undefined {
-    let location: { uri: vscode.Uri; range?: vscode.Range } | undefined;
+  return location;
+}
 
-    const regex =
-      languageId === 'typescript'
-        ? /at\s+(?<prefix>.+?):(?<line>\d+)(:(?<offset>\d+))?(?:\)|$)/m
-        : /(?<prefix>.+?):(?<line>\d+)(:(?<offset>\d+))?(?:\)|$)/m;
+function findErrorLocation(
+  executor: Executor,
+  stack: string,
+  languageId: string,
+): ErrorLocation | undefined {
+  let location: ErrorLocation | undefined;
 
-    const firstMatch = stack.match(regex);
-    if (firstMatch) {
-      const { prefix, line, offset } = firstMatch.groups!;
-      const position = new vscode.Position(parseInt(line) - 1, offset ? parseInt(offset) - 1 : 0);
-      if (prefix.endsWith(uriBasename(executor.macro.uri))) {
+  const regex =
+    languageId === 'typescript'
+      ? /at\s+(?<prefix>.+?):(?<line>\d+)(:(?<offset>\d+))?(?:\)|$)/m
+      : /(?<prefix>.+?):(?<line>\d+)(:(?<offset>\d+))?(?:\)|$)/m;
+
+  const firstMatch = stack.match(regex);
+  if (firstMatch) {
+    const { prefix, line, offset } = firstMatch.groups!;
+    const position = new vscode.Position(parseInt(line) - 1, offset ? parseInt(offset) - 1 : 0);
+    if (prefix.endsWith(uriBasename(executor.macro.uri))) {
+      location = {
+        uri: executor.macro.uri,
+        range: new vscode.Range(position, position),
+      };
+    } else {
+      try {
+        const parsedUri = vscode.Uri.parse(prefix, true);
         location = {
-          uri: executor.macro.uri,
+          uri: parsedUri,
           range: new vscode.Range(position, position),
         };
-      } else {
-        try {
-          const parsedUri = vscode.Uri.parse(prefix, true);
-          location = {
-            uri: parsedUri,
-            range: new vscode.Range(position, position),
-          };
-        } catch {
-          // eslint-disable no-empty
-        }
+      } catch {
+        // eslint-disable no-empty
       }
     }
-
-    return location;
   }
+
+  return location;
 }
 
 async function showErrorMessage(
@@ -102,10 +104,7 @@ async function showErrorMessage(
   macroCode: MacroCode,
   message: string,
   stack?: string,
-  errorLocation?: {
-    uri: vscode.Uri;
-    range?: vscode.Range;
-  },
+  errorLocation?: ErrorLocation,
   modal = false,
 ): Promise<void> {
   const actions: { title: string; execute: () => Thenable<any> | void }[] = [

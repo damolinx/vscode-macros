@@ -8,11 +8,12 @@ export async function showMacroOpenDialog(
   options?: vscode.OpenDialogOptions,
 ): Promise<vscode.Uri | undefined> {
   const selectedUris = await vscode.window.showOpenDialog({
+    canSelectMany: false,
     filters: MacroFilter,
     ...options,
   });
 
-  return selectedUris?.pop();
+  return selectedUris?.[0];
 }
 
 export async function showMacroQuickPick(
