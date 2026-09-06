@@ -23,13 +23,13 @@ export function createStartupItem(
   item.description = formatWorkspaceRelativePath(macroUri) ?? formatHomeRelativePath(macroUri);
   item.iconPath = getIconFromUri(uri);
   item.label = name;
+  item.contextValue = 'startupMacro';
   item.tooltip = formatDisplayUri(getMacroUriFromStartupMacroUri(uri));
 
   if (execution) {
-    item.contextValue = 'startupMacro running';
+    item.contextValue += 'running';
     item.tooltip += `\nStarted: ${formatStartTimestampLabel(execution.startedOn)} • Version: ${execution.snapshot.version}`;
   } else {
-    item.contextValue = 'startupMacro';
     item.tooltip += '\nNot running';
   }
 
