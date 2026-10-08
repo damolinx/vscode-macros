@@ -34,16 +34,7 @@ export class ExplorerTree extends Tree<TreeElement> {
     });
 
     this.disposables.push(
-      this.provider.onDidChangeTreeData(async (elementOrElements) => {
-        const element =
-          elementOrElements instanceof Array
-            ? elementOrElements.findLast((elem) => elem instanceof Macro)
-            : elementOrElements instanceof Macro
-              ? elementOrElements
-              : undefined;
-        if (element) {
-          await this.reveal(element);
-        }
+      this.provider.onDidChangeTreeData(async (_elementOrElements) => {
         this.expansionState.prune(context.libraryManager.libraries.map(({ id }) => id));
       }),
       this.view.onDidCollapseElement(({ element }) => {
