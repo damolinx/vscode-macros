@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.7.16
+- Macro REPL persists command history between VS Code sessions and shares it across all REPL instances.
+
 ## 0.7.15
 - Improve AI macro-generation prompt.
 - Startup nodes include **Reveal in [Explorer|Finder|Files]** in their context menu.

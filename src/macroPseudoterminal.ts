@@ -17,6 +17,8 @@ export const PROMPT_TS = '\x1b[96mts\x1b[0m\x1b[90m » \x1b[0m';
 
 type REPLServerWithHistory = REPLServer & { history?: string[] };
 
+let sharedHistory: string[] | undefined;
+
 export class MacroPseudoterminal implements vscode.Pseudoterminal {
   private readonly cts: vscode.CancellationTokenSource;
   private readonly disposables: vscode.Disposable[];
@@ -122,6 +124,22 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
       this.onDidCloseEmitter.fire();
       this.close();
     }) as REPLServerWithHistory;
+
+    replServer.setupHistory({
+      filePath: vscode.Uri.joinPath(this.context.extensionContext.globalStorageUri, 'repl-history')
+        .fsPath,
+      size: 1000, // maximum number of commands to keep
+      removeHistoryDuplicates: true,
+      onHistoryFileLoaded: (err) => {
+        if (err) {
+          this.context.log.error(`[${this.executionId}] Failed to setup REPL history:`, err);
+          return;
+        }
+
+        sharedHistory ??= replServer.history ?? [];
+        replServer.history = sharedHistory;
+      },
+    });
 
     // Override to provide sane help
     const originalBreak = replServer.commands.break;

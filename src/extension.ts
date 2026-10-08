@@ -57,6 +57,8 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
   const context = new ExtensionContext(extensionContext);
   context.log.info('Activating extension', extensionContext.extension.packageJSON.version);
 
+  await ensureGlobalStorageDirectory(context);
+
   context.disposables.push(new MacroStatusBarItem(context));
 
   registerCreateMacroContentTool(context);
@@ -136,6 +138,21 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
 
   await loadRenderers(context);
   await runStartupMacros(context);
+}
+
+async function ensureGlobalStorageDirectory({
+  extensionContext,
+  log,
+}: ExtensionContext): Promise<void> {
+  try {
+    await vscode.workspace.fs.createDirectory(extensionContext.globalStorageUri);
+  } catch (err) {
+    log.error(
+      'Failed to create extension storage directory:',
+      extensionContext.globalStorageUri,
+      err,
+    );
+  }
 }
 
 async function runStartupMacros(context: ExtensionContext): Promise<void> {
