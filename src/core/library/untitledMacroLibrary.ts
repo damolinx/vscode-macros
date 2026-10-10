@@ -2,14 +2,14 @@ import * as vscode from 'vscode';
 import { isCreatingMacro } from '../../commands/createMacro';
 import { ExtensionContext } from '../../extensionContext';
 import { isUntitled } from '../../utils/uri';
-import { getMacroId, MacroId } from '../macroId';
 import { isMacroLanguage } from '../macroLanguages';
+import { getMacroId, CodeMacroId } from '../macros/code/codeMacroId';
 import { Library } from './library';
 import { getMacroItem } from './macroLibraryItem';
 
 export const UNTITLED_MACRO_LIBRARY_NAME = 'Temporary';
 
-export class UntitledMacroLibrary extends Library<MacroId> {
+export class UntitledMacroLibrary extends Library<CodeMacroId> {
   private static _instance: UntitledMacroLibrary;
 
   public static instance(context: ExtensionContext): UntitledMacroLibrary {

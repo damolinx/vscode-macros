@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { Macro } from '../core/macro';
 import { resolveMacroInfo } from '../core/macroLanguages';
+import { CodeMacro } from '../core/macros/code/codeMacro';
 import { ExtensionContext } from '../extensionContext';
 import { setContext } from '../extensionContextValues';
 import { exists, getFileType } from '../utils/fsEx';
@@ -25,7 +25,7 @@ export async function copyFile(
 ): Promise<void> {
   const uri = locator
     ? resolveUri(locator)
-    : getTreeSelection(explorerTree, (item) => item instanceof Macro && !isUntitled(item.uri));
+    : getTreeSelection(explorerTree, (item) => item instanceof CodeMacro && !isUntitled(item.uri));
   if (!uri) {
     log.info('Copy: Nothing to copy');
     return;
@@ -53,7 +53,7 @@ export async function pasteFile(
 
   let uri = locator
     ? resolveUri(locator)
-    : getTreeSelection(explorerTree, (item) => item instanceof Macro && !isUntitled(item.uri));
+    : getTreeSelection(explorerTree, (item) => item instanceof CodeMacro && !isUntitled(item.uri));
   if (!uri) {
     log.info('Paste: No target');
     return;

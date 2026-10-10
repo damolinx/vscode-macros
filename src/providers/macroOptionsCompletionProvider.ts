@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { FeatureEnabledSelector } from '../core/macroLanguages';
-import { MacroOptionType } from '../core/macroOptions';
+import { MacroOptionType } from '../core/macros/code/codeMacroOptions';
 import { ExtensionContext } from '../extensionContext';
 
 export const MACRO_TRIGGER_CHARACTERS: readonly string[] = ['@'];

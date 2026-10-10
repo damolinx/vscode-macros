@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
+import { Macro } from '../../macroBase';
+import { getMacroId, CodeMacroId } from './codeMacroId';
 import { CodeSnapshot } from './codeSnapshot';
-import { MacroBase } from './macroBase';
-import { getMacroId, MacroId } from './macroId';
 
-export class Macro extends MacroBase<MacroId> {
+export class CodeMacro extends Macro<CodeMacroId> {
   private _snapshot?: CodeSnapshot;
 
   constructor(uri: vscode.Uri, id = getMacroId(uri)) {

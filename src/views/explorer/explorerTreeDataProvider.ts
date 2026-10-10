@@ -3,8 +3,8 @@ import { Execution } from '../../core/execution/execution';
 import { Library } from '../../core/library/library';
 import { LibraryId } from '../../core/library/libraryId';
 import { LibraryItem } from '../../core/library/libraryItem';
-import { Macro } from '../../core/macro';
-import { MacroId, getMacroId } from '../../core/macroId';
+import { CodeMacro } from '../../core/macros/code/codeMacro';
+import { CodeMacroId, getMacroId } from '../../core/macros/code/codeMacroId';
 import { ExtensionContext } from '../../extensionContext';
 import { NaturalComparer } from '../../utils/ui';
 import { TreeDataProvider } from '../treeDataProvider';
@@ -12,11 +12,11 @@ import { createExecutionItem } from './executionItem';
 import { createLibraryItem } from './libraryItem';
 import { createMacroItem } from './macroItem';
 
-export type TreeElement = Library | Macro | Execution;
+export type TreeElement = Library | CodeMacro | Execution;
 
 interface MonitoredLibraryData {
   disposable: vscode.Disposable;
-  files: Set<MacroId>;
+  files: Set<CodeMacroId>;
 }
 
 export class ExplorerTreeDataProvider extends TreeDataProvider<TreeElement> {
@@ -68,7 +68,7 @@ export class ExplorerTreeDataProvider extends TreeDataProvider<TreeElement> {
             const macroId = getMacroId(uri);
             if (!files.has(macroId)) {
               files.add(macroId);
-              this.fireOnDidChangeTreeData(new Macro(uri, macroId), library);
+              this.fireOnDidChangeTreeData(new CodeMacro(uri, macroId), library);
             }
           }
         });
@@ -100,7 +100,7 @@ export class ExplorerTreeDataProvider extends TreeDataProvider<TreeElement> {
 
   private fireOnDidChangeTreeData(element: TreeElement, library?: Library): void {
     let data: TreeElement[] | TreeElement = element;
-    if (element instanceof Macro) {
+    if (element instanceof CodeMacro) {
       // Refresh parent as Macro changes collapsible state, and
       // that won't be refreshed unless parent changes.
       const parent = library ?? this.getParent(element);
@@ -121,11 +121,11 @@ export class ExplorerTreeDataProvider extends TreeDataProvider<TreeElement> {
     } else if (element instanceof Library) {
       const uris = await element.getFiles();
       children = uris
-        .map(({ uri }) => new Macro(uri))
+        .map(({ uri }) => new CodeMacro(uri))
         .sort((a, b) => NaturalComparer.compare(a.name, b.name));
       const entry = this.ensureLibraryIsMonitored(element);
-      entry.files = new Set((children as Macro[]).map((macro) => macro.id));
-    } else if (element instanceof Macro) {
+      entry.files = new Set((children as CodeMacro[]).map((macro) => macro.id));
+    } else if (element instanceof CodeMacro) {
       const executor = this.context.executorManager.getExecutor(element);
       if (executor) {
         children = executor.executions.sort((a, b) => NaturalComparer.compare(a.id, b.id));
@@ -137,7 +137,7 @@ export class ExplorerTreeDataProvider extends TreeDataProvider<TreeElement> {
 
   public override getParent(element: TreeElement): TreeElement | undefined {
     let parent: TreeElement | undefined;
-    if (element instanceof Macro) {
+    if (element instanceof CodeMacro) {
       parent = this.context.libraryManager.libraryFor(element.uri);
     } else if (element instanceof Execution) {
       parent = element.macro;
@@ -150,7 +150,7 @@ export class ExplorerTreeDataProvider extends TreeDataProvider<TreeElement> {
 
     if (element instanceof Library) {
       treeItem = createLibraryItem(element, this.context);
-    } else if (element instanceof Macro) {
+    } else if (element instanceof CodeMacro) {
       treeItem = await createMacroItem(element, this.context);
     } else {
       treeItem = createExecutionItem(element);

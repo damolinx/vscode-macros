@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 import { Library } from '../../core/library/library';
 import { LibraryItemId } from '../../core/library/libraryItem';
-import { Macro } from '../../core/macro';
 import { isMacro } from '../../core/macroLanguages';
+import { CodeMacro } from '../../core/macros/code/codeMacro';
 import { ExtensionContext } from '../../extensionContext';
 import { Lazy } from '../../utils/lazy';
 import { Tree } from '../tree';
@@ -64,7 +64,7 @@ export class ExplorerTree extends Tree<TreeElement> {
         }
 
         if (this.context.libraryManager.libraryFor(uri)) {
-          this.view.reveal(new Macro(uri), options);
+          this.view.reveal(new CodeMacro(uri), options);
         }
       }),
     );

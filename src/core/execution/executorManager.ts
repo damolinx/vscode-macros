@@ -1,14 +1,14 @@
 import * as vscode from 'vscode';
 import { ExtensionContext } from '../../extensionContext';
-import { Macro } from '../macro';
-import { getMacroId, MacroId } from '../macroId';
+import { CodeMacro } from '../macros/code/codeMacro';
+import { getMacroId, CodeMacroId } from '../macros/code/codeMacroId';
 import { Execution } from './execution';
 import { ExecutionId } from './executionId';
 import { Executor } from './executors/executor';
 import { ExecutorFactory } from './executors/executorFactory';
 
 export class ExecutorManager implements vscode.Disposable {
-  private readonly executorMap: Map<MacroId, Executor>;
+  private readonly executorMap: Map<CodeMacroId, Executor>;
   private readonly onExecutionEndEmitter: vscode.EventEmitter<Execution>;
   private readonly onExecutionStartEmitter: vscode.EventEmitter<Execution>;
 
@@ -26,7 +26,7 @@ export class ExecutorManager implements vscode.Disposable {
     this.onExecutionEndEmitter.dispose();
   }
 
-  public cancel(target: Macro | MacroId | vscode.Uri): Execution[] {
+  public cancel(target: CodeMacro | CodeMacroId | vscode.Uri): Execution[] {
     const executor = this.getExecutor(target as any);
     if (!executor) {
       return [];
@@ -34,16 +34,16 @@ export class ExecutorManager implements vscode.Disposable {
     return executor.cancelAll();
   }
 
-  public ensureExecutor(macro: Macro): Promise<Executor>;
+  public ensureExecutor(macro: CodeMacro): Promise<Executor>;
   public ensureExecutor(uri: vscode.Uri): Promise<Executor>;
-  public async ensureExecutor(target: vscode.Uri | Macro): Promise<Executor> {
-    let macro: Macro | undefined;
-    const macroId = target instanceof Macro ? (macro = target).id : getMacroId(target);
+  public async ensureExecutor(target: vscode.Uri | CodeMacro): Promise<Executor> {
+    let macro: CodeMacro | undefined;
+    const macroId = target instanceof CodeMacro ? (macro = target).id : getMacroId(target);
     let executor = this.executorMap.get(macroId);
     if (!executor) {
       executor = await ExecutorFactory.create(
         this.context,
-        macro ?? new Macro(target as vscode.Uri, macroId),
+        macro ?? new CodeMacro(target as vscode.Uri, macroId),
       );
       executor.onExecutionStart((execution) => this.onExecutionStartEmitter.fire(execution));
       executor.onExecutionEnd((execution) => this.onExecutionEndEmitter.fire(execution));
@@ -71,22 +71,22 @@ export class ExecutorManager implements vscode.Disposable {
     return;
   }
 
-  public getExecutionCount(target: Macro | MacroId | vscode.Uri): number {
+  public getExecutionCount(target: CodeMacro | CodeMacroId | vscode.Uri): number {
     const executor = this.getExecutor(target as any);
     return executor?.executionCount ?? 0;
   }
 
-  public getExecutor(macro: Macro): Executor | undefined;
-  public getExecutor(macroId: MacroId): Executor | undefined;
+  public getExecutor(macro: CodeMacro): Executor | undefined;
+  public getExecutor(macroId: CodeMacroId): Executor | undefined;
   public getExecutor(uri: vscode.Uri): Executor | undefined;
-  public getExecutor(target: Macro | MacroId | vscode.Uri): Executor | undefined {
-    let macroId: MacroId;
-    if (target instanceof Macro) {
+  public getExecutor(target: CodeMacro | CodeMacroId | vscode.Uri): Executor | undefined {
+    let macroId: CodeMacroId;
+    if (target instanceof CodeMacro) {
       macroId = target.id;
     } else if (target instanceof vscode.Uri) {
       macroId = getMacroId(target);
     } else {
-      macroId = target as MacroId;
+      macroId = target as CodeMacroId;
     }
 
     return this.executorMap.get(macroId);
@@ -100,10 +100,10 @@ export class ExecutorManager implements vscode.Disposable {
     return this.onExecutionStartEmitter.event;
   }
 
-  public removeExecutor(macro: Macro): Executor | undefined;
+  public removeExecutor(macro: CodeMacro): Executor | undefined;
   public removeExecutor(uri: vscode.Uri): Executor | undefined;
-  public removeExecutor(target: vscode.Uri | Macro): Executor | undefined {
-    const macroId = target instanceof Macro ? target.id : getMacroId(target);
+  public removeExecutor(target: vscode.Uri | CodeMacro): Executor | undefined {
+    const macroId = target instanceof CodeMacro ? target.id : getMacroId(target);
     const executor = this.executorMap.get(macroId);
     if (executor) {
       executor.dispose();

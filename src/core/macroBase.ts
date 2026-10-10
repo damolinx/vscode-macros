@@ -3,7 +3,7 @@ import { uriBasename } from '../utils/uri';
 import { Id } from './id';
 import { resolveMacroInfo } from './macroLanguages';
 
-export abstract class MacroBase<TId extends Id<string> = Id<string>> {
+export abstract class Macro<TId extends Id<string> = Id<string>> {
   private _name?: string;
 
   protected constructor(

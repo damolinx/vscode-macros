@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { CodeSnapshot } from '../core/codeSnapshot';
 import { FeatureEnabledSelector } from '../core/macroLanguages';
+import { CodeSnapshot } from '../core/macros/code/codeSnapshot';
 import { ExtensionContext } from '../extensionContext';
 
 export function registerMacroCodeLensProvider(context: ExtensionContext): void {

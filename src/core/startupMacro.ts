@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { MacroBase } from './macroBase';
+import { Macro } from './macroBase';
 import {
   getMacroUriFromStartupMacroUri,
   getStartupMacroId,
@@ -7,7 +7,7 @@ import {
   StartupMacroId,
 } from './startupMacroId';
 
-export class StartupMacro extends MacroBase<StartupMacroId> {
+export class StartupMacro extends Macro<StartupMacroId> {
   private _macroUri?: vscode.Uri;
 
   constructor(

@@ -1,13 +1,13 @@
 import * as vscode from 'vscode';
-import { Macro } from '../../core/macro';
 import { PreferredLanguage, resolveMacroLanguage } from '../../core/macroLanguages';
+import { CodeMacro } from '../../core/macros/code/codeMacro';
 import { exists } from '../../utils/fsEx';
 import { areUriEqual, isUntitled, uriBasename } from '../../utils/uri';
 import { saveTextEditor } from '../../utils/vscodeEx';
 import { TreeElement } from '../../views/explorer/explorerTreeDataProvider';
 import { TreeDragAndDropController } from '../treeDragAndDropController';
 
-export class ExplorerTreeDragAndDropController extends TreeDragAndDropController<Macro> {
+export class ExplorerTreeDragAndDropController extends TreeDragAndDropController<CodeMacro> {
   protected override get treeMimeType(): string {
     return 'application/vnd.code.tree.macros.macroexplorer';
   }
@@ -17,7 +17,7 @@ export class ExplorerTreeDragAndDropController extends TreeDragAndDropController
     dataTransfer: vscode.DataTransfer,
     token: vscode.CancellationToken,
   ): void {
-    const filteredSource = source.filter((item) => item instanceof Macro);
+    const filteredSource = source.filter((item) => item instanceof CodeMacro);
     super.handleDrag(filteredSource, dataTransfer, token);
   }
 
@@ -29,7 +29,7 @@ export class ExplorerTreeDragAndDropController extends TreeDragAndDropController
     if (!target || !('uri' in target) || isUntitled(target)) {
       return;
     }
-    if (target instanceof Macro) {
+    if (target instanceof CodeMacro) {
       target = this.context.libraryManager.libraryFor(target.uri);
       if (!target) {
         return;

@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { CodeSnapshot } from '../core/codeSnapshot';
 import { Executor } from '../core/execution/executors/executor';
+import { CodeSnapshot } from '../core/macros/code/codeSnapshot';
 import { TranspilationError } from '../core/typescript/transpilationError';
 import { cleanError } from '../utils/errors';
 import { uriBasename } from '../utils/uri';

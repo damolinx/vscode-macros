@@ -1,14 +1,14 @@
 import * as vscode from 'vscode';
 import { exists } from '../../utils/fsEx';
 import { isParent } from '../../utils/uri';
-import { getMacroId, MacroId } from '../macroId';
 import { AllLanguages, isMacro } from '../macroLanguages';
+import { getMacroId, CodeMacroId } from '../macros/code/codeMacroId';
 import { Library } from './library';
 import { LibraryItem } from './libraryItem';
 import { getMacroItem } from './macroLibraryItem';
 import { Source } from './source';
 
-export class MacroLibrary extends Library<MacroId> {
+export class MacroLibrary extends Library<CodeMacroId> {
   private initialized: boolean;
   private readonly watcher?: vscode.FileSystemWatcher;
 
@@ -32,7 +32,7 @@ export class MacroLibrary extends Library<MacroId> {
     this.disposables.push({ dispose: () => this.watcher?.dispose() });
   }
 
-  public override async getFiles(): Promise<LibraryItem<MacroId>[]> {
+  public override async getFiles(): Promise<LibraryItem<CodeMacroId>[]> {
     if (await exists(this.uri)) {
       if (!this.initialized) {
         const entries = await vscode.workspace.fs.readDirectory(this.uri).then(

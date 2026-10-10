@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { basename, extname } from 'path';
-import { Macro } from '../core/macro';
 import { isMacro } from '../core/macroLanguages';
+import { CodeMacro } from '../core/macros/code/codeMacro';
 import { ExtensionContext } from '../extensionContext';
 import { exists } from '../utils/fsEx';
 import { isUntitled, parentUri, resolveUri, uriBasename, UriLocator } from '../utils/uri';
@@ -13,7 +13,7 @@ export async function renameMacro(
 ): Promise<void> {
   const uri = locator
     ? resolveUri(locator)
-    : getTreeSelection(explorerTree, (item) => item instanceof Macro && !isUntitled(item.uri));
+    : getTreeSelection(explorerTree, (item) => item instanceof CodeMacro && !isUntitled(item.uri));
   if (!uri) {
     log.info('RenameMacro: Nothing to rename');
     return;

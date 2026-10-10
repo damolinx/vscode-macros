@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { Execution } from '../core/execution/execution';
 import { ExecutionId } from '../core/execution/executionId';
-import { Macro } from '../core/macro';
+import { CodeMacro } from '../core/macros/code/codeMacro';
 import { StartupMacro } from '../core/startupMacro';
 import { getMacroUriFromStartupMacroUri } from '../core/startupMacroId';
 import { ExtensionContext } from '../extensionContext';
@@ -10,7 +10,7 @@ import { resolveUri } from '../utils/uri';
 
 export async function stopMacro(
   { log, executorManager }: ExtensionContext,
-  target: Macro | Execution | StartupMacro | vscode.Uri,
+  target: CodeMacro | Execution | StartupMacro | vscode.Uri,
 ): Promise<void> {
   let canceledExecutionIds: ExecutionId[];
   let logLocator: string;

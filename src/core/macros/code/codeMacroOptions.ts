@@ -1,6 +1,8 @@
-export type MacroOptionType = keyof MacroOptions;
+import { ExecutionOptions } from '../../execution/executionOptions';
 
-export interface MacroOptions {
+export type MacroOptionType = keyof CodeMacroOptions;
+
+export interface CodeMacroOptions extends ExecutionOptions {
   /**
    * Macro uses a shared context. Default: false.
    */
@@ -9,14 +11,10 @@ export interface MacroOptions {
    * Macro is not automatically terminated. Default: false.
    */
   retained?: boolean;
-  /**
-   * Macro can only have a single running instance. Default: false.
-   */
-  singleton?: boolean;
 }
 
-export function parseOptions(code: string): MacroOptions {
-  const options: MacroOptions = {};
+export function parseCodeMacroOptions(code: string): CodeMacroOptions {
+  const options: CodeMacroOptions = {};
   for (const match of code.matchAll(/\/\/\s*@macro:\s*(.+)$/gm)) {
     const optionsText = match[1];
     for (const option of optionsText.split(/\s*,\s*/)) {

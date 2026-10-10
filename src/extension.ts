@@ -34,7 +34,7 @@ import { showRunningMacros } from './commands/showRunningMacros';
 import { stopMacro } from './commands/stopMacro';
 import { Execution } from './core/execution/execution';
 import { MacroLibrary } from './core/library/macroLibrary';
-import { Macro } from './core/macro';
+import { CodeMacro } from './core/macros/code/codeMacro';
 import { StartupMacro } from './core/startupMacro';
 import { ExtensionContext } from './extensionContext';
 import { registerContextValueHandlers } from './extensionContextValues';
@@ -87,7 +87,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.createMacroPrompt', () => createMacroPrompt(context)),
     cr('macros.debug', (locator?: UriLocator) => debugMacro(context, locator)),
     cr('macros.debug.activeEditor', () => debugActiveEditor(context)),
-    cr('macros.delete.macroOrMacroLibrary', (macroOrLibrary?: Macro | MacroLibrary) =>
+    cr('macros.delete.macroOrMacroLibrary', (macroOrLibrary?: CodeMacro | MacroLibrary) =>
       deleteMacroOrMacroLibrary(context, macroOrLibrary),
     ),
     cr(
@@ -111,7 +111,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.paste.file', (locator: UriLocator) => pasteFile(context, locator)),
     cr('macros.rename.macro', (locator?: UriLocator) => renameMacro(context, locator)),
     cr('macros.resetContext', (locator: UriLocator) => resetSharedContext(context, locator)),
-    cr('macros.restart', (locator: Macro | StartupMacro) => restartMacro(context, locator)),
+    cr('macros.restart', (locator: CodeMacro | StartupMacro) => restartMacro(context, locator)),
     cr('macros.revealInExplorer', (locator?: UriLocator) => revealInOS(context, locator)),
     cr('macros.revealInFinder', (locator?: UriLocator) => revealInOS(context, locator)),
     cr('macros.revealInFiles', (locator?: UriLocator) => revealInOS(context, locator)),
@@ -131,7 +131,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     cr('macros.startup.settings', (sourceTarget?: SourceTarget) =>
       openStartupMacrosSettings(sourceTarget?.target),
     ),
-    cr('macros.stop', (locator: Macro | Execution | StartupMacro | vscode.Uri) =>
+    cr('macros.stop', (locator: CodeMacro | Execution | StartupMacro | vscode.Uri) =>
       stopMacro(context, locator),
     ),
   );

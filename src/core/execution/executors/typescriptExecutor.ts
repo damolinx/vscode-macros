@@ -1,10 +1,10 @@
 import { ExtensionContext } from '../../../extensionContext';
-import { Macro } from '../../macro';
+import { CodeMacro } from '../../macros/code/codeMacro';
 import { ensureSourceMapSupport } from '../../typescript/sourceMap';
 import { Executor } from './executor';
 
 export class TypeScriptExecutor extends Executor {
-  constructor(context: ExtensionContext, macro: Macro) {
+  constructor(context: ExtensionContext, macro: CodeMacro) {
     super(context, macro);
     ensureSourceMapSupport(this.context, this.runner);
   }

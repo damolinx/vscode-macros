@@ -1,10 +1,10 @@
 import * as vscode from 'vscode';
-import { getMacroId } from './macroId';
-import { MacroOptions, parseOptions } from './macroOptions';
-import { TranspilationError, transpileOrThrow } from './typescript/transpilation';
+import { TranspilationError, transpileOrThrow } from '../../typescript/transpilation';
+import { getMacroId } from './codeMacroId';
+import { CodeMacroOptions, parseCodeMacroOptions } from './codeMacroOptions';
 
 export class CodeSnapshot {
-  private _options?: MacroOptions;
+  private _options?: CodeMacroOptions;
   public readonly languageId: string;
   public readonly rawCode: string;
   private runnableCode?: string;
@@ -52,10 +52,10 @@ export class CodeSnapshot {
   }
 
   /**
-   * Gets {@link MacroOptions options} defined in the macro document.
+   * Macro {@link CodeMacroOptions options} parsed from the source code.
    */
-  public get options(): MacroOptions {
-    this._options ??= parseOptions(this.rawCode);
+  public get options(): CodeMacroOptions {
+    this._options ??= parseCodeMacroOptions(this.rawCode);
     return this._options;
   }
 }
