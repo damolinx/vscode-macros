@@ -1,33 +1,22 @@
 import * as vscode from 'vscode';
 import { ExtensionContext } from '../../extensionContext';
+import { CodeSnapshot } from '../codeSnapshot';
 import { Macro } from '../macro';
-import { MacroCode } from '../macroCode';
-import { getExecutionId, ExecutionId } from './executionId';
+import { ExecutionId } from './executionId';
 
 export class Execution implements vscode.Disposable {
-  public static async create(
-    context: ExtensionContext,
-    macro: Macro,
-    params: { index: number; startup?: true },
-  ): Promise<Execution> {
-    const code = await macro.getCode();
-    return new Execution(context, macro, code, params.index, params.startup);
-  }
-
   private readonly cts: vscode.CancellationTokenSource;
-  public readonly id: ExecutionId;
   public readonly macroDisposables: vscode.Disposable[];
   private ts: number;
 
-  private constructor(
+  public constructor(
     private readonly context: ExtensionContext,
+    public readonly id: ExecutionId,
     public readonly macro: Macro,
-    public readonly snapshot: MacroCode,
-    index: number,
-    public readonly startup?: true,
+    public readonly snapshot: CodeSnapshot,
+    public readonly startup = false,
   ) {
     this.cts = new vscode.CancellationTokenSource();
-    this.id = getExecutionId(macro.uri.path.split('/').slice(-2).join('/'), index, startup);
     this.macroDisposables = [];
     this.ts = Date.now();
   }
@@ -47,10 +36,6 @@ export class Execution implements vscode.Disposable {
 
   public get cancellationToken(): vscode.CancellationToken {
     return this.cts.token;
-  }
-
-  public get code(): string {
-    return this.snapshot.getRunnableCode();
   }
 
   public get startedOn(): number {

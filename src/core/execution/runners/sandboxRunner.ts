@@ -15,7 +15,7 @@ export class SandboxRunner extends Runner<vm.Context> {
 
     const runPromise = execution.snapshot.options.persistent
       ? this.executeInternalPersistent(execution, context, options)
-      : vm.runInNewContext(execution.code, context, options);
+      : vm.runInNewContext(execution.snapshot.getRunnableCode(), context, options);
 
     const result = await runPromise;
     return result;
@@ -28,7 +28,7 @@ export class SandboxRunner extends Runner<vm.Context> {
   ): Promise<any> {
     const initialKeys = Object.keys(context).filter((k) => !k.startsWith('__'));
     try {
-      const result = await vm.runInContext(execution.code, context, options);
+      const result = await vm.runInContext(execution.snapshot.getRunnableCode(), context, options);
       return result;
     } finally {
       if (this.sharedMacroContext) {

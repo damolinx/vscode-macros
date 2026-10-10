@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
+import { CodeSnapshot } from '../core/codeSnapshot';
 import { Executor } from '../core/execution/executors/executor';
-import { MacroCode } from '../core/macroCode';
 import { TranspilationError } from '../core/typescript/transpilationError';
 import { cleanError } from '../utils/errors';
 import { uriBasename } from '../utils/uri';
@@ -13,7 +13,7 @@ interface ErrorLocation {
 
 export function showMacroErrorMessage(
   executor: Executor,
-  macroCode: MacroCode,
+  snapshot: CodeSnapshot,
   error: Error | string,
 ): Promise<void> {
   let message: string;
@@ -31,14 +31,14 @@ export function showMacroErrorMessage(
       message = displayError.message;
       if (displayError.stack) {
         filteredStack = displayError.stack;
-        errorLocation = findErrorLocation(executor, filteredStack, macroCode.languageId);
+        errorLocation = findErrorLocation(executor, filteredStack, snapshot.languageId);
       }
     }
   }
 
   return showErrorMessage(
     executor,
-    macroCode,
+    snapshot,
     `Macro Error — ${message}`,
     filteredStack,
     errorLocation,
@@ -101,7 +101,7 @@ function findErrorLocation(
 
 async function showErrorMessage(
   executor: Executor,
-  macroCode: MacroCode,
+  snapshot: CodeSnapshot,
   message: string,
   stack?: string,
   errorLocation?: ErrorLocation,
@@ -119,7 +119,7 @@ async function showErrorMessage(
         },
   ];
 
-  if (!macroCode.options.singleton || executor.executionCount === 0) {
+  if (!snapshot.options.singleton || executor.executionCount === 0) {
     actions.push({
       title: 'Retry',
       execute: () =>
@@ -129,7 +129,7 @@ async function showErrorMessage(
     });
   }
 
-  if (macroCode.options.persistent) {
+  if (snapshot.options.persistent) {
     actions.push({
       title: 'Reset Context',
       execute: () => executor.resetPersistentContext(),
@@ -145,7 +145,7 @@ async function showErrorMessage(
       actions.push({
         title: 'Details',
         execute: () =>
-          showErrorMessage(executor, macroCode, 'Macro Error', stack, errorLocation, true),
+          showErrorMessage(executor, snapshot, 'Macro Error', stack, errorLocation, true),
       });
     }
   }

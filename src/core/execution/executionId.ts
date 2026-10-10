@@ -1,8 +1,17 @@
+import * as vscode from 'vscode';
 import { Id } from '../id';
 
 export type ExecutionId = Id<'ExecutionId'>;
 
-export function getExecutionId(name: string, index: number | string, startup?: true): ExecutionId {
+export function getExecutionIdFromUri(
+  uri: vscode.Uri,
+  index: number,
+  startup = false,
+): ExecutionId {
+  return getExecutionId(uri.path.split('/').slice(-2).join('/'), index, startup);
+}
+
+export function getExecutionId(name: string, index: number | string, startup = false): ExecutionId {
   const token = startup
     ? index !== 1
       ? `startup(${index})`

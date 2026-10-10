@@ -1,24 +1,20 @@
 import * as vscode from 'vscode';
+import { CodeSnapshot } from './codeSnapshot';
 import { MacroBase } from './macroBase';
-import { MacroCode } from './macroCode';
 import { getMacroId, MacroId } from './macroId';
 
 export class Macro extends MacroBase<MacroId> {
-  private code?: MacroCode;
+  private _snapshot?: CodeSnapshot;
 
   constructor(uri: vscode.Uri, id = getMacroId(uri)) {
     super(id, uri);
   }
 
-  /**
-   * Returns the *current* document state for this macro. Successive calls may
-   * return different instances.
-   */
-  public async getCode(): Promise<MacroCode> {
+  public async getSnapshot(): Promise<CodeSnapshot> {
     const document = await vscode.workspace.openTextDocument(this.uri);
-    if (this.code?.version !== document.version) {
-      this.code = new MacroCode(document, this.id);
+    if (this._snapshot?.version !== document.version) {
+      this._snapshot = new CodeSnapshot(document, this.id);
     }
-    return this.code;
+    return this._snapshot;
   }
 }

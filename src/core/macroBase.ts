@@ -1,8 +1,9 @@
 import * as vscode from 'vscode';
 import { uriBasename } from '../utils/uri';
+import { Id } from './id';
 import { resolveMacroInfo } from './macroLanguages';
 
-export abstract class MacroBase<TId extends string> {
+export abstract class MacroBase<TId extends Id<string> = Id<string>> {
   private _name?: string;
 
   protected constructor(
@@ -10,9 +11,6 @@ export abstract class MacroBase<TId extends string> {
     public readonly uri: vscode.Uri,
   ) {}
 
-  /**
-   * Display name.
-   */
   public get name(): string {
     this._name ??= uriBasename(this.uri, resolveMacroInfo(this.uri)?.extension ?? true);
     return this._name;

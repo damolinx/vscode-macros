@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
 import { ExtensionContext } from '../../../extensionContext';
+import { CodeSnapshot } from '../../codeSnapshot';
 import { Macro } from '../../macro';
-import { MacroCode } from '../../macroCode';
 import { Execution } from '../execution';
-import { ExecutionId } from '../executionId';
+import { ExecutionId, getExecutionIdFromUri } from '../executionId';
 import { Runner } from '../runners/runner';
 import { RunnerFactory } from '../runners/runnerFactory';
 import { SingletonMacroAlreadyRunningError } from './errors';
@@ -12,7 +12,7 @@ type ExecuteErrorHandler = (
   error: Error,
   info: {
     executionId: ExecutionId;
-    macroCode: MacroCode;
+    snapshot: CodeSnapshot;
   },
 ) => Promise<void> | void;
 
@@ -53,18 +53,18 @@ export class Executor implements vscode.Disposable {
     params?: { startup?: true },
     errorHandler?: ExecuteErrorHandler,
   ): Promise<void> {
-    const code = await this.macro.getCode();
-    if (code.options.singleton && this.executionCount > 0) {
+    const snapshot = await this.macro.getSnapshot();
+    if (snapshot.options.singleton && this.executionCount > 0) {
       throw new SingletonMacroAlreadyRunningError(this.macro.id, this.macro.name);
     }
 
-    const execution = await Execution.create(this.context, this.macro, {
-      index: ++this.executionIndex,
-      ...params,
-    });
-    if (this.executionMap.has(execution.id)) {
-      throw new Error(`Duplicate execution id: ${execution.id}`);
+    const startup = params?.startup ?? false;
+    const executionId = getExecutionIdFromUri(this.macro.uri, ++this.executionIndex, startup);
+    if (this.executionMap.has(executionId)) {
+      throw new Error(`Duplicate execution id: ${executionId}`);
     }
+
+    const execution = new Execution(this.context, executionId, this.macro, snapshot, startup);
     this.executionMap.set(execution.id, execution);
 
     try {
@@ -73,7 +73,7 @@ export class Executor implements vscode.Disposable {
       if (!errorHandler) {
         throw error;
       }
-      await errorHandler(error, { executionId: execution.id, macroCode: execution.snapshot });
+      await errorHandler(error, { executionId: execution.id, snapshot: execution.snapshot });
     } finally {
       execution.dispose();
     }

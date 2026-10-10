@@ -21,9 +21,9 @@ export async function createMacroItem(
 
   const executor = context.executorManager.getExecutor(macro.uri);
   const executionCount = executor?.executionCount ?? 0;
-  const code = isUntitledMacro || executionCount ? await macro.getCode() : undefined;
+  const snapshot = isUntitledMacro || executionCount ? await macro.getSnapshot() : undefined;
 
-  item.iconPath = code ? getIcon(code.languageId) : getIconFromUri(macro.uri);
+  item.iconPath = snapshot ? getIcon(snapshot.languageId) : getIconFromUri(macro.uri);
 
   if (isUntitledMacro) {
     item.contextValue += ' untitled';
@@ -35,7 +35,7 @@ export async function createMacroItem(
     item.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
     item.contextValue += ' running';
     item.description = `(${executionCount})`;
-    if (code?.options.singleton) {
+    if (snapshot?.options.singleton) {
       item.contextValue += ' restartOnly';
     }
   } else {

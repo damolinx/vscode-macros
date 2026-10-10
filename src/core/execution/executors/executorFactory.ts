@@ -5,7 +5,7 @@ import { TypeScriptExecutor } from './typescriptExecutor';
 
 export class ExecutorFactory {
   public static async create(context: ExtensionContext, macro: Macro): Promise<Executor> {
-    const { languageId } = await macro.getCode();
+    const { languageId } = await macro.getSnapshot();
     switch (languageId) {
       case 'javascript':
         return new Executor(context, macro);

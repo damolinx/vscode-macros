@@ -37,8 +37,8 @@ export async function runMacro(
 
   const executor = await context.executorManager.ensureExecutor(uri);
   try {
-    await executor.execute(options, (error, { macroCode }) =>
-      showMacroErrorMessage(executor, macroCode, error),
+    await executor.execute(options, (error, { snapshot }) =>
+      showMacroErrorMessage(executor, snapshot, error),
     );
   } catch (error) {
     if (error instanceof SingletonMacroAlreadyRunningError) {

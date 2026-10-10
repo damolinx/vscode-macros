@@ -3,7 +3,7 @@ import { getMacroId } from './macroId';
 import { MacroOptions, parseOptions } from './macroOptions';
 import { TranspilationError, transpileOrThrow } from './typescript/transpilation';
 
-export class MacroCode {
+export class CodeSnapshot {
   private _options?: MacroOptions;
   public readonly languageId: string;
   public readonly rawCode: string;

@@ -20,7 +20,7 @@ const smsSupport = new Lazy(({ executorManager }: ExtensionContext, runner: Runn
         return null;
       }
 
-      const map = extractInlineSourceMap(execution.code);
+      const map = extractInlineSourceMap(execution.snapshot.getRunnableCode());
       if (!map) {
         return null;
       }
