@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { Macro } from './macroBase';
+import { Macro } from './macro';
 import {
   getMacroUriFromStartupMacroUri,
   getStartupMacroId,
