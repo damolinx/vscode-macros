@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
-import { getId, Id } from './id';
+import { createIdFromUri, Id } from './id';
 
 export type StartupMacroId = Id<'StartupMacro'>;
 
 export function getStartupMacroId(uri: vscode.Uri): StartupMacroId {
   const startupUri = getStartupMacroUri(uri);
-  return getId<'StartupMacro'>(startupUri);
+  return createIdFromUri<StartupMacroId>(startupUri);
 }
 
 export function getStartupMacroUri(uri: vscode.Uri): vscode.Uri {
