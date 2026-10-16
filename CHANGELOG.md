@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.7.17
+- Improve handling of history in **Macro REPL**.
 - Fix: Stop forcing the **Macros Explorer** into view as a side effect of tree expansion.
 
 ## 0.7.16

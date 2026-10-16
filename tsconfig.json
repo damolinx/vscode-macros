@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es2024",
+    "target": "esnext",
     "outDir": "out",
     "rootDir": "src",
     "sourceMap": true,
