@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { get } from 'https';
-import { ExtensionContext } from '../extensionContext';
+import { Context } from '../context';
 import { exists } from '../utils/fsEx';
 import { formatDisplayUri, MacroFilter } from '../utils/ui';
 import { isUntitled, parentUri, uriBasename, UriLocator, resolveUri } from '../utils/uri';
@@ -11,7 +11,7 @@ const NO_OPTION: vscode.MessageItem = { title: 'No', isCloseAffordance: true };
 const YES_OPTION: vscode.MessageItem = { title: 'Yes' };
 
 export async function downloadAsset(
-  context: ExtensionContext,
+  context: Context,
   assetUri: vscode.Uri,
   locator: UriLocator,
 ): Promise<vscode.Uri | undefined> {

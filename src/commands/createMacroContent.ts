@@ -1,5 +1,5 @@
+import { Context } from '../context';
 import { MacroLanguageId } from '../core/language/macroLanguage';
-import { ExtensionContext } from '../extensionContext';
 import { createMacro } from './createMacro';
 import { runMacro } from './runMacro';
 
@@ -10,7 +10,7 @@ export interface CreateMacroContentArgs {
 }
 
 export async function createMacroContent(
-  context: ExtensionContext,
+  context: Context,
   args: CreateMacroContentArgs,
 ): Promise<string> {
   const document = await createMacro(context, undefined, args);

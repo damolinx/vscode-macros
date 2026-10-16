@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
+import { Context } from '../../context';
 import { Library } from '../../core/library/library';
 import { LibraryItemId } from '../../core/library/libraryItem';
 import { isMacro } from '../../core/macroLanguages';
 import { CodeMacro } from '../../core/macros/code/codeMacro';
-import { ExtensionContext } from '../../extensionContext';
 import { Lazy } from '../../utils/lazy';
 import { Tree } from '../tree';
 import { TreeViewState } from '../treeViewState';
@@ -17,7 +17,7 @@ export class ExplorerTree extends Tree<TreeElement> {
   public readonly expansionState: TreeViewState<LibraryItemId>;
   private readonly revealOptions: Lazy<{ select: true } | undefined>;
 
-  constructor(context: ExtensionContext) {
+  constructor(context: Context) {
     super(context, {
       dragAndDropController: new ExplorerTreeDragAndDropController(context),
       showCollapseAll: true,

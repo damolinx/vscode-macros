@@ -1,4 +1,4 @@
-import { ExtensionContext } from '../../extensionContext';
+import { Context } from '../../context';
 import { Tree } from '../tree';
 import { StartupTreeDataProvider, StartupTreeElement } from './startupTreeDataProvider';
 import { StartupTreeDragAndDropController } from './startupTreeDragAndDropController';
@@ -6,7 +6,7 @@ import { StartupTreeDragAndDropController } from './startupTreeDragAndDropContro
 const STARTUP_MACROS_VIEW_ID = 'macros.startupMacros';
 
 export class StartupTree extends Tree<StartupTreeElement | undefined> {
-  constructor(context: ExtensionContext) {
+  constructor(context: Context) {
     const provider = new StartupTreeDataProvider(context);
     super(context, {
       dragAndDropController: new StartupTreeDragAndDropController(context),

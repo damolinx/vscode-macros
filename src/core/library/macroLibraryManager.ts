@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { ExtensionContext } from '../../extensionContext';
+import { Context } from '../../context';
 import { LazyDisposable } from '../../utils/lazy';
 import { Library } from './library';
 import { MacroLibrary } from './macroLibrary';
@@ -13,7 +13,7 @@ export class MacroLibraryManager implements vscode.Disposable {
   public readonly sourcesManager: MacroLibrarySourceManager;
   private readonly virtualLibraries: LazyDisposable<readonly Library[]>;
 
-  constructor(context: ExtensionContext) {
+  constructor(context: Context) {
     this.onDidChangeLibrariesEmitter = new vscode.EventEmitter();
     this.persistentLibraries = new LazyDisposable(() =>
       this.sourcesManager.sources.map((source) => new MacroLibrary(source.uri, source)),

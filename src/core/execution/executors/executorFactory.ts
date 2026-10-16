@@ -1,10 +1,10 @@
-import { ExtensionContext } from '../../../extensionContext';
+import { Context } from '../../../context';
 import { CodeMacro } from '../../macros/code/codeMacro';
 import { Executor } from './executor';
 import { TypeScriptExecutor } from './typescriptExecutor';
 
 export class ExecutorFactory {
-  public static async create(context: ExtensionContext, macro: CodeMacro): Promise<Executor> {
+  public static async create(context: Context, macro: CodeMacro): Promise<Executor> {
     const { languageId } = await macro.getSnapshot();
     switch (languageId) {
       case 'javascript':

@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
+import { Context } from '../context';
 import { isFeatureMacro } from '../core/macroLanguages';
-import { ExtensionContext } from '../extensionContext';
 import { selectSourceDirectory } from '../ui/selectMacroFile';
 import { LazyDisposable } from '../utils/lazy';
 import { readFile } from '../utils/resources';
@@ -10,7 +10,7 @@ export const AUTO_VERIFY_SETTING = 'macros.sourceDirectoriesVerification';
 export const GLOBALS_RESOURCE = 'api/global.d.ts';
 export const JSCONFIG_RESOURCE = 'api/jsconfig.json';
 
-export function registerSourceDirectoryVerifier(context: ExtensionContext): void {
+export function registerSourceDirectoryVerifier(context: Context): void {
   const verifiedPaths = new Set<string>();
   const onDidChangeActiveTextEditorDisposable = new LazyDisposable(() =>
     vscode.window.onDidChangeActiveTextEditor(async (editor) => {
@@ -59,7 +59,7 @@ export function registerSourceDirectoryVerifier(context: ExtensionContext): void
 }
 
 export async function setupSourceDirectory(
-  context: ExtensionContext,
+  context: Context,
   locator?: UriLocator,
   suppressNotifications?: true,
 ): Promise<void> {

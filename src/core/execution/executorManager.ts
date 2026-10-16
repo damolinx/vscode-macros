@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { ExtensionContext } from '../../extensionContext';
+import { Context } from '../../context';
 import { CodeMacro } from '../macros/code/codeMacro';
 import { getMacroId, CodeMacroId } from '../macros/code/codeMacroId';
 import { Execution } from './execution';
@@ -12,7 +12,7 @@ export class ExecutorManager implements vscode.Disposable {
   private readonly onExecutionEndEmitter: vscode.EventEmitter<Execution>;
   private readonly onExecutionStartEmitter: vscode.EventEmitter<Execution>;
 
-  constructor(private readonly context: ExtensionContext) {
+  constructor(private readonly context: Context) {
     this.executorMap = new Map();
     this.onExecutionEndEmitter = new vscode.EventEmitter();
     this.onExecutionStartEmitter = new vscode.EventEmitter();

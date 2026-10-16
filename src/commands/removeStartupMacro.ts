@@ -1,13 +1,13 @@
 import * as vscode from 'vscode';
+import { Context } from '../context';
 import { tokenizeUri } from '../core/pathTokenization';
 import { StartupMacro } from '../core/startupMacro';
 import { getMacroUriFromStartupMacroUri } from '../core/startupMacroId';
-import { ExtensionContext } from '../extensionContext';
 import { formatDisplayUri } from '../utils/ui';
 import { resolveUri } from '../utils/uri';
 
 export async function removeStartupMacro(
-  context: ExtensionContext,
+  context: Context,
   startupMacroOrUri: StartupMacro | vscode.Uri,
   configTarget?: vscode.ConfigurationTarget,
 ): Promise<boolean> {

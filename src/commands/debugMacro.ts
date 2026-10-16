@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { ExtensionContext } from '../extensionContext';
+import { Context } from '../context';
 import { showMacroQuickPick } from '../ui/dialogs';
 import { UriLocator, parentUri, uriBasename, resolveUri } from '../utils/uri';
 import { showTextDocument } from '../utils/vscodeEx';
@@ -8,7 +8,7 @@ import { activeMacroEditor } from './utils';
 export const MACROS_EXT_DEBUG_VAR = 'MACROS_EXT_DEBUG';
 
 export async function debugMacro(
-  { libraryManager, mruMacro }: ExtensionContext,
+  { libraryManager, mruMacro }: Context,
   locator?: UriLocator,
 ): Promise<boolean | undefined> {
   const uri = locator
@@ -54,7 +54,7 @@ export async function debugMacro(
   return started;
 }
 
-export async function debugActiveEditor(context: ExtensionContext): Promise<boolean | undefined> {
+export async function debugActiveEditor(context: Context): Promise<boolean | undefined> {
   let started: boolean | undefined;
   const editor = await activeMacroEditor(true);
   if (editor) {

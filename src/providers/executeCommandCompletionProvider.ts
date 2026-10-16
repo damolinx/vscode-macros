@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
+import { Context } from '../context';
 import { FeatureEnabledSelector } from '../core/macroLanguages';
-import { ExtensionContext } from '../extensionContext';
 import { Lazy } from '../utils/lazy';
 
 export const EXECUTE_COMMAND_CHARACTERS: readonly string[] = ['(', '"', "'", '`'];
 
-export function registerExecuteCommandCompletionProvider(context: ExtensionContext): void {
+export function registerExecuteCommandCompletionProvider(context: Context): void {
   context.disposables.push(
     vscode.languages.registerCompletionItemProvider(
       FeatureEnabledSelector,

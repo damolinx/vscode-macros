@@ -1,4 +1,4 @@
-import { ExtensionContext } from '../../extensionContext';
+import { Context } from '../../context';
 import { readFile } from '../../utils/resources';
 import { isElement } from './elements/elementNode';
 import { RenderableNode } from './node';
@@ -18,7 +18,7 @@ export const SUPPORTED_RENDERERS: readonly string[] = [
 
 export const RendererScripts = new Map<string, Script>();
 
-export async function loadRenderers({ extensionContext, log }: ExtensionContext): Promise<void> {
+export async function loadRenderers({ extensionContext, log }: Context): Promise<void> {
   const start = Date.now();
   await Promise.all(
     SUPPORTED_RENDERERS.map(async (kind) => {

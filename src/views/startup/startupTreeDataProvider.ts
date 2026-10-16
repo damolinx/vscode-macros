@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
+import { Context } from '../../context';
 import { Execution } from '../../core/execution/execution';
 import { StartupMacro } from '../../core/startupMacro';
-import { ExtensionContext } from '../../extensionContext';
 import { NaturalComparer } from '../../utils/ui';
 import { TreeDataProvider } from '../treeDataProvider';
 import { SourceTarget } from './sourceTarget';
@@ -11,7 +11,7 @@ import { createStartupItem } from './startupMacroItem';
 export type StartupTreeElement = StartupMacro | SourceTarget;
 
 export class StartupTreeDataProvider extends TreeDataProvider<StartupTreeElement> {
-  constructor(context: ExtensionContext) {
+  constructor(context: Context) {
     super(context);
 
     const executionHandler = ({ startup }: Execution) =>

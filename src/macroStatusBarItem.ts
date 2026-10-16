@@ -1,13 +1,13 @@
 import * as vscode from 'vscode';
+import { Context } from './context';
 import { ExecutorManager } from './core/execution/executorManager';
-import { ExtensionContext } from './extensionContext';
 
 export class MacroStatusBarItem implements vscode.Disposable {
   private readonly disposables: vscode.Disposable[];
   private readonly item: vscode.StatusBarItem;
   private readonly executorManager: ExecutorManager;
 
-  constructor({ executorManager }: ExtensionContext) {
+  constructor({ executorManager }: Context) {
     this.executorManager = executorManager;
     this.item = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000);
     this.item.command = 'macros.run.show';

@@ -1,19 +1,19 @@
 import * as vscode from 'vscode';
+import { Context } from '../context';
 import { resolveMacroInfo } from '../core/macroLanguages';
-import { ExtensionContext } from '../extensionContext';
 import { Lazy } from '../utils/lazy';
 
 export const MACROS = 'resources/images/macros.svg';
 export const MACROS_DARK = 'resources/images/macros-dark.svg';
 export const MACROS_LIGHT = 'resources/images/macros-light.svg';
 
-export const MacrosIconUri = new Lazy(({ extensionContext }: ExtensionContext) =>
+export const MacrosIconUri = new Lazy(({ extensionContext }: Context) =>
   vscode.Uri.file(extensionContext.asAbsolutePath(MACROS)),
 );
-export const MacrosDarkIconUri = new Lazy(({ extensionContext }: ExtensionContext) =>
+export const MacrosDarkIconUri = new Lazy(({ extensionContext }: Context) =>
   vscode.Uri.file(extensionContext.asAbsolutePath(MACROS_DARK)),
 );
-export const MacrosLightIconUri = new Lazy(({ extensionContext }: ExtensionContext) =>
+export const MacrosLightIconUri = new Lazy(({ extensionContext }: Context) =>
   vscode.Uri.file(extensionContext.asAbsolutePath(MACROS_LIGHT)),
 );
 

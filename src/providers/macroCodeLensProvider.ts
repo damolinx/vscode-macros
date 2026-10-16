@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
+import { Context } from '../context';
 import { FeatureEnabledSelector } from '../core/macroLanguages';
 import { CodeSnapshot } from '../core/macros/code/codeSnapshot';
-import { ExtensionContext } from '../extensionContext';
 
-export function registerMacroCodeLensProvider(context: ExtensionContext): void {
+export function registerMacroCodeLensProvider(context: Context): void {
   context.disposables.push(
     vscode.languages.registerCodeLensProvider(FeatureEnabledSelector, new MacroCodeLensProvider()),
   );

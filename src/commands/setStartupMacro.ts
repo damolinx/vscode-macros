@@ -1,10 +1,10 @@
 import * as vscode from 'vscode';
+import { Context } from '../context';
 import { getMacroUriFromStartupMacroUri } from '../core/startupMacroId';
-import { ExtensionContext } from '../extensionContext';
 import { isUntitled, resolveUri, UriLocator } from '../utils/uri';
 
 export function setStartupMacro(
-  context: ExtensionContext,
+  context: Context,
   locator: UriLocator,
   configTarget?: vscode.ConfigurationTarget,
 ): Promise<void> {
@@ -12,7 +12,7 @@ export function setStartupMacro(
 }
 
 export async function setStartupMacros(
-  context: ExtensionContext,
+  context: Context,
   locators: UriLocator[],
   configTarget?: vscode.ConfigurationTarget,
 ): Promise<void> {

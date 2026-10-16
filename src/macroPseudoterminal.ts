@@ -4,10 +4,10 @@ import { PassThrough } from 'stream';
 import { inspect, types } from 'util';
 import * as vm from 'vm';
 import { createMacro } from './commands/createMacro';
+import { Context } from './context';
 import { ExecutionId } from './core/execution/executionId';
 import { initializeContext, MacroContextParams } from './core/execution/macroContext';
 import { transpileOrThrow, TranspilationError } from './core/typescript/transpilation';
-import { ExtensionContext } from './extensionContext';
 import { showMacroQuickPick } from './ui/dialogs';
 import { cleanError } from './utils/errors';
 
@@ -33,7 +33,7 @@ export class MacroPseudoterminal implements vscode.Pseudoterminal {
   private useTs: boolean;
 
   constructor(
-    private readonly context: ExtensionContext,
+    private readonly context: Context,
     private readonly executionId: ExecutionId,
   ) {
     this.uri = vscode.Uri.from({ scheme: '', path: this.executionId });

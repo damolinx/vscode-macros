@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { setStartupMacros } from '../../commands/setStartupMacro';
+import { Context } from '../../context';
 import { StartupMacro } from '../../core/startupMacro';
-import { ExtensionContext } from '../../extensionContext';
 import { isUntitled } from '../../utils/uri';
 import {
   FILELIST_MIMETYPE,
@@ -11,7 +11,7 @@ import {
 import { SourceTarget } from './sourceTarget';
 
 export class StartupTreeDragAndDropController extends TreeDragAndDropController<StartupMacro> {
-  constructor(context: ExtensionContext) {
+  constructor(context: Context) {
     super(context, [FILELIST_MIMETYPE], [FILELIST_MIMETYPE, MACROLIST_MIMETYPE]);
   }
 

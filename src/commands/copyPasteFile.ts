@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
+import { Context } from '../context';
+import { setContextValue } from '../contextValues';
 import { resolveMacroInfo } from '../core/macroLanguages';
 import { CodeMacro } from '../core/macros/code/codeMacro';
-import { ExtensionContext } from '../extensionContext';
-import { setContext } from '../extensionContextValues';
 import { exists, getFileType } from '../utils/fsEx';
 import { formatDisplayUri } from '../utils/ui';
 import { isUntitled, parentUri, resolveUri, uriBasename, UriLocator } from '../utils/uri';
@@ -14,13 +14,13 @@ function getSource(): vscode.Uri | undefined {
   return savedUri;
 }
 
-function setSource(uri?: vscode.Uri): void {
-  setContext('macros:canPaste', Boolean(uri));
+async function setSource(uri?: vscode.Uri): Promise<void> {
+  await setContextValue('macros:canPaste', Boolean(uri));
   savedUri = uri;
 }
 
 export async function copyFile(
-  { explorerTree, log }: ExtensionContext,
+  { explorerTree, log }: Context,
   locator?: UriLocator,
 ): Promise<void> {
   const uri = locator
@@ -31,12 +31,12 @@ export async function copyFile(
     return;
   }
 
-  setSource(uri);
+  await setSource(uri);
   log.debug('Copy: Copied file', formatDisplayUri(uri));
 }
 
 export async function pasteFile(
-  { explorerTree, log }: ExtensionContext,
+  { explorerTree, log }: Context,
   locator?: UriLocator,
 ): Promise<void> {
   const source = getSource();
@@ -47,7 +47,7 @@ export async function pasteFile(
 
   if (!(await exists(source, vscode.FileType.File))) {
     log.warn('Paste: File does not exist', formatDisplayUri(source));
-    setSource();
+    await setSource();
     return;
   }
 

@@ -1,12 +1,12 @@
 import * as vscode from 'vscode';
-import { ExtensionContext } from '../extensionContext';
+import { Context } from '../context';
 
 export abstract class TreeDataProvider<T> implements vscode.TreeDataProvider<T>, vscode.Disposable {
-  protected readonly context: ExtensionContext;
+  protected readonly context: Context;
   protected readonly disposables: vscode.Disposable[];
   protected readonly onDidChangeTreeDataEmitter: vscode.EventEmitter<T[] | T | void>;
 
-  constructor(context: ExtensionContext) {
+  constructor(context: Context) {
     this.context = context;
     this.onDidChangeTreeDataEmitter = new vscode.EventEmitter();
 

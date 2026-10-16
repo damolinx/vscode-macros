@@ -1,12 +1,12 @@
 import * as vscode from 'vscode';
+import { Context } from '../context';
 import { FeatureEnabledSelector } from '../core/macroLanguages';
 import { MacroOptionType } from '../core/macros/code/codeMacroOptions';
-import { ExtensionContext } from '../extensionContext';
 
 export const MACRO_TRIGGER_CHARACTERS: readonly string[] = ['@'];
 export const MACRO_OPTIONS_TRIGGER_CHARACTERS: readonly string[] = [':', ','];
 
-export function registerMacroOptionsCompletionProvider(context: ExtensionContext): void {
+export function registerMacroOptionsCompletionProvider(context: Context): void {
   context.disposables.push(
     vscode.languages.registerCompletionItemProvider(
       FeatureEnabledSelector,

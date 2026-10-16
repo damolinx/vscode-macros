@@ -1,10 +1,10 @@
+import { Context } from '../context';
 import { getMacroUriFromStartupMacroUri } from '../core/startupMacroId';
-import { ExtensionContext } from '../extensionContext';
 import { resolveUri, UriLocator } from '../utils/uri';
 import { runMacro } from './runMacro';
 
 export async function restartMacro(
-  context: ExtensionContext,
+  context: Context,
   locator: UriLocator,
   options?: { ignoreDiagnosticErrors?: true; startup?: true },
 ): Promise<void> {

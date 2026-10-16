@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
+import { Context } from '../../context';
 import { Library } from '../../core/library/library';
 import { MacroLibrary } from '../../core/library/macroLibrary';
-import { ExtensionContext } from '../../extensionContext';
 import {
   formatDisplayUri,
   formatHomeRelativePath,
@@ -14,10 +14,7 @@ const UntitledLibraryTooltip = new vscode.MarkdownString(
   'This library includes all `untitled:` macro documents. They exist only in   \nmemory until saved, which limits IntelliSense and other tooling features.',
 );
 
-export function createLibraryItem(
-  library: Library,
-  { explorerTree }: ExtensionContext,
-): vscode.TreeItem {
+export function createLibraryItem(library: Library, { explorerTree }: Context): vscode.TreeItem {
   const item = new vscode.TreeItem(
     library.uri,
     explorerTree.expansionState.isExpanded(library.id)

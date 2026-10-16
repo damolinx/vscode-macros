@@ -1,12 +1,12 @@
 import * as vscode from 'vscode';
-import { ExtensionContext } from '../extensionContext';
+import { Context } from '../context';
 
 export class TreeViewState<TId extends string = string> {
   private readonly key: string;
   private readonly memento: vscode.Memento;
   private readonly expanded: Set<TId>;
 
-  constructor({ extensionContext: { globalState } }: ExtensionContext, key: TId) {
+  constructor({ extensionContext: { globalState } }: Context, key: TId) {
     this.key = key;
     this.memento = globalState;
     const saved = globalState.get<TId[]>(key) ?? [];

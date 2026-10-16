@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
+import { Context } from '../context';
 import { Execution } from '../core/execution/execution';
-import { ExtensionContext } from '../extensionContext';
 
-export function registerMacroSnapshotContentProvider(context: ExtensionContext): void {
+export function registerMacroSnapshotContentProvider(context: Context): void {
   context.disposables.push(
     vscode.workspace.registerTextDocumentContentProvider('macro-snapshot', {
       provideTextDocumentContent(snapshotUri: vscode.Uri) {

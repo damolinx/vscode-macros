@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
-import { ExtensionContext } from '../extensionContext';
+import { Context } from '../context';
 import { showMacroQuickPick } from '../ui/dialogs';
 import { UriLocator, resolveUri } from '../utils/uri';
 import { showTextDocument } from '../utils/vscodeEx';
 
 export async function openMacro(
-  { libraryManager }: ExtensionContext,
+  { libraryManager }: Context,
   locator?: UriLocator,
 ): Promise<vscode.TextEditor | undefined> {
   const uri = locator

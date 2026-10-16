@@ -1,13 +1,13 @@
 import * as vscode from 'vscode';
+import { Context } from '../context';
 import { SingletonMacroAlreadyRunningError } from '../core/execution/executors/errors';
-import { ExtensionContext } from '../extensionContext';
 import { showMacroQuickPick } from '../ui/dialogs';
 import { showMacroErrorMessage } from '../ui/errors';
 import { isUntitled, UriLocator, resolveUri } from '../utils/uri';
 import { activeMacroEditor } from './utils';
 
 export async function runMacro(
-  context: ExtensionContext,
+  context: Context,
   locator?: UriLocator,
   options?: { ignoreDiagnosticErrors?: true; startup?: true },
 ): Promise<void> {
@@ -66,7 +66,7 @@ function hasDiagnosticErrors(uri: vscode.Uri) {
   return diagnostics.some(({ severity }) => severity === vscode.DiagnosticSeverity.Error);
 }
 
-export async function runActiveEditor(context: ExtensionContext) {
+export async function runActiveEditor(context: Context) {
   const editor = await activeMacroEditor(false);
   if (editor) {
     await runMacro(context, editor.document.uri);

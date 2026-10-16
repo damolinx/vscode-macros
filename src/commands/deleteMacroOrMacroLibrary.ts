@@ -1,13 +1,13 @@
 import * as vscode from 'vscode';
+import { Context } from '../context';
 import { MacroLibrary } from '../core/library/macroLibrary';
 import { CodeMacro } from '../core/macros/code/codeMacro';
-import { ExtensionContext } from '../extensionContext';
 import { formatDisplayUri } from '../utils/ui';
 import { areUriEqual, isUntitled } from '../utils/uri';
 import { stopMacro } from './stopMacro';
 
 export async function deleteMacroOrMacroLibrary(
-  context: ExtensionContext,
+  context: Context,
   macroOrLibrary?: CodeMacro | MacroLibrary,
 ): Promise<void> {
   const target = macroOrLibrary ?? context.explorerTree.selection[0];
@@ -28,7 +28,7 @@ export async function deleteMacroOrMacroLibrary(
   }
 }
 
-async function deleteLibrary(context: ExtensionContext, { uri }: MacroLibrary): Promise<void> {
+async function deleteLibrary(context: Context, { uri }: MacroLibrary): Promise<void> {
   const library = context.libraryManager.sourcesManager.sources.find((s) =>
     areUriEqual(s.uri, uri),
   );
@@ -64,7 +64,7 @@ async function deleteLibrary(context: ExtensionContext, { uri }: MacroLibrary): 
   await context.libraryManager.sourcesManager.removeSourceFor(uri, result.target);
 }
 
-async function deleteMacro(context: ExtensionContext, { uri }: CodeMacro): Promise<void> {
+async function deleteMacro(context: Context, { uri }: CodeMacro): Promise<void> {
   if (context.executorManager.getExecutionCount(uri) > 0) {
     const stopOption: vscode.MessageItem = { title: 'Stop and Delete' };
     const result = await vscode.window.showInformationMessage(

@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
+import { Context } from '../context';
 import { MacroLanguageId } from '../core/language/macroLanguage';
-import { ExtensionContext } from '../extensionContext';
 import { Lazy } from '../utils/lazy';
 import { readFile } from '../utils/resources';
 import { NaturalComparer } from '../utils/ui';
@@ -18,7 +18,7 @@ const CachedManifest = new Lazy(async (context: vscode.ExtensionContext) => {
 });
 
 export async function loadTemplates(
-  { extensionContext }: ExtensionContext,
+  { extensionContext }: Context,
   languageId?: MacroLanguageId,
 ): Promise<(Template & { load: () => Promise<string> })[]> {
   const { templates } = await CachedManifest.get(extensionContext);

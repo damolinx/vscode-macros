@@ -1,14 +1,14 @@
 import * as vscode from 'vscode';
+import { Context } from '../../context';
 import { resolveMacroInfo } from '../../core/macroLanguages';
 import { CodeMacro } from '../../core/macros/code/codeMacro';
-import { ExtensionContext } from '../../extensionContext';
 import { getIcon, getIconFromUri } from '../../ui/icons';
 import { formatDisplayUri } from '../../utils/ui';
 import { isUntitled } from '../../utils/uri';
 
 export async function createMacroItem(
   macro: CodeMacro,
-  context: ExtensionContext,
+  context: Context,
 ): Promise<vscode.TreeItem> {
   const isUntitledMacro = isUntitled(macro.uri);
 

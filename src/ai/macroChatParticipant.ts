@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
-import { ExtensionContext } from '../extensionContext';
+import { Context } from '../context';
 import { MacrosPrompt } from './macroChatPrompt';
 
 export const MACROS_CHAT_PARTICIPANT_ID = 'macros.chatParticipant';
 export const MACRO_TOOL_TAG = 'macro';
 
-export function registerMacroChatParticipant(context: ExtensionContext): void {
+export function registerMacroChatParticipant(context: Context): void {
   const macroParticipant = new MacroChatParticipant(context);
   const participant = vscode.chat.createChatParticipant(
     MACROS_CHAT_PARTICIPANT_ID,
@@ -17,7 +17,7 @@ export function registerMacroChatParticipant(context: ExtensionContext): void {
 }
 
 export class MacroChatParticipant {
-  constructor(private readonly context: ExtensionContext) {}
+  constructor(private readonly context: Context) {}
 
   private async getMessages(
     { prompt }: vscode.ChatRequest,

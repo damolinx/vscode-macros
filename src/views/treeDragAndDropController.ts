@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
+import { Context } from '../context';
 import { isMacro } from '../core/macroLanguages';
-import { ExtensionContext } from '../extensionContext';
 
 export const FILELIST_MIMETYPE = 'text/uri-list';
 export const FILELIST_SEP = '\r\n';
@@ -9,12 +9,12 @@ export const MACROLIST_MIMETYPE = 'application/vnd.code.tree.macros.macro-uri-li
 export abstract class TreeDragAndDropController<
   T extends { uri: vscode.Uri },
 > implements vscode.TreeDragAndDropController<T> {
-  protected readonly context: ExtensionContext;
+  protected readonly context: Context;
   public readonly dragMimeTypes: readonly string[];
   public readonly dropMimeTypes: readonly string[];
 
   constructor(
-    context: ExtensionContext,
+    context: Context,
     dragMimeTypes = [FILELIST_MIMETYPE, MACROLIST_MIMETYPE],
     dropMimeTypes = [FILELIST_MIMETYPE, MACROLIST_MIMETYPE],
   ) {

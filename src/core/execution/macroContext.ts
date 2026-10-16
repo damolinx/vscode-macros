@@ -2,11 +2,11 @@ import * as vscode from 'vscode';
 import * as vm from 'vm';
 import { createMacroApi } from '../../api/macroApiFactory';
 import { MacroContext } from '../../api/macroContext';
-import { ExtensionContext } from '../../extensionContext';
+import { Context } from '../../context';
 import { ExecutionId } from './executionId';
 
 export interface MacroContextParams {
-  context: ExtensionContext;
+  context: Context;
   disposables: vscode.Disposable[];
   executionId: ExecutionId;
   startup?: true;

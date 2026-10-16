@@ -1,14 +1,14 @@
 import * as vscode from 'vscode';
 import { basename, extname } from 'path';
+import { Context } from '../context';
 import { isMacro } from '../core/macroLanguages';
 import { CodeMacro } from '../core/macros/code/codeMacro';
-import { ExtensionContext } from '../extensionContext';
 import { exists } from '../utils/fsEx';
 import { isUntitled, parentUri, resolveUri, uriBasename, UriLocator } from '../utils/uri';
 import { getTreeSelection } from './utils';
 
 export async function renameMacro(
-  { explorerTree, log }: ExtensionContext,
+  { explorerTree, log }: Context,
   locator?: UriLocator,
 ): Promise<void> {
   const uri = locator

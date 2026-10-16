@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
+import { Context } from '../context';
 import { MacroLanguageId } from '../core/language/macroLanguage';
 import { isMacroLanguage, PreferredLanguage, resolveMacroLanguage } from '../core/macroLanguages';
-import { ExtensionContext } from '../extensionContext';
 import { loadTemplates } from '../templates/templates';
 import { createGroupedQuickPickItems } from '../ui/ui';
 import { exists } from '../utils/fsEx';
@@ -16,7 +16,7 @@ export function isCreatingMacro(): boolean {
 }
 
 export async function createMacro(
-  context: ExtensionContext,
+  context: Context,
   locator?: UriLocator,
   options?: vscode.TextDocumentShowOptions & {
     content?: string;
@@ -60,7 +60,7 @@ export async function createMacro(
 }
 
 export async function updateEditor(
-  context: ExtensionContext,
+  context: Context,
   locator?: UriLocator,
   defaultContent?: string,
 ): Promise<void> {
@@ -111,7 +111,7 @@ async function createUntitledUri(
 }
 
 async function getTemplateContent(
-  context: ExtensionContext,
+  context: Context,
   languageId: MacroLanguageId,
 ): Promise<string | undefined> {
   const templates = await loadTemplates(context, languageId);

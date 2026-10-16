@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { inspect } from 'util';
+import { Context } from '../context';
 import { ExecutionId } from '../core/execution/executionId';
-import { ExtensionContext } from '../extensionContext';
 import { cleanStack } from '../utils/errors';
 
 /**
@@ -13,7 +13,7 @@ export class MacroLogOutputChannel implements vscode.LogOutputChannel {
   readonly #log: vscode.LogOutputChannel;
   readonly #prefix: string;
 
-  constructor(executionId: ExecutionId, { log }: ExtensionContext) {
+  constructor(executionId: ExecutionId, { log }: Context) {
     this.#executionId = executionId;
     this.#log = log;
     this.#prefix = `[${executionId}]`;

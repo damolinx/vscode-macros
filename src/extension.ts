@@ -32,12 +32,12 @@ import {
 import { showRunCode } from './commands/showRunCode';
 import { showRunningMacros } from './commands/showRunningMacros';
 import { stopMacro } from './commands/stopMacro';
+import { Context } from './context';
+import { registerContextValueHandlers } from './contextValues';
 import { Execution } from './core/execution/execution';
 import { MacroLibrary } from './core/library/macroLibrary';
 import { CodeMacro } from './core/macros/code/codeMacro';
 import { StartupMacro } from './core/startupMacro';
-import { ExtensionContext } from './extensionContext';
-import { registerContextValueHandlers } from './extensionContextValues';
 import { MacroStatusBarItem } from './macroStatusBarItem';
 import { registerDTSCodeActionProvider } from './providers/dtsCodeActionProvider';
 import { registerExecuteCommandCompletionProvider } from './providers/executeCommandCompletionProvider';
@@ -54,7 +54,7 @@ import { SourceTarget } from './views/startup/sourceTarget';
  * @param extensionContext Context.
  */
 export async function activate(extensionContext: vscode.ExtensionContext) {
-  const context = new ExtensionContext(extensionContext);
+  const context = new Context(extensionContext);
   context.log.info('Activating extension', extensionContext.extension.packageJSON.version);
 
   await ensureGlobalStorageDirectory(context);
@@ -140,10 +140,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
   await runStartupMacros(context);
 }
 
-async function ensureGlobalStorageDirectory({
-  extensionContext,
-  log,
-}: ExtensionContext): Promise<void> {
+async function ensureGlobalStorageDirectory({ extensionContext, log }: Context): Promise<void> {
   try {
     await vscode.workspace.fs.createDirectory(extensionContext.globalStorageUri);
   } catch (err) {
@@ -155,7 +152,7 @@ async function ensureGlobalStorageDirectory({
   }
 }
 
-async function runStartupMacros(context: ExtensionContext): Promise<void> {
+async function runStartupMacros(context: Context): Promise<void> {
   const uris = context.startupManager.sources.map((s) => s.uri);
   if (uris.length === 0) {
     context.log.info('No startup macros to execute — none registered');

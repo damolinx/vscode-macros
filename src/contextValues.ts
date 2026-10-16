@@ -1,37 +1,37 @@
 import * as vscode from 'vscode';
 import { MACROS_EXT_DEBUG_VAR } from './commands/debugMacro';
+import { Context } from './context';
 import { isFeatureMacro, isMacroLanguage } from './core/macroLanguages';
-import { ExtensionContext } from './extensionContext';
 import { areUriEqual } from './utils/uri';
 
-export function registerContextValueHandlers(context: ExtensionContext): void {
+export function registerContextValueHandlers(context: Context): void {
   registerInDebugMode(context);
   registerMruSet(context);
   registerSupported(context);
 }
 
-function registerInDebugMode({ log }: ExtensionContext): void {
+async function registerInDebugMode({ log }: Context): Promise<void> {
   const contextKey = 'macros:inDebugMode';
   const inDebugMode = process.env[MACROS_EXT_DEBUG_VAR]?.trim();
 
   if (inDebugMode) {
     log.warn('Running macros in Debug Mode');
-    setContext(contextKey, inDebugMode);
+    await setContextValue(contextKey, inDebugMode);
   }
 }
 
-function registerMruSet(context: ExtensionContext): void {
+async function registerMruSet(context: Context): Promise<void> {
   const contextKey = 'macros:mruSet';
 
   context.disposables.push(
-    context.executorManager.onExecutionStart(({ macro: { uri } }) => {
+    context.executorManager.onExecutionStart(async ({ macro: { uri } }) => {
       context.mruMacro = uri;
-      setContext(contextKey, true);
+      await setContextValue(contextKey, true);
     }),
   );
 }
 
-function registerSupported(context: ExtensionContext): void {
+async function registerSupported(context: Context): Promise<void> {
   const supportedExtKey = 'macros:supportedFeatureExt';
   const supportedLangKey = 'macros:supportedEditorLangId';
 
@@ -49,18 +49,18 @@ function registerSupported(context: ExtensionContext): void {
     vscode.window.onDidChangeActiveTextEditor((editor) => setSupportedFromEditor(editor)),
   );
 
-  function setSupportedFromEditor(editor?: vscode.TextEditor): void {
+  async function setSupportedFromEditor(editor?: vscode.TextEditor): Promise<void> {
     const supportedLangId = !!editor && isMacroLanguage(editor.document.languageId);
     const supportedFeatureExt =
       supportedLangId &&
       (isFeatureMacro(editor.document.uri) ||
         !!context.libraryManager.libraryFor(editor.document.uri));
 
-    setContext(supportedExtKey, supportedFeatureExt);
-    setContext(supportedLangKey, supportedLangId);
+    await setContextValue(supportedExtKey, supportedFeatureExt);
+    await setContextValue(supportedLangKey, supportedLangId);
   }
 }
 
-export function setContext<T>(contextKey: string, arg: T): void {
-  vscode.commands.executeCommand('setContext', contextKey, arg);
+export async function setContextValue<T>(contextKey: string, arg: T): Promise<void> {
+  await vscode.commands.executeCommand('setContext', contextKey, arg);
 }

@@ -1,11 +1,11 @@
-import { ExtensionContext } from '../../../extensionContext';
+import { Context } from '../../../context';
 import { parentUri, uriBasename } from '../../../utils/uri';
 import { Execution } from '../execution';
 import { getExecutionIdToken } from '../executionId';
 import { MacroContextParams } from '../macroContext';
 
 export abstract class Runner<TContext = unknown> {
-  constructor(private readonly context: ExtensionContext) {}
+  constructor(private readonly context: Context) {}
 
   protected abstract createMacroContext(execution: Execution, params: MacroContextParams): TContext;
 

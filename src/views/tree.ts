@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { ExtensionContext } from '../extensionContext';
+import { Context } from '../context';
 import { TreeDataProvider } from './treeDataProvider';
 
 export abstract class Tree<TElement> implements vscode.Disposable {
@@ -7,7 +7,7 @@ export abstract class Tree<TElement> implements vscode.Disposable {
   protected readonly view: vscode.TreeView<TElement | undefined>;
 
   protected constructor(
-    protected readonly context: ExtensionContext,
+    protected readonly context: Context,
     private readonly options: vscode.TreeViewOptions<TElement> & {
       readonly viewId: string;
       readonly treeDataProvider: TreeDataProvider<TElement>;

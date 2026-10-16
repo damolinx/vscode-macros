@@ -1,16 +1,16 @@
-import { ExtensionContext } from '../extensionContext';
+import { Context } from '../context';
 import { Lazy } from '../utils/lazy';
 import { readFile } from '../utils/resources';
 
 export const CURSOR_RULE_RESOURCE = 'ai/cursor-rule.txt';
 export const MACROS_PROMPT_RESOURCE = 'ai/macros-prompt.txt';
 
-export const MacrosPrompt = new Lazy(async ({ extensionContext }: ExtensionContext) => {
+export const MacrosPrompt = new Lazy(async ({ extensionContext }: Context) => {
   const content = await readFile(extensionContext, MACROS_PROMPT_RESOURCE);
   return content;
 });
 
-export const CursorRule = new Lazy(async (context: ExtensionContext) => {
+export const CursorRule = new Lazy(async (context: Context) => {
   const [content, macrosPrompt] = await Promise.all([
     readFile(context.extensionContext, CURSOR_RULE_RESOURCE),
     MacrosPrompt.get(context),

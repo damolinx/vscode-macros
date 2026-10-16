@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { ExtensionContext } from '../../../extensionContext';
+import { Context } from '../../../context';
 import { CodeMacro } from '../../macros/code/codeMacro';
 import { CodeSnapshot } from '../../macros/code/codeSnapshot';
 import { Execution } from '../execution';
@@ -24,7 +24,7 @@ export class Executor implements vscode.Disposable {
   protected readonly runner: Runner;
 
   constructor(
-    protected readonly context: ExtensionContext,
+    protected readonly context: Context,
     public readonly macro: CodeMacro,
   ) {
     this.executionMap = new Map();

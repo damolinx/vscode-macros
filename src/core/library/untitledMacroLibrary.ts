@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { isCreatingMacro } from '../../commands/createMacro';
-import { ExtensionContext } from '../../extensionContext';
+import { Context } from '../../context';
 import { isUntitled } from '../../utils/uri';
 import { isMacroLanguage } from '../macroLanguages';
 import { getMacroId, CodeMacroId } from '../macros/code/codeMacroId';
@@ -12,12 +12,12 @@ export const UNTITLED_MACRO_LIBRARY_NAME = 'Temporary';
 export class UntitledMacroLibrary extends Library<CodeMacroId> {
   private static _instance: UntitledMacroLibrary;
 
-  public static instance(context: ExtensionContext): UntitledMacroLibrary {
+  public static instance(context: Context): UntitledMacroLibrary {
     this._instance ??= new UntitledMacroLibrary(context);
     return this._instance;
   }
 
-  private constructor({ executorManager }: ExtensionContext) {
+  private constructor({ executorManager }: Context) {
     super(vscode.Uri.from({ scheme: 'untitled', path: UNTITLED_MACRO_LIBRARY_NAME }));
     this.disposables.push(
       vscode.workspace.onDidOpenTextDocument((document) => {

@@ -1,13 +1,13 @@
 import * as vscode from 'vscode';
+import { Context } from '../context';
 import { getMacroUriFromStartupMacroUri } from '../core/startupMacroId';
-import { ExtensionContext } from '../extensionContext';
 import { exists } from '../utils/fsEx';
 import { formatDisplayUri } from '../utils/ui';
 import { resolveUri, UriLocator } from '../utils/uri';
 import { getTreeSelection } from './utils';
 
 export async function revealInOS(
-  { explorerTree, log }: ExtensionContext,
+  { explorerTree, log }: Context,
   locator?: UriLocator,
 ): Promise<void> {
   let uri = locator ? resolveUri(locator) : getTreeSelection(explorerTree);

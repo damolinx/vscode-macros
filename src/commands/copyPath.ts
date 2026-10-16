@@ -1,10 +1,10 @@
 import * as vscode from 'vscode';
-import { ExtensionContext } from '../extensionContext';
+import { Context } from '../context';
 import { UriLocator, resolveUri, uriBasename } from '../utils/uri';
 import { getTreeSelection } from './utils';
 
 export async function copyPath(
-  { explorerTree, log }: ExtensionContext,
+  { explorerTree, log }: Context,
   locator?: UriLocator,
   nameOnly?: true,
 ): Promise<void> {

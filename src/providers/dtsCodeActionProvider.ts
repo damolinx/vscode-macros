@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
+import { Context } from '../context';
 import { FeatureEnabledSelector } from '../core/macroLanguages';
-import { ExtensionContext } from '../extensionContext';
 
-export function registerDTSCodeActionProvider(context: ExtensionContext): void {
+export function registerDTSCodeActionProvider(context: Context): void {
   context.disposables.push(
     vscode.languages.registerCodeActionsProvider(
       FeatureEnabledSelector,

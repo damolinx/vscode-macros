@@ -6,7 +6,7 @@ import { StartupMacroLibrarySourceManager } from './core/library/startupMacroLib
 import { ExplorerTree } from './views/explorer/explorerTree';
 import { StartupTree } from './views/startup/startupTree';
 
-export class ExtensionContext {
+export class Context {
   public readonly executorManager: ExecutorManager;
   public readonly explorerTree: ExplorerTree;
   public readonly libraryManager: MacroLibraryManager;

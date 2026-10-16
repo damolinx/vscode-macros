@@ -1,13 +1,13 @@
 import * as vscode from 'vscode';
+import { Context } from '../context';
 import { Execution } from '../core/execution/execution';
 import { getExecutionIdName, getExecutionIdToken } from '../core/execution/executionId';
-import { ExtensionContext } from '../extensionContext';
 import { createGroupedQuickPickItems } from '../ui/ui';
 import { formatStartTimestampLabel } from '../utils/ui';
 import { showTextDocument } from '../utils/vscodeEx';
 import { stopMacro } from './stopMacro';
 
-export async function showRunningMacros(context: ExtensionContext): Promise<void> {
+export async function showRunningMacros(context: Context): Promise<void> {
   const {
     executorManager: { executions },
   } = context;

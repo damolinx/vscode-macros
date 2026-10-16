@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { ExtensionContext } from '../../extensionContext';
+import { Context } from '../../context';
 import { CodeMacro } from '../macros/code/codeMacro';
 import { CodeSnapshot } from '../macros/code/codeSnapshot';
 import { ExecutionId } from './executionId';
@@ -10,7 +10,7 @@ export class Execution implements vscode.Disposable {
   private ts: number;
 
   public constructor(
-    private readonly context: ExtensionContext,
+    private readonly context: Context,
     public readonly id: ExecutionId,
     public readonly macro: CodeMacro,
     public readonly snapshot: CodeSnapshot,

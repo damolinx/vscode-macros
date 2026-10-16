@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 import { CursorRule } from '../../ai/macroChatPrompt';
-import { ExtensionContext } from '../../extensionContext';
+import { Context } from '../../context';
 
-export async function createCursorRules(context: ExtensionContext): Promise<void> {
+export async function createCursorRules(context: Context): Promise<void> {
   const document = await vscode.workspace.openTextDocument({
     content: await CursorRule.get(context),
     language: 'markdown',

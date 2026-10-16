@@ -1,10 +1,10 @@
 import * as vscode from 'vscode';
-import { ExtensionContext } from '../extensionContext';
+import { Context } from '../context';
 import { formatDisplayUri } from '../utils/ui';
 import { resolveUri, UriLocator } from '../utils/uri';
 import { setupSourceDirectory } from './setupSourceDirectory';
 
-export async function addLibrary(context: ExtensionContext, locator?: UriLocator): Promise<void> {
+export async function addLibrary(context: Context, locator?: UriLocator): Promise<void> {
   const uri = locator ? resolveUri(locator) : await pickFolder();
   if (!uri) {
     return;

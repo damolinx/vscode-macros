@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
+import { Context } from '../../context';
 import { Execution } from '../../core/execution/execution';
 import { Library } from '../../core/library/library';
 import { LibraryId } from '../../core/library/libraryId';
 import { LibraryItem } from '../../core/library/libraryItem';
 import { CodeMacro } from '../../core/macros/code/codeMacro';
 import { CodeMacroId, getMacroId } from '../../core/macros/code/codeMacroId';
-import { ExtensionContext } from '../../extensionContext';
 import { NaturalComparer } from '../../utils/ui';
 import { TreeDataProvider } from '../treeDataProvider';
 import { createExecutionItem } from './executionItem';
@@ -22,7 +22,7 @@ interface MonitoredLibraryData {
 export class ExplorerTreeDataProvider extends TreeDataProvider<TreeElement> {
   private readonly monitoredLibraries: Map<LibraryId, MonitoredLibraryData>;
 
-  constructor(context: ExtensionContext) {
+  constructor(context: Context) {
     super(context);
     this.monitoredLibraries = new Map();
 
