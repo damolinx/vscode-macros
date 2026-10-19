@@ -24,7 +24,7 @@ declare global {
   const __runId: string;
 
   /**
-   * Macro run was triggered on startup.
+   * Whether the macro was started during extension or workspace startup.
    */
   const __startup: true | undefined;
 
@@ -286,4 +286,4 @@ export declare namespace macros.ui {
   export type EventNode = BoundEvent | Event | EventHandler;
 }
 
-export {};
+export { };

@@ -171,9 +171,7 @@ export class MacroRepl implements vscode.Disposable {
       if (isRecoverable(e)) {
         targetError = new Recoverable(e);
       } else if (!maybePreview) {
-        this.executionHistory.push(
-          `${code.trim()} // Failed${e.message ? `: ${e.message}` : ''}`,
-        );
+        this.executionHistory.push(`${code.trim()} // Failed${e.message ? `: ${e.message}` : ''}`);
       }
       callback(targetError, null);
     }

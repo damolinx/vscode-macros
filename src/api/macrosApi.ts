@@ -17,7 +17,7 @@ export interface MacrosApi {
    */
   readonly __runId: string;
   /**
-   * Macro run was triggered on startup.
+   * Whether the macro was started during extension or workspace startup.
    */
   readonly __startup?: true;
 
